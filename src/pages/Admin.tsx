@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { 
   Users, BarChart3, FileText, Settings, LogOut, 
   Menu, BellRing, UserCircle, Sun, Moon,
-  PanelTop, Home, Globe
+  PanelTop, Home, Globe, Grid3X3, LayoutGrid
 } from 'lucide-react';
 
 // Admin components
@@ -123,11 +123,11 @@ const Admin = () => {
           <div className="flex flex-col items-center space-y-4">
             <div className="relative">
               <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping"></div>
-              <div className="relative z-10 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
-                <PanelTop className="h-6 w-6 text-white" />
+              <div className="relative z-10 h-16 w-16 rounded-full bg-primary flex items-center justify-center">
+                <PanelTop className="h-8 w-8 text-white" />
               </div>
             </div>
-            <p className="text-muted-foreground animate-pulse">Carregando painel...</p>
+            <p className="text-lg text-muted-foreground animate-pulse">Carregando painel administrativo...</p>
           </div>
         </motion.div>
       </div>
@@ -164,23 +164,30 @@ const Admin = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="container flex items-center justify-between p-4">
+        <div className="container flex items-center justify-between p-3">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={toggleSidebar} className="md:hidden">
               <Menu className="h-5 w-5" />
             </Button>
-            <AnimatedLogo size="sm" showText={true} />
-            <h1 className="text-lg font-semibold hidden md:block">Painel Administrativo</h1>
+            <div className="flex items-center space-x-2">
+              <div className="bg-primary/10 p-2 rounded-md">
+                <AnimatedLogo size="sm" showText={false} />
+              </div>
+              <div>
+                <h1 className="text-lg font-semibold leading-none">Painel Administrativo</h1>
+                <p className="text-xs text-muted-foreground mt-1">Sistemas Claudio Figueiredo</p>
+              </div>
+            </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
-              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full h-8 w-8">
+              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
             
             <div className="relative">
-              <Button variant="ghost" size="icon">
-                <BellRing className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
+                <BellRing className="h-4 w-4" />
                 {hasNotifications && (
                   <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
                 )}
@@ -188,10 +195,13 @@ const Admin = () => {
             </div>
             
             <div className="relative group">
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <UserCircle className="h-6 w-6" />
+              <Button variant="ghost" className="h-8 flex items-center gap-2 text-xs">
+                <UserCircle className="h-5 w-5" />
+                <span className="hidden sm:inline-block max-w-[120px] truncate">
+                  {user?.email || 'admin@sistemasclaudio.com'}
+                </span>
               </Button>
-              <div className="absolute right-0 mt-2 w-48 p-2 bg-card rounded-md shadow-lg border border-border hidden group-hover:block z-20">
+              <div className="absolute right-0 mt-2 w-56 p-2 bg-card rounded-md shadow-lg border border-border hidden group-hover:block z-20">
                 <div className="px-4 py-2">
                   <p className="text-sm font-medium">{user?.email || 'admin@sistemasclaudio.com'}</p>
                   <p className="text-xs text-muted-foreground">Administrador</p>
@@ -211,81 +221,107 @@ const Admin = () => {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <motion.aside 
-          className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-card border-r border-border/40 hidden md:block transition-all duration-300 ease-in-out`}
+          className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-card/95 backdrop-blur-sm border-r border-border/40 hidden md:block transition-all duration-300 ease-in-out`}
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <nav className="p-4 space-y-2">
-            <Button 
-              variant={activeTab === 'dashboard' ? 'secondary' : 'ghost'} 
-              className="w-full justify-start" 
-              onClick={() => setActiveTab('dashboard')}
-            >
-              <BarChart3 className="mr-2 h-4 w-4" />
-              Dashboard
-            </Button>
-            <Button 
-              variant={activeTab === 'users' ? 'secondary' : 'ghost'} 
-              className="w-full justify-start" 
-              onClick={() => setActiveTab('users')}
-            >
-              <Users className="mr-2 h-4 w-4" />
-              Usuários
-            </Button>
-            <Button 
-              variant={activeTab === 'reports' ? 'secondary' : 'ghost'} 
-              className="w-full justify-start" 
-              onClick={() => setActiveTab('reports')}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              Relatórios
-            </Button>
-            <Button 
-              variant={activeTab === 'site' ? 'secondary' : 'ghost'} 
-              className="w-full justify-start" 
-              onClick={() => setActiveTab('site')}
-            >
-              <Globe className="mr-2 h-4 w-4" />
-              Editor do Site
-            </Button>
-            <Button 
-              variant={activeTab === 'settings' ? 'secondary' : 'ghost'} 
-              className="w-full justify-start" 
-              onClick={() => setActiveTab('settings')}
-            >
-              <Settings className="mr-2 h-4 w-4" />
-              Configurações
-            </Button>
-            
-            <div className="pt-4 mt-4 border-t border-border">
+          <div className="flex flex-col h-full">
+            <nav className="p-4 space-y-1.5 flex-1">
+              <div className="py-2 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Principal
+              </div>
               <Button 
-                variant="outline" 
+                variant={activeTab === 'dashboard' ? 'secondary' : 'ghost'} 
                 className="w-full justify-start" 
-                onClick={() => window.open('/', '_blank')}
+                onClick={() => setActiveTab('dashboard')}
               >
-                <Home className="mr-2 h-4 w-4" />
-                Página Inicial
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Dashboard
               </Button>
               <Button 
-                variant="outline" 
-                className="w-full justify-start mt-2 text-destructive hover:text-destructive" 
-                onClick={handleLogout}
+                variant={activeTab === 'users' ? 'secondary' : 'ghost'} 
+                className="w-full justify-start" 
+                onClick={() => setActiveTab('users')}
               >
-                <LogOut className="mr-2 h-4 w-4" />
-                Sair
+                <Users className="mr-2 h-4 w-4" />
+                Usuários
               </Button>
+              
+              <div className="py-2 px-3 mt-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Conteúdo
+              </div>
+              <Button 
+                variant={activeTab === 'site' ? 'secondary' : 'ghost'} 
+                className="w-full justify-start" 
+                onClick={() => setActiveTab('site')}
+              >
+                <Globe className="mr-2 h-4 w-4" />
+                Editor do Site
+              </Button>
+              <Button 
+                variant={activeTab === 'reports' ? 'secondary' : 'ghost'} 
+                className="w-full justify-start" 
+                onClick={() => setActiveTab('reports')}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Relatórios
+              </Button>
+              
+              <div className="py-2 px-3 mt-4 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Sistema
+              </div>
+              <Button 
+                variant={activeTab === 'settings' ? 'secondary' : 'ghost'} 
+                className="w-full justify-start" 
+                onClick={() => setActiveTab('settings')}
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Configurações
+              </Button>
+            </nav>
+            
+            <div className="p-4 border-t border-border">
+              <div className="bg-muted p-3 rounded-lg mb-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <LayoutGrid className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium">Acesso Rápido</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="h-auto py-1 text-xs justify-start"
+                    onClick={() => window.open('/', '_blank')}
+                  >
+                    <Home className="mr-1 h-3 w-3" />
+                    Site
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="h-auto py-1 text-xs justify-start text-destructive hover:text-destructive" 
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="mr-1 h-3 w-3" />
+                    Sair
+                  </Button>
+                </div>
+              </div>
+              <div className="text-xs text-muted-foreground text-center">
+                v1.0.0 &copy; 2023 Sistemas Claudio
+              </div>
             </div>
-          </nav>
+          </div>
         </motion.aside>
         
         {/* Mobile Tab Selector */}
-        <div className="md:hidden w-full border-b border-border flex justify-center">
-          <div className="grid grid-cols-5 gap-2 p-2 w-full">
+        <div className="md:hidden w-full border-b border-border sticky top-0 z-10 bg-card/95 backdrop-blur-sm">
+          <div className="grid grid-cols-5 gap-1 p-1 w-full">
             <Button 
               variant={activeTab === 'dashboard' ? 'secondary' : 'ghost'} 
               size="sm"
-              className="flex flex-col items-center py-2 h-auto"
+              className="flex flex-col items-center py-2 h-auto rounded-md"
               onClick={() => setActiveTab('dashboard')}
             >
               <BarChart3 className="h-4 w-4" />
@@ -294,7 +330,7 @@ const Admin = () => {
             <Button 
               variant={activeTab === 'users' ? 'secondary' : 'ghost'}
               size="sm"
-              className="flex flex-col items-center py-2 h-auto"
+              className="flex flex-col items-center py-2 h-auto rounded-md"
               onClick={() => setActiveTab('users')}
             >
               <Users className="h-4 w-4" />
@@ -303,7 +339,7 @@ const Admin = () => {
             <Button 
               variant={activeTab === 'reports' ? 'secondary' : 'ghost'}
               size="sm"
-              className="flex flex-col items-center py-2 h-auto"
+              className="flex flex-col items-center py-2 h-auto rounded-md"
               onClick={() => setActiveTab('reports')}
             >
               <FileText className="h-4 w-4" />
@@ -312,7 +348,7 @@ const Admin = () => {
             <Button 
               variant={activeTab === 'site' ? 'secondary' : 'ghost'}
               size="sm"
-              className="flex flex-col items-center py-2 h-auto"
+              className="flex flex-col items-center py-2 h-auto rounded-md"
               onClick={() => setActiveTab('site')}
             >
               <Globe className="h-4 w-4" />
@@ -321,7 +357,7 @@ const Admin = () => {
             <Button 
               variant={activeTab === 'settings' ? 'secondary' : 'ghost'}
               size="sm"
-              className="flex flex-col items-center py-2 h-auto"
+              className="flex flex-col items-center py-2 h-auto rounded-md"
               onClick={() => setActiveTab('settings')}
             >
               <Settings className="h-4 w-4" />
@@ -332,18 +368,71 @@ const Admin = () => {
         
         {/* Content */}
         <motion.main 
-          className="flex-1 overflow-auto p-6"
+          className="flex-1 overflow-auto p-6 bg-background"
           initial="hidden"
           animate="visible"
           variants={fadeInVariants}
         >
-          <motion.div variants={childVariants}>
-            {activeTab === 'dashboard' && <AdminDashboard />}
-            {activeTab === 'users' && <AdminUsers />}
-            {activeTab === 'reports' && <AdminReports />}
-            {activeTab === 'site' && <SiteEditor />}
-            {activeTab === 'settings' && <AdminSettings user={user} />}
-          </motion.div>
+          <div className="max-w-7xl mx-auto">
+            <motion.div 
+              variants={childVariants}
+              className="mb-6 pb-4 border-b border-border/40"
+            >
+              {activeTab === 'dashboard' && (
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <BarChart3 className="h-5 w-5 text-primary" />
+                    <h1 className="text-2xl font-bold">Dashboard</h1>
+                  </div>
+                  <p className="text-muted-foreground">Visualize dados e estatísticas do sistema</p>
+                </>
+              )}
+              {activeTab === 'users' && (
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Users className="h-5 w-5 text-primary" />
+                    <h1 className="text-2xl font-bold">Usuários</h1>
+                  </div>
+                  <p className="text-muted-foreground">Gerencie usuários e permissões</p>
+                </>
+              )}
+              {activeTab === 'reports' && (
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <FileText className="h-5 w-5 text-primary" />
+                    <h1 className="text-2xl font-bold">Relatórios</h1>
+                  </div>
+                  <p className="text-muted-foreground">Acesse e gere relatórios do sistema</p>
+                </>
+              )}
+              {activeTab === 'site' && (
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Globe className="h-5 w-5 text-primary" />
+                    <h1 className="text-2xl font-bold">Editor do Site</h1>
+                  </div>
+                  <p className="text-muted-foreground">Personalize a aparência e conteúdo do seu site</p>
+                </>
+              )}
+              {activeTab === 'settings' && (
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Settings className="h-5 w-5 text-primary" />
+                    <h1 className="text-2xl font-bold">Configurações</h1>
+                  </div>
+                  <p className="text-muted-foreground">Configure preferências do sistema</p>
+                </>
+              )}
+            </motion.div>
+            
+            <motion.div variants={childVariants}>
+              {activeTab === 'dashboard' && <AdminDashboard />}
+              {activeTab === 'users' && <AdminUsers />}
+              {activeTab === 'reports' && <AdminReports />}
+              {activeTab === 'site' && <SiteEditor />}
+              {activeTab === 'settings' && <AdminSettings user={user} />}
+            </motion.div>
+          </div>
         </motion.main>
       </div>
     </div>
