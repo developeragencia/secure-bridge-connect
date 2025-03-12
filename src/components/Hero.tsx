@@ -1,11 +1,9 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { DollarSign, TrendingUp, BadgePercent } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
-import AnimatedLogo from './AnimatedLogo';
 
 const Hero: React.FC = () => {
   const { ref: titleRef, classes: titleClasses } = useAnimationOnScroll<HTMLDivElement>({
@@ -36,9 +34,6 @@ const Hero: React.FC = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="space-y-8">
           <div ref={titleRef} className={titleClasses}>
-            <div className="mb-6">
-              <AnimatedLogo size="lg" />
-            </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-balance">
               Recuperação de Créditos <span className="text-primary">IRRF/PJ</span> de Forma Inteligente
             </h1>
