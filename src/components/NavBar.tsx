@@ -1,75 +1,111 @@
 
 import React, { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
+import { useMobile } from "@/hooks/use-mobile";
+import AnimatedLogo from './AnimatedLogo';
 
 const NavBar: React.FC = () => {
+  const isMobile = useMobile();
+  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       const isScrolled = window.scrollY > 10;
-      if (isScrolled !== scrolled) {
-        setScrolled(isScrolled);
-      }
+      setScrolled(isScrolled);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (menuOpen && isMobile) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      document.body.style.overflow = 'auto';
     };
-  }, [scrolled]);
+  }, [menuOpen, isMobile]);
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header
-      className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out px-6 md:px-10 py-4',
-        scrolled
-          ? 'bg-white/80 backdrop-blur-md shadow-sm'
-          : 'bg-transparent'
-      )}
-    >
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center">
-          <a href="#" className="text-xl font-medium tracking-tight">
-            <span className="text-primary">Secure</span>Bridge
-          </a>
-        </div>
-        
-        <nav className="hidden md:flex space-x-8">
-          {[
-            { name: 'Funcionalidades', link: 'features' },
-            { name: 'Metodologia', link: 'methodology' },
-            { name: 'Tecnologia', link: 'technology' },
-            { name: 'Contato', link: 'contact' }
-          ].map((item) => (
-            <a
-              key={item.name}
-              href={`#${item.link}`}
-              className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      scrolled ? 'bg-background/80 backdrop-blur-md shadow-md py-2' : 'bg-transparent py-4'
+    }`}>
+      <div className="max-w-7xl mx-auto px-6 md:px-10">
+        <div className="flex items-center justify-between">
+          <Link to="/" className="flex items-center" onClick={closeMenu}>
+            <AnimatedLogo 
+              size={scrolled ? "sm" : "md"} 
+              animationDisabled={menuOpen}
+              className="transition-all duration-300"
+            />
+          </Link>
+
+          {isMobile ? (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleMenu}
+              className="relative z-50"
+              aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
             >
-              {item.name}
-            </a>
-          ))}
-        </nav>
-        
-        <div className="md:flex items-center hidden">
-          <a 
-            href="#contact"
-            className="px-4 py-2 rounded-full text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-colors"
-          >
-            Começar Agora
-          </a>
+              {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+          ) : (
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <Button variant="ghost" asChild>
+                <Link to="#features">Recursos</Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link to="#methodology">Metodologia</Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link to="#technology">Tecnologia</Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link to="#contact">Contato</Link>
+              </Button>
+              <Button variant="default" asChild>
+                <Link to="#contact">Iniciar Agora</Link>
+              </Button>
+            </div>
+          )}
+
+          {isMobile && (
+            <div className={`fixed inset-0 bg-background z-40 flex flex-col items-center justify-center space-y-8 transition-all duration-300 transform ${
+              menuOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}>
+              <Link to="#features" className="text-lg font-medium" onClick={closeMenu}>
+                Recursos
+              </Link>
+              <Link to="#methodology" className="text-lg font-medium" onClick={closeMenu}>
+                Metodologia
+              </Link>
+              <Link to="#technology" className="text-lg font-medium" onClick={closeMenu}>
+                Tecnologia
+              </Link>
+              <Link to="#contact" className="text-lg font-medium" onClick={closeMenu}>
+                Contato
+              </Link>
+              <Button size="lg" asChild>
+                <Link to="#contact" onClick={closeMenu}>
+                  Iniciar Agora
+                </Link>
+              </Button>
+            </div>
+          )}
         </div>
-        
-        <button className="block md:hidden text-foreground">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="4" x2="20" y1="12" y2="12"></line>
-            <line x1="4" x2="20" y1="6" y2="6"></line>
-            <line x1="4" x2="20" y1="18" y2="18"></line>
-          </svg>
-        </button>
       </div>
-    </header>
+    </nav>
   );
 };
 
