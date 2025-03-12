@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { DollarSign, TrendingUp, BadgePercent } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
 
@@ -60,30 +60,10 @@ const Hero: React.FC = () => {
             )}
           >
             <Button size="lg" asChild>
-              <Link to="#contact">
-                Comece Agora
+              <Link to="/sistemas">
+                Acessar Sistemas
               </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link to="#methodology">
-                Saiba Como Funciona
-              </Link>
-            </Button>
-          </div>
-
-          <div className="flex flex-wrap gap-6 mt-8">
-            <div className="flex items-center gap-2">
-              <DollarSign className="text-primary h-5 w-5" />
-              <span className="text-sm font-medium">Recuperação Fiscal</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="text-primary h-5 w-5" />
-              <span className="text-sm font-medium">Otimização Financeira</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BadgePercent className="text-primary h-5 w-5" />
-              <span className="text-sm font-medium">Conformidade Legal</span>
-            </div>
           </div>
         </div>
         
