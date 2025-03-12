@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -258,8 +259,8 @@ const Login = () => {
               transition={{ duration: 0.4, delay: 0.7 }}
             >
               Sistema Administrativo © {new Date().getFullYear()} Claudio Figueiredo | 
-              <a href="https://alexdesenvolvedor.com.br" target="_blank" rel="noopener noreferrer" className="ml-1 text-primary hover:underline">
-                Desenvolvido por Alex Developer
+              Desenvolvido por <a href="https://alexdesenvolvedor.com.br" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                Alex Developer
               </a>
             </motion.p>
           </CardFooter>

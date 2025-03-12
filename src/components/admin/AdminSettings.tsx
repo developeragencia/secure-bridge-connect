@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Check, AlarmClock, Globe, Shield, Bell, Key, Mail, Building, User, PenLine } from 'lucide-react';
+import { DollarSign, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const AdminSettings = ({ user }: { user?: any }) => {
