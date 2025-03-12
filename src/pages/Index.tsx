@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import NavBar from '@/components/NavBar';
 import Hero from '@/components/Hero';
 import Features from '@/components/Features';
@@ -32,8 +32,8 @@ const Index: React.FC = () => {
 
   const methodologies = [
     {
-      title: "Backend Development",
-      description: "FastAPI with SQLModel for a type-safe, high-performance API layer with automatic documentation.",
+      title: "Desenvolvimento Backend",
+      description: "FastAPI com SQLModel para uma camada de API de alto desempenho e segura com documentação automática.",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"></path>
@@ -47,8 +47,8 @@ const Index: React.FC = () => {
       ),
     },
     {
-      title: "Frontend Development",
-      description: "React.js with Chakra UI for a responsive, accessible, and customizable user interface with a design system.",
+      title: "Desenvolvimento Frontend",
+      description: "React.js com Chakra UI para uma interface de usuário responsiva, acessível e personalizável com sistema de design.",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect width="18" height="18" x="3" y="3" rx="2"></rect>
@@ -59,8 +59,8 @@ const Index: React.FC = () => {
       ),
     },
     {
-      title: "Authentication System",
-      description: "JWT with Two-Factor Authentication for enhanced security, especially for critical user profiles.",
+      title: "Sistema de Autenticação",
+      description: "JWT com Autenticação de Dois Fatores para segurança aprimorada, especialmente para perfis de usuário críticos.",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
@@ -70,8 +70,8 @@ const Index: React.FC = () => {
       ),
     },
     {
-      title: "Infrastructure",
-      description: "Docker with Redis and Celery for containerization and asynchronous processing, ensuring scalability.",
+      title: "Infraestrutura",
+      description: "Docker com Redis e Celery para containerização e processamento assíncrono, garantindo escalabilidade.",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect width="18" height="8" x="3" y="14" rx="2"></rect>
@@ -83,8 +83,8 @@ const Index: React.FC = () => {
       ),
     },
     {
-      title: "Database Structure",
-      description: "PostgreSQL with separate structures for clients, suppliers, and payments for better data management.",
+      title: "Estrutura de Banco de Dados",
+      description: "PostgreSQL com estruturas separadas para clientes, fornecedores e pagamentos para melhor gestão de dados.",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
@@ -124,14 +124,14 @@ const Index: React.FC = () => {
             )}
           >
             <span className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
-              Our Approach
+              Nossa Abordagem
             </span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">
-              Methodology & Technologies
+              Metodologia & Tecnologias
             </h2>
             <p className="max-w-2xl mx-auto text-foreground/70">
-              We follow a comprehensive approach combining modern technologies and best practices
-              to create secure, scalable, and maintainable applications.
+              Seguimos uma abordagem abrangente combinando tecnologias modernas e melhores práticas
+              para criar aplicações seguras, escaláveis e de fácil manutenção.
             </p>
           </div>
           
@@ -160,13 +160,13 @@ const Index: React.FC = () => {
             )}
           >
             <span className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
-              Tech Stack
+              Stack Tecnológica
             </span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">
-              Technology Proficiency
+              Proficiência Tecnológica
             </h2>
             <p className="max-w-2xl mx-auto text-foreground/70">
-              Our expertise across various technologies ensures a robust and efficient solution.
+              Nossa expertise em várias tecnologias garante uma solução robusta e eficiente.
             </p>
           </div>
           
@@ -215,13 +215,13 @@ const Index: React.FC = () => {
             )}
           >
             <span className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
-              Get In Touch
+              Entre em Contato
             </span>
             <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">
-              Start Your Project Today
+              Comece Seu Projeto Hoje
             </h2>
             <p className="max-w-2xl mx-auto text-foreground/70">
-              Ready to build your next project with our modern tech stack? Contact us to get started.
+              Pronto para construir seu próximo projeto com nossa stack tecnológica moderna? Entre em contato para começar.
             </p>
           </div>
           
@@ -236,13 +236,13 @@ const Index: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-foreground/70 mb-2">
-                    Name
+                    Nome
                   </label>
                   <input
                     type="text"
                     id="name"
                     className="w-full px-4 py-3 rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition-all"
-                    placeholder="Your name"
+                    placeholder="Seu nome"
                   />
                 </div>
                 <div>
@@ -253,30 +253,30 @@ const Index: React.FC = () => {
                     type="email"
                     id="email"
                     className="w-full px-4 py-3 rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition-all"
-                    placeholder="Your email"
+                    placeholder="Seu email"
                   />
                 </div>
               </div>
               <div>
                 <label htmlFor="subject" className="block text-sm font-medium text-foreground/70 mb-2">
-                  Subject
+                  Assunto
                 </label>
                 <input
                   type="text"
                   id="subject"
                   className="w-full px-4 py-3 rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition-all"
-                  placeholder="Project subject"
+                  placeholder="Assunto do projeto"
                 />
               </div>
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-foreground/70 mb-2">
-                  Message
+                  Mensagem
                 </label>
                 <textarea
                   id="message"
                   rows={5}
                   className="w-full px-4 py-3 rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition-all resize-none"
-                  placeholder="Your message"
+                  placeholder="Sua mensagem"
                 ></textarea>
               </div>
               <div>
@@ -284,7 +284,7 @@ const Index: React.FC = () => {
                   type="submit"
                   className="w-full px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 shadow-lg hover:shadow-xl hover:shadow-primary/20"
                 >
-                  Send Message
+                  Enviar Mensagem
                 </button>
               </div>
             </form>

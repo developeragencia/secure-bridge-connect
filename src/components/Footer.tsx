@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
               <span className="text-primary">Secure</span>Bridge
             </h3>
             <p className="text-sm text-foreground/70 mb-6 max-w-xs">
-              Modern backend architecture for enterprise solutions with FastAPI, SQLModel, and PostgreSQL.
+              Arquitetura de backend moderna para soluções empresariais com FastAPI, SQLModel e PostgreSQL.
             </p>
             <div className="flex space-x-4">
               {['GitHub', 'Twitter', 'LinkedIn'].map((social) => (
@@ -27,9 +27,9 @@ const Footer: React.FC = () => {
           </div>
           
           <div>
-            <h4 className="text-sm font-semibold uppercase text-foreground/60 mb-4">Resources</h4>
+            <h4 className="text-sm font-semibold uppercase text-foreground/60 mb-4">Recursos</h4>
             <ul className="space-y-3">
-              {['Documentation', 'API Reference', 'Examples', 'Tutorials'].map((item) => (
+              {['Documentação', 'Referência da API', 'Exemplos', 'Tutoriais'].map((item) => (
                 <li key={item}>
                   <a href="#" className="text-sm text-foreground/70 hover:text-primary transition-colors">
                     {item}
@@ -40,9 +40,9 @@ const Footer: React.FC = () => {
           </div>
           
           <div>
-            <h4 className="text-sm font-semibold uppercase text-foreground/60 mb-4">Company</h4>
+            <h4 className="text-sm font-semibold uppercase text-foreground/60 mb-4">Empresa</h4>
             <ul className="space-y-3">
-              {['About', 'Blog', 'Careers', 'Contact'].map((item) => (
+              {['Sobre', 'Blog', 'Carreiras', 'Contato'].map((item) => (
                 <li key={item}>
                   <a href="#" className="text-sm text-foreground/70 hover:text-primary transition-colors">
                     {item}
@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-sm font-semibold uppercase text-foreground/60 mb-4">Legal</h4>
             <ul className="space-y-3">
-              {['Privacy Policy', 'Terms of Service', 'Cookie Policy', 'GDPR'].map((item) => (
+              {['Política de Privacidade', 'Termos de Serviço', 'Política de Cookies', 'LGPD'].map((item) => (
                 <li key={item}>
                   <a href="#" className="text-sm text-foreground/70 hover:text-primary transition-colors">
                     {item}
@@ -68,10 +68,10 @@ const Footer: React.FC = () => {
         
         <div className="border-t border-border/50 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-foreground/60 mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} SecureBridge. All rights reserved.
+            &copy; {new Date().getFullYear()} SecureBridge. Todos os direitos reservados.
           </p>
           <div className="flex space-x-6">
-            {['Privacy Policy', 'Terms of Use', 'Cookie Policy'].map((item) => (
+            {['Política de Privacidade', 'Termos de Uso', 'Política de Cookies'].map((item) => (
               <a key={item} href="#" className="text-sm text-foreground/60 hover:text-primary transition-colors">
                 {item}
               </a>

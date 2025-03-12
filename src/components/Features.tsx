@@ -48,8 +48,8 @@ const Features: React.FC = () => {
           <path d="M7 18h10.8c.2 0 .5 0 .7-.1.2-.1.4-.2.5-.4.1-.1.2-.3.2-.5s0-.4-.2-.5l-6-6"></path>
         </svg>
       ),
-      title: "FastAPI Backend",
-      description: "High-performance, easy-to-use framework for building APIs with automatic validation, serialization, and documentation.",
+      title: "Backend FastAPI",
+      description: "Framework de alto desempenho e fácil uso para construção de APIs com validação, serialização e documentação automáticas.",
       delay: 1 as const,
     },
     {
@@ -59,8 +59,8 @@ const Features: React.FC = () => {
           <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
         </svg>
       ),
-      title: "SQLModel ORM",
-      description: "SQL databases in Python, designed for simplicity, compatibility, and robustness with easy integration with FastAPI.",
+      title: "ORM SQLModel",
+      description: "Bancos de dados SQL em Python, projetados para simplicidade, compatibilidade e robustez com fácil integração com FastAPI.",
       delay: 2 as const,
     },
     {
@@ -73,8 +73,8 @@ const Features: React.FC = () => {
           <line x1="15" x2="15" y1="3" y2="21"></line>
         </svg>
       ),
-      title: "PostgreSQL Database",
-      description: "Powerful, open-source object-relational database system with a strong reputation for reliability and data integrity.",
+      title: "Banco de Dados PostgreSQL",
+      description: "Sistema de banco de dados objeto-relacional poderoso e de código aberto com forte reputação em confiabilidade e integridade de dados.",
       delay: 3 as const,
     },
     {
@@ -88,8 +88,8 @@ const Features: React.FC = () => {
           <line x1="4.93" x2="9.17" y1="19.07" y2="14.83"></line>
         </svg>
       ),
-      title: "React Frontend",
-      description: "A JavaScript library for building user interfaces with a component-based architecture for reusable UI elements.",
+      title: "Frontend React",
+      description: "Biblioteca JavaScript para construção de interfaces de usuário com arquitetura baseada em componentes para elementos de UI reutilizáveis.",
       delay: 4 as const,
     },
     {
@@ -106,8 +106,8 @@ const Features: React.FC = () => {
           <path d="M15 9v1"></path>
         </svg>
       ),
-      title: "Chakra UI Components",
-      description: "Simple, modular and accessible component library for React applications with built-in design system.",
+      title: "Componentes Chakra UI",
+      description: "Biblioteca de componentes simples, modular e acessível para aplicações React com sistema de design integrado.",
       delay: 5 as const,
     },
     {
@@ -117,8 +117,8 @@ const Features: React.FC = () => {
           <path d="m9 12 2 2 4-4"></path>
         </svg>
       ),
-      title: "JWT Authentication",
-      description: "Secure, token-based authentication with two-factor authentication for critical user profiles.",
+      title: "Autenticação JWT",
+      description: "Autenticação segura baseada em token com autenticação de dois fatores para perfis de usuário críticos.",
       delay: 1 as const,
     },
   ];
@@ -134,14 +134,14 @@ const Features: React.FC = () => {
           )}
         >
           <span className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
-            Core Features
+            Funcionalidades Principais
           </span>
           <h2 className="text-3xl md:text-4xl font-bold mt-4 mb-6">
-            Comprehensive Technology Stack
+            Stack Tecnológica Completa
           </h2>
           <p className="max-w-2xl mx-auto text-foreground/70">
-            Our solution combines the best modern technologies to create a robust, 
-            scalable, and maintainable application architecture.
+            Nossa solução combina as melhores tecnologias modernas para criar uma arquitetura
+            de aplicação robusta, escalável e de fácil manutenção.
           </p>
         </div>
         

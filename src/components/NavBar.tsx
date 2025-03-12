@@ -36,13 +36,18 @@ const NavBar: React.FC = () => {
         </div>
         
         <nav className="hidden md:flex space-x-8">
-          {['Features', 'Methodology', 'Technology', 'Contact'].map((item) => (
+          {[
+            { name: 'Funcionalidades', link: 'features' },
+            { name: 'Metodologia', link: 'methodology' },
+            { name: 'Tecnologia', link: 'technology' },
+            { name: 'Contato', link: 'contact' }
+          ].map((item) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
+              key={item.name}
+              href={`#${item.link}`}
               className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors"
             >
-              {item}
+              {item.name}
             </a>
           ))}
         </nav>
@@ -52,7 +57,7 @@ const NavBar: React.FC = () => {
             href="#contact"
             className="px-4 py-2 rounded-full text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-colors"
           >
-            Get Started
+            Começar Agora
           </a>
         </div>
         
