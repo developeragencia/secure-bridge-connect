@@ -9,6 +9,7 @@ interface AnimatedLogoProps {
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
   animationDisabled?: boolean;
+  hovering?: boolean;
 }
 
 const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
@@ -16,8 +17,10 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
   showText = true,
   size = 'md',
   animationDisabled = false,
+  hovering = false,
 }) => {
   const [activeIcon, setActiveIcon] = useState(0);
+  const [animationState, setAnimationState] = useState('normal'); // 'normal', 'fly', 'return'
   const { ref, classes } = useAnimationOnScroll<HTMLDivElement>({
     transitionType: 'fade-in',
     threshold: 0.1,
@@ -41,6 +44,19 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
     return () => clearInterval(interval);
   }, [animationDisabled, icons.length]);
 
+  useEffect(() => {
+    if (hovering) {
+      setAnimationState('fly');
+      const timeout = setTimeout(() => {
+        setAnimationState('return');
+        setTimeout(() => {
+          setAnimationState('normal');
+        }, 1000);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [hovering]);
+
   const sizeClasses = {
     sm: 'h-8',
     md: 'h-12',
@@ -53,6 +69,17 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
     lg: 'h-10 w-10',
   };
 
+  const getAnimationClass = () => {
+    switch (animationState) {
+      case 'fly':
+        return 'animate-fly-to-dashboard';
+      case 'return':
+        return 'animate-return-from-dashboard';
+      default:
+        return '';
+    }
+  };
+
   return (
     <div
       ref={ref}
@@ -63,7 +90,10 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
         className
       )}
     >
-      <div className="relative flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-full p-2 shadow-lg border border-primary/20">
+      <div className={cn(
+        "relative flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-full p-2 shadow-lg border border-primary/20",
+        getAnimationClass()
+      )}>
         <div className="absolute inset-0 bg-primary/5 rounded-full animate-pulse"></div>
         <div className={cn("relative z-10", iconSize[size])}>
           {icons.map((icon, index) => (

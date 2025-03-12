@@ -257,4 +257,42 @@
       transform: scaleY(0.1);
     }
   }
+
+  @keyframes fly-to-dashboard {
+    0% {
+      transform: translate(0, 0) scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: translate(calc(50vw - 100px), 120px) scale(1.5);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(calc(50vw - 100px), 220px) scale(0.8);
+      opacity: 0;
+    }
+  }
+
+  @keyframes return-from-dashboard {
+    0% {
+      transform: translate(calc(50vw - 100px), 220px) scale(0.8);
+      opacity: 0;
+    }
+    50% {
+      transform: translate(calc(50vw - 100px), 120px) scale(1.2);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(0, 0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  .animate-fly-to-dashboard {
+    animation: fly-to-dashboard 2s ease-in-out forwards;
+  }
+
+  .animate-return-from-dashboard {
+    animation: return-from-dashboard 1s ease-in-out forwards;
+  }
 }
