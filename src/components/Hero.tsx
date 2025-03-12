@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -14,7 +15,6 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
-import MascotCharacter from './MascotCharacter';
 
 const Hero: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -211,17 +211,14 @@ const Hero: React.FC = () => {
               "flex flex-col sm:flex-row gap-4 pt-4 items-center"
             )}
           >
-            <div className="relative flex items-center">
-              <Button size="lg" asChild className="relative overflow-hidden group">
-                <Link to="/sistemas">
-                  Acessar Sistemas
-                  <span className="absolute right-4 group-hover:translate-x-1 transition-transform">
-                    <ArrowRight size={18} />
-                  </span>
-                </Link>
-              </Button>
-              <MascotCharacter className="ml-4" />
-            </div>
+            <Button size="lg" asChild className="relative overflow-hidden group">
+              <Link to="/sistemas">
+                Acessar Sistemas
+                <span className="absolute right-4 group-hover:translate-x-1 transition-transform">
+                  <ArrowRight size={18} />
+                </span>
+              </Link>
+            </Button>
           </div>
         </div>
         

@@ -2,11 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import AnimatedLogo from './AnimatedLogo';
-import MascotCharacter from './MascotCharacter';
 
 const NavBar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [showMenuMascot, setShowMenuMascot] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,15 +14,6 @@ const NavBar: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Randomly show the mascot on the menu
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setShowMenuMascot(Math.random() > 0.7);
-    }, 10000);
-    
-    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -39,13 +28,6 @@ const NavBar: React.FC = () => {
               className="transition-all duration-300"
             />
           </Link>
-          
-          {/* The mascot character can appear on top of the navbar */}
-          {showMenuMascot && (
-            <div className="absolute right-0 -top-8 z-10">
-              <MascotCharacter position="menu" />
-            </div>
-          )}
         </div>
       </div>
     </nav>
