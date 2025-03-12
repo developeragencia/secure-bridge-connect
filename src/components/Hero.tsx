@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -99,7 +100,10 @@ const Hero: React.FC = () => {
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary/40 via-primary to-primary/40"></div>
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
-                  <AnimatedLogo size="sm" showText={false} animationDisabled={true} />
+                  <div className="relative flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-full p-2 shadow-lg border border-primary/20 h-8">
+                    <div className="absolute inset-0 bg-primary/5 rounded-full animate-pulse"></div>
+                    <DollarSign className="text-primary h-6 w-6 relative z-10" />
+                  </div>
                   <span className="font-semibold">Dashboard Fiscal</span>
                 </div>
                 <div className="px-2 py-1 bg-primary/10 rounded-full text-xs font-medium text-primary">
