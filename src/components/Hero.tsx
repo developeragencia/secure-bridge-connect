@@ -212,7 +212,7 @@ const Hero: React.FC = () => {
             )}
           >
             <Button size="lg" asChild className="relative overflow-hidden group">
-              <Link to="/sistemas">
+              <Link to="/login">
                 Acessar Sistemas
                 <span className="absolute right-4 group-hover:translate-x-1 transition-transform">
                   <ArrowRight size={18} />
