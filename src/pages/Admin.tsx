@@ -6,7 +6,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AnimatedLogo } from '@/components/AnimatedLogo';
+import AnimatedLogo from '@/components/AnimatedLogo';
 import { 
   Users, BarChart3, FileText, Settings, LogOut, 
   Home, DollarSign, Calendar, BarChart4, Wallet

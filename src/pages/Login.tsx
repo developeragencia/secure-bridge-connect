@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AnimatedLogo } from '@/components/AnimatedLogo';
 import { Button } from '@/components/ui/button';
+import AnimatedLogo from '@/components/AnimatedLogo';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';

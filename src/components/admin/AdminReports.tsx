@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, FileText, BarChart4, FileBar, Calendar, Filter } from 'lucide-react';
+import { Download, FileText, BarChart4, FileSpreadsheet, Calendar, Filter } from 'lucide-react';
 
 const reports = [
   { id: 1, name: 'Relatório Financeiro - Mensal', date: '01/08/2023', downloads: 128, type: 'Financeiro' },
@@ -69,7 +69,7 @@ const AdminReports = () => {
                           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
                             {report.type === 'Financeiro' && <BarChart4 className="h-4 w-4 text-primary" />}
                             {report.type === 'Usuários' && <FileText className="h-4 w-4 text-primary" />}
-                            {report.type === 'Vendas' && <FileBar className="h-4 w-4 text-primary" />}
+                            {report.type === 'Vendas' && <FileSpreadsheet className="h-4 w-4 text-primary" />}
                             {report.type === 'Desempenho' && <FileText className="h-4 w-4 text-primary" />}
                             {report.type === 'Fiscal' && <FileText className="h-4 w-4 text-primary" />}
                           </div>
