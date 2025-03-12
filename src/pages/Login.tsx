@@ -9,13 +9,60 @@ import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 
+const ADMIN_EMAIL = 'admin@sistemasclaudio.com';
+const ADMIN_PASSWORD = 'admin123';
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [initializing, setInitializing] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Setup admin user on first load if it doesn't exist
+  useEffect(() => {
+    const setupAdminUser = async () => {
+      try {
+        // First check if admin user exists by trying to sign in
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: ADMIN_EMAIL,
+          password: ADMIN_PASSWORD
+        });
+
+        // If sign in fails with invalid credentials, we need to create the user
+        if (signInError && signInError.message.includes('Invalid login credentials')) {
+          console.log('Admin user does not exist. Creating...');
+          
+          // Create admin user
+          const { error: signUpError } = await supabase.auth.signUp({
+            email: ADMIN_EMAIL,
+            password: ADMIN_PASSWORD
+          });
+
+          if (signUpError) {
+            console.error('Failed to create admin user:', signUpError);
+          } else {
+            console.log('Admin user created successfully');
+            
+            // Auto-verify the admin user
+            // This would normally be done through a database function or with admin APIs
+            // For simplicity, we'll let the manual login process handle it
+          }
+        }
+        
+        // Sign out after setup to ensure clean login state
+        await supabase.auth.signOut();
+      } catch (err) {
+        console.error('Error during admin setup:', err);
+      } finally {
+        setInitializing(false);
+      }
+    };
+    
+    setupAdminUser();
+  }, []);
 
   // Check if user is already logged in
   useEffect(() => {
@@ -23,6 +70,8 @@ const Login = () => {
       const { data } = await supabase.auth.getSession();
       if (data.session) {
         navigate('/admin');
+      } else {
+        setInitializing(false);
       }
     };
     
@@ -48,26 +97,21 @@ const Login = () => {
     setError(null);
 
     try {
-      // For demo purposes, allow only the admin user
-      if (email === 'admin@sistemasclaudio.com' && password === 'admin123') {
-        // Sign in with Supabase
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
+      // Sign in with Supabase
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        toast({
-          title: "Login realizado com sucesso!",
-          description: "Bem-vindo ao Painel Administrativo.",
-          variant: "default",
-        });
-        
-        navigate('/admin');
-      } else {
-        throw new Error('Credenciais inválidas. Apenas o administrador tem acesso.');
-      }
+      toast({
+        title: "Login realizado com sucesso!",
+        description: "Bem-vindo ao Painel Administrativo.",
+        variant: "default",
+      });
+      
+      navigate('/admin');
     } catch (error: any) {
       setError(error.message);
       toast({
@@ -79,6 +123,14 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  if (initializing) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/30">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/30">
