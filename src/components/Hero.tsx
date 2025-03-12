@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -15,6 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
+import MascotCharacter from './MascotCharacter';
 
 const Hero: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -43,7 +43,6 @@ const Hero: React.FC = () => {
     threshold: 0.1,
   });
 
-  // Auto-advance the carousel
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % totalSlides);
@@ -60,7 +59,6 @@ const Hero: React.FC = () => {
   };
 
   const dashboardSlides = [
-    // Slide 1: Financial Overview
     <div key="financial" className="space-y-4 h-full">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
@@ -105,7 +103,6 @@ const Hero: React.FC = () => {
       </div>
     </div>,
 
-    // Slide 2: Analytics Report
     <div key="analytics" className="space-y-4 h-full">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
@@ -148,7 +145,6 @@ const Hero: React.FC = () => {
       <div className="h-2.5 bg-primary/10 rounded-full w-3/4 animate-pulse"></div>
     </div>,
 
-    // Slide 3: Timeline & Activities
     <div key="timeline" className="space-y-4 h-full">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
@@ -212,17 +208,20 @@ const Hero: React.FC = () => {
             ref={ctaRef}
             className={cn(
               ctaClasses,
-              "flex flex-col sm:flex-row gap-4 pt-4"
+              "flex flex-col sm:flex-row gap-4 pt-4 items-center"
             )}
           >
-            <Button size="lg" asChild className="relative overflow-hidden group">
-              <Link to="/sistemas">
-                Acessar Sistemas
-                <span className="absolute right-4 group-hover:translate-x-1 transition-transform">
-                  <ArrowRight size={18} />
-                </span>
-              </Link>
-            </Button>
+            <div className="relative flex items-center">
+              <Button size="lg" asChild className="relative overflow-hidden group">
+                <Link to="/sistemas">
+                  Acessar Sistemas
+                  <span className="absolute right-4 group-hover:translate-x-1 transition-transform">
+                    <ArrowRight size={18} />
+                  </span>
+                </Link>
+              </Button>
+              <MascotCharacter className="ml-4" />
+            </div>
           </div>
         </div>
         
@@ -238,9 +237,7 @@ const Hero: React.FC = () => {
             <div className="relative glass-card rounded-3xl p-8 overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary/40 via-primary to-primary/40"></div>
               
-              {/* Carousel container */}
               <div className="relative min-h-[300px]">
-                {/* Slide indicators */}
                 <div className="absolute -top-4 left-0 right-0 flex justify-center gap-2 z-10">
                   {Array.from({length: totalSlides}).map((_, i) => (
                     <button 
@@ -253,7 +250,6 @@ const Hero: React.FC = () => {
                   ))}
                 </div>
                 
-                {/* Carousel slides */}
                 <div className="relative overflow-hidden">
                   <div 
                     className="flex transition-transform duration-500 ease-in-out" 
@@ -267,7 +263,6 @@ const Hero: React.FC = () => {
                   </div>
                 </div>
                 
-                {/* Navigation buttons */}
                 <button 
                   className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-primary hover:bg-white/30 transition-colors"
                   onClick={prevSlide}
