@@ -83,98 +83,90 @@ const MascotCharacter: React.FC<MascotCharacterProps> = ({
           }
         )}
       >
-        {/* Human cartoon character */}
+        {/* Completely redesigned human cartoon character */}
         <div className="relative">
           {/* Head */}
-          <div className="w-12 h-14 bg-orange-200 rounded-full relative z-10 flex items-center justify-center overflow-hidden">
+          <div className="w-12 h-12 bg-amber-200 rounded-full relative z-20">
             {/* Hair */}
-            <div className="absolute top-0 left-0 right-0 h-5 bg-amber-700 rounded-t-full"></div>
+            <div className="absolute -top-2 left-0 right-0 h-6 bg-amber-800 rounded-t-full"></div>
             
-            {/* Face */}
-            <div className="flex flex-col items-center mt-4">
-              {/* Eyes */}
-              <div className="flex gap-3 mb-1">
-                <div className="w-2 h-2.5 bg-slate-800 rounded-full">
-                  <div className="w-0.5 h-0.5 bg-white rounded-full absolute top-[0.35rem] left-[0.35rem]"></div>
-                </div>
-                <div className="w-2 h-2.5 bg-slate-800 rounded-full">
-                  <div className="w-0.5 h-0.5 bg-white rounded-full absolute top-[0.35rem] right-[0.35rem]"></div>
-                </div>
-              </div>
-              
-              {/* Eyebrows that move with animation */}
-              <div className={cn(
-                "flex gap-3 mb-1 absolute top-6",
-                animation === 'point' ? "transform -translate-y-0.5" : ""
-              )}>
-                <div className="w-2 h-0.5 bg-amber-700 rounded-full transform -rotate-12"></div>
-                <div className="w-2 h-0.5 bg-amber-700 rounded-full transform rotate-12"></div>
-              </div>
-              
-              {/* Nose */}
-              <div className="w-1.5 h-2 bg-orange-300 rounded-full"></div>
-              
-              {/* Mouth - changes with animation */}
-              <div className={cn(
-                "bg-rose-500 rounded-full mt-1",
-                animation === 'dance' ? "w-6 h-1.5 rounded-t-full" : 
-                animation === 'wave' ? "w-4 h-2 rounded-t-full" : 
-                "w-3 h-1 rounded-full"
-              )}></div>
+            {/* Eyes */}
+            <div className="absolute top-4 left-2 w-2 h-3 bg-white rounded-full flex items-center justify-center">
+              <div className="w-1 h-1 bg-slate-800 rounded-full"></div>
             </div>
+            <div className="absolute top-4 right-2 w-2 h-3 bg-white rounded-full flex items-center justify-center">
+              <div className="w-1 h-1 bg-slate-800 rounded-full"></div>
+            </div>
+            
+            {/* Eyebrows */}
+            <div className={cn(
+              "absolute top-3 left-2 w-2 h-0.5 bg-amber-800 rounded-full transform -rotate-15",
+              animation === 'point' ? "-translate-y-0.5" : ""
+            )}></div>
+            <div className={cn(
+              "absolute top-3 right-2 w-2 h-0.5 bg-amber-800 rounded-full transform rotate-15",
+              animation === 'point' ? "-translate-y-0.5" : ""
+            )}></div>
+            
+            {/* Nose */}
+            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-1.5 h-2 bg-amber-300 rounded-full"></div>
+            
+            {/* Mouth */}
+            <div className={cn(
+              "absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-rose-500 rounded-full",
+              animation === 'dance' ? "w-6 h-1.5 rounded-t-full" : 
+              animation === 'wave' ? "w-4 h-2" : 
+              "w-3 h-1"
+            )}></div>
           </div>
           
           {/* Neck */}
-          <div className="w-3 h-2 bg-orange-200 absolute top-14 left-4.5 z-0"></div>
+          <div className="w-4 h-2 bg-amber-200 absolute top-12 left-4 z-10"></div>
           
-          {/* Body with shirt */}
-          <div className="w-14 h-10 bg-blue-500 rounded-t-lg absolute top-16 left-[-1px] z-0">
+          {/* Body */}
+          <div className="w-14 h-16 bg-blue-600 rounded-t-lg absolute top-14 left-[-1px] z-0 flex items-center justify-center">
             {/* Shirt details */}
-            <div className="absolute top-0 left-6 w-1 h-4 bg-blue-400"></div>
-            <div className="absolute top-0 right-5 w-1 h-3 bg-blue-400"></div>
+            <div className="w-8 h-8 bg-blue-500 rounded-full absolute top-2"></div>
             
-            {/* Tie or collar */}
-            <div className="w-4 h-2 bg-red-500 absolute top-0 left-5 transform rotate-45 rounded-tr-md"></div>
+            {/* Belt */}
+            <div className="w-14 h-2 bg-slate-800 absolute bottom-0"></div>
           </div>
           
-          {/* Arms - animated based on state */}
+          {/* Arms */}
           <div className={cn(
-            "w-2.5 h-8 bg-blue-500 rounded-full absolute top-16 left-[-2px]",
-            animation === 'dance' ? "animate-[wave_1s_ease-in-out_infinite]" : 
-            animation === 'point' ? "transform rotate-45 origin-top" : 
-            "transform -rotate-12 origin-top"
-          )}>
-            {/* Hand */}
-            <div className="w-3 h-3 bg-orange-200 rounded-full absolute bottom-[-2px] left-[-0.5px]"></div>
-          </div>
-          
-          <div className={cn(
-            "w-2.5 h-8 bg-blue-500 rounded-full absolute top-16 right-[-2px]",
-            animation === 'dance' ? "animate-[wave_1s_ease-in-out_infinite_reverse]" : 
+            "w-3 h-10 bg-blue-600 rounded-full absolute top-15 left-[-2px] z-10",
+            animation === 'dance' ? "transform -rotate-45 origin-top animate-wave" : 
             animation === 'point' ? "transform -rotate-45 origin-top" : 
-            "transform rotate-12 origin-top"
+            "transform -rotate-15 origin-top"
           )}>
             {/* Hand */}
-            <div className="w-3 h-3 bg-orange-200 rounded-full absolute bottom-[-2px] right-[-0.5px]"></div>
+            <div className="w-3.5 h-3.5 bg-amber-200 rounded-full absolute bottom-[-1px]"></div>
           </div>
           
-          {/* Legs - only visible when not sitting on menu */}
-          {currentPosition !== 'menu' && (
-            <>
-              <div className="w-3 h-6 bg-gray-700 rounded-full absolute top-26 left-3">
-                {/* Shoe */}
-                <div className="w-4 h-2 bg-black rounded-full absolute bottom-[-1px] left-[-0.5px]"></div>
-              </div>
-              <div className="w-3 h-6 bg-gray-700 rounded-full absolute top-26 right-3">
-                {/* Shoe */}
-                <div className="w-4 h-2 bg-black rounded-full absolute bottom-[-1px] right-[-0.5px]"></div>
-              </div>
-            </>
-          )}
+          <div className={cn(
+            "w-3 h-10 bg-blue-600 rounded-full absolute top-15 right-[-2px] z-10",
+            animation === 'dance' ? "transform rotate-45 origin-top animate-wave" : 
+            animation === 'point' ? "transform rotate-45 origin-top" : 
+            "transform rotate-15 origin-top"
+          )}>
+            {/* Hand */}
+            <div className="w-3.5 h-3.5 bg-amber-200 rounded-full absolute bottom-[-1px]"></div>
+          </div>
+          
+          {/* Legs */}
+          <div className="w-4 h-10 bg-slate-700 rounded-full absolute bottom-[-10px] left-3 z-0">
+            {/* Shoe */}
+            <div className="w-5 h-2 bg-slate-900 rounded-lg absolute bottom-[-1px] left-[-0.5px]"></div>
+          </div>
+          
+          <div className="w-4 h-10 bg-slate-700 rounded-full absolute bottom-[-10px] right-3 z-0">
+            {/* Shoe */}
+            <div className="w-5 h-2 bg-slate-900 rounded-lg absolute bottom-[-1px] right-[-0.5px]"></div>
+          </div>
         </div>
       </div>
       
-      {/* Speech bubble that appears occasionally */}
+      {/* Speech bubble */}
       {(animation === 'point' || animation === 'wave') && (
         <div className="absolute -top-12 left-16 bg-white px-3 py-1.5 rounded-lg text-xs font-medium text-primary shadow-md animate-fade-in">
           {animation === 'point' ? "Clique aqui!" : "Olá!"}
@@ -182,7 +174,7 @@ const MascotCharacter: React.FC<MascotCharacterProps> = ({
         </div>
       )}
       
-      {/* Custom animations for name reveal */}
+      {/* Name tag */}
       <div className={cn(
         "absolute -bottom-6 left-0 right-0 text-center text-xs font-bold text-primary transition-all duration-500",
         animation === 'idle' ? "opacity-100" : "opacity-0"
