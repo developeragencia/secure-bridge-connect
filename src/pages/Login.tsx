@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,7 @@ import { Loader2, Key, Mail, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const ADMIN_EMAIL = 'admin@sistemasclaudio.com';
-const ADMIN_PASSWORD = 'essaadmin123';
+const ADMIN_PASSWORD = 'admin123';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -247,7 +246,7 @@ const Login = () => {
 
               <div className="text-xs text-center text-muted-foreground">
                 <p>Email padrão: <span className="font-medium">admin@sistemasclaudio.com</span></p>
-                <p>Senha padrão: <span className="font-medium">essaadmin123</span></p>
+                <p>Senha padrão: <span className="font-medium">admin123</span></p>
               </div>
             </motion.form>
           </CardContent>
@@ -258,7 +257,10 @@ const Login = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.7 }}
             >
-              Sistema Administrativo © {new Date().getFullYear()} Claudio Figueiredo
+              Sistema Administrativo © {new Date().getFullYear()} Claudio Figueiredo | 
+              <a href="https://alexdesenvolvedor.com.br" target="_blank" rel="noopener noreferrer" className="ml-1 text-primary hover:underline">
+                Desenvolvido por Alex Developer
+              </a>
             </motion.p>
           </CardFooter>
         </Card>
