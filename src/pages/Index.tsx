@@ -11,6 +11,9 @@ const Index: React.FC = () => {
       <div className="py-4 text-center text-sm text-muted-foreground">
         Desenvolvido por <a href="https://alexdesenvolvedor.com.br" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline transition-colors">Alex Developer</a>
       </div>
+      <div className="pb-4 text-center text-xs text-muted-foreground">
+        © 2025 Sistemas Claudio Figueiredo. Todos os direitos reservados.
+      </div>
     </div>
   );
 };
