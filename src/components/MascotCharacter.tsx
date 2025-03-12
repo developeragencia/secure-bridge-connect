@@ -15,6 +15,17 @@ const MascotCharacter: React.FC<MascotCharacterProps> = ({
 }) => {
   const [animation, setAnimation] = useState<'idle' | 'dance' | 'point' | 'wave'>('idle');
   const [currentPosition, setCurrentPosition] = useState<MascotPosition>(position);
+  const [mascotName] = useState<string>(() => {
+    const possibleNames = [
+      "PixelBot",
+      "ByteBuddy",
+      "TechHelper",
+      "CreditPal",
+      "TaxWiz",
+      "FiscalFriend"
+    ];
+    return possibleNames[Math.floor(Math.random() * possibleNames.length)];
+  });
 
   // Cycle through animations
   useEffect(() => {
@@ -131,7 +142,7 @@ const MascotCharacter: React.FC<MascotCharacterProps> = ({
         "absolute -bottom-6 left-0 right-0 text-center text-xs font-bold text-primary transition-all duration-500",
         animation === 'idle' ? "opacity-100" : "opacity-0"
       )}>
-        SISTEMA <br />CLAUDIO FIGUEIREDO
+        {mascotName}
       </div>
     </div>
   );
