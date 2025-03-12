@@ -1,9 +1,24 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, FileText, BarChart4, FileSpreadsheet, Calendar, Filter } from 'lucide-react';
+import { 
+  Download, 
+  FileText, 
+  BarChart4, 
+  FileSpreadsheet, 
+  Calendar, 
+  Filter,
+  Printer,
+  Share2
+} from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/components/ui/use-toast';
 
 const reports = [
   { id: 1, name: 'Relatório Financeiro - Mensal', date: '01/08/2023', downloads: 128, type: 'Financeiro' },
@@ -14,19 +29,138 @@ const reports = [
 ];
 
 const AdminReports = () => {
+  const [selectedReportType, setSelectedReportType] = useState('all');
+  const [isGenerateReportOpen, setIsGenerateReportOpen] = useState(false);
+  const [reportName, setReportName] = useState('');
+  const [reportType, setReportType] = useState('Financeiro');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const { toast } = useToast();
+
+  const handleGenerateReport = () => {
+    if (!reportName || !startDate || !endDate) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Por favor, preencha todos os campos obrigatórios.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Simulate report generation
+    setTimeout(() => {
+      const newReport = {
+        id: reports.length + 1,
+        name: reportName,
+        date: new Date().toLocaleDateString('pt-BR'),
+        downloads: 0,
+        type: reportType
+      };
+      
+      reports.unshift(newReport);
+      
+      setIsGenerateReportOpen(false);
+      setReportName('');
+      setStartDate('');
+      setEndDate('');
+      
+      toast({
+        title: "Relatório gerado",
+        description: `O relatório "${reportName}" foi gerado com sucesso.`,
+      });
+    }, 1500);
+  };
+
+  const handleDownloadReport = (reportId) => {
+    const report = reports.find(r => r.id === reportId);
+    if (report) {
+      report.downloads += 1;
+      toast({
+        title: "Relatório baixado",
+        description: `O relatório "${report.name}" foi baixado com sucesso.`,
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-bold">Relatórios</h1>
         <div className="flex items-center gap-2">
-          <Button>
-            <FileText className="h-4 w-4 mr-2" />
-            Gerar Relatório
-          </Button>
+          <Dialog open={isGenerateReportOpen} onOpenChange={setIsGenerateReportOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <FileText className="h-4 w-4 mr-2" />
+                Gerar Relatório
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Gerar Novo Relatório</DialogTitle>
+                <DialogDescription>
+                  Preencha as informações abaixo para gerar um novo relatório.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="report-name">Nome do Relatório</Label>
+                  <Input 
+                    id="report-name" 
+                    placeholder="Ex: Relatório Financeiro - Agosto 2023" 
+                    value={reportName}
+                    onChange={(e) => setReportName(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="report-type">Tipo de Relatório</Label>
+                  <Select value={reportType} onValueChange={setReportType}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Financeiro">Financeiro</SelectItem>
+                      <SelectItem value="Usuários">Usuários</SelectItem>
+                      <SelectItem value="Vendas">Vendas</SelectItem>
+                      <SelectItem value="Desempenho">Desempenho</SelectItem>
+                      <SelectItem value="Fiscal">Fiscal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="start-date">Data Inicial</Label>
+                    <Input 
+                      id="start-date" 
+                      type="date" 
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="end-date">Data Final</Label>
+                    <Input 
+                      id="end-date" 
+                      type="date" 
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsGenerateReportOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={handleGenerateReport}>
+                  Gerar Relatório
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       
-      <Tabs defaultValue="all" className="w-full">
+      <Tabs value={selectedReportType} onValueChange={setSelectedReportType} className="w-full">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <TabsList>
             <TabsTrigger value="all">Todos</TabsTrigger>
@@ -80,10 +214,18 @@ const AdminReports = () => {
                       <TableCell>{report.date}</TableCell>
                       <TableCell>{report.downloads}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          <Download className="h-4 w-4 mr-2" />
-                          Baixar
-                        </Button>
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => handleDownloadReport(report.id)}>
+                            <Download className="h-4 w-4 mr-1" />
+                            Baixar
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Printer className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Share2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

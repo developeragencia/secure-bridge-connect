@@ -3,15 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AnimatedLogo from '@/components/AnimatedLogo';
 import { motion } from 'framer-motion';
 import { 
   Users, BarChart3, FileText, Settings, LogOut, 
   Menu, BellRing, UserCircle, Sun, Moon,
-  PanelTop, Home
+  PanelTop, Home, Globe
 } from 'lucide-react';
 
 // Admin components
@@ -19,6 +17,7 @@ import AdminDashboard from '@/components/admin/AdminDashboard';
 import AdminUsers from '@/components/admin/AdminUsers';
 import AdminReports from '@/components/admin/AdminReports';
 import AdminSettings from '@/components/admin/AdminSettings';
+import SiteEditor from '@/components/admin/SiteEditor';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -243,6 +242,14 @@ const Admin = () => {
               Relatórios
             </Button>
             <Button 
+              variant={activeTab === 'site' ? 'secondary' : 'ghost'} 
+              className="w-full justify-start" 
+              onClick={() => setActiveTab('site')}
+            >
+              <Globe className="mr-2 h-4 w-4" />
+              Editor do Site
+            </Button>
+            <Button 
               variant={activeTab === 'settings' ? 'secondary' : 'ghost'} 
               className="w-full justify-start" 
               onClick={() => setActiveTab('settings')}
@@ -273,43 +280,55 @@ const Admin = () => {
         </motion.aside>
         
         {/* Mobile Tab Selector */}
-        <motion.div 
-          className="md:hidden w-full border-b border-border flex justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
-          <TabsList className="w-full max-w-md justify-around p-1 bg-transparent">
-            <TabsTrigger 
-              value="dashboard" 
+        <div className="md:hidden w-full border-b border-border flex justify-center">
+          <div className="grid grid-cols-5 gap-2 p-2 w-full">
+            <Button 
+              variant={activeTab === 'dashboard' ? 'secondary' : 'ghost'} 
+              size="sm"
+              className="flex flex-col items-center py-2 h-auto"
               onClick={() => setActiveTab('dashboard')}
-              className={`${activeTab === 'dashboard' ? 'bg-secondary' : ''} data-[state=active]:bg-secondary`}
             >
               <BarChart3 className="h-4 w-4" />
-            </TabsTrigger>
-            <TabsTrigger 
-              value="users" 
+              <span className="text-xs mt-1">Dashboard</span>
+            </Button>
+            <Button 
+              variant={activeTab === 'users' ? 'secondary' : 'ghost'}
+              size="sm"
+              className="flex flex-col items-center py-2 h-auto"
               onClick={() => setActiveTab('users')}
-              className={`${activeTab === 'users' ? 'bg-secondary' : ''} data-[state=active]:bg-secondary`}
             >
               <Users className="h-4 w-4" />
-            </TabsTrigger>
-            <TabsTrigger 
-              value="reports" 
+              <span className="text-xs mt-1">Usuários</span>
+            </Button>
+            <Button 
+              variant={activeTab === 'reports' ? 'secondary' : 'ghost'}
+              size="sm"
+              className="flex flex-col items-center py-2 h-auto"
               onClick={() => setActiveTab('reports')}
-              className={`${activeTab === 'reports' ? 'bg-secondary' : ''} data-[state=active]:bg-secondary`}
             >
               <FileText className="h-4 w-4" />
-            </TabsTrigger>
-            <TabsTrigger 
-              value="settings" 
+              <span className="text-xs mt-1">Relatórios</span>
+            </Button>
+            <Button 
+              variant={activeTab === 'site' ? 'secondary' : 'ghost'}
+              size="sm"
+              className="flex flex-col items-center py-2 h-auto"
+              onClick={() => setActiveTab('site')}
+            >
+              <Globe className="h-4 w-4" />
+              <span className="text-xs mt-1">Site</span>
+            </Button>
+            <Button 
+              variant={activeTab === 'settings' ? 'secondary' : 'ghost'}
+              size="sm"
+              className="flex flex-col items-center py-2 h-auto"
               onClick={() => setActiveTab('settings')}
-              className={`${activeTab === 'settings' ? 'bg-secondary' : ''} data-[state=active]:bg-secondary`}
             >
               <Settings className="h-4 w-4" />
-            </TabsTrigger>
-          </TabsList>
-        </motion.div>
+              <span className="text-xs mt-1">Config</span>
+            </Button>
+          </div>
+        </div>
         
         {/* Content */}
         <motion.main 
@@ -322,6 +341,7 @@ const Admin = () => {
             {activeTab === 'dashboard' && <AdminDashboard />}
             {activeTab === 'users' && <AdminUsers />}
             {activeTab === 'reports' && <AdminReports />}
+            {activeTab === 'site' && <SiteEditor />}
             {activeTab === 'settings' && <AdminSettings user={user} />}
           </motion.div>
         </motion.main>
