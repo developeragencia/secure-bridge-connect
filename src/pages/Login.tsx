@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 
 const ADMIN_EMAIL = 'admin@sistemasclaudio.com';
-const ADMIN_PASSWORD = 'admin123';
+const ADMIN_PASSWORD = 'essaadmin123';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -21,21 +20,17 @@ const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Setup admin user on first load if it doesn't exist
   useEffect(() => {
     const setupAdminUser = async () => {
       try {
-        // First check if admin user exists by trying to sign in
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: ADMIN_EMAIL,
           password: ADMIN_PASSWORD
         });
 
-        // If sign in fails with invalid credentials, we need to create the user
         if (signInError && signInError.message.includes('Invalid login credentials')) {
           console.log('Admin user does not exist. Creating...');
           
-          // Create admin user
           const { error: signUpError } = await supabase.auth.signUp({
             email: ADMIN_EMAIL,
             password: ADMIN_PASSWORD
@@ -46,25 +41,19 @@ const Login = () => {
           } else {
             console.log('Admin user created successfully');
             
-            // Auto-verify the admin user
-            // This would normally be done through a database function or with admin APIs
-            // For simplicity, we'll let the manual login process handle it
+            await supabase.auth.signOut();
           }
         }
         
-        // Sign out after setup to ensure clean login state
-        await supabase.auth.signOut();
+        setInitializing(false);
       } catch (err) {
         console.error('Error during admin setup:', err);
-      } finally {
-        setInitializing(false);
       }
     };
     
     setupAdminUser();
   }, []);
 
-  // Check if user is already logged in
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
@@ -77,7 +66,6 @@ const Login = () => {
     
     checkSession();
     
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === 'SIGNED_IN' && session) {
@@ -97,7 +85,6 @@ const Login = () => {
     setError(null);
 
     try {
-      // Sign in with Supabase
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password
