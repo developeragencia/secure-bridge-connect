@@ -109,7 +109,6 @@ const AdminReports = () => {
           </Card>
         </TabsContent>
         
-        {/* Other tab contents with similar structure */}
         {["users", "sales", "tax"].map((tab) => (
           <TabsContent key={tab} value={tab} className="mt-0">
             <Card>

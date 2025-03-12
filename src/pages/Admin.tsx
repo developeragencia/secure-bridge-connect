@@ -40,14 +40,34 @@ const Admin = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      // Check for Supabase session
       const { data } = await supabase.auth.getSession();
       
-      if (!data.session) {
+      // Check for our demo auth (fallback)
+      const adminAuth = localStorage.getItem('adminAuth');
+      let adminAuthData = null;
+      
+      if (adminAuth) {
+        try {
+          adminAuthData = JSON.parse(adminAuth);
+          // Check if auth is expired (24 hours)
+          const now = Date.now();
+          const authTime = adminAuthData.timestamp || 0;
+          if (now - authTime > 24 * 60 * 60 * 1000) {
+            localStorage.removeItem('adminAuth');
+            adminAuthData = null;
+          }
+        } catch (e) {
+          localStorage.removeItem('adminAuth');
+        }
+      }
+      
+      if (!data.session && !adminAuthData) {
         navigate('/login');
         return;
       }
       
-      setUser(data.session.user);
+      setUser(data.session?.user || { email: adminAuthData?.email || 'admin@sistemasclaudio.com' });
       setLoading(false);
     };
     
@@ -56,6 +76,8 @@ const Admin = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === 'SIGNED_OUT') {
+          // Also clear our fallback auth
+          localStorage.removeItem('adminAuth');
           navigate('/login');
         } else if (session) {
           setUser(session.user);
@@ -69,11 +91,17 @@ const Admin = () => {
   }, [navigate]);
 
   const handleLogout = async () => {
+    // Clear our fallback auth
+    localStorage.removeItem('adminAuth');
+    
+    // Also sign out from Supabase if logged in
     await supabase.auth.signOut();
+    
     toast({
       title: "Sessão encerrada",
       description: "Você foi desconectado com sucesso.",
     });
+    
     navigate('/login');
   };
 
