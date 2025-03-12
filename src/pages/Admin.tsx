@@ -7,9 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AnimatedLogo from '@/components/AnimatedLogo';
+import { motion } from 'framer-motion';
 import { 
   Users, BarChart3, FileText, Settings, LogOut, 
-  Home, DollarSign, Calendar, BarChart4, Wallet
+  Menu, BellRing, UserCircle, Sun, Moon,
+  PanelTop, Home
 } from 'lucide-react';
 
 // Admin components
@@ -24,6 +26,17 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
+  const [hasNotifications, setHasNotifications] = useState(true);
+  
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -64,40 +77,118 @@ const Admin = () => {
     navigate('/login');
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-primary">Carregando...</div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex flex-col items-center space-y-4">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping"></div>
+              <div className="relative z-10 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
+                <PanelTop className="h-6 w-6 text-white" />
+              </div>
+            </div>
+            <p className="text-muted-foreground animate-pulse">Carregando painel...</p>
+          </div>
+        </motion.div>
       </div>
     );
   }
 
+  const fadeInVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.5,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const childVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.3 }
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
+    <div className="min-h-screen flex flex-col bg-background text-foreground overflow-hidden">
       {/* Header */}
-      <header className="bg-card shadow-sm z-10">
+      <motion.header 
+        className="bg-card border-b border-border/40 shadow-sm z-10"
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
         <div className="container flex items-center justify-between p-4">
           <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={toggleSidebar} className="md:hidden">
+              <Menu className="h-5 w-5" />
+            </Button>
             <AnimatedLogo size="sm" showText={true} />
-            <h1 className="text-lg font-semibold">Painel Administrativo</h1>
+            <h1 className="text-lg font-semibold hidden md:block">Painel Administrativo</h1>
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-muted-foreground">
-              {user?.email || 'admin@sistemasclaudio.com'}
-            </div>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Sair
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
+            
+            <div className="relative">
+              <Button variant="ghost" size="icon">
+                <BellRing className="h-5 w-5" />
+                {hasNotifications && (
+                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
+                )}
+              </Button>
+            </div>
+            
+            <div className="relative group">
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <UserCircle className="h-6 w-6" />
+              </Button>
+              <div className="absolute right-0 mt-2 w-48 p-2 bg-card rounded-md shadow-lg border border-border hidden group-hover:block z-20">
+                <div className="px-4 py-2">
+                  <p className="text-sm font-medium">{user?.email || 'admin@sistemasclaudio.com'}</p>
+                  <p className="text-xs text-muted-foreground">Administrador</p>
+                </div>
+                <div className="border-t border-border my-1"></div>
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="w-full justify-start text-destructive">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sair
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-      </header>
+      </motion.header>
       
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-64 bg-sidebar hidden md:block border-r border-border">
+        <motion.aside 
+          className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-card border-r border-border/40 hidden md:block transition-all duration-300 ease-in-out`}
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
           <nav className="p-4 space-y-2">
             <Button 
               variant={activeTab === 'dashboard' ? 'secondary' : 'ghost'} 
@@ -131,34 +222,81 @@ const Admin = () => {
               <Settings className="mr-2 h-4 w-4" />
               Configurações
             </Button>
+            
+            <div className="pt-4 mt-4 border-t border-border">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start" 
+                onClick={() => window.open('/', '_blank')}
+              >
+                <Home className="mr-2 h-4 w-4" />
+                Página Inicial
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full justify-start mt-2 text-destructive hover:text-destructive" 
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Sair
+              </Button>
+            </div>
           </nav>
-        </aside>
+        </motion.aside>
         
         {/* Mobile Tab Selector */}
-        <div className="md:hidden w-full border-b border-border">
-          <TabsList className="w-full justify-start p-1">
-            <TabsTrigger value="dashboard" onClick={() => setActiveTab('dashboard')}>
+        <motion.div 
+          className="md:hidden w-full border-b border-border flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <TabsList className="w-full max-w-md justify-around p-1 bg-transparent">
+            <TabsTrigger 
+              value="dashboard" 
+              onClick={() => setActiveTab('dashboard')}
+              className={`${activeTab === 'dashboard' ? 'bg-secondary' : ''} data-[state=active]:bg-secondary`}
+            >
               <BarChart3 className="h-4 w-4" />
             </TabsTrigger>
-            <TabsTrigger value="users" onClick={() => setActiveTab('users')}>
+            <TabsTrigger 
+              value="users" 
+              onClick={() => setActiveTab('users')}
+              className={`${activeTab === 'users' ? 'bg-secondary' : ''} data-[state=active]:bg-secondary`}
+            >
               <Users className="h-4 w-4" />
             </TabsTrigger>
-            <TabsTrigger value="reports" onClick={() => setActiveTab('reports')}>
+            <TabsTrigger 
+              value="reports" 
+              onClick={() => setActiveTab('reports')}
+              className={`${activeTab === 'reports' ? 'bg-secondary' : ''} data-[state=active]:bg-secondary`}
+            >
               <FileText className="h-4 w-4" />
             </TabsTrigger>
-            <TabsTrigger value="settings" onClick={() => setActiveTab('settings')}>
+            <TabsTrigger 
+              value="settings" 
+              onClick={() => setActiveTab('settings')}
+              className={`${activeTab === 'settings' ? 'bg-secondary' : ''} data-[state=active]:bg-secondary`}
+            >
               <Settings className="h-4 w-4" />
             </TabsTrigger>
           </TabsList>
-        </div>
+        </motion.div>
         
         {/* Content */}
-        <main className="flex-1 overflow-auto p-6">
-          {activeTab === 'dashboard' && <AdminDashboard />}
-          {activeTab === 'users' && <AdminUsers />}
-          {activeTab === 'reports' && <AdminReports />}
-          {activeTab === 'settings' && <AdminSettings />}
-        </main>
+        <motion.main 
+          className="flex-1 overflow-auto p-6"
+          initial="hidden"
+          animate="visible"
+          variants={fadeInVariants}
+        >
+          <motion.div variants={childVariants}>
+            {activeTab === 'dashboard' && <AdminDashboard />}
+            {activeTab === 'users' && <AdminUsers />}
+            {activeTab === 'reports' && <AdminReports />}
+            {activeTab === 'settings' && <AdminSettings user={user} />}
+          </motion.div>
+        </motion.main>
       </div>
     </div>
   );
