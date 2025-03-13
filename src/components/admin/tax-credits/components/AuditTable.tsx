@@ -5,19 +5,21 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Download, Eye } from 'lucide-react';
 import { Audit } from '@/types/audit';
 import { getStatusLabel } from './AuditFilters';
 
 interface AuditTableProps {
   audits: Audit[];
   onDownloadDocuments: (auditId: string) => void;
+  onViewDetails: (auditId: string) => void;
   statusColors: Record<string, string>;
 }
 
 const AuditTable: React.FC<AuditTableProps> = ({ 
   audits, 
   onDownloadDocuments,
+  onViewDetails,
   statusColors 
 }) => {
   const formatDate = (dateString: string) => {
@@ -62,7 +64,12 @@ const AuditTable: React.FC<AuditTableProps> = ({
                   <Download className="mr-2 h-3 w-3" />
                   {audit.documentsCount} docs
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => onViewDetails(audit.id)}
+                >
+                  <Eye className="mr-2 h-3 w-3" />
                   Detalhes
                 </Button>
               </div>

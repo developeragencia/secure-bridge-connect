@@ -96,6 +96,7 @@ const RecoveryManagement = () => {
     completedProcesses: recoveryProcesses.filter(p => p.status === "CONCLUIDO").length
   };
   
+  // First click functionality
   const handleViewProcessDetails = (processId: string) => {
     toast({
       title: "Detalhes do processo",
@@ -103,6 +104,7 @@ const RecoveryManagement = () => {
     });
   };
   
+  // Second click functionality
   const handleGenerateReport = (processId: string) => {
     toast({
       title: "Relatório gerado",

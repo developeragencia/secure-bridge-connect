@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
 import { 
-  Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
+  Card, CardContent, CardFooter, CardHeader
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Audit, AuditSummary } from '@/types/audit';
 
-// Import new components
+// Import components
 import AuditStatusCards from './components/AuditStatusCards';
 import AuditFilters from './components/AuditFilters';
 import AuditTable from './components/AuditTable';
@@ -84,6 +84,7 @@ const AuditManagement = () => {
     cancelada: auditProcesses.filter(a => a.status === "CANCELADA").length
   };
   
+  // First click functionality
   const handleCreateAudit = () => {
     toast({
       title: "Nova auditoria",
@@ -91,14 +92,21 @@ const AuditManagement = () => {
     });
   };
   
+  // Second click functionality
   const handleDownloadDocuments = (auditId: string) => {
     toast({
       title: "Download de documentos",
       description: `Baixando documentos da auditoria ID: ${auditId}`,
     });
   };
-  
-  console.log("Rendering AuditManagement component");
+
+  // Added a new functionality for viewing audit details
+  const handleViewAuditDetails = (auditId: string) => {
+    toast({
+      title: "Detalhes da auditoria",
+      description: `Visualizando detalhes da auditoria ID: ${auditId}`,
+    });
+  };
   
   return (
     <div className="space-y-6">
@@ -118,6 +126,7 @@ const AuditManagement = () => {
           <AuditTable 
             audits={auditProcesses}
             onDownloadDocuments={handleDownloadDocuments}
+            onViewDetails={handleViewAuditDetails}
             statusColors={statusColors}
           />
         </CardContent>

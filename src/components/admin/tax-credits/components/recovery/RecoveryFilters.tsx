@@ -1,16 +1,16 @@
 
 import React from 'react';
+import { Search, Filter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { 
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
 } from '@/components/ui/select';
-import { Search, Filter } from 'lucide-react';
 
 interface RecoveryFiltersProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   filterStatus: string | undefined;
-  setFilterStatus: (status: string) => void;
+  setFilterStatus: (status: string | undefined) => void;
   statusLabels: Record<string, string>;
 }
 
@@ -32,16 +32,16 @@ const RecoveryFilters: React.FC<RecoveryFiltersProps> = ({
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-      <div className="flex gap-2">
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
+      <div>
+        <Select value={filterStatus || "all"} onValueChange={value => setFilterStatus(value === "all" ? undefined : value)}>
           <SelectTrigger className="w-[180px]">
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4" />
-              <span>{filterStatus ? statusLabels[filterStatus] : "Filtrar status"}</span>
+              <span>{filterStatus ? statusLabels[filterStatus] : "Todos os status"}</span>
             </div>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos</SelectItem>
+            <SelectItem value="all">Todos</SelectItem>
             <SelectItem value="INICIAL">Inicial</SelectItem>
             <SelectItem value="EM_ANDAMENTO">Em Andamento</SelectItem>
             <SelectItem value="PARCIAL">Recuperação Parcial</SelectItem>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
@@ -145,10 +146,9 @@ const TaxCreditManagement = () => {
     });
   };
   
-  console.log("Rendering TaxCreditManagement component");
-  
   return (
     <div className="space-y-6">
+      {/* Summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -260,7 +260,7 @@ const TaxCreditManagement = () => {
               />
             </div>
             <div className="flex gap-2">
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <Select value={filterStatus || "all"} onValueChange={value => setFilterStatus(value === "all" ? undefined : value)}>
                 <SelectTrigger className="w-[180px]">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4" />
@@ -268,7 +268,7 @@ const TaxCreditManagement = () => {
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
                   <SelectItem value="PENDING">Pendentes</SelectItem>
                   <SelectItem value="ANALYZING">Em Análise</SelectItem>
                   <SelectItem value="APPROVED">Aprovados</SelectItem>
@@ -277,7 +277,7 @@ const TaxCreditManagement = () => {
                 </SelectContent>
               </Select>
               
-              <Select value={sortBy} onValueChange={setSortBy}>
+              <Select value={sortBy || "default"} onValueChange={value => setSortBy(value === "default" ? undefined : value)}>
                 <SelectTrigger className="w-[180px]">
                   <div className="flex items-center gap-2">
                     <ArrowUpDown className="h-4 w-4" />
@@ -285,7 +285,7 @@ const TaxCreditManagement = () => {
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Padrão</SelectItem>
+                  <SelectItem value="default">Padrão</SelectItem>
                   <SelectItem value="date_desc">Data (mais recente)</SelectItem>
                   <SelectItem value="date_asc">Data (mais antiga)</SelectItem>
                   <SelectItem value="amount_desc">Valor (maior)</SelectItem>
