@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useClientStore, Client } from '@/hooks/useClientStore';
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { CalendarIcon } from "@radix-ui/react-icons";
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -24,7 +26,6 @@ import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon } from "@radix-ui/react-icons"
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { enUS } from 'date-fns/locale';
@@ -73,13 +74,13 @@ const Clients = () => {
       id: Date.now().toString(),
       name: newClientData.name || 'New Client', // Ensure name is always provided
       cnpj: newClientData.cnpj || '',
-      email: newClientData.email,
-      phone: newClientData.phone,
-      address: newClientData.address,
-      city: newClientData.city,
-      state: newClientData.state,
-      zipCode: newClientData.zipCode,
-      contactName: newClientData.contactName,
+      email: newClientData.email || '',
+      phone: newClientData.phone || '',
+      address: newClientData.address || '',
+      city: newClientData.city || '',
+      state: newClientData.state || '',
+      zipCode: newClientData.zipCode || '',
+      contactName: newClientData.contactName || '',
       active: true,
       createdAt: new Date().toISOString(),
     };
@@ -129,7 +130,7 @@ const Clients = () => {
         <h1 className="text-2xl font-bold">Clientes</h1>
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="primary">
+            <Button variant="default">
               <Plus className="w-4 h-4 mr-2" />
               Adicionar Cliente
             </Button>
@@ -306,25 +307,6 @@ const Clients = () => {
               pagedNavigation
               locale={enUS}
               className="border-0 rounded-md"
-              components={{
-                HeadCell: ({ children, ...props }) => (
-                  <th className="h-10 w-10 text-center [&[data-state=selected]]:bg-accent" {...props}>
-                    <span className="text-muted-foreground">{children}</span>
-                  </th>
-                ),
-                Day: ({ children, ...props }) => (
-                  <td className="p-0">
-                    <Button
-                      variant="ghost"
-                      className="h-10 w-10 p-0 font-normal text-muted-foreground [&:has([data-state=selected])]:bg-accent [&:has([data-state=selected])]:text-accent-foreground"
-                      {...props}
-                    >
-                      <span>{children}</span>
-                    </Button>
-                  </td>
-                ),
-                // Caption: ({ children }) => <div className="text-center">{children}</div>,
-              }}
             />
             <Separator />
             <CardFooter className="justify-between space-x-2">
