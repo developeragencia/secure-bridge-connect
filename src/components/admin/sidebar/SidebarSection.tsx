@@ -37,20 +37,27 @@ const SidebarSection = ({
     setActiveTab(id);
   };
 
-  const isExpanded = sidebarOpen && expandedSection === section.id;
+  // Check if any item in this section is active
+  const isSectionActive = section.items.some(item => item.id === activeTab);
+  
+  // Auto-expand section if it contains the active tab
+  const isExpanded = sidebarOpen && (expandedSection === section.id || isSectionActive);
 
   return (
     <div className="mb-4 w-full">
       {sidebarOpen ? (
         <div 
-          className="flex items-center justify-between py-2 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground rounded-md hover:bg-accent/30"
+          className={cn(
+            "flex items-center justify-between py-2 px-3 text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-foreground rounded-md hover:bg-accent/30",
+            isSectionActive ? "text-primary" : "text-muted-foreground"
+          )}
           onClick={() => toggleSection(section.id)}
         >
           <span>{section.title}</span>
           <ChevronDown 
             className={cn(
               "h-3.5 w-3.5 transition-transform duration-200", 
-              expandedSection === section.id ? "transform rotate-0" : "transform rotate(-90deg)"
+              isExpanded ? "transform rotate-0" : "transform rotate(-90deg)"
             )} 
           />
         </div>
@@ -60,7 +67,7 @@ const SidebarSection = ({
       
       <div className={cn(
         "space-y-1 w-full",
-        sidebarOpen && expandedSection !== section.id && "hidden"
+        sidebarOpen && !isExpanded && "hidden"
       )}>
         {section.items.map((item) => (
           <motion.div 

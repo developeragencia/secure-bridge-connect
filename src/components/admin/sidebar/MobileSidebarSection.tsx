@@ -34,12 +34,19 @@ const MobileSidebarSection = ({
     toggleMobileMenu();
   };
 
-  const isExpanded = expandedSection === section.id;
+  // Check if any item in this section is active
+  const isSectionActive = section.items.some(item => item.id === activeTab);
+  
+  // Auto-expand section that contains active tab
+  const isExpanded = expandedSection === section.id || isSectionActive;
 
   return (
     <div className="mb-4 w-full">
       <div 
-        className="flex items-center justify-between py-2 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground rounded-md"
+        className={cn(
+          "flex items-center justify-between py-2 px-3 text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-foreground rounded-md",
+          isSectionActive ? "text-primary" : "text-muted-foreground"
+        )}
         onClick={() => toggleSection(section.id)}
       >
         <span>{section.title}</span>
