@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Audit, AuditSummary } from '@/types/audit';
 import { toast } from 'sonner';
@@ -128,15 +129,15 @@ export const useAuditManagement = () => {
     setIsFormOpen(false);
   };
 
-  const handleViewDetails = (auditId: string) => {
+  const handleViewDetails = (audit: Audit) => {
     toast.info('Visualizando detalhes', {
-      description: `Detalhes da auditoria #${auditId}`,
+      description: `Detalhes da auditoria #${audit.id}`,
     });
   };
 
-  const handleDownloadDocuments = (auditId: string) => {
+  const handleDownloadDocuments = (audit: Audit) => {
     toast.success('Download dos documentos', {
-      description: `Download dos documentos da auditoria #${auditId} iniciado`,
+      description: `Download dos documentos da auditoria #${audit.id} iniciado`,
     });
   };
 
