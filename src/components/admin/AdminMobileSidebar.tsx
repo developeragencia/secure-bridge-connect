@@ -7,7 +7,8 @@ import { cn } from '@/lib/utils';
 import {
   Users, BarChart3, FileText, Settings, LogOut,
   Home, Globe, ShieldAlert, CreditCard,
-  HelpCircle, ChevronDown, User, X
+  HelpCircle, ChevronDown, User, X,
+  Receipt, Building, FileSearch, Landmark
 } from 'lucide-react';
 
 interface AdminMobileSidebarProps {
@@ -45,6 +46,16 @@ const AdminMobileSidebar = ({
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 className="h-4 w-4" /> },
         { id: 'users', label: 'Usuários', icon: <Users className="h-4 w-4" /> }
+      ]
+    },
+    {
+      id: 'tax_credits',
+      title: 'Créditos Tributários',
+      items: [
+        { id: 'tax_credits', label: 'Gestão de Créditos', icon: <Receipt className="h-4 w-4" /> },
+        { id: 'clients', label: 'Clientes', icon: <Building className="h-4 w-4" /> },
+        { id: 'audits', label: 'Auditorias', icon: <FileSearch className="h-4 w-4" /> },
+        { id: 'recovery', label: 'Recuperação', icon: <Landmark className="h-4 w-4" /> }
       ]
     },
     {

@@ -8,6 +8,10 @@ import AdminSettings from '@/components/admin/AdminSettings';
 import SiteEditor from '@/components/admin/SiteEditor';
 import AdminTabHeader from '@/components/admin/AdminTabHeader';
 import ExtraTabContent from '@/components/admin/ExtraTabContent';
+import TaxCreditManagement from '@/components/admin/tax-credits/TaxCreditManagement';
+import ClientManagement from '@/components/admin/tax-credits/ClientManagement';
+import AuditManagement from '@/components/admin/tax-credits/AuditManagement';
+import RecoveryManagement from '@/components/admin/tax-credits/RecoveryManagement';
 
 interface MainContentProps {
   activeTab: string;
@@ -47,11 +51,19 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         <AdminTabHeader activeTab={activeTab} />
         
         <motion.div variants={childVariants}>
+          {/* Original tabs */}
           {activeTab === 'dashboard' && <AdminDashboard />}
           {activeTab === 'users' && <AdminUsers />}
           {activeTab === 'reports' && <AdminReports />}
           {activeTab === 'site' && <SiteEditor />}
           {activeTab === 'settings' && <AdminSettings user={user} />}
+          
+          {/* Tax Credit Management tabs */}
+          {activeTab === 'tax_credits' && <TaxCreditManagement />}
+          {activeTab === 'clients' && <ClientManagement />}
+          {activeTab === 'audits' && <AuditManagement />}
+          {activeTab === 'recovery' && <RecoveryManagement />}
+          
           <ExtraTabContent activeTab={activeTab} />
         </motion.div>
       </div>

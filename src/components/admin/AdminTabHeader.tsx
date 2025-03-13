@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
   BarChart3, Users, FileText, Globe, Settings,
-  ShieldAlert, CreditCard, HelpCircle
+  ShieldAlert, CreditCard, HelpCircle, 
+  Receipt, Building, FileSearch, Landmark
 } from 'lucide-react';
 
 interface AdminTabHeaderProps {
@@ -36,6 +36,55 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
           <p className="text-muted-foreground">Visualize dados e estatísticas do sistema</p>
         </>
       )}
+      
+      {activeTab === 'tax_credits' && (
+        <>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <Receipt className="h-5 w-5" />
+            </div>
+            <h1 className="text-2xl font-bold">Gestão de Créditos Tributários</h1>
+          </div>
+          <p className="text-muted-foreground">Gerencie créditos tributários de IRRF/PJ e outros</p>
+        </>
+      )}
+      
+      {activeTab === 'clients' && (
+        <>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <Building className="h-5 w-5" />
+            </div>
+            <h1 className="text-2xl font-bold">Clientes</h1>
+          </div>
+          <p className="text-muted-foreground">Cadastro e gestão de clientes para recuperação de créditos</p>
+        </>
+      )}
+      
+      {activeTab === 'audits' && (
+        <>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <FileSearch className="h-5 w-5" />
+            </div>
+            <h1 className="text-2xl font-bold">Auditorias</h1>
+          </div>
+          <p className="text-muted-foreground">Acompanhe processos de auditoria fiscal e análise de créditos</p>
+        </>
+      )}
+      
+      {activeTab === 'recovery' && (
+        <>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <Landmark className="h-5 w-5" />
+            </div>
+            <h1 className="text-2xl font-bold">Recuperação de Créditos</h1>
+          </div>
+          <p className="text-muted-foreground">Acompanhe o processo de recuperação de créditos tributários</p>
+        </>
+      )}
+      
       {activeTab === 'users' && (
         <>
           <div className="flex items-center gap-2 mb-1">
@@ -47,6 +96,7 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
           <p className="text-muted-foreground">Gerencie usuários e permissões</p>
         </>
       )}
+      
       {activeTab === 'reports' && (
         <>
           <div className="flex items-center gap-2 mb-1">
@@ -58,6 +108,7 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
           <p className="text-muted-foreground">Acesse e gere relatórios do sistema</p>
         </>
       )}
+      
       {activeTab === 'site' && (
         <>
           <div className="flex items-center gap-2 mb-1">
@@ -69,6 +120,7 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
           <p className="text-muted-foreground">Personalize a aparência e conteúdo do seu site</p>
         </>
       )}
+      
       {activeTab === 'settings' && (
         <>
           <div className="flex items-center gap-2 mb-1">
@@ -80,6 +132,7 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
           <p className="text-muted-foreground">Configure preferências do sistema</p>
         </>
       )}
+      
       {activeTab === 'security' && (
         <>
           <div className="flex items-center gap-2 mb-1">
@@ -91,6 +144,7 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
           <p className="text-muted-foreground">Gerencie configurações de segurança e permissões</p>
         </>
       )}
+      
       {activeTab === 'billing' && (
         <>
           <div className="flex items-center gap-2 mb-1">
@@ -102,6 +156,7 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
           <p className="text-muted-foreground">Gerencie planos, assinaturas e pagamentos</p>
         </>
       )}
+      
       {activeTab === 'support' && (
         <>
           <div className="flex items-center gap-2 mb-1">

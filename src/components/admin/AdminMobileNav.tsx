@@ -3,7 +3,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
-  BarChart3, Users, FileBarChart2, Globe, Settings
+  BarChart3, Users, FileBarChart2, Globe, Settings,
+  Receipt, Building, FileSearch, Landmark
 } from 'lucide-react';
 
 interface AdminMobileNavProps {
@@ -28,16 +29,28 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
           <span className="text-[10px] mt-0.5">Dashboard</span>
         </Button>
         <Button 
-          variant={activeTab === 'users' ? 'secondary' : 'ghost'}
+          variant={activeTab === 'tax_credits' ? 'secondary' : 'ghost'}
           size="sm"
           className={cn(
             "flex flex-col items-center py-1.5 h-auto rounded-md",
-            activeTab === 'users' && "bg-primary/10 text-primary"
+            activeTab === 'tax_credits' && "bg-primary/10 text-primary"
           )}
-          onClick={() => setActiveTab('users')}
+          onClick={() => setActiveTab('tax_credits')}
         >
-          <Users className="h-3.5 w-3.5" />
-          <span className="text-[10px] mt-0.5">Usuários</span>
+          <Receipt className="h-3.5 w-3.5" />
+          <span className="text-[10px] mt-0.5">Créditos</span>
+        </Button>
+        <Button 
+          variant={activeTab === 'clients' ? 'secondary' : 'ghost'}
+          size="sm"
+          className={cn(
+            "flex flex-col items-center py-1.5 h-auto rounded-md",
+            activeTab === 'clients' && "bg-primary/10 text-primary"
+          )}
+          onClick={() => setActiveTab('clients')}
+        >
+          <Building className="h-3.5 w-3.5" />
+          <span className="text-[10px] mt-0.5">Clientes</span>
         </Button>
         <Button 
           variant={activeTab === 'reports' ? 'secondary' : 'ghost'}
@@ -50,18 +63,6 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
         >
           <FileBarChart2 className="h-3.5 w-3.5" />
           <span className="text-[10px] mt-0.5">Relatórios</span>
-        </Button>
-        <Button 
-          variant={activeTab === 'site' ? 'secondary' : 'ghost'}
-          size="sm"
-          className={cn(
-            "flex flex-col items-center py-1.5 h-auto rounded-md",
-            activeTab === 'site' && "bg-primary/10 text-primary"
-          )}
-          onClick={() => setActiveTab('site')}
-        >
-          <Globe className="h-3.5 w-3.5" />
-          <span className="text-[10px] mt-0.5">Site</span>
         </Button>
         <Button 
           variant={activeTab === 'settings' ? 'secondary' : 'ghost'}
