@@ -23,9 +23,10 @@ const MobileSidebarSection = ({
   toggleMobileMenu
 }: MobileSidebarSectionProps) => {
   const handleItemClick = (id: string) => {
-    // Skip if already on this tab
+    // Skip if already on this tab to prevent unnecessary rendering
     if (id === activeTab) return;
     
+    // Set the active tab and close the mobile menu
     setActiveTab(id);
     toggleMobileMenu();
   };

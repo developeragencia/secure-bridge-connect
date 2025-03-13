@@ -31,7 +31,8 @@ const SidebarSection = ({
   };
 
   const handleItemClick = (id: string) => {
-    if (id === activeTab) return; // Prevent re-clicking the same tab
+    // Only update if the tab is actually changing to prevent re-renders
+    if (id === activeTab) return;
     console.log("Menu item clicked:", id);
     setActiveTab(id);
   };
@@ -74,7 +75,7 @@ const SidebarSection = ({
                   ? "bg-primary/10 text-primary font-medium border-l-2 border-primary"
                   : "hover:bg-secondary/80",
                 sidebarOpen ? "w-full justify-start" : "w-full p-2 flex justify-center",
-                "rounded-md transition-all duration-200 min-h-[32px]"
+                "rounded-md transition-all duration-200 min-h-[40px]"
               )}
               onClick={() => handleItemClick(item.id)}
             >
