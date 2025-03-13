@@ -85,8 +85,9 @@
     }
   }
   
-  /* Fly animation for logo */
+  /* Fly animation for logo - with will-change optimization */
   .animate-fly-to-dashboard {
+    will-change: transform, opacity;
     animation: fly-to-dashboard 2s forwards ease-in-out;
   }
   
@@ -106,6 +107,7 @@
   }
   
   .animate-return-from-dashboard {
+    will-change: transform, opacity;
     animation: return-from-dashboard 1s forwards ease-in-out;
   }
   
@@ -125,6 +127,7 @@
   }
   
   .logo-float {
+    will-change: transform;
     animation: logo-float 2s ease-in-out infinite;
   }
   
@@ -140,10 +143,11 @@
     }
   }
   
-  /* Adicionando novos efeitos para o painel administrativo */
+  /* Otimizando efeitos para o painel administrativo */
   .card-shimmer {
     position: relative;
     overflow: hidden;
+    will-change: transform;
   }
   
   .card-shimmer::before {
@@ -167,6 +171,7 @@
   }
   
   .menu-card-hover {
+    will-change: transform, box-shadow;
     transition: all 0.3s ease;
   }
   
@@ -192,6 +197,7 @@
   }
   
   .scale-on-hover {
+    will-change: transform;
     transition: transform 0.2s ease-in-out;
   }
   
@@ -199,9 +205,10 @@
     transform: scale(1.05);
   }
   
-  /* Efeito de gradiente dinâmico */
+  /* Efeito de gradiente dinâmico - otimizado para performance */
   .gradient-shift {
     background-size: 200% 200%;
+    will-change: background-position;
     animation: gradient-animation 5s ease infinite;
   }
   
