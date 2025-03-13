@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
@@ -30,6 +29,7 @@ const ClientManagement = () => {
       id: "1",
       name: "Empresa ABC Ltda",
       cnpj: "12.345.678/0001-90",
+      documentNumber: "12.345.678/0001-90",
       status: 'ACTIVE',
       type: 'private',
       segment: "Tecnologia",
@@ -41,13 +41,14 @@ const ClientManagement = () => {
       contactPhone: "(11) 3456-7890",
       createdAt: "2023-01-15T10:30:00Z",
       updatedAt: "2023-05-20T14:45:00Z",
-      email: "",
+      email: "contato@empresaabc.com.br",
       phone: "(11) 3456-7890",
     },
     {
       id: "2",
       name: "Indústria XYZ S.A.",
       cnpj: "23.456.789/0001-10",
+      documentNumber: "23.456.789/0001-10",
       status: 'ACTIVE',
       type: 'public',
       segment: "Manufatura",
@@ -59,13 +60,14 @@ const ClientManagement = () => {
       contactPhone: "(11) 2345-6789",
       createdAt: "2023-02-10T09:15:00Z",
       updatedAt: "2023-02-10T09:15:00Z",
-      email: "",
+      email: "financeiro@industriaxyz.com.br",
       phone: "(11) 2345-6789",
     },
     {
       id: "3",
       name: "Comércio DEF Eireli",
       cnpj: "34.567.890/0001-21",
+      documentNumber: "34.567.890/0001-21",
       status: 'INACTIVE',
       type: 'private',
       segment: "Varejo",
@@ -77,13 +79,14 @@ const ClientManagement = () => {
       contactPhone: "(11) 4567-8901",
       createdAt: "2023-03-05T11:45:00Z",
       updatedAt: "2023-06-18T16:30:00Z",
-      email: "",
+      email: "contato@comerciodef.com.br",
       phone: "(11) 4567-8901",
     },
     {
       id: "4",
       name: "Serviços GHI S.A.",
       cnpj: "45.678.901/0001-32",
+      documentNumber: "45.678.901/0001-32",
       status: 'ACTIVE',
       type: 'public',
       segment: "Consultoria",
@@ -95,13 +98,14 @@ const ClientManagement = () => {
       contactPhone: "(11) 5678-9012",
       createdAt: "2023-04-20T08:00:00Z",
       updatedAt: "2023-04-20T08:00:00Z",
-      email: "",
+      email: "atendimento@servicosghi.com.br",
       phone: "(11) 5678-9012",
     },
     {
       id: "5",
       name: "Transportes JKL Ltda",
       cnpj: "56.789.012/0001-43",
+      documentNumber: "56.789.012/0001-43",
       status: 'ACTIVE',
       type: 'private',
       segment: "Logística",
@@ -113,7 +117,7 @@ const ClientManagement = () => {
       contactPhone: "(11) 6789-0123",
       createdAt: "2023-05-15T14:30:00Z",
       updatedAt: "2023-05-15T14:30:00Z",
-      email: "",
+      email: "operacoes@transportesjkl.com.br",
       phone: "(11) 6789-0123",
     }
   ];

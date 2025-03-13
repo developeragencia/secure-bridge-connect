@@ -52,8 +52,10 @@ const UserProfileHeader = ({ user }: UserProfileHeaderProps) => {
             >
               <Shield className="h-3 w-3 mr-1 text-primary" />
               {user.role === 'admin' && 'Administrador'}
-              {user.role === 'office' && 'Escritório'}
+              {user.role === 'staff' && 'Escritório'}
               {user.role === 'client' && 'Cliente'}
+              {user.role === 'representative' && 'Representante'}
+              {user.role === 'office' && 'Escritório'}
               {user.role === 'sales' && 'Comercial'}
             </Badge>
           </div>

@@ -6,7 +6,7 @@ import { AuditSummary } from '@/types/audit';
 
 interface AuditStatusCardsProps {
   summary: AuditSummary;
-  className?: string; // Added className prop
+  className?: string;
 }
 
 const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className }) => {
@@ -20,7 +20,7 @@ const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className 
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.total}</div>
+            <div className="text-2xl font-bold">{summary.totalAudits || summary.total || 0}</div>
             <FileSearch className="h-5 w-5 text-muted-foreground" />
           </div>
         </CardContent>
@@ -34,7 +34,7 @@ const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className 
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.emAndamento}</div>
+            <div className="text-2xl font-bold">{summary.inProgressAudits || summary.emAndamento || 0}</div>
             <Clock className="h-5 w-5 text-blue-500" />
           </div>
         </CardContent>
@@ -48,7 +48,7 @@ const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className 
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.pendente}</div>
+            <div className="text-2xl font-bold">{summary.pendingAudits || summary.pendente || 0}</div>
             <Calendar className="h-5 w-5 text-yellow-500" />
           </div>
         </CardContent>
@@ -62,7 +62,7 @@ const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className 
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.concluida}</div>
+            <div className="text-2xl font-bold">{summary.completedAudits || summary.concluida || 0}</div>
             <CheckCircle className="h-5 w-5 text-green-500" />
           </div>
         </CardContent>

@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Edit, Trash2 } from 'lucide-react';
-import { Client } from '@/types/tax-credits';
+import { Client } from '@/types/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 

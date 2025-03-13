@@ -22,6 +22,7 @@ export interface RecoverySummary {
   completedProcesses: number;
   inProgressProcesses: number;
   successRate: number;
+  // Adding these properties that are being accessed in components
   totalCredits: number;
   recoveredAmount: number;
   avgRecoveryRate: number;

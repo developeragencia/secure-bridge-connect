@@ -16,18 +16,31 @@ const generateMockAudits = (): Audit[] => {
     deadline: new Date(2023, Math.floor(Math.random() * 12) + 1, Math.floor(Math.random() * 28) + 1).toISOString(),
     status: ['EM_ANDAMENTO', 'PENDENTE', 'CONCLUIDA', 'CANCELADA'][Math.floor(Math.random() * 4)] as any,
     assignedTo: `Auditor ${Math.floor(Math.random() * 5) + 1}`,
-    documentsCount: Math.floor(Math.random() * 20) + 1
+    documentsCount: Math.floor(Math.random() * 20) + 1,
+    createdAt: new Date(2023, Math.floor(Math.random() * 6), Math.floor(Math.random() * 28) + 1).toISOString(),
+    updatedAt: new Date(2023, Math.floor(Math.random() * 6) + 6, Math.floor(Math.random() * 28) + 1).toISOString()
   }));
 };
 
 // Mock summary generator
 const generateMockSummary = (): AuditSummary => {
+  const total = Math.floor(Math.random() * 50) + 20;
+  const emAndamento = Math.floor(Math.random() * 15) + 5;
+  const pendente = Math.floor(Math.random() * 10) + 2;
+  const concluida = Math.floor(Math.random() * 20) + 10;
+  const cancelada = Math.floor(Math.random() * 5);
+  
   return {
-    total: Math.floor(Math.random() * 50) + 20,
-    emAndamento: Math.floor(Math.random() * 15) + 5,
-    pendente: Math.floor(Math.random() * 10) + 2,
-    concluida: Math.floor(Math.random() * 20) + 10,
-    cancelada: Math.floor(Math.random() * 5)
+    total,
+    emAndamento,
+    pendente,
+    concluida,
+    cancelada,
+    totalAudits: total,
+    inProgressAudits: emAndamento,
+    pendingAudits: pendente,
+    completedAudits: concluida,
+    canceledAudits: cancelada
   };
 };
 

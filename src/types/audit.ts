@@ -21,4 +21,10 @@ export interface AuditSummary {
   inProgressAudits: number;
   completedAudits: number;
   canceledAudits: number;
+  // Adding properties to match what's being used in components
+  total: number;
+  emAndamento: number;
+  pendente: number;
+  concluida: number;
+  cancelada: number;
 }

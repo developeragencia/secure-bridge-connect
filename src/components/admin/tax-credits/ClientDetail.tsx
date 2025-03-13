@@ -12,7 +12,8 @@ import {
 import { Button } from '@/components/ui/button';
 import {
   Building, Calendar, MapPin, Phone, Mail, User, FileText,
-  Check, Clock, FileClock, Receipt, ChevronLeft, Share2, Edit
+  Check, Clock, FileClock, Receipt, ChevronLeft, Share2, Edit,
+  PlusCircle
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
