@@ -119,7 +119,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           <Input
             id="email"
             type="email"
-            placeholder="admin@sistemasclaudio.com"
+            placeholder="Seu e-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -183,13 +183,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           "Entrar"
         )}
       </Button>
-
-      <div className="text-[10px] sm:text-xs text-center text-muted-foreground">
-        <p>Email padrão: <span className="font-medium">admin@sistemasclaudio.com</span></p>
-        <p>Senha padrão: <span className="font-medium">admin123</span></p>
-      </div>
     </motion.form>
   );
 };
 
 export default LoginForm;
+
