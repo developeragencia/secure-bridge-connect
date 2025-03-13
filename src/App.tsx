@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -125,10 +124,7 @@ const App = () => (
           <Route path="/maintenance" element={<Maintenance />} />
           <Route path="/login" element={<Login />} />
           
-          {/* Main admin route */}
           <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
-          
-          {/* All admin subroutes - this handles direct URL access */}
           <Route path="/admin/:tab" element={<ProtectedRoute element={<Admin />} />} />
           <Route path="/admin/:tab/:subRoute" element={<ProtectedRoute element={<Admin />} />} />
           <Route path="/admin/:tab/:subRoute/:id" element={<ProtectedRoute element={<Admin />} />} />

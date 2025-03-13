@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,14 +13,16 @@ export const useAdminUI = () => {
   // Persist active tab to session storage when it changes
   useEffect(() => {
     if (activeTab) {
+      // Always store the active tab in session storage
       sessionStorage.setItem('adminActiveTab', activeTab);
       
-      // Update URL to match the active tab for better bookmarking and refresh handling
-      if (activeTab !== 'dashboard') {
-        navigate(`/admin/${activeTab}`, { replace: true });
-      } else {
-        // For dashboard, keep the URL clean
-        navigate('/admin', { replace: true });
+      // Only update URL if we're not already on the correct path
+      // This prevents unnecessary history entries and potential refresh issues
+      const currentPath = window.location.pathname;
+      const expectedPath = activeTab === 'dashboard' ? '/admin' : `/admin/${activeTab}`;
+      
+      if (currentPath !== expectedPath) {
+        navigate(expectedPath, { replace: true });
       }
     }
   }, [activeTab, navigate]);
@@ -40,10 +43,13 @@ export const useAdminUI = () => {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  // Custom setActiveTab function that also navigates
+  // Custom setActiveTab function
   const handleSetActiveTab = useCallback((tab: string) => {
-    setActiveTab(tab);
-  }, []);
+    // Only update if tab is actually changing
+    if (tab && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+  }, [activeTab]);
   
   // Toggle functions
   const toggleSidebar = useCallback(() => {
