@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useClientStore, Client } from '@/hooks/useClientStore';
+import { useClientStore } from '@/hooks/useClientStore';
+import { Client } from '@/types/client';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -72,7 +72,7 @@ const Clients = () => {
   const handleAddClient = () => {
     const newClient: Client = {
       id: Date.now().toString(),
-      name: newClientData.name || 'New Client', // Ensure name is always provided
+      name: newClientData.name || 'New Client',
       cnpj: newClientData.cnpj || '',
       email: newClientData.email || '',
       phone: newClientData.phone || '',

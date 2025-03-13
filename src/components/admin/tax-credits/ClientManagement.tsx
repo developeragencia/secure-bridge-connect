@@ -41,7 +41,8 @@ const ClientManagement = () => {
       contactPhone: "(11) 3456-7890",
       createdAt: "2023-01-15T10:30:00Z",
       updatedAt: "2023-05-20T14:45:00Z",
-      email: ""
+      email: "",
+      phone: "(11) 3456-7890",
     },
     {
       id: "2",
@@ -58,7 +59,8 @@ const ClientManagement = () => {
       contactPhone: "(11) 2345-6789",
       createdAt: "2023-02-10T09:15:00Z",
       updatedAt: "2023-02-10T09:15:00Z",
-      email: ""
+      email: "",
+      phone: "(11) 2345-6789",
     },
     {
       id: "3",
@@ -75,7 +77,8 @@ const ClientManagement = () => {
       contactPhone: "(11) 4567-8901",
       createdAt: "2023-03-05T11:45:00Z",
       updatedAt: "2023-06-18T16:30:00Z",
-      email: ""
+      email: "",
+      phone: "(11) 4567-8901",
     },
     {
       id: "4",
@@ -92,7 +95,8 @@ const ClientManagement = () => {
       contactPhone: "(11) 5678-9012",
       createdAt: "2023-04-20T08:00:00Z",
       updatedAt: "2023-04-20T08:00:00Z",
-      email: ""
+      email: "",
+      phone: "(11) 5678-9012",
     },
     {
       id: "5",
@@ -109,7 +113,8 @@ const ClientManagement = () => {
       contactPhone: "(11) 6789-0123",
       createdAt: "2023-05-15T14:30:00Z",
       updatedAt: "2023-05-15T14:30:00Z",
-      email: ""
+      email: "",
+      phone: "(11) 6789-0123",
     }
   ];
   

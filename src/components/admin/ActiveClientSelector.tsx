@@ -25,7 +25,8 @@ const mockClients: Client[] = [
     segment: 'Municipal',
     createdAt: '2023-01-01',
     updatedAt: '2023-01-01',
-    email: ''
+    email: '',
+    phone: '(11) 1234-5678',
   },
   {
     id: '2',
@@ -36,7 +37,8 @@ const mockClients: Client[] = [
     segment: 'Estadual',
     createdAt: '2023-02-15',
     updatedAt: '2023-02-15',
-    email: ''
+    email: '',
+    phone: '(11) 2345-6789',
   },
   {
     id: '3',
@@ -47,7 +49,8 @@ const mockClients: Client[] = [
     segment: 'Saúde',
     createdAt: '2023-03-20',
     updatedAt: '2023-03-20',
-    email: ''
+    email: '',
+    phone: '(11) 3456-7890',
   },
   {
     id: '4',
@@ -58,7 +61,8 @@ const mockClients: Client[] = [
     segment: 'Federal',
     createdAt: '2023-04-10',
     updatedAt: '2023-04-10',
-    email: ''
+    email: '',
+    phone: '(11) 4567-8901',
   },
   {
     id: '5',
@@ -69,7 +73,8 @@ const mockClients: Client[] = [
     segment: 'Educação',
     createdAt: '2023-05-05',
     updatedAt: '2023-05-05',
-    email: ''
+    email: '',
+    phone: '(11) 5678-9012',
   },
 ];
 
