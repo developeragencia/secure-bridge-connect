@@ -33,15 +33,17 @@ const SidebarSection = ({
   const handleItemClick = (id: string) => {
     // Only update if the tab is actually changing to prevent re-renders
     if (id === activeTab) return;
-    console.log("Menu item clicked:", id);
+    console.log("Desktop menu item clicked:", id);
     setActiveTab(id);
   };
+
+  const isExpanded = sidebarOpen && expandedSection === section.id;
 
   return (
     <div className="mb-4 w-full">
       {sidebarOpen ? (
         <div 
-          className="flex items-center justify-between py-2 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground"
+          className="flex items-center justify-between py-2 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground rounded-md hover:bg-accent/30"
           onClick={() => toggleSection(section.id)}
         >
           <span>{section.title}</span>
@@ -81,7 +83,7 @@ const SidebarSection = ({
             >
               <div className={cn(
                 "flex items-center",
-                !sidebarOpen && "flex-col gap-1"
+                !sidebarOpen ? "flex-col gap-1" : "w-full"
               )}>
                 <span className={cn(
                   activeTab === item.id 
@@ -91,16 +93,14 @@ const SidebarSection = ({
                 )}>
                   {item.icon}
                 </span>
-                {sidebarOpen && <span className="ml-2">{item.label}</span>}
+                {sidebarOpen && <span className="ml-2 flex-1">{item.label}</span>}
                 {!sidebarOpen && (
                   <span className="text-[10px]">{item.label.split(' ')[0]}</span>
                 )}
+                {activeTab === item.id && sidebarOpen && (
+                  <Sparkles className="h-3.5 w-3.5 text-primary ml-auto" />
+                )}
               </div>
-              {activeTab === item.id && sidebarOpen && (
-                <div className="ml-auto">
-                  <Sparkles className="h-3.5 w-3.5 text-primary" />
-                </div>
-              )}
             </Button>
           </motion.div>
         ))}

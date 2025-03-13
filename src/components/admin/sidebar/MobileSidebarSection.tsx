@@ -2,8 +2,9 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Sparkles } from 'lucide-react';
 import { SidebarSection } from '@/types/admin-sidebar';
+import { motion } from 'framer-motion';
 
 interface MobileSidebarSectionProps {
   section: SidebarSection;
@@ -26,54 +27,68 @@ const MobileSidebarSection = ({
     // Skip if already on this tab to prevent unnecessary rendering
     if (id === activeTab) return;
     
+    console.log("Mobile menu item clicked:", id);
+    
     // Set the active tab and close the mobile menu
     setActiveTab(id);
     toggleMobileMenu();
   };
 
+  const isExpanded = expandedSection === section.id;
+
   return (
     <div className="mb-4 w-full">
       <div 
-        className="flex items-center justify-between py-2 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground"
+        className="flex items-center justify-between py-2 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground rounded-md"
         onClick={() => toggleSection(section.id)}
       >
         <span>{section.title}</span>
         <ChevronDown 
           className={cn(
             "h-3.5 w-3.5 transition-transform duration-200", 
-            expandedSection === section.id ? "transform rotate-0" : "transform rotate(-90deg)"
+            isExpanded ? "transform rotate-0" : "transform rotate(-90deg)"
           )} 
         />
       </div>
       
-      <div className={cn(
-        "space-y-1.5 w-full",
-        expandedSection !== section.id && "hidden"
-      )}>
-        {section.items.map((item) => (
-          <Button 
-            key={item.id}
-            variant={activeTab === item.id ? 'secondary' : 'ghost'} 
-            className={cn(
-              activeTab === item.id 
-                ? "bg-primary/10 text-primary font-medium border-l-2 border-primary"
-                : "hover:bg-secondary/80",
-              "w-full justify-start rounded-md min-h-[40px]"
-            )}
-            onClick={() => handleItemClick(item.id)}
-          >
-            <span className={cn(
-              activeTab === item.id 
-                ? "text-primary" 
-                : "text-muted-foreground group-hover:text-foreground",
-              "transition-colors"
-            )}>
-              {item.icon}
-            </span>
-            <span className="ml-2">{item.label}</span>
-          </Button>
-        ))}
-      </div>
+      {isExpanded && (
+        <motion.div 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-1.5 w-full pl-2"
+        >
+          {section.items.map((item) => (
+            <Button 
+              key={item.id}
+              variant={activeTab === item.id ? 'secondary' : 'ghost'} 
+              className={cn(
+                activeTab === item.id 
+                  ? "bg-primary/10 text-primary font-medium border-l-2 border-primary"
+                  : "hover:bg-secondary/80",
+                "w-full justify-start rounded-md min-h-[40px] transition-all"
+              )}
+              onClick={() => handleItemClick(item.id)}
+            >
+              <div className="flex items-center w-full">
+                <span className={cn(
+                  activeTab === item.id 
+                    ? "text-primary" 
+                    : "text-muted-foreground group-hover:text-foreground",
+                  "transition-colors"
+                )}>
+                  {item.icon}
+                </span>
+                <span className="ml-2 flex-1">{item.label}</span>
+                {activeTab === item.id && (
+                  <Sparkles className="h-3.5 w-3.5 text-primary ml-auto" />
+                )}
+              </div>
+            </Button>
+          ))}
+        </motion.div>
+      )}
     </div>
   );
 };
