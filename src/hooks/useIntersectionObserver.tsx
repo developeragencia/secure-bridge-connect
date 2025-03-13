@@ -5,6 +5,7 @@ interface IntersectionObserverOptions {
   root?: Element | null;
   rootMargin?: string;
   threshold?: number | number[];
+  onIntersect?: (entries: IntersectionObserverEntry[]) => void;
 }
 
 export function useIntersectionObserver<T extends Element>(
@@ -13,30 +14,41 @@ export function useIntersectionObserver<T extends Element>(
     rootMargin: '0px',
     threshold: 0.1,
   }
-): [RefObject<T>, boolean] {
+): { ref: RefObject<T>; isVisible: boolean; observer: IntersectionObserver } {
   const ref = useRef<T>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [observer, setObserver] = useState<IntersectionObserver | null>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
+    const onIntersect = options.onIntersect || (([entry]: IntersectionObserverEntry[]) => {
       if (entry.isIntersecting) {
         setIsVisible(true);
         // Once it's visible, we don't need to observe it anymore
-        if (ref.current) observer.unobserve(ref.current);
+        if (ref.current && observer) observer.unobserve(ref.current);
       }
-    }, options);
+    });
+
+    // Create observer
+    const newObserver = new IntersectionObserver(onIntersect, {
+      root: options.root || null,
+      rootMargin: options.rootMargin || '0px',
+      threshold: options.threshold || 0.1
+    });
+    
+    setObserver(newObserver);
 
     const currentRef = ref.current;
     if (currentRef) {
-      observer.observe(currentRef);
+      newObserver.observe(currentRef);
     }
 
     return () => {
       if (currentRef) {
-        observer.unobserve(currentRef);
+        newObserver.unobserve(currentRef);
       }
+      newObserver.disconnect();
     };
-  }, [options]);
+  }, [options.root, options.rootMargin, options.threshold, options.onIntersect]);
 
-  return [ref, isVisible];
+  return { ref, isVisible, observer: observer! };
 }

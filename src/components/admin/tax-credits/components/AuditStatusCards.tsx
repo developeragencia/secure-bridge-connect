@@ -6,7 +6,7 @@ import { LineChart, CheckCircle, AlertTriangle, Clock } from 'lucide-react';
 
 interface AuditStatusCardsProps {
   summary: AuditSummary;
-  className?: string; // Added className prop
+  className?: string; // Added className as optional prop
 }
 
 const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className }) => {

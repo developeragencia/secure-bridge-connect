@@ -120,10 +120,10 @@ export const useDeclarationData = (id?: string) => {
     }
   ];
 
-  // Sample declaration details
+  // Sample declaration details with title property
   const declarationDetail: DeclarationDetails = {
     id: id || '1',
-    title: 'Declaração de Imposto de Renda 2022', // Add title property
+    title: 'Declaração de Imposto de Renda 2022', // Ensure title property is here
     type: 'Declaração de Imposto de Renda',
     status: 'PENDING',
     periodName: 'Anual 2022',

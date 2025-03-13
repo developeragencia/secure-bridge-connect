@@ -40,7 +40,7 @@ export function useAnimationOnScroll<T extends HTMLElement>(
     const [entry] = entries;
     if (entry.isIntersecting) {
       setIsVisible(true);
-      if (triggerOnce && ref.current) {
+      if (triggerOnce && ref.current && observer) {
         observer.unobserve(ref.current);
       }
     } else if (!triggerOnce) {
@@ -49,17 +49,17 @@ export function useAnimationOnScroll<T extends HTMLElement>(
   };
 
   const { observer } = useIntersectionObserver({
-    onIntersect,
     threshold,
     rootMargin,
+    onIntersect
   });
 
   useEffect(() => {
-    if (ref.current) {
+    if (ref.current && observer) {
       observer.observe(ref.current);
     }
     return () => {
-      if (ref.current) {
+      if (ref.current && observer) {
         observer.unobserve(ref.current);
       }
     };
