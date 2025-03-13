@@ -29,45 +29,37 @@ export function useRealtimeUpdates({
     // Create channel for real-time updates
     const channel = supabase
       .channel('schema-db-changes')
-      .on(
-        'postgres_changes', // This needs to be passed as the first argument to the 'on' method
-        { 
-          event: events, 
-          schema: 'public', 
-          table: tableName 
-        },
-        (payload) => {
-          console.log(`Realtime update for ${tableName}:`, payload);
-          
-          // Handle different events
-          if (payload.eventType === 'INSERT') {
-            if (showToasts) {
-              toast.success(`Novo registro adicionado`, {
-                description: `Um novo registro foi adicionado à tabela ${tableName}`,
-              });
-            }
-            if (onInsert) onInsert(payload.new);
-          } 
-          
-          else if (payload.eventType === 'UPDATE') {
-            if (showToasts) {
-              toast.info(`Registro atualizado`, {
-                description: `Um registro foi atualizado na tabela ${tableName}`,
-              });
-            }
-            if (onUpdate) onUpdate(payload.new);
-          } 
-          
-          else if (payload.eventType === 'DELETE') {
-            if (showToasts) {
-              toast.info(`Registro removido`, {
-                description: `Um registro foi removido da tabela ${tableName}`,
-              });
-            }
-            if (onDelete) onDelete(payload.old);
+      .on('postgres_changes', { event: events, schema: 'public', table: tableName }, (payload) => {
+        console.log(`Realtime update for ${tableName}:`, payload);
+        
+        // Handle different events
+        if (payload.eventType === 'INSERT') {
+          if (showToasts) {
+            toast.success(`Novo registro adicionado`, {
+              description: `Um novo registro foi adicionado à tabela ${tableName}`,
+            });
           }
+          if (onInsert) onInsert(payload.new);
+        } 
+        
+        else if (payload.eventType === 'UPDATE') {
+          if (showToasts) {
+            toast.info(`Registro atualizado`, {
+              description: `Um registro foi atualizado na tabela ${tableName}`,
+            });
+          }
+          if (onUpdate) onUpdate(payload.new);
+        } 
+        
+        else if (payload.eventType === 'DELETE') {
+          if (showToasts) {
+            toast.info(`Registro removido`, {
+              description: `Um registro foi removido da tabela ${tableName}`,
+            });
+          }
+          if (onDelete) onDelete(payload.old);
         }
-      )
+      })
       .subscribe((status) => {
         console.log(`Realtime subscription status for ${tableName}:`, status);
         setIsListening(status === 'SUBSCRIBED');
