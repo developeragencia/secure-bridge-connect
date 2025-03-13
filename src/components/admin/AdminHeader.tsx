@@ -79,7 +79,7 @@ const AdminHeader = ({
             </div>
             <div>
               <h1 className="text-base sm:text-lg font-semibold leading-none">PAINEL ADMINISTRATIVO</h1>
-              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">Sistemas Claudio</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">Sistemas Claudio Figueiredo</p>
             </div>
           </div>
           

@@ -58,7 +58,7 @@ const AdminMobileSidebar = ({
             </div>
             <div>
               <h2 className="text-base font-semibold">PAINEL ADMINISTRATIVO</h2>
-              <p className="text-[10px] text-muted-foreground">Sistemas Claudio</p>
+              <p className="text-[10px] text-muted-foreground">Sistemas Claudio Figueiredo</p>
             </div>
           </div>
           <Button variant="ghost" size="icon" onClick={toggleMobileMenu}>

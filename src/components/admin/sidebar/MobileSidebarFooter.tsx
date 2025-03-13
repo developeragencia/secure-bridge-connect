@@ -32,7 +32,7 @@ const MobileSidebarFooter = ({ handleLogout }: MobileSidebarFooterProps) => {
       </div>
       
       <div className="text-xs text-muted-foreground text-center mt-3">
-        v1.0.0 &copy; 2023 Sistemas Claudio
+        v1.0.0 &copy; 2023 Sistemas Claudio Figueiredo
       </div>
     </div>
   );
