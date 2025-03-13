@@ -24,8 +24,10 @@ const AttachmentsCard: React.FC<AttachmentsCardProps> = ({ attachments, formatDa
               <div className="flex items-center">
                 <FileText className="h-5 w-5 mr-3 text-muted-foreground" />
                 <div>
-                  <p className="font-medium">{attachment.name}</p>
-                  <p className="text-sm text-muted-foreground">{attachment.size} • {formatDate(attachment.date)}</p>
+                  <p className="font-medium">{attachment.fileName || attachment.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {attachment.fileSize ? `${attachment.fileSize} bytes` : attachment.size} • {formatDate(attachment.uploadedAt || attachment.date)}
+                  </p>
                 </div>
               </div>
               <Button variant="ghost" size="icon">

@@ -8,7 +8,7 @@ export interface TaxCredit {
   documentNumber: string;
   creditType: string;
   creditAmount: number;
-  originalAmount?: number; // Add this for FinancialSummaryCard
+  originalAmount?: number;
   periodStart: string | Date;
   periodEnd: string | Date;
   status: StatusType;

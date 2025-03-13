@@ -1,70 +1,65 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileSearch, Clock, Calendar, CheckCircle } from 'lucide-react';
 import { AuditSummary } from '@/types/audit';
+import { LineChart, CheckCircle, AlertTriangle, Clock } from 'lucide-react';
 
 interface AuditStatusCardsProps {
   summary: AuditSummary;
-  className?: string;
 }
 
-const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className }) => {
+const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary }) => {
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 ${className || ''}`}>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Total de Auditorias
-          </CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Total de Auditorias</CardTitle>
+          <LineChart className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.totalAudits || summary.total || 0}</div>
-            <FileSearch className="h-5 w-5 text-muted-foreground" />
-          </div>
+          <div className="text-2xl font-bold">{summary.totalAudits || summary.total}</div>
+          <p className="text-xs text-muted-foreground">
+            Todas as auditorias no sistema
+          </p>
         </CardContent>
       </Card>
       
       <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Em Andamento
-          </CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Em Andamento</CardTitle>
+          <Clock className="h-4 w-4 text-blue-500" />
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.inProgressAudits || summary.emAndamento || 0}</div>
-            <Clock className="h-5 w-5 text-blue-500" />
-          </div>
+          <div className="text-2xl font-bold">{summary.inProgressAudits || summary.emAndamento}</div>
+          <p className="text-xs text-muted-foreground">
+            Auditorias em processamento
+          </p>
         </CardContent>
       </Card>
       
       <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Pendentes
-          </CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Pendentes</CardTitle>
+          <AlertTriangle className="h-4 w-4 text-yellow-500" />
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.pendingAudits || summary.pendentes || 0}</div>
-            <Calendar className="h-5 w-5 text-yellow-500" />
-          </div>
+          <div className="text-2xl font-bold">{summary.pendingAudits || summary.pendentes}</div>
+          <p className="text-xs text-muted-foreground">
+            Auditorias aguardando início
+          </p>
         </CardContent>
       </Card>
       
       <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Concluídas
-          </CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Concluídas</CardTitle>
+          <CheckCircle className="h-4 w-4 text-green-500" />
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.completedAudits || summary.concluidas || 0}</div>
-            <CheckCircle className="h-5 w-5 text-green-500" />
-          </div>
+          <div className="text-2xl font-bold">{summary.completedAudits || summary.concluidas}</div>
+          <p className="text-xs text-muted-foreground">
+            Auditorias finalizadas
+          </p>
         </CardContent>
       </Card>
     </div>

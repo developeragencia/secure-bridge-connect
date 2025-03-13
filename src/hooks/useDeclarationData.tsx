@@ -1,9 +1,8 @@
 
 import { useState } from 'react';
-import { Declaration, StatusType } from '@/types/declarations';
+import { Declaration, StatusType, DeclarationDetails, Attachment, HistoryItem } from '@/types/declarations';
 
-// No need for DeclarationType since we've defined it in declarations.ts
-export const useDeclarationData = () => {
+export const useDeclarationData = (id?: string) => {
   const [declarations, setDeclarations] = useState<Declaration[]>([
     {
       id: '1',
@@ -56,6 +55,90 @@ export const useDeclarationData = () => {
     }
   ]);
 
+  // Sample attachments
+  const sampleAttachments: Attachment[] = [
+    {
+      id: 'att-1',
+      fileName: 'Declaração IRPJ.pdf',
+      fileSize: 1024000,
+      fileType: 'application/pdf',
+      uploadedAt: '2023-01-20T14:30:00Z',
+      uploadedBy: 'João Silva',
+      downloadUrl: '/downloads/declaration-irpj.pdf',
+      name: 'Declaração IRPJ.pdf',
+      size: '1 MB',
+      date: '2023-01-20T14:30:00Z'
+    },
+    {
+      id: 'att-2',
+      fileName: 'Comprovantes.zip',
+      fileSize: 3072000,
+      fileType: 'application/zip',
+      uploadedAt: '2023-01-25T10:15:00Z',
+      uploadedBy: 'Maria Oliveira',
+      downloadUrl: '/downloads/receipts.zip',
+      name: 'Comprovantes.zip',
+      size: '3 MB',
+      date: '2023-01-25T10:15:00Z'
+    },
+    {
+      id: 'att-3',
+      fileName: 'Balanço Patrimonial.xlsx',
+      fileSize: 512000,
+      fileType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      uploadedAt: '2023-01-30T09:45:00Z',
+      uploadedBy: 'Carlos Souza',
+      downloadUrl: '/downloads/balance-sheet.xlsx',
+      name: 'Balanço Patrimonial.xlsx',
+      size: '500 KB',
+      date: '2023-01-30T09:45:00Z'
+    }
+  ];
+
+  // Sample history items
+  const sampleHistory: HistoryItem[] = [
+    {
+      id: 'hist-1',
+      action: 'Declaração criada',
+      date: '2023-01-15T10:30:00Z',
+      user: 'João Silva',
+      status: 'PENDING'
+    },
+    {
+      id: 'hist-2',
+      action: 'Documentos anexados',
+      date: '2023-01-20T14:30:00Z',
+      user: 'Maria Oliveira',
+      details: 'Adicionados 3 documentos'
+    },
+    {
+      id: 'hist-3',
+      action: 'Em processamento',
+      date: '2023-01-25T09:15:00Z',
+      user: 'Sistema',
+      status: 'PROCESSING'
+    }
+  ];
+
+  // Sample declaration details
+  const declarationDetail: DeclarationDetails = {
+    id: id || '1',
+    type: 'Declaração de Imposto de Renda',
+    status: 'PENDING',
+    periodName: 'Anual 2022',
+    fiscalYear: '2022',
+    dueDate: '2023-04-30T23:59:59Z',
+    submissionDate: '2023-01-15T10:30:00Z',
+    protocol: 'IRPJ2022123456789',
+    amount: 'R$ 25.000,00',
+    taxOffice: 'Delegacia da Receita Federal São Paulo',
+    submittedBy: 'João Silva',
+    company: 'Empresa XYZ Ltda',
+    cnpj: '12.345.678/0001-99',
+    attachments: sampleAttachments,
+    history: sampleHistory
+  };
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,11 +165,17 @@ export const useDeclarationData = () => {
     );
   };
 
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('pt-BR');
+  };
+
   return { 
     declarations, 
+    declaration: declarationDetail,
     loading, 
     error, 
     fetchDeclarations,
-    updateDeclarationStatus
+    updateDeclarationStatus,
+    formatDate
   };
 };

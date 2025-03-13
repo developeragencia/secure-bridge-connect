@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DeclarationType } from '@/types/declarations';
+import { DeclarationDetails } from '@/types/declarations';
 
 interface CompanyInfoCardProps {
-  declaration: DeclarationType;
+  declaration: DeclarationDetails;
 }
 
 const CompanyInfoCard: React.FC<CompanyInfoCardProps> = ({ declaration }) => {

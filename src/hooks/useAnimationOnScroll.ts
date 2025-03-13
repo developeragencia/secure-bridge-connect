@@ -1,7 +1,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 
-type TransitionType = 'fade-in' | 'slide-up' | 'slide-in-right' | 'zoom-in';
+type TransitionType = 'fade-in' | 'slide-up' | 'slide-in-right' | 'zoom-in' | 'fade-in-right' | 'fade-in-left';
 
 interface AnimationOptions {
   threshold?: number;
@@ -58,6 +58,10 @@ export const useAnimationOnScroll = <T extends HTMLElement>({
         initialClasses = !isVisible ? 'opacity-0 translate-y-10' : '';
         break;
       case 'slide-in-right':
+      case 'fade-in-right':
+        initialClasses = !isVisible ? 'opacity-0 translate-x-10' : '';
+        break;
+      case 'fade-in-left':
         initialClasses = !isVisible ? 'opacity-0 translate-x-10' : '';
         break;
       case 'zoom-in':

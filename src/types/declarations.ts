@@ -41,6 +41,10 @@ export interface Attachment {
   uploadedAt: string;
   uploadedBy: string;
   downloadUrl: string;
+  // Add properties needed by AttachmentsCard
+  name: string;
+  size: string;
+  date: string;
 }
 
 export interface HistoryItem {
@@ -53,3 +57,22 @@ export interface HistoryItem {
 }
 
 export type DeclarationType = 'TAX_RETURN' | 'FINANCIAL_STATEMENT' | 'AUDIT_REPORT' | 'REGULATORY_FILING';
+
+// Add a new interface for declaration details
+export interface DeclarationDetails {
+  id: string;
+  type: string;
+  status: StatusType;
+  periodName: string;
+  fiscalYear: string;
+  dueDate: string;
+  submissionDate?: string;
+  protocol: string;
+  amount: string;
+  taxOffice: string;
+  submittedBy: string;
+  company: string;
+  cnpj: string;
+  attachments: Attachment[];
+  history: HistoryItem[];
+}

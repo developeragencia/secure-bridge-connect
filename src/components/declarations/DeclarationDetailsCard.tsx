@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Edit, Printer, Download } from 'lucide-react';
 import StatusBadge from '@/components/admin/tax-credits/components/StatusBadge';
-import { DeclarationType } from '@/types/declarations';
+import { DeclarationDetails } from '@/types/declarations';
 
 interface DeclarationDetailsCardProps {
-  declaration: DeclarationType;
+  declaration: DeclarationDetails;
   formatDate: (date: string) => string;
 }
 
