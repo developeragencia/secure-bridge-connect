@@ -10,82 +10,101 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
-import { Client } from '@/types/tax-credits';
+import { Client } from '@/types/client';
+import { useActiveClient } from '@/hooks/useActiveClient';
+import { useNavigate } from 'react-router-dom';
 import { 
   Building, Users, PlusCircle, Search, FileDown, FileUp, 
-  Settings, Eye, Edit, Trash2 
+  Settings, Eye, Edit, Trash2, CheckCircle 
 } from 'lucide-react';
 
 const ClientManagement = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const { activeClient, setActiveClient } = useActiveClient();
   
   // Mock data for clients
   const clients: Client[] = [
     {
       id: "1",
       name: "Empresa ABC Ltda",
-      documentNumber: "12.345.678/0001-90",
-      email: "contato@empresaabc.com.br",
-      phone: "(11) 3456-7890",
+      cnpj: "12.345.678/0001-90",
+      status: 'active',
+      type: 'private',
+      segment: "Tecnologia",
       address: "Av. Paulista, 1000, São Paulo - SP",
-      contactPerson: "João Silva",
-      industry: "Tecnologia",
+      city: "São Paulo",
+      state: "SP",
+      contactName: "João Silva",
+      contactEmail: "contato@empresaabc.com.br",
+      contactPhone: "(11) 3456-7890",
       createdAt: "2023-01-15T10:30:00Z",
-      updatedAt: "2023-05-20T14:45:00Z",
-      status: "ACTIVE"
+      updatedAt: "2023-05-20T14:45:00Z"
     },
     {
       id: "2",
       name: "Indústria XYZ S.A.",
-      documentNumber: "23.456.789/0001-10",
-      email: "financeiro@industriaxyz.com.br",
-      phone: "(11) 2345-6789",
+      cnpj: "23.456.789/0001-10",
+      status: 'active',
+      type: 'public',
+      segment: "Manufatura",
       address: "Rua Industrial, 500, Guarulhos - SP",
-      contactPerson: "Maria Oliveira",
-      industry: "Manufatura",
+      city: "Guarulhos",
+      state: "SP",
+      contactName: "Maria Oliveira",
+      contactEmail: "financeiro@industriaxyz.com.br",
+      contactPhone: "(11) 2345-6789",
       createdAt: "2023-02-10T09:15:00Z",
-      updatedAt: "2023-02-10T09:15:00Z",
-      status: "ACTIVE"
+      updatedAt: "2023-02-10T09:15:00Z"
     },
     {
       id: "3",
       name: "Comércio DEF Eireli",
-      documentNumber: "34.567.890/0001-21",
-      email: "contato@comerciodef.com.br",
-      phone: "(11) 4567-8901",
+      cnpj: "34.567.890/0001-21",
+      status: 'inactive',
+      type: 'private',
+      segment: "Varejo",
       address: "Rua Comercial, 200, Campinas - SP",
-      contactPerson: "Carlos Santos",
-      industry: "Varejo",
+      city: "Campinas",
+      state: "SP",
+      contactName: "Carlos Santos",
+      contactEmail: "contato@comerciodef.com.br",
+      contactPhone: "(11) 4567-8901",
       createdAt: "2023-03-05T11:45:00Z",
-      updatedAt: "2023-06-18T16:30:00Z",
-      status: "INACTIVE"
+      updatedAt: "2023-06-18T16:30:00Z"
     },
     {
       id: "4",
       name: "Serviços GHI S.A.",
-      documentNumber: "45.678.901/0001-32",
-      email: "atendimento@servicosghi.com.br",
-      phone: "(11) 5678-9012",
+      cnpj: "45.678.901/0001-32",
+      status: 'active',
+      type: 'public',
+      segment: "Consultoria",
       address: "Av. Brasil, 1500, Rio de Janeiro - RJ",
-      contactPerson: "Ana Souza",
-      industry: "Consultoria",
+      city: "Rio de Janeiro",
+      state: "RJ",
+      contactName: "Ana Souza",
+      contactEmail: "atendimento@servicosghi.com.br",
+      contactPhone: "(11) 5678-9012",
       createdAt: "2023-04-20T08:00:00Z",
-      updatedAt: "2023-04-20T08:00:00Z",
-      status: "ACTIVE"
+      updatedAt: "2023-04-20T08:00:00Z"
     },
     {
       id: "5",
       name: "Transportes JKL Ltda",
-      documentNumber: "56.789.012/0001-43",
-      email: "operacoes@transportesjkl.com.br",
-      phone: "(11) 6789-0123",
+      cnpj: "56.789.012/0001-43",
+      status: 'active',
+      type: 'private',
+      segment: "Logística",
       address: "Rodovia BR 101, Km 200, Florianópolis - SC",
-      contactPerson: "Roberto Lima",
-      industry: "Logística",
+      city: "Florianópolis",
+      state: "SC",
+      contactName: "Roberto Lima",
+      contactEmail: "operacoes@transportesjkl.com.br",
+      contactPhone: "(11) 6789-0123",
       createdAt: "2023-05-15T14:30:00Z",
-      updatedAt: "2023-05-15T14:30:00Z",
-      status: "ACTIVE"
+      updatedAt: "2023-05-15T14:30:00Z"
     }
   ];
   
@@ -110,27 +129,39 @@ const ClientManagement = () => {
     });
   };
   
-  const handleViewClient = (clientId: string) => {
-    toast({
-      title: "Visualizar cliente",
-      description: `Visualizando detalhes do cliente ID: ${clientId}`,
-    });
+  const handleViewClient = (client: Client) => {
+    navigate(`/admin/client-${client.id}`);
   };
   
-  const handleEditClient = (clientId: string) => {
+  const handleEditClient = (client: Client) => {
     toast({
       title: "Editar cliente",
-      description: `Editando cliente ID: ${clientId}`,
+      description: `Editando cliente: ${client.name}`,
     });
   };
   
-  const handleDeleteClient = (clientId: string) => {
+  const handleDeleteClient = (client: Client) => {
     toast({
-      title: "Excluir cliente",
-      description: `Cliente ID: ${clientId} excluído com sucesso`,
       variant: "destructive",
+      title: "Excluir cliente",
+      description: `Cliente ${client.name} excluído com sucesso`,
     });
   };
+  
+  const handleSetActiveClient = (client: Client) => {
+    setActiveClient(client);
+    toast({
+      title: "Cliente ativo definido",
+      description: `${client.name} definido como cliente ativo`,
+    });
+  };
+  
+  const filteredClients = clients.filter(client => 
+    client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    client.cnpj.includes(searchQuery) ||
+    (client.contactName && client.contactName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (client.contactEmail && client.contactEmail.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
   
   return (
     <div className="space-y-6">
@@ -159,7 +190,7 @@ const ClientManagement = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold">
-                {clients.filter(c => c.status === "ACTIVE").length}
+                {clients.filter(c => c.status === "active").length}
               </div>
               <Users className="h-5 w-5 text-green-500" />
             </div>
@@ -175,7 +206,7 @@ const ClientManagement = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold">
-                {clients.filter(c => c.status === "INACTIVE").length}
+                {clients.filter(c => c.status === "inactive").length}
               </div>
               <Users className="h-5 w-5 text-red-500" />
             </div>
@@ -238,19 +269,19 @@ const ClientManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {clients.map((client) => (
-                <TableRow key={client.id}>
+              {filteredClients.map((client) => (
+                <TableRow key={client.id} className="cursor-pointer" onClick={() => handleViewClient(client)}>
                   <TableCell className="font-medium">{client.name}</TableCell>
-                  <TableCell>{client.documentNumber}</TableCell>
-                  <TableCell>{client.contactPerson}</TableCell>
-                  <TableCell>{client.email}</TableCell>
-                  <TableCell>{client.phone}</TableCell>
+                  <TableCell>{client.cnpj}</TableCell>
+                  <TableCell>{client.contactName}</TableCell>
+                  <TableCell>{client.contactEmail}</TableCell>
+                  <TableCell>{client.contactPhone}</TableCell>
                   <TableCell>
-                    <Badge className={client.status === "ACTIVE" 
+                    <Badge className={client.status === "active" 
                       ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
                       : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
                     }>
-                      {client.status === "ACTIVE" ? "Ativo" : "Inativo"}
+                      {client.status === "active" ? "Ativo" : "Inativo"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -258,21 +289,41 @@ const ClientManagement = () => {
                       <Button 
                         variant="ghost" 
                         size="icon"
-                        onClick={() => handleViewClient(client.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSetActiveClient(client);
+                        }}
+                        title="Definir como cliente ativo"
+                      >
+                        <CheckCircle className={`h-4 w-4 ${activeClient?.id === client.id ? 'text-primary' : ''}`} />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewClient(client);
+                        }}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
                       <Button 
                         variant="ghost" 
                         size="icon"
-                        onClick={() => handleEditClient(client.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClient(client);
+                        }}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button 
                         variant="ghost" 
                         size="icon"
-                        onClick={() => handleDeleteClient(client.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClient(client);
+                        }}
                       >
                         <Trash2 className="h-4 w-4 text-red-500" />
                       </Button>
@@ -285,7 +336,7 @@ const ClientManagement = () => {
         </CardContent>
         <CardFooter className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            Mostrando {clients.length} de {clients.length} clientes
+            Mostrando {filteredClients.length} de {clients.length} clientes
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" disabled>

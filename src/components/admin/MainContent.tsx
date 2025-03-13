@@ -15,6 +15,7 @@ import RecoveryManagement from '@/components/admin/tax-credits/RecoveryManagemen
 import AdminUserProfile from '@/components/admin/AdminUserProfile';
 import ActiveClientHeader from '@/components/admin/ActiveClientHeader';
 import { useActiveClient } from '@/hooks/useActiveClient';
+import ClientDetail from '@/components/admin/tax-credits/ClientDetail';
 
 interface MainContentProps {
   activeTab: string;
@@ -45,6 +46,10 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
     }
   };
 
+  // Check if we're on a client detail view
+  const isClientDetail = activeTab.startsWith('client-');
+  const clientId = isClientDetail ? activeTab.replace('client-', '') : '';
+
   return (
     <motion.main 
       className="flex-1 overflow-auto bg-background"
@@ -72,6 +77,9 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {activeTab === 'clients' && <ClientManagement />}
             {activeTab === 'audits' && <AuditManagement />}
             {activeTab === 'recovery' && <RecoveryManagement />}
+            
+            {/* Client detail view */}
+            {isClientDetail && <ClientDetail clientId={clientId} />}
             
             <ExtraTabContent activeTab={activeTab} />
           </motion.div>
