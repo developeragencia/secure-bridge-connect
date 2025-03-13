@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { format } from 'date-fns';
-import { SelicRate, MonetaryCorrection } from './types';
+import { ptBR } from 'date-fns/locale';
+import { SelicRate, MonetaryCorrection, SelicAPIResponse } from './types';
 import { generateMockSelicRates } from './utils';
 
 // Mock corrections data

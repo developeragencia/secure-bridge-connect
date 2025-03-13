@@ -16,3 +16,10 @@ export type MonetaryCorrection = {
   months: number;
   accumulatedRate: number;
 };
+
+export type SelicAPIResponse = {
+  data: {
+    date: string;
+    value: number;
+  }[];
+};

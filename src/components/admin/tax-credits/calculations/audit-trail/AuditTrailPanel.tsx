@@ -1,63 +1,43 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { DownloadCloud } from 'lucide-react';
-import { useAuditTrail } from './useAuditTrail';
 import AuditFilters from './components/AuditFilters';
 import AuditTable from './components/AuditTable';
-import AuditDetailDialog from './components/AuditDetailDialog';
+import { Card } from '@/components/ui/card';
+import { useAuditTrail } from './useAuditTrail';
 
 const AuditTrailPanel: React.FC = () => {
   const {
+    auditLogs,
+    filteredLogs,
     searchQuery,
-    handleSearch,
-    actionFilter,
-    setActionFilter,
+    setSearchQuery,
     userFilter,
     setUserFilter,
-    selectedAudit,
-    isDetailsOpen,
-    setIsDetailsOpen,
-    filteredAudits,
-    viewDetails,
-    uniqueUsers,
+    actionFilter,
+    setActionFilter,
+    dateFilter,
+    setDateFilter,
+    isLoading,
+    exportAuditLogs,
   } = useAuditTrail();
-  
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h3 className="text-lg font-medium">Histórico Detalhado de Auditoria</h3>
-        <Button variant="outline">
-          <DownloadCloud className="mr-2 h-4 w-4" />
-          Exportar Logs
-        </Button>
-      </div>
-      
-      <Card>
-        <CardContent className="pt-6 space-y-4">
-          <AuditFilters
-            searchQuery={searchQuery}
-            onSearchChange={handleSearch}
-            actionFilter={actionFilter}
-            onActionFilterChange={setActionFilter}
-            userFilter={userFilter}
-            onUserFilterChange={setUserFilter}
-            uniqueUsers={uniqueUsers}
-          />
-          
-          <AuditTable 
-            audits={filteredAudits} 
-            onViewDetails={viewDetails} 
-          />
-        </CardContent>
+      <Card className="p-6">
+        <AuditFilters
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          userFilter={userFilter}
+          setUserFilter={setUserFilter}
+          actionFilter={actionFilter}
+          setActionFilter={setActionFilter}
+          dateFilter={dateFilter}
+          setDateFilter={setDateFilter}
+          onExport={exportAuditLogs}
+        />
       </Card>
-      
-      <AuditDetailDialog
-        open={isDetailsOpen}
-        onOpenChange={setIsDetailsOpen}
-        auditData={selectedAudit}
-      />
+
+      <AuditTable logs={filteredLogs} isLoading={isLoading} />
     </div>
   );
 };
