@@ -7,8 +7,10 @@ export const useAuditTrail = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [actionFilter, setActionFilter] = useState<string>("all");
   const [userFilter, setUserFilter] = useState<string>("all");
+  const [dateFilter, setDateFilter] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
   const [selectedAudit, setSelectedAudit] = useState<AuditTrail | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   // Get all audit logs (in a real app, this would be fetched from an API)
   const auditLogs: AuditTrail[] = useMemo(() => {
@@ -39,13 +41,8 @@ export const useAuditTrail = () => {
     }
   }, [auditLogs]);
   
-  // Handle search input changes
-  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  }, []);
-  
   // Filter audit logs based on search query and filters
-  const filteredAudits = useMemo(() => {
+  const filteredLogs = useMemo(() => {
     try {
       return auditLogs.filter(log => {
         // Apply search filter
@@ -61,13 +58,18 @@ export const useAuditTrail = () => {
         // Apply user filter
         const matchesUser = userFilter === "all" || log.userName === userFilter;
         
-        return matchesSearch && matchesAction && matchesUser;
+        // Apply date filter
+        const logDate = new Date(log.date);
+        const matchesDateFrom = !dateFilter.from || logDate >= dateFilter.from;
+        const matchesDateTo = !dateFilter.to || logDate <= dateFilter.to;
+        
+        return matchesSearch && matchesAction && matchesUser && matchesDateFrom && matchesDateTo;
       });
     } catch (error) {
       console.error("Error filtering audits:", error);
       return [];
     }
-  }, [auditLogs, searchQuery, actionFilter, userFilter]);
+  }, [auditLogs, searchQuery, actionFilter, userFilter, dateFilter]);
   
   // Open detail dialog for a specific audit log
   const viewDetails = useCallback((audit: AuditTrail) => {
@@ -75,18 +77,53 @@ export const useAuditTrail = () => {
     setIsDetailsOpen(true);
   }, []);
   
+  // Export audit logs
+  const exportAuditLogs = useCallback(() => {
+    try {
+      setIsLoading(true);
+      
+      // Mock export functionality - in a real app, this would call an API
+      setTimeout(() => {
+        const csvContent = 
+          "data:text/csv;charset=utf-8," + 
+          "ID,Date,User,Action,Resource,Details\n" + 
+          filteredLogs.map(log => 
+            `${log.id},${log.date.toLocaleString()},${log.userName},${log.action},${log.resourceName},"${log.details}"`
+          ).join("\n");
+          
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `audit_logs_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        setIsLoading(false);
+      }, 1000);
+    } catch (error) {
+      console.error("Error exporting audit logs:", error);
+      setIsLoading(false);
+    }
+  }, [filteredLogs]);
+  
   return {
+    auditLogs,
+    filteredLogs,
     searchQuery,
-    handleSearch,
-    actionFilter,
-    setActionFilter,
+    setSearchQuery,
     userFilter,
     setUserFilter,
+    actionFilter,
+    setActionFilter,
+    dateFilter,
+    setDateFilter,
     selectedAudit,
     isDetailsOpen,
     setIsDetailsOpen,
-    filteredAudits,
+    isLoading,
     viewDetails,
     uniqueUsers,
+    exportAuditLogs,
   };
 };

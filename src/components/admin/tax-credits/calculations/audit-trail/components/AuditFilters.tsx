@@ -8,26 +8,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 import { AuditAction } from '../types';
 
 interface AuditFiltersProps {
   searchQuery: string;
-  onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setSearchQuery: (value: string) => void;
   actionFilter: string | null;
-  onActionFilterChange: (value: string) => void;
+  setActionFilter: (value: string) => void;
   userFilter: string | null;
-  onUserFilterChange: (value: string) => void;
-  uniqueUsers: { id: string; name: string }[];
+  setUserFilter: (value: string) => void;
+  dateFilter: { from: Date | null; to: Date | null };
+  setDateFilter: (value: { from: Date | null; to: Date | null }) => void;
+  onExport: () => void;
 }
 
 const AuditFilters: React.FC<AuditFiltersProps> = ({
   searchQuery,
-  onSearchChange,
+  setSearchQuery,
   actionFilter,
-  onActionFilterChange,
+  setActionFilter,
   userFilter,
-  onUserFilterChange,
-  uniqueUsers,
+  setUserFilter,
+  dateFilter,
+  setDateFilter,
+  onExport,
 }) => {
   // Action types for filter
   const actionTypes: { label: string; value: AuditAction | "all" }[] = [
@@ -41,52 +47,48 @@ const AuditFilters: React.FC<AuditFiltersProps> = ({
     { label: "Importação", value: "import" },
   ];
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
   return (
-    <div className="flex flex-col sm:flex-row gap-4 p-4">
-      <div className="flex-1">
-        <Input
-          placeholder="Buscar nos logs de auditoria..."
-          value={searchQuery}
-          onChange={onSearchChange}
-          className="w-full"
-        />
-      </div>
-      
-      <div className="flex-1 sm:max-w-[200px]">
-        <Select
-          value={actionFilter || "all"}
-          onValueChange={onActionFilterChange}
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <Input
+            placeholder="Buscar nos logs de auditoria..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full"
+          />
+        </div>
+        
+        <div className="flex-1 sm:max-w-[200px]">
+          <Select
+            value={actionFilter || "all"}
+            onValueChange={setActionFilter}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Tipo de Ação" />
+            </SelectTrigger>
+            <SelectContent>
+              {actionTypes.map((type) => (
+                <SelectItem key={type.value} value={type.value}>
+                  {type.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <Button 
+          variant="outline" 
+          onClick={onExport}
+          className="sm:ml-auto"
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Tipo de Ação" />
-          </SelectTrigger>
-          <SelectContent>
-            {actionTypes.map((type) => (
-              <SelectItem key={type.value} value={type.value}>
-                {type.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      
-      <div className="flex-1 sm:max-w-[200px]">
-        <Select
-          value={userFilter || "all"}
-          onValueChange={onUserFilterChange}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Usuário" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos Usuários</SelectItem>
-            {uniqueUsers.map((user) => (
-              <SelectItem key={user.id} value={user.id}>
-                {user.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Download className="h-4 w-4 mr-2" />
+          Exportar
+        </Button>
       </div>
     </div>
   );
