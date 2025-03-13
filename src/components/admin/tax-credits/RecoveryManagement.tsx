@@ -6,7 +6,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { RecoveryProcess } from '@/types/recovery';
 
-// Import new components
+// Import components
 import RecoverySummaryCards from './components/recovery/RecoverySummaryCards';
 import RecoveryHeader from './components/recovery/RecoveryHeader';
 import RecoveryFilters from './components/recovery/RecoveryFilters';
@@ -110,7 +110,12 @@ const RecoveryManagement = () => {
     });
   };
   
-  console.log("Rendering RecoveryManagement component");
+  const handleNewProcess = () => {
+    toast({
+      title: "Novo processo",
+      description: "Iniciando cadastro de novo processo de recuperação",
+    });
+  };
   
   return (
     <div className="space-y-6">
@@ -118,7 +123,7 @@ const RecoveryManagement = () => {
       
       <Card>
         <CardHeader>
-          <RecoveryHeader />
+          <RecoveryHeader onNewProcess={handleNewProcess} />
           <RecoveryFilters 
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
