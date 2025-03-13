@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
 import { 
   Loader2, Check, Construction, 
   Wrench, AlertCircle, Timer, 
-  ShieldAlert, cn
+  ShieldAlert
 } from 'lucide-react';
 
 const MaintenanceSettings = () => {
