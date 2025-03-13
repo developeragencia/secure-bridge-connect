@@ -6,11 +6,12 @@ import { AuditSummary } from '@/types/audit';
 
 interface AuditStatusCardsProps {
   summary: AuditSummary;
+  className?: string; // Added className prop
 }
 
-const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary }) => {
+const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className={`grid grid-cols-1 md:grid-cols-4 gap-4 ${className || ''}`}>
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">

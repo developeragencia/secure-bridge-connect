@@ -19,15 +19,19 @@ export const getStatusLabel = (status: string): string => {
 interface AuditFiltersProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  filterStatus: string | undefined;
-  setFilterStatus: (status: string | undefined) => void;
+  statusFilter: string; // Changed from filterStatus
+  setStatusFilter: (status: string) => void; // Changed from setFilterStatus
+  typeFilter: string; // Added typeFilter
+  setTypeFilter: (type: string) => void; // Added setTypeFilter
 }
 
 const AuditFilters: React.FC<AuditFiltersProps> = ({ 
   searchQuery, 
   setSearchQuery, 
-  filterStatus, 
-  setFilterStatus 
+  statusFilter, 
+  setStatusFilter,
+  typeFilter,
+  setTypeFilter
 }) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mt-4">
@@ -41,11 +45,11 @@ const AuditFilters: React.FC<AuditFiltersProps> = ({
         />
       </div>
       <div>
-        <Select value={filterStatus || "all"} onValueChange={value => setFilterStatus(value === "all" ? undefined : value)}>
+        <Select value={statusFilter || "all"} onValueChange={value => setStatusFilter(value === "all" ? "" : value)}>
           <SelectTrigger className="w-[180px]">
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4" />
-              <span>{filterStatus ? getStatusLabel(filterStatus) : "Todos os status"}</span>
+              <span>{statusFilter ? getStatusLabel(statusFilter) : "Todos os status"}</span>
             </div>
           </SelectTrigger>
           <SelectContent>
@@ -57,6 +61,26 @@ const AuditFilters: React.FC<AuditFiltersProps> = ({
           </SelectContent>
         </Select>
       </div>
+      {/* Add type filter if needed */}
+      {typeFilter !== undefined && (
+        <div>
+          <Select value={typeFilter || "all"} onValueChange={value => setTypeFilter(value === "all" ? "" : value)}>
+            <SelectTrigger className="w-[180px]">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                <span>{typeFilter ? typeFilter : "Todos os tipos"}</span>
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="Fiscal">Fiscal</SelectItem>
+              <SelectItem value="Contábil">Contábil</SelectItem>
+              <SelectItem value="Trabalhista">Trabalhista</SelectItem>
+              <SelectItem value="Previdenciária">Previdenciária</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      )}
     </div>
   );
 };
