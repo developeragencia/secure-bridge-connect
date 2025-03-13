@@ -24,7 +24,11 @@ interface MenuGridProps {
 const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
   const navigate = useNavigate();
 
-  const handleMenuClick = (item: MenuItem) => {
+  const handleMenuClick = (item: MenuItem, event: React.MouseEvent) => {
+    // Prevent event propagation so parent elements don't capture the click
+    event.stopPropagation();
+    event.preventDefault();
+    
     if (item.isExternal) {
       window.open(item.route, '_blank');
     } else {
@@ -76,7 +80,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
           )}
           variants={itemVariants}
           whileHover="hover"
-          onClick={() => handleMenuClick(item)}
+          onClick={(e) => handleMenuClick(item, e)}
           layoutId={`menu-card-${item.id}`}
         >
           {/* Gradiente de fundo com transição melhorada */}
