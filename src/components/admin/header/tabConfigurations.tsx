@@ -5,11 +5,12 @@ import {
   FileSpreadsheet, FileStack, ClipboardList, Calculator, FileCheck, Database,
   FileLineChart, Layout, ReceiptText, Key, Clock, Shield, ClipboardListIcon, Bell
 } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 type TabConfig = {
   title: string;
   description: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
 };
 
 export const tabConfigurations: Record<string, TabConfig> = {
@@ -148,6 +149,6 @@ export const tabConfigurations: Record<string, TabConfig> = {
   audit_trails: {
     title: 'Trilhas de Auditoria',
     description: 'Registro de todas as alterações realizadas no sistema.',
-    icon: ClipboardList,
+    icon: ClipboardListIcon,
   },
 };
