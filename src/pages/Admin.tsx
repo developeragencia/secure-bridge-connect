@@ -124,6 +124,7 @@ const Admin = () => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         user={user}
+        setActiveTab={setActiveTab}
       />
       
       {mobileMenuOpen && (

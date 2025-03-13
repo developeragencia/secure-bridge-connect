@@ -12,6 +12,9 @@ import TaxCreditManagement from '@/components/admin/tax-credits/TaxCreditManagem
 import ClientManagement from '@/components/admin/tax-credits/ClientManagement';
 import AuditManagement from '@/components/admin/tax-credits/AuditManagement';
 import RecoveryManagement from '@/components/admin/tax-credits/RecoveryManagement';
+import AdminUserProfile from '@/components/admin/AdminUserProfile';
+import ActiveClientHeader from '@/components/admin/ActiveClientHeader';
+import { useActiveClient } from '@/hooks/useActiveClient';
 
 interface MainContentProps {
   activeTab: string;
@@ -19,6 +22,8 @@ interface MainContentProps {
 }
 
 const MainContent = ({ activeTab, user }: MainContentProps) => {
+  const { activeClient } = useActiveClient();
+  
   const fadeInVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: { 
@@ -42,30 +47,35 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
 
   return (
     <motion.main 
-      className="flex-1 overflow-auto p-3 sm:p-4 md:p-6 bg-background"
+      className="flex-1 overflow-auto bg-background"
       initial="hidden"
       animate="visible"
       variants={fadeInVariants}
     >
-      <div className="max-w-7xl mx-auto">
-        <AdminTabHeader activeTab={activeTab} />
-        
-        <motion.div variants={childVariants}>
-          {/* Original tabs */}
-          {activeTab === 'dashboard' && <AdminDashboard />}
-          {activeTab === 'users' && <AdminUsers />}
-          {activeTab === 'reports' && <AdminReports />}
-          {activeTab === 'site' && <SiteEditor />}
-          {activeTab === 'settings' && <AdminSettings user={user} />}
+      {activeClient && <ActiveClientHeader />}
+      
+      <div className="p-3 sm:p-4 md:p-6">
+        <div className="max-w-7xl mx-auto">
+          <AdminTabHeader activeTab={activeTab} />
           
-          {/* Tax Credit Management tabs */}
-          {activeTab === 'tax_credits' && <TaxCreditManagement />}
-          {activeTab === 'clients' && <ClientManagement />}
-          {activeTab === 'audits' && <AuditManagement />}
-          {activeTab === 'recovery' && <RecoveryManagement />}
-          
-          <ExtraTabContent activeTab={activeTab} />
-        </motion.div>
+          <motion.div variants={childVariants}>
+            {/* Original tabs */}
+            {activeTab === 'dashboard' && <AdminDashboard />}
+            {activeTab === 'users' && <AdminUsers />}
+            {activeTab === 'reports' && <AdminReports />}
+            {activeTab === 'site' && <SiteEditor />}
+            {activeTab === 'settings' && <AdminSettings user={user} />}
+            {activeTab === 'profile' && <AdminUserProfile />}
+            
+            {/* Tax Credit Management tabs */}
+            {activeTab === 'tax_credits' && <TaxCreditManagement />}
+            {activeTab === 'clients' && <ClientManagement />}
+            {activeTab === 'audits' && <AuditManagement />}
+            {activeTab === 'recovery' && <RecoveryManagement />}
+            
+            <ExtraTabContent activeTab={activeTab} />
+          </motion.div>
+        </div>
       </div>
     </motion.main>
   );

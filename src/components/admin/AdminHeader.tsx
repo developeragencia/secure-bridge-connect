@@ -9,6 +9,7 @@ import {
   PanelLeftClose, PanelLeftOpen, User,
   ChevronDown, Search, LogOut
 } from 'lucide-react';
+import ActiveClientSelector from './ActiveClientSelector';
 
 interface AdminHeaderProps {
   toggleSidebar: () => void;
@@ -21,6 +22,7 @@ interface AdminHeaderProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   user: any;
+  setActiveTab: (tab: string) => void;
 }
 
 const AdminHeader = ({
@@ -33,7 +35,8 @@ const AdminHeader = ({
   hasNotifications,
   searchQuery,
   setSearchQuery,
-  user
+  user,
+  setActiveTab
 }: AdminHeaderProps) => {
   return (
     <motion.header 
@@ -73,6 +76,11 @@ const AdminHeader = ({
               <h1 className="text-base sm:text-lg font-semibold leading-none">Painel Admin</h1>
               <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">Sistemas Claudio</p>
             </div>
+          </div>
+          
+          {/* Add ActiveClientSelector */}
+          <div className="hidden md:block ml-2">
+            <ActiveClientSelector />
           </div>
         </div>
         
@@ -117,6 +125,7 @@ const AdminHeader = ({
             <Button 
               variant="ghost" 
               className="h-8 sm:h-9 flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs rounded-full px-2 sm:px-3 hover:bg-primary/10"
+              onClick={() => setActiveTab('profile')}
             >
               <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-primary/20 flex items-center justify-center text-primary ring-2 ring-background">
                 <User className="h-3 w-3 sm:h-4 sm:w-4" />

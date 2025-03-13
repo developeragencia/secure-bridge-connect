@@ -3,7 +3,8 @@ import React from 'react';
 import {
   Users, BarChart3, FileText, Settings, 
   Globe, ShieldAlert, CreditCard, HelpCircle,
-  Receipt, Building, FileSearch, Landmark
+  Receipt, Building, FileSearch, Landmark,
+  UserCircle
 } from 'lucide-react';
 import { SidebarSection } from '@/types/admin-sidebar';
 
@@ -14,7 +15,8 @@ export const getMenuSections = (): SidebarSection[] => {
       title: 'Principal',
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 className="h-4 w-4" /> },
-        { id: 'users', label: 'Usuários', icon: <Users className="h-4 w-4" /> }
+        { id: 'users', label: 'Usuários', icon: <Users className="h-4 w-4" /> },
+        { id: 'profile', label: 'Meu Perfil', icon: <UserCircle className="h-4 w-4" /> }
       ]
     },
     {
