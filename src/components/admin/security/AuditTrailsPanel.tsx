@@ -7,7 +7,7 @@ import AuditDetailDialog from '../tax-credits/calculations/audit-trail/component
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { DownloadCloud, Shield } from 'lucide-react';
+import { DownloadCloud, Shield, ClipboardList } from 'lucide-react';
 
 const AuditTrailsPanel: React.FC = () => {
   const {
