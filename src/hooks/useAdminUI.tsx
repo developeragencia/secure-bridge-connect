@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -20,6 +21,7 @@ export const useAdminUI = () => {
   
   const navigate = useNavigate();
   const initialRender = useRef(true);
+  const navigationInProgress = useRef(false);
   
   // Persist active tab to session storage when it changes
   useEffect(() => {
@@ -28,13 +30,19 @@ export const useAdminUI = () => {
       sessionStorage.setItem('adminActiveTab', activeTab);
       
       // Only update URL if not during initial render to prevent unnecessary redirects
-      if (!initialRender.current) {
+      if (!initialRender.current && !navigationInProgress.current) {
+        navigationInProgress.current = true;
         const currentPath = location.pathname;
         const expectedPath = activeTab === 'dashboard' ? '/admin' : `/admin/${activeTab}`;
         
         if (currentPath !== expectedPath && !currentPath.includes(expectedPath)) {
           navigate(expectedPath, { replace: true });
         }
+        
+        // Reset navigation flag after a short delay
+        setTimeout(() => {
+          navigationInProgress.current = false;
+        }, 100);
       } else {
         initialRender.current = false;
       }

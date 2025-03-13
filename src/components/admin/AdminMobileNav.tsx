@@ -16,6 +16,11 @@ interface AdminMobileNavProps {
 
 const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
   const { activeClient } = useActiveClient();
+  
+  const handleTabChange = (tab: string) => {
+    if (tab === activeTab) return; // Prevent re-clicking the same tab
+    setActiveTab(tab);
+  };
 
   return (
     <div className="md:hidden w-full border-b border-border sticky top-[57px] z-10 bg-card/95 backdrop-blur-sm">
@@ -33,7 +38,7 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
           <ActiveClientSelector />
         </div>
       )}
-      <div className="grid grid-cols-5 gap-1 p-1 w-full max-w-[480px] mx-auto">
+      <div className="grid grid-cols-5 gap-1 p-1 w-full max-w-[480px] mx-auto min-h-[64px]">
         <Button 
           variant={activeTab === 'dashboard' ? 'secondary' : 'ghost'} 
           size="sm"
@@ -41,7 +46,7 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
             "flex flex-col items-center py-1.5 h-auto rounded-md",
             activeTab === 'dashboard' && "bg-primary/10 text-primary"
           )}
-          onClick={() => setActiveTab('dashboard')}
+          onClick={() => handleTabChange('dashboard')}
         >
           <BarChart3 className="h-3.5 w-3.5" />
           <span className="text-[10px] mt-0.5">Dashboard</span>
@@ -53,7 +58,7 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
             "flex flex-col items-center py-1.5 h-auto rounded-md",
             activeTab === 'tax_credits' && "bg-primary/10 text-primary"
           )}
-          onClick={() => setActiveTab('tax_credits')}
+          onClick={() => handleTabChange('tax_credits')}
         >
           <Receipt className="h-3.5 w-3.5" />
           <span className="text-[10px] mt-0.5">Créditos</span>
@@ -65,7 +70,7 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
             "flex flex-col items-center py-1.5 h-auto rounded-md",
             activeTab === 'calculations' && "bg-primary/10 text-primary"
           )}
-          onClick={() => setActiveTab('calculations')}
+          onClick={() => handleTabChange('calculations')}
         >
           <PercentCircle className="h-3.5 w-3.5" />
           <span className="text-[10px] mt-0.5">IRRF</span>
@@ -77,7 +82,7 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
             "flex flex-col items-center py-1.5 h-auto rounded-md",
             activeTab === 'clients' && "bg-primary/10 text-primary"
           )}
-          onClick={() => setActiveTab('clients')}
+          onClick={() => handleTabChange('clients')}
         >
           <Building className="h-3.5 w-3.5" />
           <span className="text-[10px] mt-0.5">Clientes</span>
@@ -89,7 +94,7 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
             "flex flex-col items-center py-1.5 h-auto rounded-md",
             activeTab === 'profile' && "bg-primary/10 text-primary"
           )}
-          onClick={() => setActiveTab('profile')}
+          onClick={() => handleTabChange('profile')}
         >
           <UserCircle className="h-3.5 w-3.5" />
           <span className="text-[10px] mt-0.5">Perfil</span>

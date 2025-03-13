@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback, memo } from 'react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminUI } from '@/hooks/useAdminUI';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
@@ -11,6 +11,12 @@ import AdminHeader from '@/components/admin/AdminHeader';
 import MainContent from '@/components/admin/MainContent';
 import AdminLoading from '@/components/admin/AdminLoading';
 import MobileMenuOverlay from '@/components/admin/MobileMenuOverlay';
+
+// Memoized components to prevent unnecessary re-renders
+const MemoizedAdminSidebar = memo(AdminSidebar);
+const MemoizedAdminHeader = memo(AdminHeader);
+const MemoizedMobileMenuOverlay = memo(MobileMenuOverlay);
+const MemoizedAdminMobileNav = memo(AdminMobileNav);
 
 const Admin = () => {
   const { user, loading, handleLogout } = useAdminAuth();
@@ -71,7 +77,7 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground overflow-hidden">
-      <AdminHeader 
+      <MemoizedAdminHeader 
         toggleSidebar={toggleSidebar}
         toggleMobileMenu={toggleMobileMenu}
         toggleDarkMode={toggleDarkMode}
@@ -85,7 +91,7 @@ const Admin = () => {
         setActiveTab={setActiveTab}
       />
       
-      <MobileMenuOverlay 
+      <MemoizedMobileMenuOverlay 
         mobileMenuOpen={mobileMenuOpen}
         toggleMobileMenu={toggleMobileMenu}
         activeTab={activeTab}
@@ -100,10 +106,10 @@ const Admin = () => {
         handleLogout={handleLogout}
       />
       
-      <AdminMobileNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      <MemoizedAdminMobileNav activeTab={activeTab} setActiveTab={setActiveTab} />
       
       <div className="flex flex-1 overflow-hidden">
-        <AdminSidebar 
+        <MemoizedAdminSidebar 
           activeTab={activeTab}
           sidebarOpen={sidebarOpen}
           expandedSection={expandedSection}

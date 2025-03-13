@@ -31,12 +31,13 @@ const SidebarSection = ({
   };
 
   const handleItemClick = (id: string) => {
+    if (id === activeTab) return; // Prevent re-clicking the same tab
     console.log("Menu item clicked:", id);
     setActiveTab(id);
   };
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 w-full">
       {sidebarOpen ? (
         <div 
           className="flex items-center justify-between py-2 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground"
@@ -55,7 +56,7 @@ const SidebarSection = ({
       )}
       
       <div className={cn(
-        "space-y-1",
+        "space-y-1 w-full",
         sidebarOpen && expandedSection !== section.id && "hidden"
       )}>
         {section.items.map((item) => (
@@ -63,6 +64,8 @@ const SidebarSection = ({
             key={item.id}
             variants={sidebarItemVariants}
             whileHover="hover"
+            className="w-full"
+            layout="position"
           >
             <Button 
               variant={activeTab === item.id ? 'secondary' : 'ghost'} 
@@ -71,7 +74,7 @@ const SidebarSection = ({
                   ? "bg-primary/10 text-primary font-medium border-l-2 border-primary"
                   : "hover:bg-secondary/80",
                 sidebarOpen ? "w-full justify-start" : "w-full p-2 flex justify-center",
-                "rounded-md transition-all duration-200"
+                "rounded-md transition-all duration-200 min-h-[32px]"
               )}
               onClick={() => handleItemClick(item.id)}
             >

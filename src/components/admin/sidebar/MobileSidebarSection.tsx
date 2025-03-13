@@ -22,8 +22,14 @@ const MobileSidebarSection = ({
   setActiveTab,
   toggleMobileMenu
 }: MobileSidebarSectionProps) => {
+  const handleItemClick = (id: string) => {
+    if (id === activeTab) return; // Prevent re-clicking the same tab
+    setActiveTab(id);
+    toggleMobileMenu();
+  };
+
   return (
-    <div className="mb-4">
+    <div className="mb-4 w-full">
       <div 
         className="flex items-center justify-between py-2 px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground"
         onClick={() => toggleSection(section.id)}
@@ -38,7 +44,7 @@ const MobileSidebarSection = ({
       </div>
       
       <div className={cn(
-        "space-y-1.5",
+        "space-y-1.5 w-full",
         expandedSection !== section.id && "hidden"
       )}>
         {section.items.map((item) => (
@@ -49,12 +55,9 @@ const MobileSidebarSection = ({
               activeTab === item.id 
                 ? "bg-primary/10 text-primary font-medium border-l-2 border-primary"
                 : "hover:bg-secondary/80",
-              "w-full justify-start rounded-md"
+              "w-full justify-start rounded-md min-h-[40px]"
             )}
-            onClick={() => {
-              setActiveTab(item.id);
-              toggleMobileMenu();
-            }}
+            onClick={() => handleItemClick(item.id)}
           >
             <span className={cn(
               activeTab === item.id 
