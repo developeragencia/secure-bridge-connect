@@ -1,351 +1,146 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React from 'react';
+import { Database, Upload, FileSpreadsheet, DownloadCloud, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
-import { 
-  FileUp, Cloud, Database, FileSpreadsheet, Clock, CheckCircle, 
-  AlertCircle, RefreshCw, FileCog, FileX 
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import TabTitleSection from '../header/TabTitleSection';
 
 const DataImports: React.FC = () => {
-  const [importStatus, setImportStatus] = useState<'idle' | 'uploading' | 'processing' | 'success' | 'error'>('idle');
-  const [progress, setProgress] = useState(0);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [importHistory] = useState([
-    {
-      id: 'imp-1',
-      fileName: 'pagamentos-jan2023.csv',
-      date: '15/01/2023',
-      recordsCount: 1234,
-      status: 'success',
-      importType: 'Pagamentos'
-    },
-    {
-      id: 'imp-2',
-      fileName: 'fornecedores.xlsx',
-      date: '10/01/2023',
-      recordsCount: 543,
-      status: 'success',
-      importType: 'Fornecedores'
-    },
-    {
-      id: 'imp-3',
-      fileName: 'retencoes-2022.csv',
-      date: '05/01/2023',
-      recordsCount: 987,
-      status: 'error',
-      importType: 'Retenções'
-    }
-  ]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-
-  const handleUpload = () => {
-    if (!selectedFile) {
-      toast.error('Selecione um arquivo para importar');
-      return;
-    }
-
-    toast.info('Iniciando importação', {
-      description: `Processando o arquivo ${selectedFile.name}`
-    });
-
-    setImportStatus('uploading');
-    setProgress(0);
-
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setImportStatus('processing');
-          
-          // Simulate processing time
-          setTimeout(() => {
-            setImportStatus('success');
-            toast.success('Importação concluída com sucesso', {
-              description: `${selectedFile.name} foi processado com sucesso`
-            });
-          }, 2000);
-          
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 300);
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'success':
-        return <Badge className="bg-green-500/20 text-green-700 dark:text-green-300">Concluído</Badge>;
-      case 'error':
-        return <Badge className="bg-red-500/20 text-red-700 dark:text-red-300">Erro</Badge>;
-      case 'processing':
-        return <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-300">Processando</Badge>;
-      default:
-        return <Badge>Desconhecido</Badge>;
-    }
-  };
-
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Importação de Dados</h1>
-          <p className="text-muted-foreground">
-            Importe e processe dados fiscais de diversas fontes
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" className="flex items-center gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Atualizar
-          </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <FileCog className="h-4 w-4" />
-            Configurações
-          </Button>
-        </div>
-      </div>
-      
-      <Tabs defaultValue="upload" className="w-full">
-        <TabsList className="grid grid-cols-3 mb-4">
-          <TabsTrigger value="upload">Nova Importação</TabsTrigger>
-          <TabsTrigger value="history">Histórico</TabsTrigger>
+      <TabTitleSection 
+        Icon={Database} 
+        title="Importação de Dados" 
+        description="Importe dados de sistemas externos e gerenciar o fluxo de importação de documentos fiscais."
+      />
+
+      <Tabs defaultValue="import" className="space-y-4">
+        <TabsList className="grid grid-cols-4 gap-2">
+          <TabsTrigger value="import">Importar Arquivos</TabsTrigger>
+          <TabsTrigger value="history">Histórico de Importações</TabsTrigger>
           <TabsTrigger value="templates">Templates</TabsTrigger>
+          <TabsTrigger value="settings">Configurações</TabsTrigger>
         </TabsList>
-        
-        <TabsContent value="upload" className="space-y-4">
+
+        <TabsContent value="import" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <ImportCard 
+              title="EFD Contribuições" 
+              icon={<FileSpreadsheet className="h-8 w-8 text-blue-500" />}
+              description="Escrituração Fiscal Digital PIS/COFINS"
+            />
+            <ImportCard 
+              title="EFD ICMS/IPI" 
+              icon={<FileSpreadsheet className="h-8 w-8 text-green-500" />}
+              description="Escrituração Fiscal Digital de ICMS e IPI"
+            />
+            <ImportCard 
+              title="SPED Contábil" 
+              icon={<FileSpreadsheet className="h-8 w-8 text-purple-500" />}
+              description="Sistema Público de Escrituração Digital Contábil"
+            />
+            <ImportCard 
+              title="Notas Fiscais XML" 
+              icon={<FileSpreadsheet className="h-8 w-8 text-orange-500" />}
+              description="Arquivos XML de Notas Fiscais Eletrônicas"
+            />
+            <ImportCard 
+              title="Extratos Bancários" 
+              icon={<FileSpreadsheet className="h-8 w-8 text-cyan-500" />}
+              description="Extratos de conta corrente e aplicações"
+            />
+            <ImportCard 
+              title="Importação personalizada" 
+              icon={<FileSpreadsheet className="h-8 w-8 text-red-500" />}
+              description="Carregue dados com mapeamento personalizado"
+              isCustom={true}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="history" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-medium">Importar Arquivo</CardTitle>
+              <CardTitle>Histórico de Importações</CardTitle>
+              <CardDescription>Consulte o histórico de importações realizadas</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="import-type">Tipo de Importação</Label>
-                    <select 
-                      id="import-type"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="payments">Pagamentos</option>
-                      <option value="suppliers">Fornecedores</option>
-                      <option value="retention">Retenções</option>
-                      <option value="contracts">Contratos</option>
-                    </select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="client">Cliente</Label>
-                    <select 
-                      id="client"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="">Selecione um cliente</option>
-                      <option value="1">Prefeitura Municipal de São Paulo</option>
-                      <option value="2">Secretaria Estadual de Educação</option>
-                      <option value="3">Hospital Municipal Dr. João Silva</option>
-                    </select>
-                  </div>
+            <CardContent>
+              <div className="rounded-md border">
+                <div className="grid grid-cols-5 bg-muted/50 p-3 text-sm font-medium">
+                  <div>Data</div>
+                  <div>Tipo</div>
+                  <div>Arquivos</div>
+                  <div>Status</div>
+                  <div>Ações</div>
                 </div>
-                
+                <ImportHistoryRow 
+                  date="12/07/2023" 
+                  type="EFD Contribuições" 
+                  files={3} 
+                  status="Concluído" 
+                />
+                <ImportHistoryRow 
+                  date="10/07/2023" 
+                  type="Notas Fiscais XML" 
+                  files={48} 
+                  status="Concluído" 
+                />
+                <ImportHistoryRow 
+                  date="05/07/2023" 
+                  type="SPED Contábil" 
+                  files={1} 
+                  status="Erro" 
+                />
+                <ImportHistoryRow 
+                  date="01/07/2023" 
+                  type="EFD ICMS/IPI" 
+                  files={2} 
+                  status="Concluído" 
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="templates" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Templates de Importação</CardTitle>
+              <CardDescription>Templates para importação de dados</CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <TemplateCard title="Planilha de Fornecedores" description="Modelo para importação de cadastro de fornecedores" />
+              <TemplateCard title="Planilha de Produtos" description="Modelo para importação de cadastro de produtos" />
+              <TemplateCard title="Mapeamento de Contas" description="Modelo para mapeamento de plano de contas" />
+              <TemplateCard title="Despesas Operacionais" description="Modelo para importação de despesas" />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Configurações de Importação</CardTitle>
+              <CardDescription>Configure as opções de importação de dados</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="file-upload">Arquivo</Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      id="file-upload"
-                      type="file"
-                      onChange={handleFileChange}
-                      accept=".csv,.xlsx,.xls,.xml,.json"
-                    />
-                    <Button 
-                      onClick={handleUpload} 
-                      disabled={!selectedFile || importStatus === 'uploading' || importStatus === 'processing'}
-                      className="whitespace-nowrap"
-                    >
-                      <FileUp className="h-4 w-4 mr-2" />
-                      Importar
-                    </Button>
+                  <h3 className="text-sm font-medium">Processamento Automático</h3>
+                  <p className="text-sm text-muted-foreground">Processe automaticamente arquivos após o upload</p>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="outline" size="sm">Ativar</Button>
+                    <Button variant="outline" size="sm">Desativar</Button>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Formatos aceitos: CSV, Excel, XML, JSON
-                  </p>
                 </div>
-                
-                {importStatus !== 'idle' && (
-                  <div className="space-y-2 mt-4">
-                    <div className="flex justify-between items-center">
-                      <Label>
-                        {importStatus === 'uploading' && 'Enviando arquivo...'}
-                        {importStatus === 'processing' && 'Processando dados...'}
-                        {importStatus === 'success' && 'Importação concluída!'}
-                        {importStatus === 'error' && 'Erro na importação'}
-                      </Label>
-                      <span className="text-sm">{progress}%</span>
-                    </div>
-                    <Progress value={progress} />
-                    
-                    {importStatus === 'success' && (
-                      <div className="p-3 bg-green-500/10 border border-green-500/30 rounded-md mt-4 text-sm">
-                        <div className="flex items-center">
-                          <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                          <p>Arquivo <strong>{selectedFile?.name}</strong> importado com sucesso.</p>
-                        </div>
-                        <p className="ml-7 mt-1 text-muted-foreground">
-                          Os dados estão sendo processados e serão disponibilizados em breve.
-                        </p>
-                      </div>
-                    )}
-                    
-                    {importStatus === 'error' && (
-                      <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-md mt-4 text-sm">
-                        <div className="flex items-center">
-                          <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                          <p>Erro ao processar o arquivo <strong>{selectedFile?.name}</strong>.</p>
-                        </div>
-                        <p className="ml-7 mt-1 text-muted-foreground">
-                          Verifique o formato do arquivo e tente novamente.
-                        </p>
-                      </div>
-                    )}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium">Validação de Dados</h3>
+                  <p className="text-sm text-muted-foreground">Nível de validação durante importação</p>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="outline" size="sm">Básica</Button>
+                    <Button variant="outline" size="sm">Completa</Button>
                   </div>
-                )}
-              </div>
-              
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="border rounded-md p-4 flex flex-col items-center text-center">
-                  <Cloud className="h-8 w-8 text-primary mb-2" />
-                  <h3 className="font-medium">Importação Simples</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Carregue seus arquivos no formato padrão
-                  </p>
-                </div>
-                
-                <div className="border rounded-md p-4 flex flex-col items-center text-center">
-                  <Database className="h-8 w-8 text-primary mb-2" />
-                  <h3 className="font-medium">Processamento Automático</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Análise e classificação inteligente de dados
-                  </p>
-                </div>
-                
-                <div className="border rounded-md p-4 flex flex-col items-center text-center">
-                  <FileSpreadsheet className="h-8 w-8 text-primary mb-2" />
-                  <h3 className="font-medium">Identificação de Créditos</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Detecção automática de créditos tributários
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="history">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-medium">Histórico de Importações</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="border rounded-md overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-muted border-b">
-                      <th className="px-4 py-3 text-left font-medium">Arquivo</th>
-                      <th className="px-4 py-3 text-left font-medium">Tipo</th>
-                      <th className="px-4 py-3 text-left font-medium">Data</th>
-                      <th className="px-4 py-3 text-left font-medium">Registros</th>
-                      <th className="px-4 py-3 text-left font-medium">Status</th>
-                      <th className="px-4 py-3 text-left font-medium">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {importHistory.map(item => (
-                      <tr key={item.id} className="border-b">
-                        <td className="px-4 py-3">{item.fileName}</td>
-                        <td className="px-4 py-3">{item.importType}</td>
-                        <td className="px-4 py-3">{item.date}</td>
-                        <td className="px-4 py-3">{item.recordsCount}</td>
-                        <td className="px-4 py-3">{getStatusBadge(item.status)}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Clock className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <FileX className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="templates">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-medium">Templates de Importação</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 text-muted-foreground">
-                Baixe os modelos de planilhas para importação de dados
-              </p>
-              
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-                <div className="border rounded-md p-4 flex flex-col justify-between">
-                  <div>
-                    <FileSpreadsheet className="h-8 w-8 mb-2 text-green-600" />
-                    <h3 className="font-medium">Template de Pagamentos</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Modelo para importação de pagamentos a fornecedores
-                    </p>
-                  </div>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Baixar Template
-                  </Button>
-                </div>
-                
-                <div className="border rounded-md p-4 flex flex-col justify-between">
-                  <div>
-                    <FileSpreadsheet className="h-8 w-8 mb-2 text-blue-600" />
-                    <h3 className="font-medium">Template de Fornecedores</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Modelo para importação de cadastro de fornecedores
-                    </p>
-                  </div>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Baixar Template
-                  </Button>
-                </div>
-                
-                <div className="border rounded-md p-4 flex flex-col justify-between">
-                  <div>
-                    <FileSpreadsheet className="h-8 w-8 mb-2 text-amber-600" />
-                    <h3 className="font-medium">Template de Retenções</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Modelo para importação de retenções fiscais
-                    </p>
-                  </div>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Baixar Template
-                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -353,6 +148,92 @@ const DataImports: React.FC = () => {
         </TabsContent>
       </Tabs>
     </div>
+  );
+};
+
+// Helper component for import cards
+interface ImportCardProps {
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+  isCustom?: boolean;
+}
+
+const ImportCard: React.FC<ImportCardProps> = ({ title, icon, description, isCustom = false }) => {
+  return (
+    <Card className="overflow-hidden transition-all hover:border-primary/50 hover:shadow-md">
+      <CardHeader className="space-y-1 flex flex-row items-start gap-3">
+        <div className="rounded-md border border-muted bg-muted/30 p-2">{icon}</div>
+        <div>
+          <CardTitle className="text-base">{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </div>
+      </CardHeader>
+      <CardFooter className="border-t bg-muted/10 px-6 py-3">
+        <Button className="w-full" variant={isCustom ? "default" : "outline"}>
+          <Upload className="mr-2 h-4 w-4" />
+          Importar
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+};
+
+// Helper component for import history rows
+interface ImportHistoryRowProps {
+  date: string;
+  type: string;
+  files: number;
+  status: string;
+}
+
+const ImportHistoryRow: React.FC<ImportHistoryRowProps> = ({ date, type, files, status }) => {
+  return (
+    <div className="grid grid-cols-5 items-center p-3 text-sm border-t">
+      <div>{date}</div>
+      <div>{type}</div>
+      <div>{files} arquivo{files > 1 ? 's' : ''}</div>
+      <div>
+        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+          status === 'Concluído' ? 'bg-green-100 text-green-800' : 
+          status === 'Erro' ? 'bg-red-100 text-red-800' : 
+          'bg-yellow-100 text-yellow-800'
+        }`}>
+          {status}
+        </span>
+      </div>
+      <div className="flex space-x-2">
+        <Button variant="outline" size="icon" className="h-7 w-7">
+          <DownloadCloud className="h-4 w-4" />
+        </Button>
+        <Button variant="outline" size="icon" className="h-7 w-7">
+          <RefreshCw className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+// Helper component for template cards
+interface TemplateCardProps {
+  title: string;
+  description: string;
+}
+
+const TemplateCard: React.FC<TemplateCardProps> = ({ title, description }) => {
+  return (
+    <Card className="overflow-hidden transition-all hover:border-primary/50 hover:shadow-md">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-base">{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
+      <CardFooter className="border-t bg-muted/10 px-6 py-3">
+        <Button className="w-full" variant="outline">
+          <DownloadCloud className="mr-2 h-4 w-4" />
+          Download
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

@@ -1,354 +1,378 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Receipt, Download, Plus, Search, Filter, Calendar, Printer, Send, ArrowRight, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  Search, Download, Printer, Eye, FileDown, Send 
-} from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-
-// Mock data for receipts
-const mockReceipts = [
-  { id: '1', supplier: 'Fornecedor A', document: '12.345.678/0001-90', date: '15/04/2023', amount: 'R$ 15.250,00', status: 'Emitido' },
-  { id: '2', supplier: 'Fornecedor B', document: '23.456.789/0001-01', date: '23/05/2023', amount: 'R$ 8.750,30', status: 'Emitido' },
-  { id: '3', supplier: 'Fornecedor C', document: '34.567.890/0001-12', date: '07/06/2023', amount: 'R$ 22.130,75', status: 'Pendente' },
-  { id: '4', supplier: 'Fornecedor D', document: '45.678.901/0001-23', date: '18/06/2023', amount: 'R$ 5.480,90', status: 'Pendente' },
-  { id: '5', supplier: 'Fornecedor E', document: '56.789.012/0001-34', date: '02/07/2023', amount: 'R$ 12.345,67', status: 'Emitido' },
-];
+import TabTitleSection from '../header/TabTitleSection';
 
 const RetentionReceiptsPanel: React.FC = () => {
-  const { toast } = useToast();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedReceipt, setSelectedReceipt] = useState<null | typeof mockReceipts[0]>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedReceipts, setSelectedReceipts] = useState<string[]>([]);
-
-  const filteredReceipts = mockReceipts.filter(receipt => 
-    receipt.supplier.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    receipt.document.includes(searchTerm)
-  );
-
-  const handleGenerateReceipt = () => {
-    setIsGenerating(true);
-    
-    // Simulate receipt generation
-    setTimeout(() => {
-      setIsGenerating(false);
-      toast({
-        title: "Comprovante gerado com sucesso",
-        description: "Seu comprovante está pronto para download.",
-      });
-    }, 1500);
-  };
-
-  const handlePreviewReceipt = (receipt: typeof mockReceipts[0]) => {
-    setSelectedReceipt(receipt);
-    setIsPreviewOpen(true);
-  };
-
-  const handleDownloadReceipt = (id: string) => {
-    toast({
-      title: "Download iniciado",
-      description: `Fazendo o download do comprovante #${id}`,
-    });
-  };
-
-  const handleSendReceipt = (id: string) => {
-    toast({
-      title: "Email enviado",
-      description: `O comprovante #${id} foi enviado com sucesso.`,
-    });
-  };
-
-  const handleSelectReceipt = (id: string, checked: boolean) => {
-    if (checked) {
-      setSelectedReceipts([...selectedReceipts, id]);
-    } else {
-      setSelectedReceipts(selectedReceipts.filter(receiptId => receiptId !== id));
-    }
-  };
-
-  const handleBulkDownload = () => {
-    if (selectedReceipts.length === 0) {
-      toast({
-        title: "Nenhum comprovante selecionado",
-        description: "Selecione pelo menos um comprovante para download.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    toast({
-      title: "Download em lote iniciado",
-      description: `Baixando ${selectedReceipts.length} comprovantes.`,
-    });
-  };
-
+  const [year, setYear] = useState('2023');
+  
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold">Comprovantes de Retenção</h2>
-          <p className="text-muted-foreground">Emissão de comprovantes para fornecedores e órgãos públicos</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" disabled={selectedReceipts.length === 0} onClick={handleBulkDownload}>
-            <Download className="mr-2 h-4 w-4" />
-            Download em Lote
+      <TabTitleSection 
+        Icon={Receipt} 
+        title="Recibos de Retenção" 
+        description="Gerencie recibos de retenção tributária, emissão, envio e histórico de documentos."
+      />
+
+      {/* Summary cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <SummaryCard
+          title="Total de Recibos"
+          value="152"
+          icon={<Receipt className="h-5 w-5 text-primary" />}
+          description="42 emitidos este mês"
+        />
+        <SummaryCard
+          title="Valor Total Retido"
+          value="R$ 876.543,21"
+          icon={<CheckCircle2 className="h-5 w-5 text-emerald-500" />}
+          description="R$ 245.678,90 este mês"
+        />
+        <SummaryCard
+          title="Pendentes de Envio"
+          value="18"
+          icon={<Clock className="h-5 w-5 text-amber-500" />}
+          description="Aguardando processamento"
+        />
+        <SummaryCard
+          title="Com Problemas"
+          value="5"
+          icon={<AlertCircle className="h-5 w-5 text-red-500" />}
+          description="Requerem atenção imediata"
+        />
+      </div>
+
+      {/* Filters and search */}
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+        <div className="flex flex-1 items-center gap-2 flex-wrap">
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Buscar recibos por cliente ou número..."
+              className="w-full bg-background pl-8 md:w-[320px]"
+            />
+          </div>
+          <Select value={year} onValueChange={setYear}>
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Ano" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="2023">2023</SelectItem>
+              <SelectItem value="2022">2022</SelectItem>
+              <SelectItem value="2021">2021</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" size="icon">
+            <Filter className="h-4 w-4" />
           </Button>
+          <Button variant="outline" size="icon">
+            <Calendar className="h-4 w-4" />
+          </Button>
+        </div>
+        <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm">
-            <Printer className="mr-2 h-4 w-4" />
-            Imprimir
+            <Download className="mr-2 h-4 w-4" />
+            Exportar
+          </Button>
+          <Button size="sm">
+            <Plus className="mr-2 h-4 w-4" />
+            Novo Recibo
           </Button>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Gerar Novo Comprovante</CardTitle>
-          <CardDescription>Preencha os dados para gerar um comprovante de retenção</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="supplier">Fornecedor</Label>
-              <Select>
-                <SelectTrigger id="supplier">
-                  <SelectValue placeholder="Selecione o fornecedor" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="supplier-1">Fornecedor A</SelectItem>
-                  <SelectItem value="supplier-2">Fornecedor B</SelectItem>
-                  <SelectItem value="supplier-3">Fornecedor C</SelectItem>
-                  <SelectItem value="supplier-4">Fornecedor D</SelectItem>
-                  <SelectItem value="supplier-5">Fornecedor E</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="receipt-type">Tipo de Comprovante</Label>
-              <Select>
-                <SelectTrigger id="receipt-type">
-                  <SelectValue placeholder="Selecione o tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="irrf">IRRF</SelectItem>
-                  <SelectItem value="pis">PIS</SelectItem>
-                  <SelectItem value="cofins">COFINS</SelectItem>
-                  <SelectItem value="csll">CSLL</SelectItem>
-                  <SelectItem value="inss">INSS</SelectItem>
-                  <SelectItem value="iss">ISS</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="receipt-date">Data de Competência</Label>
-              <Input type="date" id="receipt-date" />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="receipt-value">Valor da Retenção</Label>
-              <Input type="text" id="receipt-value" placeholder="R$ 0,00" />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="invoice">Nota Fiscal</Label>
-              <Input type="text" id="invoice" placeholder="Número da nota fiscal" />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="document">Documento</Label>
-              <Input type="text" id="document" placeholder="CPF/CNPJ" />
-            </div>
-          </div>
-          
-          <div className="flex justify-end mt-6">
-            <Button 
-              onClick={handleGenerateReceipt} 
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <>Gerando...</>
-              ) : (
-                <>
-                  <FileDown className="mr-2 h-4 w-4" />
-                  Gerar Comprovante
-                </>
-              )}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Comprovantes Emitidos</CardTitle>
-          <div className="flex items-center gap-2 mt-2">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Buscar por fornecedor ou CNPJ" 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-sm"
-            />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-2 w-8">
-                    <Checkbox />
-                  </th>
-                  <th className="text-left py-3 px-2">Fornecedor</th>
-                  <th className="text-left py-3 px-2">CNPJ</th>
-                  <th className="text-left py-3 px-2">Data</th>
-                  <th className="text-left py-3 px-2">Valor</th>
-                  <th className="text-left py-3 px-2">Status</th>
-                  <th className="text-left py-3 px-2">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredReceipts.length > 0 ? (
-                  filteredReceipts.map((receipt) => (
-                    <tr key={receipt.id} className="border-b hover:bg-muted/50">
-                      <td className="py-3 px-2">
-                        <Checkbox 
-                          checked={selectedReceipts.includes(receipt.id)}
-                          onCheckedChange={(checked) => handleSelectReceipt(receipt.id, !!checked)}
-                        />
-                      </td>
-                      <td className="py-3 px-2">{receipt.supplier}</td>
-                      <td className="py-3 px-2">{receipt.document}</td>
-                      <td className="py-3 px-2">{receipt.date}</td>
-                      <td className="py-3 px-2">{receipt.amount}</td>
-                      <td className="py-3 px-2">
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          receipt.status === 'Emitido' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {receipt.status}
-                        </span>
-                      </td>
-                      <td className="py-3 px-2">
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="icon" onClick={() => handlePreviewReceipt(receipt)}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDownloadReceipt(receipt.id)}>
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleSendReceipt(receipt.id)}>
-                            <Send className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={7} className="py-6 text-center text-muted-foreground">
-                      Nenhum comprovante encontrado
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Main content tabs */}
+      <Tabs defaultValue="recent" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="recent">Recentes</TabsTrigger>
+          <TabsTrigger value="pending">Pendentes</TabsTrigger>
+          <TabsTrigger value="sent">Enviados</TabsTrigger>
+          <TabsTrigger value="all">Todos</TabsTrigger>
+        </TabsList>
 
-      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Visualização do Comprovante</DialogTitle>
-            <DialogDescription>
-              Comprovante de retenção para {selectedReceipt?.supplier}
-            </DialogDescription>
-          </DialogHeader>
-          
-          {selectedReceipt && (
-            <div className="border rounded-md p-6 space-y-4">
-              <div className="text-center mb-6">
-                <h3 className="text-xl font-bold">COMPROVANTE DE RETENÇÃO DE TRIBUTOS</h3>
-                <p className="text-muted-foreground">Documento fiscal emitido conforme legislação vigente</p>
+        <TabsContent value="recent" className="space-y-4">
+          <Card>
+            <CardHeader className="px-6 py-4">
+              <CardTitle>Recibos Recentes</CardTitle>
+              <CardDescription>
+                Recibos de retenção emitidos nos últimos 30 dias
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="border-t">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b bg-muted/50 text-sm text-muted-foreground">
+                      <th className="h-10 px-4 text-left font-medium">Número</th>
+                      <th className="h-10 px-4 text-left font-medium">Cliente</th>
+                      <th className="h-10 px-4 text-left font-medium">Data</th>
+                      <th className="h-10 px-4 text-left font-medium">Tributo</th>
+                      <th className="h-10 px-4 text-left font-medium">Valor</th>
+                      <th className="h-10 px-4 text-left font-medium">Status</th>
+                      <th className="h-10 px-4 text-left font-medium">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ReceiptRow
+                      number="RET-2023-001"
+                      client="Empresa ABC Ltda"
+                      date="15/07/2023"
+                      taxType="IRRF"
+                      value="R$ 12.345,67"
+                      status="Enviado"
+                    />
+                    <ReceiptRow
+                      number="RET-2023-002"
+                      client="XYZ Indústria S.A."
+                      date="10/07/2023"
+                      taxType="PIS/COFINS"
+                      value="R$ 23.456,78"
+                      status="Pendente"
+                    />
+                    <ReceiptRow
+                      number="RET-2023-003"
+                      client="Tech Solutions Ltda"
+                      date="05/07/2023"
+                      taxType="CSLL"
+                      value="R$ 8.765,43"
+                      status="Enviado"
+                    />
+                    <ReceiptRow
+                      number="RET-2023-004"
+                      client="Comércio Geral Ltda"
+                      date="01/07/2023"
+                      taxType="IRRF"
+                      value="R$ 6.543,21"
+                      status="Erro"
+                    />
+                    <ReceiptRow
+                      number="RET-2023-005"
+                      client="Distribuidora Norte Ltda"
+                      date="28/06/2023"
+                      taxType="PIS/COFINS"
+                      value="R$ 15.678,90"
+                      status="Enviado"
+                    />
+                  </tbody>
+                </table>
               </div>
-              
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Fornecedor:</p>
-                    <p className="font-medium">{selectedReceipt.supplier}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">CNPJ:</p>
-                    <p className="font-medium">{selectedReceipt.document}</p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Data de Emissão:</p>
-                    <p className="font-medium">{selectedReceipt.date}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Valor Retido:</p>
-                    <p className="font-medium">{selectedReceipt.amount}</p>
-                  </div>
-                </div>
-                
-                <div className="border-t pt-4 mt-4">
-                  <p className="text-sm text-muted-foreground">Tributos Retidos:</p>
-                  <div className="grid grid-cols-3 gap-2 mt-2">
-                    <div className="border rounded p-2">
-                      <p className="text-xs text-muted-foreground">IRRF (1,5%)</p>
-                      <p className="font-medium">R$ 228,75</p>
-                    </div>
-                    <div className="border rounded p-2">
-                      <p className="text-xs text-muted-foreground">PIS (0,65%)</p>
-                      <p className="font-medium">R$ 99,13</p>
-                    </div>
-                    <div className="border rounded p-2">
-                      <p className="text-xs text-muted-foreground">COFINS (3%)</p>
-                      <p className="font-medium">R$ 457,50</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="border-t pt-4 mt-4">
-                  <p className="text-sm text-muted-foreground">Notas Fiscais Vinculadas:</p>
-                  <p className="font-medium">NF-e 12345, NF-e 12346</p>
-                </div>
-                
-                <div className="border-t pt-4 mt-4 text-center">
-                  <p className="text-xs text-muted-foreground">Este documento tem validade fiscal e pode ser verificado no site da Receita Federal</p>
-                  <p className="text-xs text-muted-foreground">Código de Verificação: ABC123DEF456GHI789</p>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsPreviewOpen(false)}>Fechar</Button>
-            <Button onClick={() => {
-              handleDownloadReceipt(selectedReceipt?.id || '');
-              setIsPreviewOpen(false);
-            }}>
-              <Download className="mr-2 h-4 w-4" />
-              Download
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="pending" className="space-y-4">
+          <ReceiptGrid status="Pendente" />
+        </TabsContent>
+
+        <TabsContent value="sent" className="space-y-4">
+          <ReceiptGrid status="Enviado" />
+        </TabsContent>
+
+        <TabsContent value="all" className="space-y-4">
+          <ReceiptGrid status="Todos" />
+        </TabsContent>
+      </Tabs>
     </div>
+  );
+};
+
+// Helper component for summary cards
+interface SummaryCardProps {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+  description: string;
+}
+
+const SummaryCard: React.FC<SummaryCardProps> = ({ 
+  title, 
+  value, 
+  icon, 
+  description 
+}) => {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        <p className="text-xs text-muted-foreground">
+          {description}
+        </p>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Helper component for receipt table rows
+interface ReceiptRowProps {
+  number: string;
+  client: string;
+  date: string;
+  taxType: string;
+  value: string;
+  status: 'Enviado' | 'Pendente' | 'Erro';
+}
+
+const ReceiptRow: React.FC<ReceiptRowProps> = ({
+  number,
+  client,
+  date,
+  taxType,
+  value,
+  status,
+}) => {
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'enviado':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'pendente':
+        return 'bg-amber-100 text-amber-800 border-amber-200';
+      case 'erro':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  return (
+    <tr className="border-b transition-colors hover:bg-muted/50">
+      <td className="p-4 align-middle text-sm">{number}</td>
+      <td className="p-4 align-middle font-medium">{client}</td>
+      <td className="p-4 align-middle text-sm">{date}</td>
+      <td className="p-4 align-middle text-sm">{taxType}</td>
+      <td className="p-4 align-middle text-sm font-medium">{value}</td>
+      <td className="p-4 align-middle">
+        <Badge variant="outline" className={`${getStatusColor(status)}`}>
+          {status}
+        </Badge>
+      </td>
+      <td className="p-4 align-middle">
+        <div className="flex space-x-1">
+          <Button variant="ghost" size="icon" className="h-7 w-7">
+            <Download className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-7 w-7">
+            <Printer className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-7 w-7">
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
+      </td>
+    </tr>
+  );
+};
+
+// Helper component for receipt grid
+interface ReceiptGridProps {
+  status: 'Pendente' | 'Enviado' | 'Erro' | 'Todos';
+}
+
+const ReceiptGrid: React.FC<ReceiptGridProps> = ({ status }) => {
+  // This would typically fetch the receipts with the given status
+  // For now, just show a placeholder message
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{status === 'Todos' ? 'Todos os Recibos' : `Recibos ${status}s`}</CardTitle>
+        <CardDescription>{getStatusDescription(status)}</CardDescription>
+      </CardHeader>
+      <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* For demonstration, let's show some receipt cards */}
+        {Array.from({ length: 6 }).map((_, index) => (
+          <ReceiptCard key={index} status={status === 'Todos' ? getRandomStatus() : status} />
+        ))}
+      </CardContent>
+    </Card>
+  );
+};
+
+// Helper function to get a random status for the "Todos" tab demonstration
+const getRandomStatus = (): 'Pendente' | 'Enviado' | 'Erro' => {
+  const statuses: Array<'Pendente' | 'Enviado' | 'Erro'> = ['Pendente', 'Enviado', 'Erro'];
+  return statuses[Math.floor(Math.random() * statuses.length)];
+};
+
+// Helper function to get a description based on the status
+const getStatusDescription = (status: string): string => {
+  switch (status) {
+    case 'Pendente':
+      return 'Recibos que ainda não foram enviados aos clientes';
+    case 'Enviado':
+      return 'Recibos já enviados com sucesso aos clientes';
+    case 'Erro':
+      return 'Recibos que apresentaram erros durante o processamento';
+    case 'Todos':
+      return 'Visualização completa de todos os recibos';
+    default:
+      return '';
+  }
+};
+
+// Helper component for receipt cards in the grid view
+const ReceiptCard: React.FC<{ status: 'Pendente' | 'Enviado' | 'Erro' }> = ({ status }) => {
+  // Generate some random mock data for the card
+  const client = ['Empresa ABC', 'XYZ Indústria', 'Tech Solutions', 'Comércio Geral'][Math.floor(Math.random() * 4)];
+  const value = `R$ ${(Math.random() * 20000 + 5000).toFixed(2)}`;
+  const date = `${Math.floor(Math.random() * 28) + 1}/07/2023`;
+  const taxType = ['IRRF', 'PIS/COFINS', 'CSLL', 'INSS'][Math.floor(Math.random() * 4)];
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'enviado':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'pendente':
+        return 'bg-amber-100 text-amber-800 border-amber-200';
+      case 'erro':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  return (
+    <Card className="overflow-hidden transition hover:shadow-md hover:border-primary/60">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <Badge variant="outline" className={getStatusColor(status)}>
+            {status}
+          </Badge>
+          <div className="text-sm font-medium">
+            {date}
+          </div>
+        </div>
+        <CardTitle className="text-base mt-2">{`RET-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`}</CardTitle>
+        <CardDescription>{client}</CardDescription>
+      </CardHeader>
+      <CardContent className="pb-2">
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <p className="text-sm text-muted-foreground">Valor retido</p>
+            <p className="text-lg font-bold">{value}</p>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Tributo</p>
+            <p className="text-sm">{taxType}</p>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="bg-muted/20 border-t pt-3">
+        <Button variant="ghost" className="w-full justify-between">
+          <span>Ver detalhes</span>
+          <ArrowRight className="h-4 w-4" />
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

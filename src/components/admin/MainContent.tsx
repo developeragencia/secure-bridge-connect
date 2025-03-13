@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import NotificationsContent from './notifications/NotificationsContent';
 import BillingContent from './billing/BillingContent';
 import SupportContent from './support/SupportContent';
+import AdminTabHeader from './AdminTabHeader';
 
 // Tax Credits Components
 import TaxCreditManagement from './tax-credits/TaxCreditManagement';
@@ -153,6 +154,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       exit="exit"
     >
       <div className="container mx-auto max-w-7xl">
+        <AdminTabHeader activeTab={activeTab} />
         {renderContent()}
       </div>
     </motion.main>
