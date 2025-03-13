@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useClientStore } from '@/hooks/useClientStore';
@@ -81,8 +82,9 @@ const Clients = () => {
       state: newClientData.state || '',
       zipCode: newClientData.zipCode || '',
       contactName: newClientData.contactName || '',
-      active: true,
+      status: 'ACTIVE', // Using the correct status property instead of active
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     addClient(newClient);
