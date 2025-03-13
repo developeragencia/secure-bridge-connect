@@ -14,7 +14,7 @@ export function useIntersectionObserver<T extends Element>(
     rootMargin: '0px',
     threshold: 0.1,
   }
-): { ref: RefObject<T>; isVisible: boolean; observer: IntersectionObserver } {
+): { ref: RefObject<T>; isVisible: boolean; observer: IntersectionObserver | null } {
   const ref = useRef<T>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [observer, setObserver] = useState<IntersectionObserver | null>(null);
@@ -50,5 +50,5 @@ export function useIntersectionObserver<T extends Element>(
     };
   }, [options.root, options.rootMargin, options.threshold, options.onIntersect]);
 
-  return { ref, isVisible, observer: observer! };
+  return { ref, isVisible, observer };
 }

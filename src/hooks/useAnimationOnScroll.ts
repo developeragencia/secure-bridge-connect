@@ -9,8 +9,11 @@ export type TransitionType =
   | 'slide-in-right' 
   | 'slide-in-left'
   | 'zoom-in'
-  | 'fade-in-right'  // Added for Hero component
-  | 'fade-in-left';  // Added for MethodologyCard component
+  | 'fade-in-right'  
+  | 'fade-in-left'
+  | 'bounce'
+  | 'pulse'
+  | 'flip';
 
 interface AnimationOptions<T> {
   threshold?: number;
@@ -79,7 +82,10 @@ export function useAnimationOnScroll<T extends HTMLElement>(
       'slide-in-left': `${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-20'}`,
       'zoom-in': `${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`,
       'fade-in-right': `${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`,
-      'fade-in-left': `${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`
+      'fade-in-left': `${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`,
+      'bounce': `${isVisible ? 'opacity-100 animate-bounce' : 'opacity-0'}`,
+      'pulse': `${isVisible ? 'opacity-100 animate-pulse' : 'opacity-0'}`,
+      'flip': `${isVisible ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-90'}`
     };
 
     return `${baseClasses} ${delayClass} ${durationClass} ${animationClasses[transitionType]}`;

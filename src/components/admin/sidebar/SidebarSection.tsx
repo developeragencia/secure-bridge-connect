@@ -24,6 +24,12 @@ const SidebarSection = ({
   setActiveTab
 }: SidebarSectionProps) => {
   const sidebarItemVariants = {
+    initial: { x: -5, opacity: 0 },
+    animate: { 
+      x: 0, 
+      opacity: 1,
+      transition: { duration: 0.2 } 
+    },
     hover: { 
       x: 5, 
       transition: { duration: 0.2 } 
@@ -48,8 +54,10 @@ const SidebarSection = ({
       {sidebarOpen ? (
         <div 
           className={cn(
-            "flex items-center justify-between py-2 px-3 text-xs font-medium uppercase tracking-wider cursor-pointer hover:text-foreground rounded-md hover:bg-accent/30",
-            isSectionActive ? "text-primary" : "text-muted-foreground"
+            "flex items-center justify-between py-2 px-3 text-xs font-medium uppercase tracking-wider cursor-pointer rounded-md transition-all duration-200",
+            isSectionActive 
+              ? "text-primary bg-primary/5"
+              : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
           )}
           onClick={() => toggleSection(section.id)}
         >
@@ -62,13 +70,24 @@ const SidebarSection = ({
           />
         </div>
       ) : (
-        <div className="h-px bg-border/50 my-4"></div>
+        <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent my-4"></div>
       )}
       
-      <div className={cn(
-        "space-y-1 w-full",
-        sidebarOpen && !isExpanded && "hidden"
-      )}>
+      <motion.div 
+        className={cn(
+          "space-y-1 w-full",
+          sidebarOpen && !isExpanded && "hidden"
+        )}
+        initial="initial"
+        animate="animate"
+        variants={{
+          animate: {
+            transition: {
+              staggerChildren: 0.05
+            }
+          }
+        }}
+      >
         {section.items.map((item) => (
           <motion.div 
             key={item.id}
@@ -81,7 +100,7 @@ const SidebarSection = ({
               variant={activeTab === item.id ? 'secondary' : 'ghost'} 
               className={cn(
                 activeTab === item.id 
-                  ? "bg-primary/10 text-primary font-medium border-l-2 border-primary"
+                  ? "bg-primary/10 text-primary font-medium border-l-2 border-primary shadow-sm"
                   : "hover:bg-secondary/80",
                 sidebarOpen ? "w-full justify-start" : "w-full p-2 flex justify-center",
                 "rounded-md transition-all duration-200 min-h-[40px]"
@@ -111,7 +130,7 @@ const SidebarSection = ({
             </Button>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 };
