@@ -11,7 +11,7 @@ import {
   Loader2, Check, Upload, AlertTriangle, 
   Image as ImageIcon, RefreshCw, Trash2 
 } from 'lucide-react';
-import { AnimatedLogo } from '@/components';
+import AnimatedLogo from '@/components/AnimatedLogo';
 import { 
   Select, 
   SelectContent, 
