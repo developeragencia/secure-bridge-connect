@@ -242,8 +242,8 @@ const AdminDashboard = () => {
             <CardDescription>Faturamento mensal durante o último ano</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-80 min-w-[200px]">
+              <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={300}>
                 <BarChart data={data}>
                   <defs>
                     <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
@@ -287,8 +287,8 @@ const AdminDashboard = () => {
             <CardDescription>Tendência de crescimento nos últimos 7 meses</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-80 min-w-[200px]">
+              <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={300}>
                 <LineChart data={lineData}>
                   <defs>
                     <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
@@ -345,8 +345,8 @@ const AdminDashboard = () => {
             <CardDescription>Divisão percentual por categorias</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-80 min-w-[200px]">
+              <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={300}>
                 <PieChart>
                   <Pie
                     data={pieData}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -94,7 +93,7 @@ const AdminReports = () => {
                 Gerar Relatório
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>Gerar Novo Relatório</DialogTitle>
                 <DialogDescription>
@@ -126,7 +125,7 @@ const AdminReports = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="start-date">Data Inicial</Label>
                     <Input 
@@ -162,7 +161,7 @@ const AdminReports = () => {
       
       <Tabs value={selectedReportType} onValueChange={setSelectedReportType} className="w-full">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <TabsList>
+          <TabsList className="w-full sm:w-auto overflow-x-auto flex flex-nowrap sm:flex-wrap">
             <TabsTrigger value="all">Todos</TabsTrigger>
             <TabsTrigger value="financial">Financeiro</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
@@ -184,53 +183,63 @@ const AdminReports = () => {
                 Lista de todos os relatórios disponíveis no sistema
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Data</TableHead>
-                    <TableHead>Downloads</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {reports.map((report) => (
-                    <TableRow key={report.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                            {report.type === 'Financeiro' && <BarChart4 className="h-4 w-4 text-primary" />}
-                            {report.type === 'Usuários' && <FileText className="h-4 w-4 text-primary" />}
-                            {report.type === 'Vendas' && <FileSpreadsheet className="h-4 w-4 text-primary" />}
-                            {report.type === 'Desempenho' && <FileText className="h-4 w-4 text-primary" />}
-                            {report.type === 'Fiscal' && <FileText className="h-4 w-4 text-primary" />}
-                          </div>
-                          <div>{report.name}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{report.type}</TableCell>
-                      <TableCell>{report.date}</TableCell>
-                      <TableCell>{report.downloads}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => handleDownloadReport(report.id)}>
-                            <Download className="h-4 w-4 mr-1" />
-                            Baixar
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Printer className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Share2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+            <CardContent className="px-0 sm:px-6 overflow-x-auto">
+              <div className="min-w-[600px] sm:min-w-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Tipo</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Downloads</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {reports.map((report) => (
+                      <TableRow key={report.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                              {report.type === 'Financeiro' && <BarChart4 className="h-4 w-4 text-primary" />}
+                              {report.type === 'Usuários' && <FileText className="h-4 w-4 text-primary" />}
+                              {report.type === 'Vendas' && <FileSpreadsheet className="h-4 w-4 text-primary" />}
+                              {report.type === 'Desempenho' && <FileText className="h-4 w-4 text-primary" />}
+                              {report.type === 'Fiscal' && <FileText className="h-4 w-4 text-primary" />}
+                            </div>
+                            <div className="line-clamp-1">{report.name}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{report.type}</TableCell>
+                        <TableCell>{report.date}</TableCell>
+                        <TableCell>{report.downloads}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2 flex-wrap">
+                            <Button variant="ghost" size="sm" onClick={() => handleDownloadReport(report.id)}>
+                              <Download className="h-4 w-4 mr-1" />
+                              <span className="hidden sm:inline">Baixar</span>
+                            </Button>
+                            <Button variant="ghost" size="icon" className="sm:hidden">
+                              <Printer className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="sm:hidden">
+                              <Share2 className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" className="hidden sm:flex">
+                              <Printer className="h-4 w-4 mr-1" />
+                              <span>Imprimir</span>
+                            </Button>
+                            <Button variant="ghost" size="sm" className="hidden sm:flex">
+                              <Share2 className="h-4 w-4 mr-1" />
+                              <span>Compartilhar</span>
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
