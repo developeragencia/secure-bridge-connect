@@ -65,19 +65,21 @@ const AdminSidebar = ({
       </div>
       
       {/* Toggle button with improved styling */}
-      <button
+      <motion.button
         onClick={toggleSidebar}
         className={cn(
           "absolute -right-3 top-20 bg-background border border-border rounded-full p-1.5 shadow-md transition-all hover:bg-primary/5 group",
           sidebarOpen ? "rotate-0" : "rotate-180"
         )}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
       >
         {sidebarOpen ? (
           <PanelLeftClose className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
         ) : (
           <PanelLeftOpen className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
         )}
-      </button>
+      </motion.button>
       
       {/* Gradient overlay at the bottom */}
       <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none z-0" />

@@ -42,7 +42,7 @@ const MobileSidebarSection = ({
 
   return (
     <div className="mb-4 w-full">
-      <div 
+      <motion.div 
         className={cn(
           "flex items-center justify-between py-2 px-3 text-xs font-medium uppercase tracking-wider cursor-pointer rounded-md transition-all duration-200",
           isSectionActive 
@@ -50,15 +50,17 @@ const MobileSidebarSection = ({
             : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
         )}
         onClick={() => toggleSection(section.id)}
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
       >
         <span>{section.title}</span>
-        <ChevronDown 
-          className={cn(
-            "h-3.5 w-3.5 transition-transform duration-200", 
-            isExpanded ? "transform rotate-0" : "transform rotate(-90deg)"
-          )} 
-        />
-      </div>
+        <motion.div
+          animate={{ rotate: isExpanded ? 0 : -90 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronDown className="h-3.5 w-3.5" />
+        </motion.div>
+      </motion.div>
       
       {isExpanded && (
         <motion.div 
@@ -89,17 +91,31 @@ const MobileSidebarSection = ({
                 onClick={() => handleItemClick(item.id)}
               >
                 <div className="flex items-center w-full">
-                  <span className={cn(
-                    activeTab === item.id 
-                      ? "text-primary" 
-                      : "text-muted-foreground group-hover:text-foreground",
-                    "transition-colors"
-                  )}>
+                  <motion.span
+                    className={cn(
+                      activeTab === item.id 
+                        ? "text-primary" 
+                        : "text-muted-foreground group-hover:text-foreground",
+                      "transition-colors"
+                    )}
+                    whileHover={{ rotate: [0, -5, 5, 0] }}
+                    transition={{ duration: 0.5 }}
+                  >
                     {item.icon}
-                  </span>
+                  </motion.span>
                   <span className="ml-2 flex-1">{item.label}</span>
                   {activeTab === item.id && (
-                    <Sparkles className="h-3.5 w-3.5 text-primary ml-auto" />
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ 
+                        type: "spring", 
+                        stiffness: 260, 
+                        damping: 20 
+                      }}
+                    >
+                      <Sparkles className="h-3.5 w-3.5 text-primary ml-auto" />
+                    </motion.div>
                   )}
                 </div>
               </Button>
