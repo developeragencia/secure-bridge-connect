@@ -220,7 +220,7 @@ const OperationalAuditsPanel = () => {
                             </Badge>
                           )}
                           {warning && (
-                            <Badge variant="warning" className="flex w-fit items-center gap-1 bg-amber-500">
+                            <Badge variant="warning" className="flex w-fit items-center gap-1">
                               <AlertCircle className="h-3 w-3" />
                               Ressalvas
                             </Badge>
