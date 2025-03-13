@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 type TableName = 'tax_credits' | 'audits' | 'recovery_processes' | 'clients';
-type Event = 'INSERT' | 'UPDATE' | 'DELETE';
+type Event = 'INSERT' | 'UPDATE' | 'DELETE' | '*';
 
 interface UseRealtimeUpdatesOptions {
   tableName: TableName;
@@ -32,7 +32,7 @@ export function useRealtimeUpdates({
       .on(
         'postgres_changes',
         { 
-          event: events as any, 
+          event: '*', // Listen to all events and filter in the callback
           schema: 'public', 
           table: tableName 
         },

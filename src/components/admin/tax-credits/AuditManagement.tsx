@@ -5,6 +5,7 @@ import AuditStatusCards from './components/AuditStatusCards';
 import AuditHeader from './components/AuditHeader';
 import AuditFilters from './components/AuditFilters';
 import AuditTable from './components/AuditTable';
+import AuditForm from './components/AuditForm';
 import { Audit, AuditSummary } from '@/types/audit';
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
 import { toast } from 'sonner';
@@ -45,6 +46,9 @@ const AuditManagement: React.FC = () => {
   const [summary, setSummary] = useState<AuditSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [currentAudit, setCurrentAudit] = useState<Partial<Audit> | undefined>(undefined);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const { classes: cardClasses } = useAnimationOnScroll<HTMLDivElement>({
     threshold: 0.1,
@@ -105,10 +109,37 @@ const AuditManagement: React.FC = () => {
   };
 
   const handleCreateAudit = () => {
-    toast.success('Nova auditoria', {
-      description: 'Formulário de criação aberto',
-    });
-    // This would open a form in a real app
+    setCurrentAudit(undefined);
+    setIsEditMode(false);
+    setIsFormOpen(true);
+  };
+
+  const handleSaveAudit = (auditData: Partial<Audit>) => {
+    if (isEditMode && currentAudit?.id) {
+      // Update existing audit
+      const updatedAudit = { ...currentAudit, ...auditData } as Audit;
+      setAudits(prev => 
+        prev.map(audit => audit.id === currentAudit.id ? updatedAudit : audit)
+      );
+      toast.success('Auditoria atualizada', {
+        description: `A auditoria ${updatedAudit.clientName} foi atualizada com sucesso.`,
+      });
+    } else {
+      // Create new audit
+      const newAudit: Audit = {
+        id: `audit-${Date.now()}`,
+        clientId: `client-${Math.floor(Math.random() * 5) + 1}`,
+        ...auditData,
+      } as Audit;
+      
+      setAudits(prev => [newAudit, ...prev]);
+      toast.success('Nova auditoria', {
+        description: `A auditoria para ${newAudit.clientName} foi criada com sucesso.`,
+      });
+    }
+    
+    // Update summary after changes
+    fetchSummaryData();
   };
 
   const handleDownloadDocuments = (auditId: string) => {
@@ -126,10 +157,16 @@ const AuditManagement: React.FC = () => {
   };
 
   const handleEditAudit = (auditId: string) => {
-    toast.info('Editando auditoria', {
-      description: `Formulário de edição para a auditoria #${auditId}`,
-    });
-    // This would open an edit form in a real app
+    const auditToEdit = audits.find(audit => audit.id === auditId);
+    if (auditToEdit) {
+      setCurrentAudit(auditToEdit);
+      setIsEditMode(true);
+      setIsFormOpen(true);
+    } else {
+      toast.error('Auditoria não encontrada', {
+        description: `Não foi possível encontrar a auditoria #${auditId}`,
+      });
+    }
   };
 
   const handleDeleteAudit = (auditId: string) => {
@@ -205,6 +242,15 @@ const AuditManagement: React.FC = () => {
           onApprove={handleApproveAudit}
         />
       </Card>
+
+      {/* Audit Form Dialog */}
+      <AuditForm
+        open={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        onSave={handleSaveAudit}
+        initialData={currentAudit}
+        isEdit={isEditMode}
+      />
     </div>
   );
 };
