@@ -47,7 +47,7 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
       >
         <NavButton 
           icon={<BarChart3 className="h-3.5 w-3.5" />}
-          label="Dashboard"
+          label="Painel Principal"
           isActive={activeTab === 'dashboard'}
           onClick={() => handleTabChange('dashboard')}
         />

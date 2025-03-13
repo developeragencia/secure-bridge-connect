@@ -14,7 +14,7 @@ const DashboardHeader: React.FC = () => {
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Layout className="w-6 h-6 text-primary" />
-          Dashboard
+          Painel Principal
         </h1>
         <p className="text-muted-foreground mt-1">
           Bem-vindo ao painel administrativo do sistema

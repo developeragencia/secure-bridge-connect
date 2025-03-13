@@ -15,7 +15,7 @@ type TabConfig = {
 
 export const tabConfigurations: Record<string, TabConfig> = {
   dashboard: {
-    title: 'Dashboard',
+    title: 'Painel Principal',
     description: 'Visão geral das métricas do sistema e atividades recentes.',
     icon: BarChart3,
   },
