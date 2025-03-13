@@ -4,17 +4,30 @@ import { persist } from 'zustand/middleware';
 import { Client } from '@/types/client';
 import { toast } from 'sonner';
 
+// Extend Client type to include user role permissions
+interface ClientWithPermissions extends Client {
+  userRoles?: {
+    canViewOperations: boolean;
+    canEditOperations: boolean;
+    canApproveOperations: boolean;
+    isAdmin: boolean;
+    isRepresentative: boolean;
+  }
+}
+
 interface ClientStore {
-  activeClient: Client | null;
-  recentClients: Client[];
-  allClients: Client[]; 
-  setActiveClient: (client: Client | null) => void;
-  addClient: (client: Client) => void;
-  updateClient: (id: string, data: Partial<Client>) => void;
+  activeClient: ClientWithPermissions | null;
+  recentClients: ClientWithPermissions[];
+  allClients: ClientWithPermissions[]; 
+  pendingProposals: number;
+  setActiveClient: (client: ClientWithPermissions | null) => void;
+  addClient: (client: ClientWithPermissions) => void;
+  updateClient: (id: string, data: Partial<ClientWithPermissions>) => void;
   removeClient: (id: string) => void;
   clearActiveClient: () => void;
+  setPendingProposals: (count: number) => void;
   // Alias for backward compatibility
-  clients: Client[];
+  clients: ClientWithPermissions[];
 }
 
 export const useClientStore = create<ClientStore>()(
@@ -25,62 +38,84 @@ export const useClientStore = create<ClientStore>()(
       allClients: [
         {
           id: '1',
-          name: 'Empresa ACME Ltda',
+          name: 'Prefeitura Municipal de São Paulo',
           cnpj: '12.345.678/0001-90',
           documentNumber: '12.345.678/0001-90',
-          email: 'contato@acme.com.br',
+          email: 'contato@prefeitura.sp.gov.br',
           phone: '(11) 3456-7890',
-          address: 'Av. Paulista, 1000',
+          address: 'Praça da Sé, 1000',
           city: 'São Paulo',
           state: 'SP',
           contactName: 'João Silva',
-          contactEmail: 'joao@acme.com.br',
+          contactEmail: 'joao@prefeitura.sp.gov.br',
           contactPhone: '(11) 98765-4321',
           status: 'ACTIVE',
           createdAt: '2023-06-01T10:00:00Z',
           updatedAt: '2023-06-01T10:00:00Z',
-          segment: 'Tecnologia',
-          type: 'private',
+          segment: 'Municipal',
+          type: 'public',
+          userRoles: {
+            canViewOperations: true,
+            canEditOperations: false,
+            canApproveOperations: false,
+            isAdmin: false,
+            isRepresentative: false
+          }
         },
         {
           id: '2',
-          name: 'Indústrias XYZ S/A',
+          name: 'Secretaria Estadual de Saúde',
           cnpj: '98.765.432/0001-10',
           documentNumber: '98.765.432/0001-10',
-          email: 'financeiro@xyz.com.br',
+          email: 'financeiro@saude.sp.gov.br',
           phone: '(11) 2345-6789',
-          address: 'Rua Augusta, 500',
+          address: 'Av. Dr. Arnaldo, 500',
           city: 'São Paulo',
           state: 'SP',
           contactName: 'Maria Oliveira',
-          contactEmail: 'maria@xyz.com.br',
+          contactEmail: 'maria@saude.sp.gov.br',
           contactPhone: '(11) 98765-4321',
           status: 'ACTIVE',
           createdAt: '2023-07-15T14:30:00Z',
           updatedAt: '2023-07-15T14:30:00Z',
-          segment: 'Indústria',
-          type: 'private',
+          segment: 'Estadual',
+          type: 'public',
+          userRoles: {
+            canViewOperations: true,
+            canEditOperations: true,
+            canApproveOperations: false,
+            isAdmin: false,
+            isRepresentative: false
+          }
         },
         {
           id: '3',
-          name: 'Tech Solutions Brasil',
+          name: 'Universidade Federal',
           cnpj: '56.789.123/0001-45',
           documentNumber: '56.789.123/0001-45',
-          email: 'contato@techsolutions.com.br',
+          email: 'contato@universidade.edu.br',
           phone: '(21) 9876-5432',
-          address: 'Av. Rio Branco, 100',
+          address: 'Av. Universitária, 100',
           city: 'Rio de Janeiro',
           state: 'RJ',
           contactName: 'Roberto Santos',
-          contactEmail: 'roberto@techsolutions.com.br',
+          contactEmail: 'roberto@universidade.edu.br',
           contactPhone: '(21) 98765-4321',
           status: 'ACTIVE',
           createdAt: '2023-08-10T09:15:00Z',
           updatedAt: '2023-08-10T09:15:00Z',
-          segment: 'Tecnologia',
-          type: 'private',
+          segment: 'Federal',
+          type: 'public',
+          userRoles: {
+            canViewOperations: true,
+            canEditOperations: true,
+            canApproveOperations: true,
+            isAdmin: false,
+            isRepresentative: false
+          }
         },
       ],
+      pendingProposals: 3,
       // Define clients getter that returns allClients
       get clients() {
         return get().allClients;
@@ -166,6 +201,9 @@ export const useClientStore = create<ClientStore>()(
             activeClient: updatedActiveClient
           };
         });
+      },
+      setPendingProposals: (count) => {
+        set({ pendingProposals: count });
       }
     }),
     {
@@ -173,3 +211,20 @@ export const useClientStore = create<ClientStore>()(
     }
   )
 );
+
+// Create a custom hook for active client management
+export const useActiveClient = () => {
+  const store = useClientStore();
+  
+  return {
+    activeClient: store.activeClient,
+    setActiveClient: store.setActiveClient,
+    clearActiveClient: store.clearActiveClient,
+    recentClients: store.recentClients,
+    hasViewAccess: store.activeClient?.userRoles?.canViewOperations || false,
+    hasEditAccess: store.activeClient?.userRoles?.canEditOperations || false,
+    hasApprovalAccess: store.activeClient?.userRoles?.canApproveOperations || false,
+    isClientAdmin: store.activeClient?.userRoles?.isAdmin || false,
+    isRepresentative: store.activeClient?.userRoles?.isRepresentative || false
+  };
+};
