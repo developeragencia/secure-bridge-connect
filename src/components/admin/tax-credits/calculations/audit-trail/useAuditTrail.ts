@@ -2,17 +2,19 @@
 import { useState, useCallback, useMemo } from 'react';
 import { AuditTrail } from './types';
 import { mockAuditLogs } from './mock-data';
+import { useToast } from '@/components/ui/use-toast';
 
 export const useAuditTrail = () => {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [actionFilter, setActionFilter] = useState<string>("all");
-  const [userFilter, setUserFilter] = useState<string>("all");
+  const [userFilter, setUserFilter] = useState<string | null>("all");
   const [dateFilter, setDateFilter] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
   const [selectedAudit, setSelectedAudit] = useState<AuditTrail | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Get all audit logs (in a real app, this would be fetched from an API)
+  // Get all audit logs
   const auditLogs: AuditTrail[] = useMemo(() => {
     try {
       return mockAuditLogs || [];
@@ -100,12 +102,17 @@ export const useAuditTrail = () => {
         document.body.removeChild(link);
         
         setIsLoading(false);
+        
+        toast({
+          title: "Exportação concluída",
+          description: "Os logs de auditoria foram exportados com sucesso.",
+        });
       }, 1000);
     } catch (error) {
       console.error("Error exporting audit logs:", error);
       setIsLoading(false);
     }
-  }, [filteredLogs]);
+  }, [filteredLogs, toast]);
   
   return {
     auditLogs,
