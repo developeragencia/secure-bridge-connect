@@ -11,6 +11,9 @@ import SessionExpirationPanel from './security/SessionExpirationPanel';
 import AccessProtectionContent from './security/AccessProtectionContent';
 import AuditTrailsPanel from './security/AuditTrailsPanel';
 import { motion } from 'framer-motion';
+import NotificationsContent from './notifications/NotificationsContent';
+import BillingContent from './billing/BillingContent';
+import SupportContent from './support/SupportContent';
 
 // Tax Credits Components
 import TaxCreditManagement from './tax-credits/TaxCreditManagement';
@@ -69,7 +72,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'profile':
         return <UserProfilePermissions userRole={user?.role || "client"} />;
       case 'notifications':
-        return <ExtraTabContent activeTab="notifications" />;
+        return <NotificationsContent />;
       
       // Clients Section
       case 'clients':
@@ -127,9 +130,9 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'security':
         return <ExtraTabContent activeTab="security" />;
       case 'billing':
-        return <ExtraTabContent activeTab="billing" />;
+        return <BillingContent />;
       case 'support':
-        return <ExtraTabContent activeTab="support" />;
+        return <SupportContent />;
       
       default:
         // Check if it's a client tab
