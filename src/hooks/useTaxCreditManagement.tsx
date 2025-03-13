@@ -4,7 +4,6 @@ import { TaxCredit, TaxCreditSummary } from '@/types/tax-credits';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 
-// Fixed the import to use correct hook definition
 export const useTaxCreditManagement = () => {
   // Estado para os filtros
   const [searchQuery, setSearchQuery] = useState('');
@@ -189,11 +188,9 @@ export const useTaxCreditManagement = () => {
   }, [toast]);
 
   const handleCreateCredit = useCallback(() => {
-    toast({
-      title: 'Criar crédito',
-      description: 'Funcionalidade em desenvolvimento',
-    });
-  }, [toast]);
+    // This is now handled in the component
+    console.log("Open create credit form");
+  }, []);
 
   const handleViewDetails = useCallback((creditId: string) => {
     navigate(`/credits/details/${creditId}`);
@@ -204,6 +201,48 @@ export const useTaxCreditManagement = () => {
       title: 'Exportação iniciada',
       description: 'Os dados estão sendo exportados. Você receberá uma notificação quando estiver pronto.',
     });
+  }, [toast]);
+
+  // Funções adicionais para CRUD
+  const createCredit = useCallback((creditData: Partial<TaxCredit>) => {
+    console.log('Creating credit:', creditData);
+    // API call would go here
+    toast({
+      title: 'Crédito criado',
+      description: 'O crédito tributário foi criado com sucesso',
+    });
+    fetchCredits();
+  }, [toast]);
+
+  const updateCredit = useCallback((creditId: string, creditData: Partial<TaxCredit>) => {
+    console.log('Updating credit:', creditId, creditData);
+    // API call would go here
+    toast({
+      title: 'Crédito atualizado',
+      description: 'O crédito tributário foi atualizado com sucesso',
+    });
+    fetchCredits();
+  }, [toast]);
+
+  const deleteCredit = useCallback((creditId: string) => {
+    console.log('Deleting credit:', creditId);
+    // API call would go here
+    toast({
+      title: 'Crédito excluído',
+      description: 'O crédito tributário foi excluído com sucesso',
+      variant: 'destructive',
+    });
+    fetchCredits();
+  }, [toast]);
+
+  const changeStatus = useCallback((creditId: string, newStatus: string, notes: string) => {
+    console.log('Changing status:', creditId, newStatus, notes);
+    // API call would go here
+    toast({
+      title: 'Status atualizado',
+      description: `O status do crédito foi atualizado para ${newStatus}`,
+    });
+    fetchCredits();
   }, [toast]);
 
   return {
@@ -221,5 +260,9 @@ export const useTaxCreditManagement = () => {
     handleCreateCredit,
     handleViewDetails,
     handleExportData,
+    createCredit,
+    updateCredit,
+    deleteCredit,
+    changeStatus,
   };
 };

@@ -1,17 +1,34 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { FileSearch } from 'lucide-react';
+import { FileSearch, Edit, Trash2, RefreshCcw } from 'lucide-react';
 import { TaxCredit } from '@/types/tax-credits';
 import StatusBadge from './StatusBadge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface CreditTableProps {
   credits: TaxCredit[];
   isLoading: boolean;
   onViewDetails: (creditId: string) => void;
+  onEdit: (credit: TaxCredit) => void;
+  onDelete: (credit: TaxCredit) => void;
+  onStatusChange: (credit: TaxCredit) => void;
 }
 
-const CreditTable: React.FC<CreditTableProps> = ({ credits, isLoading, onViewDetails }) => {
+const CreditTable: React.FC<CreditTableProps> = ({ 
+  credits, 
+  isLoading, 
+  onViewDetails,
+  onEdit,
+  onDelete,
+  onStatusChange
+}) => {
   // Function to format currency values
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -31,7 +48,7 @@ const CreditTable: React.FC<CreditTableProps> = ({ credits, isLoading, onViewDet
             <th className="py-3 px-4 text-left font-medium">Valor</th>
             <th className="py-3 px-4 text-left font-medium">Período</th>
             <th className="py-3 px-4 text-left font-medium">Status</th>
-            <th className="py-3 px-4 text-left font-medium">Ações</th>
+            <th className="py-3 px-4 text-right font-medium">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -63,16 +80,52 @@ const CreditTable: React.FC<CreditTableProps> = ({ credits, isLoading, onViewDet
                 <td className="py-3 px-4">
                   <StatusBadge status={credit.status} />
                 </td>
-                <td className="py-3 px-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                    onClick={() => onViewDetails(credit.id)}
-                  >
-                    <FileSearch className="h-4 w-4" />
-                    <span className="sr-only">Ver detalhes</span>
-                  </Button>
+                <td className="py-3 px-4 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={() => onViewDetails(credit.id)}
+                      title="Ver detalhes"
+                    >
+                      <FileSearch className="h-4 w-4" />
+                      <span className="sr-only">Ver detalhes</span>
+                    </Button>
+                    
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                        >
+                          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4">
+                            <path d="M8.625 2.5C8.625 3.12132 8.12132 3.625 7.5 3.625C6.87868 3.625 6.375 3.12132 6.375 2.5C6.375 1.87868 6.87868 1.375 7.5 1.375C8.12132 1.375 8.625 1.87868 8.625 2.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM7.5 13.625C8.12132 13.625 8.625 13.1213 8.625 12.5C8.625 11.8787 8.12132 11.375 7.5 11.375C6.87868 11.375 6.375 11.8787 6.375 12.5C6.375 13.1213 6.87868 13.625 7.5 13.625Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                          </svg>
+                          <span className="sr-only">Abrir menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => onEdit(credit)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          <span>Editar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onStatusChange(credit)}>
+                          <RefreshCcw className="mr-2 h-4 w-4" />
+                          <span>Alterar status</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={() => onDelete(credit)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          <span>Excluir</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </td>
               </tr>
             ))

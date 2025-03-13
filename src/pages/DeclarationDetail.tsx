@@ -17,7 +17,7 @@ const MOCK_DECLARATION = {
   periodName: '1º Trimestre de 2023',
   dueDate: '2023-04-30',
   submissionDate: '2023-04-25',
-  status: 'approved', // This is now a valid status for StatusBadge
+  status: 'APPROVED', // Changed to uppercase to match StatusType
   amount: 'R$ 12.450,00',
   protocol: 'RF2023040012345678',
   fiscalYear: '2023',
@@ -31,10 +31,10 @@ const MOCK_DECLARATION = {
     { id: '3', name: 'comprovante_pagamento.pdf', size: '500 KB', date: '2023-04-25' }
   ],
   history: [
-    { id: '1', date: '2023-04-25 14:30', action: 'Declaração enviada', user: 'João Silva', status: 'submitted' },
-    { id: '2', date: '2023-04-26 09:15', action: 'Recibo gerado', user: 'Sistema RFB', status: 'processing' },
-    { id: '3', date: '2023-04-28 11:45', action: 'Análise concluída', user: 'Sistema RFB', status: 'analyzing' },
-    { id: '4', date: '2023-04-30 10:20', action: 'Declaração aprovada', user: 'Sistema RFB', status: 'approved' }
+    { id: '1', date: '2023-04-25 14:30', action: 'Declaração enviada', user: 'João Silva', status: 'SUBMITTED' },
+    { id: '2', date: '2023-04-26 09:15', action: 'Recibo gerado', user: 'Sistema RFB', status: 'PROCESSING' },
+    { id: '3', date: '2023-04-28 11:45', action: 'Análise concluída', user: 'Sistema RFB', status: 'ANALYZING' },
+    { id: '4', date: '2023-04-30 10:20', action: 'Declaração aprovada', user: 'Sistema RFB', status: 'APPROVED' }
   ]
 };
 
