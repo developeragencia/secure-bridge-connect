@@ -14,17 +14,25 @@ const ClientsManagement: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Mock data for clients
+  // Mock data for clients - updated to match Client interface
   const mockClients = [
     {
       id: 'client-1',
       name: 'Empresa ABC Ltda',
       documentNumber: '12.345.678/0001-99',
+      cnpj: '12.345.678/0001-99',
       email: 'contato@empresaabc.com.br',
       phone: '(11) 3456-7890',
       address: 'Av. Paulista, 1000',
+      city: 'São Paulo',
+      state: 'SP',
       contactPerson: 'João Silva',
+      contactName: 'João Silva',
+      contactEmail: 'joao@empresaabc.com.br',
+      contactPhone: '(11) 98765-4321',
       industry: 'Tecnologia',
+      segment: 'Tecnologia',
+      type: 'private' as const,
       createdAt: '2023-01-15T10:00:00Z',
       updatedAt: '2023-06-20T14:30:00Z',
       status: 'ACTIVE' as const
@@ -33,11 +41,19 @@ const ClientsManagement: React.FC = () => {
       id: 'client-2',
       name: 'Indústrias XYZ S/A',
       documentNumber: '98.765.432/0001-10',
+      cnpj: '98.765.432/0001-10',
       email: 'contato@industriasxyz.com.br',
       phone: '(11) 2345-6789',
       address: 'Rua Augusta, 500',
+      city: 'São Paulo',
+      state: 'SP',
       contactPerson: 'Maria Oliveira',
+      contactName: 'Maria Oliveira',
+      contactEmail: 'maria@industriasxyz.com.br',
+      contactPhone: '(11) 97654-3210',
       industry: 'Manufatura',
+      segment: 'Manufatura',
+      type: 'private' as const,
       createdAt: '2022-09-10T09:00:00Z',
       updatedAt: '2023-05-12T11:20:00Z',
       status: 'ACTIVE' as const
@@ -46,11 +62,19 @@ const ClientsManagement: React.FC = () => {
       id: 'client-3',
       name: 'Comércio FastShop Ltda',
       documentNumber: '45.678.901/0001-23',
+      cnpj: '45.678.901/0001-23',
       email: 'contato@fastshop.com.br',
       phone: '(11) 4567-8901',
       address: 'Alameda Santos, 200',
+      city: 'São Paulo',
+      state: 'SP',
       contactPerson: 'Carlos Pereira',
+      contactName: 'Carlos Pereira',
+      contactEmail: 'carlos@fastshop.com.br',
+      contactPhone: '(11) 96543-2109',
       industry: 'Varejo',
+      segment: 'Varejo',
+      type: 'private' as const,
       createdAt: '2022-11-05T14:00:00Z',
       updatedAt: '2023-04-18T16:40:00Z',
       status: 'INACTIVE' as const

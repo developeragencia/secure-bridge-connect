@@ -75,6 +75,7 @@ const Clients = () => {
       id: Date.now().toString(),
       name: newClientData.name || 'New Client',
       cnpj: newClientData.cnpj || '',
+      documentNumber: newClientData.cnpj || '', // Use cnpj for documentNumber
       email: newClientData.email || '',
       phone: newClientData.phone || '',
       address: newClientData.address || '',
@@ -82,7 +83,11 @@ const Clients = () => {
       state: newClientData.state || '',
       zipCode: newClientData.zipCode || '',
       contactName: newClientData.contactName || '',
-      status: 'ACTIVE', // Using the correct status property instead of active
+      contactEmail: newClientData.contactEmail || '', // Add missing required fields
+      contactPhone: newClientData.contactPhone || '', // Add missing required fields
+      segment: newClientData.segment || '', // Add missing required fields
+      type: 'private', // Set default type
+      status: 'ACTIVE',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
