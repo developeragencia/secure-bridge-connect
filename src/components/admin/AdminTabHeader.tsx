@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import {
   BarChart3, Users, FileText, Globe, Settings,
   ShieldAlert, CreditCard, HelpCircle, Building, UserCircle,
-  Receipt, FileBarChart2, Landmark
+  Receipt, FileBarChart2, Landmark, PercentCircle, FileSpreadsheet,
+  FileStack, ClipboardList
 } from 'lucide-react';
 
 interface AdminTabHeaderProps {
@@ -111,75 +112,51 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
         </>
       )}
       
+      {activeTab === 'calculations' && (
+        <>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <PercentCircle className="h-5 w-5" />
+            </div>
+            <h1 className="text-2xl font-bold">Cálculos IRRF</h1>
+          </div>
+          <p className="text-muted-foreground">Cálculo e validação de retenções de IRRF</p>
+        </>
+      )}
+      
+      {activeTab === 'imports' && (
+        <>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <FileSpreadsheet className="h-5 w-5" />
+            </div>
+            <h1 className="text-2xl font-bold">Importação de Dados</h1>
+          </div>
+          <p className="text-muted-foreground">Importação e processamento de arquivos fiscais</p>
+        </>
+      )}
+      
       {activeTab === 'reports' && (
         <>
           <div className="flex items-center gap-2 mb-1">
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <FileText className="h-5 w-5" />
+              <FileStack className="h-5 w-5" />
             </div>
-            <h1 className="text-2xl font-bold">Relatórios</h1>
+            <h1 className="text-2xl font-bold">Relatórios Fiscais</h1>
           </div>
-          <p className="text-muted-foreground">Acesse e gere relatórios do sistema</p>
+          <p className="text-muted-foreground">Geração de relatórios e dossiês tributários</p>
         </>
       )}
       
-      {activeTab === 'site' && (
+      {activeTab === 'proposals' && (
         <>
           <div className="flex items-center gap-2 mb-1">
             <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <Globe className="h-5 w-5" />
+              <ClipboardList className="h-5 w-5" />
             </div>
-            <h1 className="text-2xl font-bold">Editor do Site</h1>
+            <h1 className="text-2xl font-bold">Propostas Comerciais</h1>
           </div>
-          <p className="text-muted-foreground">Personalize a aparência e conteúdo do seu site</p>
-        </>
-      )}
-      
-      {activeTab === 'settings' && (
-        <>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <Settings className="h-5 w-5" />
-            </div>
-            <h1 className="text-2xl font-bold">Configurações</h1>
-          </div>
-          <p className="text-muted-foreground">Configure preferências do sistema</p>
-        </>
-      )}
-      
-      {activeTab === 'security' && (
-        <>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <ShieldAlert className="h-5 w-5" />
-            </div>
-            <h1 className="text-2xl font-bold">Segurança</h1>
-          </div>
-          <p className="text-muted-foreground">Gerencie configurações de segurança e permissões</p>
-        </>
-      )}
-      
-      {activeTab === 'billing' && (
-        <>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <CreditCard className="h-5 w-5" />
-            </div>
-            <h1 className="text-2xl font-bold">Faturamento</h1>
-          </div>
-          <p className="text-muted-foreground">Gerencie planos, assinaturas e pagamentos</p>
-        </>
-      )}
-      
-      {activeTab === 'support' && (
-        <>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <HelpCircle className="h-5 w-5" />
-            </div>
-            <h1 className="text-2xl font-bold">Suporte</h1>
-          </div>
-          <p className="text-muted-foreground">Central de suporte e documentação</p>
+          <p className="text-muted-foreground">Gestão de propostas e contratos</p>
         </>
       )}
     </motion.div>

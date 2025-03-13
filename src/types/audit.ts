@@ -7,15 +7,18 @@ export interface Audit {
   auditType: string;
   startDate: string;
   deadline: string;
-  status: "EM_ANDAMENTO" | "PENDENTE" | "CONCLUIDA" | "CANCELADA";
+  status: 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANCELADA';
   assignedTo: string;
   documentsCount: number;
+  findings?: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuditSummary {
-  total: number;
-  emAndamento: number;
-  pendente: number;
-  concluida: number;
-  cancelada: number;
+  totalAudits: number;
+  pendingAudits: number;
+  inProgressAudits: number;
+  completedAudits: number;
+  canceledAudits: number;
 }

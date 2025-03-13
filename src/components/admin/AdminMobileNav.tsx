@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
   BarChart3, Users, FileBarChart2, Globe, Settings,
-  Receipt, Building, FileSearch, Landmark, UserCircle
+  Receipt, Building, FileSearch, Landmark, UserCircle, PercentCircle
 } from 'lucide-react';
 import ActiveClientSelector from './ActiveClientSelector';
 import { useActiveClient } from '@/hooks/useActiveClient';
@@ -59,6 +59,18 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
           <span className="text-[10px] mt-0.5">Créditos</span>
         </Button>
         <Button 
+          variant={activeTab === 'calculations' ? 'secondary' : 'ghost'}
+          size="sm"
+          className={cn(
+            "flex flex-col items-center py-1.5 h-auto rounded-md",
+            activeTab === 'calculations' && "bg-primary/10 text-primary"
+          )}
+          onClick={() => setActiveTab('calculations')}
+        >
+          <PercentCircle className="h-3.5 w-3.5" />
+          <span className="text-[10px] mt-0.5">IRRF</span>
+        </Button>
+        <Button 
           variant={activeTab === 'clients' ? 'secondary' : 'ghost'}
           size="sm"
           className={cn(
@@ -69,18 +81,6 @@ const AdminMobileNav = ({ activeTab, setActiveTab }: AdminMobileNavProps) => {
         >
           <Building className="h-3.5 w-3.5" />
           <span className="text-[10px] mt-0.5">Clientes</span>
-        </Button>
-        <Button 
-          variant={activeTab === 'users' ? 'secondary' : 'ghost'}
-          size="sm"
-          className={cn(
-            "flex flex-col items-center py-1.5 h-auto rounded-md",
-            activeTab === 'users' && "bg-primary/10 text-primary"
-          )}
-          onClick={() => setActiveTab('users')}
-        >
-          <Users className="h-3.5 w-3.5" />
-          <span className="text-[10px] mt-0.5">Usuários</span>
         </Button>
         <Button 
           variant={activeTab === 'profile' ? 'secondary' : 'ghost'}

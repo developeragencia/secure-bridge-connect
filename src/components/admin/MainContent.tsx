@@ -15,6 +15,10 @@ import { useActiveClient } from '@/hooks/useActiveClient';
 import TaxCreditManagement from '@/components/admin/tax-credits/TaxCreditManagement';
 import RecoveryManagement from '@/components/admin/tax-credits/RecoveryManagement';
 import AuditManagement from '@/components/admin/tax-credits/AuditManagement';
+import IRRFCalculations from '@/components/admin/tax-credits/IRRFCalculations';
+import DataImports from '@/components/admin/tax-credits/DataImports';
+import FiscalReports from '@/components/admin/tax-credits/FiscalReports';
+import CommercialProposals from '@/components/admin/tax-credits/CommercialProposals';
 
 interface MainContentProps {
   activeTab: string;
@@ -84,6 +88,10 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {activeTab === 'tax_credits' && <TaxCreditManagement />}
             {activeTab === 'recovery' && <RecoveryManagement />}
             {activeTab === 'audits' && <AuditManagement />}
+            {activeTab === 'calculations' && <IRRFCalculations />}
+            {activeTab === 'imports' && <DataImports />}
+            {activeTab === 'reports' && <FiscalReports />}
+            {activeTab === 'proposals' && <CommercialProposals />}
             
             {/* Extra tabs */}
             <ExtraTabContent activeTab={activeTab} />
