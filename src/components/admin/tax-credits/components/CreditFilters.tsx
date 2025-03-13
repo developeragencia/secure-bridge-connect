@@ -58,6 +58,8 @@ const CreditFilters: React.FC<CreditFiltersProps> = ({
             <SelectItem value="approved">Aprovado</SelectItem>
             <SelectItem value="pending">Pendente</SelectItem>
             <SelectItem value="rejected">Rejeitado</SelectItem>
+            <SelectItem value="analyzing">Em Análise</SelectItem>
+            <SelectItem value="recovered">Recuperado</SelectItem>
           </SelectContent>
         </Select>
       </div>

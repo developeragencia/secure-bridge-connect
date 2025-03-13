@@ -2,12 +2,18 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
+// Update to handle both lowercase and uppercase status values
+type StatusType = 'approved' | 'pending' | 'rejected' | 'APPROVED' | 'PENDING' | 'REJECTED' | 'ANALYZING' | 'RECOVERED';
+
 interface StatusBadgeProps {
-  status: 'approved' | 'pending' | 'rejected';
+  status: StatusType;
   className?: string;
 }
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className }) => {
+  // Normalize status to lowercase for internal processing
+  const normalizedStatus = status.toLowerCase() as 'approved' | 'pending' | 'rejected' | 'analyzing' | 'recovered';
+  
   const statusConfig = {
     approved: {
       label: 'Aprovado',
@@ -21,9 +27,18 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className }) => {
       label: 'Rejeitado',
       classes: 'bg-red-100 text-red-800',
     },
+    analyzing: {
+      label: 'Em Análise',
+      classes: 'bg-blue-100 text-blue-800',
+    },
+    recovered: {
+      label: 'Recuperado',
+      classes: 'bg-purple-100 text-purple-800',
+    },
   };
 
-  const { label, classes } = statusConfig[status];
+  // Default to pending if status is not recognized
+  const { label, classes } = statusConfig[normalizedStatus] || statusConfig.pending;
 
   return (
     <span
