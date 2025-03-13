@@ -2,14 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Clock } from 'lucide-react';
-
-interface HistoryItem {
-  id: string;
-  date: string;
-  action: string;
-  user: string;
-  status: string;
-}
+import { HistoryItem } from '@/types/declarations';
 
 interface CreditHistoryTabProps {
   history: HistoryItem[];
