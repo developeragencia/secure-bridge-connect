@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { RecoveryProcess } from '@/types/recovery';
+import { Badge } from '@/components/ui/badge';
 import RecoveryActionButtons from './RecoveryActionButtons';
 
 interface RecoveryTableProps {
@@ -15,8 +14,8 @@ interface RecoveryTableProps {
   onApprove: (processId: string) => void;
 }
 
-const RecoveryTable: React.FC<RecoveryTableProps> = ({ 
-  processes, 
+const RecoveryTable: React.FC<RecoveryTableProps> = ({
+  processes,
   isLoading,
   onViewDetails,
   onGenerateReport,
@@ -32,17 +31,39 @@ const RecoveryTable: React.FC<RecoveryTableProps> = ({
     }).format(value);
   };
 
+  const statusLabels = {
+    'INICIAL': 'Inicial',
+    'EM_ANDAMENTO': 'Em Andamento',
+    'PARCIAL': 'Parcial',
+    'CONCLUIDO': 'Concluído'
+  };
+
+  const getStatusClassName = (status: string) => {
+    switch (status) {
+      case 'INICIAL':
+        return 'bg-blue-100 text-blue-800 hover:bg-blue-200';
+      case 'EM_ANDAMENTO':
+        return 'bg-amber-100 text-amber-800 hover:bg-amber-200';
+      case 'PARCIAL':
+        return 'bg-purple-100 text-purple-800 hover:bg-purple-200';
+      case 'CONCLUIDO':
+        return 'bg-green-100 text-green-800 hover:bg-green-200';
+      default:
+        return 'bg-gray-100 text-gray-800 hover:bg-gray-200';
+    }
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b">
-            <th className="py-3 px-4 text-left font-medium">Cliente</th>
-            <th className="py-3 px-4 text-left font-medium">Nº Processo</th>
+            <th className="py-3 px-4 text-left font-medium">Processo</th>
             <th className="py-3 px-4 text-left font-medium">Tipo</th>
+            <th className="py-3 px-4 text-left font-medium">Cliente</th>
             <th className="py-3 px-4 text-left font-medium">Valor Original</th>
-            <th className="py-3 px-4 text-left font-medium">Recuperado</th>
-            <th className="py-3 px-4 text-left font-medium">% Recuperação</th>
+            <th className="py-3 px-4 text-left font-medium">Valor Recuperado</th>
+            <th className="py-3 px-4 text-left font-medium">Taxa</th>
             <th className="py-3 px-4 text-left font-medium">Status</th>
             <th className="py-3 px-4 text-left font-medium">Ações</th>
           </tr>
@@ -66,17 +87,19 @@ const RecoveryTable: React.FC<RecoveryTableProps> = ({
           ) : (
             processes.map((process) => (
               <tr key={process.id} className="border-b hover:bg-muted/50">
-                <td className="py-3 px-4">{process.clientName}</td>
                 <td className="py-3 px-4">{process.processNumber}</td>
                 <td className="py-3 px-4">{process.creditType}</td>
+                <td className="py-3 px-4">{process.clientName}</td>
                 <td className="py-3 px-4">{formatCurrency(process.originalAmount)}</td>
                 <td className="py-3 px-4">{formatCurrency(process.recoveredAmount)}</td>
                 <td className="py-3 px-4">{process.recoveryPercent.toFixed(1)}%</td>
                 <td className="py-3 px-4">
-                  <StatusBadge status={process.status} />
+                  <Badge className={getStatusClassName(process.status)}>
+                    {statusLabels[process.status as keyof typeof statusLabels]}
+                  </Badge>
                 </td>
                 <td className="py-3 px-4">
-                  <RecoveryActionButtons 
+                  <RecoveryActionButtons
                     process={process}
                     onViewDetails={onViewDetails}
                     onEdit={onEdit}
@@ -90,29 +113,6 @@ const RecoveryTable: React.FC<RecoveryTableProps> = ({
         </tbody>
       </table>
     </div>
-  );
-};
-
-// Status Badge component
-const StatusBadge: React.FC<{ status: RecoveryProcess['status'] }> = ({ status }) => {
-  const statusConfig = {
-    INICIAL: { label: 'Inicial', variant: 'secondary' as const },
-    EM_ANDAMENTO: { label: 'Em Andamento', variant: 'default' as const },
-    PARCIAL: { label: 'Parcial', variant: 'default' as const },
-    CONCLUIDO: { label: 'Concluído', variant: 'default' as const },
-  };
-
-  const config = statusConfig[status];
-
-  return (
-    <Badge variant={config.variant} className={
-      status === 'INICIAL' ? 'bg-slate-500/20 text-slate-700 hover:bg-slate-500/30' :
-      status === 'EM_ANDAMENTO' ? 'bg-blue-500/20 text-blue-700 hover:bg-blue-500/30' :
-      status === 'PARCIAL' ? 'bg-amber-500/20 text-amber-700 hover:bg-amber-500/30' :
-      'bg-green-500/20 text-green-700 hover:bg-green-500/30'
-    }>
-      {config.label}
-    </Badge>
   );
 };
 

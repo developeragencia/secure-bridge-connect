@@ -7,7 +7,8 @@ import {
   Tabs, TabsContent, TabsList, TabsTrigger 
 } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Client } from '@/types/client';
+import { Client } from '@/types/recovery';
+import { TaxCredit } from '@/types/tax-credits';
 import { useActiveClient } from '@/hooks/useActiveClient';
 import { 
   ArrowLeft, Building, MapPin, Phone, Mail, User, 
@@ -19,7 +20,6 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
 } from '@/components/ui/table';
 import { Progress } from '@/components/ui/progress';
-import { TaxCredit } from '@/types/tax-credits';
 import { useToast } from '@/components/ui/use-toast';
 
 interface ClientDetailProps {
@@ -33,7 +33,6 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
   const { activeClient, setActiveClient } = useActiveClient();
   const [client, setClient] = useState<Client | null>(null);
   
-  // Mock credit data for this client
   const [credits, setCredits] = useState<TaxCredit[]>([
     {
       id: "1",
@@ -81,7 +80,6 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
     },
   ]);
 
-  // Mock data for clients - simulating a database fetch
   const clients: Client[] = [
     {
       id: "1",
@@ -176,13 +174,11 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
   ];
   
   useEffect(() => {
-    // Simulated fetch of client data
     const foundClient = clients.find(c => c.id === clientId);
     
     if (foundClient) {
       setClient(foundClient);
       
-      // Update the client name and document number in the credits
       setCredits(prevCredits => 
         prevCredits.map(credit => ({
           ...credit,
@@ -250,7 +246,6 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
     RECOVERED: "Recuperado"
   };
   
-  // Calculate summary data
   const totalCredits = credits.reduce((sum, credit) => sum + credit.originalAmount, 0);
   const recoveredAmount = credits.reduce((sum, credit) => sum + credit.creditAmount, 0);
   const recoveryRate = totalCredits ? Math.round((recoveredAmount / totalCredits) * 100) : 0;
@@ -339,7 +334,6 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
             </TabsList>
             
             <TabsContent value="overview" className="space-y-6">
-              {/* Client Summary Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
                   <CardHeader className="pb-2">
@@ -384,7 +378,6 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
                 </Card>
               </div>
               
-              {/* Client Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader className="pb-2">

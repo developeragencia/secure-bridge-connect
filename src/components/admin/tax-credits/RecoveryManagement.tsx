@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { RecoveryProcess, RecoverySummary } from '@/types/recovery';
@@ -18,21 +17,28 @@ const generateMockRecoveryProcesses = (): RecoveryProcess[] => {
     clientName: `Cliente ${Math.floor(Math.random() * 5) + 1}`,
     documentNumber: `${Math.floor(Math.random() * 90000000) + 10000000}/${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 90) + 10}`,
     creditType: ['IRPJ', 'CSLL', 'PIS/COFINS', 'INSS', 'IRRF', 'OUTROS'][Math.floor(Math.random() * 6)],
+    processType: ['Restituição', 'Compensação', 'Regularização'][Math.floor(Math.random() * 3)],
     originalAmount: Math.floor(Math.random() * 1000000) + 50000,
     recoveredAmount: Math.floor(Math.random() * 500000) + 10000,
     recoveryPercent: Math.random() * 100,
     startDate: new Date(2022, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
-    status: ['INICIAL', 'EM_ANDAMENTO', 'PARCIAL', 'CONCLUIDO'][Math.floor(Math.random() * 4)] as any,
-    processNumber: `${Math.floor(Math.random() * 9000) + 1000}.${Math.floor(Math.random() * 9000) + 1000}/${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 90) + 10}`
+    currentStatus: ['Em análise', 'Em processamento', 'Concluído', 'Cancelado'][Math.floor(Math.random() * 4)],
+    status: ['INICIAL', 'EM_ANDAMENTO', 'PARCIAL', 'CONCLUIDO'][Math.floor(Math.random() * 4)],
+    responsiblePerson: `Responsável ${Math.floor(Math.random() * 5) + 1}`,
+    processNumber: `${Math.floor(Math.random() * 9000) + 1000}.${Math.floor(Math.random() * 9000) + 1000}/${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 90) + 10}`,
+    completionDate: Math.random() > 0.5 ? new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString() : undefined
   }));
 };
 
 const generateMockSummary = (): RecoverySummary => {
   return {
+    totalProcesses: Math.floor(Math.random() * 100) + 20,
+    completedProcesses: Math.floor(Math.random() * 50) + 10,
+    inProgressProcesses: Math.floor(Math.random() * 30) + 5,
+    successRate: Math.random() * 100,
     totalCredits: Math.floor(Math.random() * 10000000) + 1000000,
     recoveredAmount: Math.floor(Math.random() * 5000000) + 500000,
-    avgRecoveryRate: Math.random() * 100,
-    completedProcesses: Math.floor(Math.random() * 100) + 10
+    avgRecoveryRate: Math.random() * 100
   };
 };
 

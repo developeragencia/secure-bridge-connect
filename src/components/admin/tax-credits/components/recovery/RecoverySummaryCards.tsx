@@ -54,7 +54,7 @@ const RecoverySummaryCards: React.FC<RecoverySummaryCardsProps> = ({ summary }) 
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.avgRecoveryRate}%</div>
+            <div className="text-2xl font-bold">{summary.avgRecoveryRate.toFixed(1)}%</div>
             <ArrowUpRight className="h-5 w-5 text-green-500" />
           </div>
         </CardContent>
