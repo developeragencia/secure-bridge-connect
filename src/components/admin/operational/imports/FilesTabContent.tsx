@@ -22,6 +22,8 @@ const FilesTabContent = ({ onFormatClick }: FilesTabContentProps) => {
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.3 }}
+          whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+          className="card-shimmer"
         >
           <ImportFormatsCard onFormatClick={onFormatClick} />
         </motion.div>
@@ -30,6 +32,8 @@ const FilesTabContent = ({ onFormatClick }: FilesTabContentProps) => {
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.3 }}
+          whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+          className="card-shimmer"
         >
           <RecentImportsCard />
         </motion.div>

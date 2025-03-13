@@ -46,11 +46,11 @@ const MobileSidebarSection = ({
         className={cn(
           "flex items-center justify-between py-2 px-3 text-xs font-medium uppercase tracking-wider cursor-pointer rounded-md transition-all duration-200",
           isSectionActive 
-            ? "text-primary bg-primary/5"
-            : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
+            ? "text-primary bg-sidebar-primary/15"
+            : "text-sidebar-foreground hover:text-foreground hover:bg-sidebar-accent/50"
         )}
         onClick={() => toggleSection(section.id)}
-        whileHover={{ scale: 1.01 }}
+        whileHover={{ scale: 1.01, backgroundColor: 'hsla(var(--sidebar-primary)/0.2)' }}
         whileTap={{ scale: 0.99 }}
       >
         <span>{section.title}</span>
@@ -67,7 +67,7 @@ const MobileSidebarSection = ({
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.3 }}
           className="space-y-1.5 w-full pl-2"
         >
           {section.items.map((item, index) => (
@@ -77,15 +77,15 @@ const MobileSidebarSection = ({
               animate={{ opacity: 1, x: 0 }}
               transition={{ 
                 duration: 0.2,
-                delay: index * 0.03 // Stagger the animations
+                delay: index * 0.05 // Stagger the animations
               }}
             >
               <Button 
-                variant={activeTab === item.id ? 'secondary' : 'ghost'} 
+                variant={activeTab === item.id ? 'default' : 'ghost'} 
                 className={cn(
                   activeTab === item.id 
-                    ? "bg-primary/10 text-primary font-medium border-l-2 border-primary shadow-sm"
-                    : "hover:bg-secondary/80",
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium shadow-sm"
+                    : "hover:bg-sidebar-accent/50 text-sidebar-foreground",
                   "w-full justify-start rounded-md min-h-[40px] transition-all"
                 )}
                 onClick={() => handleItemClick(item.id)}
@@ -94,11 +94,11 @@ const MobileSidebarSection = ({
                   <motion.span
                     className={cn(
                       activeTab === item.id 
-                        ? "text-primary" 
-                        : "text-muted-foreground group-hover:text-foreground",
+                        ? "text-sidebar-primary-foreground" 
+                        : "text-sidebar-primary",
                       "transition-colors"
                     )}
-                    whileHover={{ rotate: [0, -5, 5, 0] }}
+                    whileHover={{ rotate: [0, -10, 10, -5, 0] }}
                     transition={{ duration: 0.5 }}
                   >
                     {item.icon}
@@ -107,14 +107,15 @@ const MobileSidebarSection = ({
                   {activeTab === item.id && (
                     <motion.div
                       initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
+                      animate={{ scale: 1, rotate: [0, 10, -10, 5, 0] }}
                       transition={{ 
                         type: "spring", 
                         stiffness: 260, 
-                        damping: 20 
+                        damping: 20,
+                        duration: 0.5 
                       }}
                     >
-                      <Sparkles className="h-3.5 w-3.5 text-primary ml-auto" />
+                      <Sparkles className="h-3.5 w-3.5 text-sidebar-primary-foreground ml-auto" />
                     </motion.div>
                   )}
                 </div>

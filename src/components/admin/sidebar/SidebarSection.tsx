@@ -40,14 +40,33 @@ const SidebarSection = ({
       navigate(`/admin/${tabId}`);
     }
   };
+
+  // Animation variants for menu items
+  const menuItemVariants = {
+    closed: { opacity: 0, y: -10, height: 0 },
+    open: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      height: 'auto',
+      transition: {
+        delay: i * 0.05,
+        duration: 0.3,
+      },
+    }),
+  };
   
   return (
     <div className="my-2">
-      {/* Section header with improved styling and animation */}
+      {/* Section header with enhanced styling and animation */}
       {sidebarOpen && (
-        <button
-          className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-sidebar-foreground hover:bg-primary/10 rounded-md transition-all duration-200"
+        <motion.button
+          className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-sidebar-foreground bg-sidebar-accent/50 hover:bg-sidebar-primary/20 rounded-md transition-all duration-200"
           onClick={() => toggleSection(section.id)}
+          whileHover={{ 
+            backgroundColor: 'hsla(var(--sidebar-primary)/0.15)',
+            scale: 1.02
+          }}
+          whileTap={{ scale: 0.98 }}
         >
           <span className="tracking-wide uppercase">{section.title}</span>
           <motion.div
@@ -56,12 +75,12 @@ const SidebarSection = ({
             transition={{ duration: 0.2 }}
           >
             {isExpanded ? (
-              <ChevronDown className="h-3.5 w-3.5 text-sidebar-foreground/80" />
+              <ChevronDown className="h-3.5 w-3.5 text-sidebar-primary" />
             ) : (
-              <ChevronRight className="h-3.5 w-3.5 text-sidebar-foreground/80" />
+              <ChevronRight className="h-3.5 w-3.5 text-sidebar-primary" />
             )}
           </motion.div>
-        </button>
+        </motion.button>
       )}
       
       {/* Section items with enhanced animations and transitions */}
@@ -71,25 +90,35 @@ const SidebarSection = ({
           sidebarOpen && !isExpanded ? "hidden" : "block",
           !sidebarOpen ? "px-2" : ""
         )}
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ 
-          opacity: sidebarOpen && isExpanded || !sidebarOpen ? 1 : 0,
-          height: sidebarOpen && isExpanded || !sidebarOpen ? "auto" : 0
+        initial="closed"
+        animate={sidebarOpen && isExpanded || !sidebarOpen ? "open" : "closed"}
+        variants={{
+          open: {
+            opacity: 1,
+            height: 'auto',
+            transition: { staggerChildren: 0.07, delayChildren: 0.1 }
+          },
+          closed: {
+            opacity: 0,
+            height: 0,
+            transition: { staggerChildren: 0.05, staggerDirection: -1 }
+          }
         }}
-        transition={{ duration: 0.3 }}
       >
-        {section.items.map((item) => (
+        {section.items.map((item, index) => (
           <motion.button
             key={item.id}
+            custom={index}
+            variants={menuItemVariants}
             className={cn(
-              "flex items-center w-full rounded-md px-3 py-2 text-sm",
+              "flex items-center w-full rounded-md px-3 py-2 text-sm shadow-sm",
               activeTab === item.id 
-                ? "bg-primary/20 text-primary font-medium shadow-sm backdrop-blur-sm" 
-                : "text-sidebar-foreground hover:bg-primary/10 hover:text-foreground",
+                ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium" 
+                : "bg-sidebar-accent/30 text-sidebar-foreground hover:bg-sidebar-primary/20 hover:text-sidebar-foreground",
               !sidebarOpen && "justify-center p-2"
             )}
             onClick={() => handleTabClick(item.id)}
-            whileHover={{ scale: 1.02, x: sidebarOpen ? 4 : 0 }}
+            whileHover={{ scale: 1.03, x: sidebarOpen ? 4 : 0 }}
             whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.2 }}
           >
@@ -97,9 +126,9 @@ const SidebarSection = ({
               className={cn(
                 "mr-2 text-current", 
                 !sidebarOpen && "mr-0",
-                activeTab === item.id ? "text-primary" : "text-sidebar-foreground"
+                activeTab === item.id ? "text-sidebar-primary-foreground" : "text-sidebar-primary"
               )}
-              whileHover={{ rotate: [0, -5, 5, 0] }}
+              whileHover={{ rotate: [0, -10, 10, -5, 0] }}
               transition={{ duration: 0.5 }}
             >
               {item.icon}
@@ -118,7 +147,7 @@ const SidebarSection = ({
             {/* Active indicator animation */}
             {activeTab === item.id && sidebarOpen && (
               <motion.div 
-                className="ml-auto h-1.5 w-1.5 rounded-full bg-primary"
+                className="ml-auto h-1.5 w-1.5 rounded-full bg-white"
                 initial={{ scale: 0 }}
                 animate={{ scale: [0, 1.5, 1] }}
                 transition={{ duration: 0.5 }}
