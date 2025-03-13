@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Filter, Printer, Download } from 'lucide-react';
+import { Filter, Printer } from 'lucide-react';
+import ExportOptionsMenu from './ExportOptionsMenu';
 
 interface ReportsHeaderProps {
-  onExport?: () => void;
-  onFilter?: () => void;
+  onExport: (format: string) => void;
+  onFilter: () => void;
 }
 
 const ReportsHeader: React.FC<ReportsHeaderProps> = ({ 
@@ -34,14 +35,7 @@ const ReportsHeader: React.FC<ReportsHeaderProps> = ({
           <Printer className="mr-2 h-4 w-4" />
           Imprimir
         </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={onExport}
-        >
-          <Download className="mr-2 h-4 w-4" />
-          Exportar
-        </Button>
+        <ExportOptionsMenu onExport={onExport} />
       </div>
     </div>
   );

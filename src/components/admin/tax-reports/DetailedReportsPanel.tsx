@@ -4,11 +4,11 @@ import ReportsHeader from './components/ReportsHeader';
 import TabsContainer from './components/TabsContainer';
 import ReportConfigForm from './components/ReportConfigForm';
 import RecentReportsList from './components/RecentReportsList';
+import FilterSidebar from './components/FilterSidebar';
+import ReportsTable from './components/ReportsTable';
 import { useReportGeneration } from './hooks/useReportGeneration';
-import { useToast } from '@/components/ui/use-toast';
 
 const DetailedReportsPanel: React.FC = () => {
-  const toast = useToast();
   const {
     reportPeriod,
     setReportPeriod,
@@ -17,15 +17,18 @@ const DetailedReportsPanel: React.FC = () => {
     isGenerating,
     activeTab,
     setActiveTab,
+    filterSidebarOpen,
+    setFilterSidebarOpen,
+    reports,
     handleGenerateReport,
-    handleExportReport
+    handleExportReport,
+    handleClearFilters,
+    handleViewReport,
+    handleDownloadReport
   } = useReportGeneration();
 
   const handleFilterClick = () => {
-    toast.toast({
-      title: "Filtros avançados",
-      description: "Função de filtros avançados em desenvolvimento.",
-    });
+    setFilterSidebarOpen(true);
   };
 
   // Fiscal tab content
@@ -38,7 +41,18 @@ const DetailedReportsPanel: React.FC = () => {
         setReportType={setReportType}
         isGenerating={isGenerating}
         onGenerateReport={handleGenerateReport}
+        onClearFilters={handleClearFilters}
       />
+      
+      <div className="mt-6">
+        <h3 className="text-lg font-medium mb-4">Relatórios Gerados</h3>
+        <ReportsTable 
+          reports={reports}
+          onView={handleViewReport}
+          onDownload={handleDownloadReport}
+        />
+      </div>
+      
       <RecentReportsList />
     </>
   );
@@ -53,6 +67,12 @@ const DetailedReportsPanel: React.FC = () => {
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
         fiscalContent={fiscalContent}
+      />
+      
+      <FilterSidebar 
+        isVisible={filterSidebarOpen}
+        onClose={() => setFilterSidebarOpen(false)}
+        onClearFilters={handleClearFilters}
       />
     </div>
   );

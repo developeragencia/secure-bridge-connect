@@ -10,7 +10,7 @@ export const SidebarHeader = React.forwardRef<HTMLDivElement, SidebarHeaderProps
       <div
         ref={ref}
         data-sidebar="header"
-        className={cn("flex flex-col gap-2 p-2", className)}
+        className={cn("flex flex-col gap-2 p-2 border-b border-b-sidebar-border", className)}
         {...props}
       />
     )

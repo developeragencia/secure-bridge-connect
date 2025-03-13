@@ -14,6 +14,7 @@ interface ReportConfigFormProps {
   setReportType: (value: string) => void;
   isGenerating: boolean;
   onGenerateReport: () => void;
+  onClearFilters: () => void;
 }
 
 const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
@@ -22,7 +23,8 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
   reportType,
   setReportType,
   isGenerating,
-  onGenerateReport
+  onGenerateReport,
+  onClearFilters
 }) => {
   return (
     <Card>
@@ -110,7 +112,7 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
         </div>
         
         <div className="flex justify-end gap-2 pt-4">
-          <Button variant="outline">Limpar Filtros</Button>
+          <Button variant="outline" onClick={onClearFilters}>Limpar Filtros</Button>
           <Button 
             onClick={onGenerateReport} 
             disabled={isGenerating}

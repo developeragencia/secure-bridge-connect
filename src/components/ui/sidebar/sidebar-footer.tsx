@@ -10,7 +10,7 @@ export const SidebarFooter = React.forwardRef<HTMLDivElement, SidebarFooterProps
       <div
         ref={ref}
         data-sidebar="footer"
-        className={cn("flex flex-col gap-2 p-2", className)}
+        className={cn("flex flex-col gap-2 p-2 border-t border-t-sidebar-border mt-auto", className)}
         {...props}
       />
     )
