@@ -1,0 +1,187 @@
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { Loader2, Key, Mail } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+
+const ADMIN_EMAIL = 'admin@sistemasclaudio.com';
+const ADMIN_PASSWORD = 'admin123';
+
+interface LoginFormProps {
+  onSuccess: () => void;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Admin fallback login for demo purposes
+      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        console.log('Using fallback admin login');
+        
+        // Set a mock session for demo purposes
+        const authData = {
+          email: ADMIN_EMAIL,
+          isAdmin: true,
+          timestamp: Date.now()
+        };
+        
+        // Store in the appropriate storage based on remember me option
+        if (rememberMe) {
+          localStorage.setItem('adminAuthRemembered', JSON.stringify(authData));
+        } else {
+          localStorage.setItem('adminAuth', JSON.stringify(authData));
+        }
+        
+        toast({
+          title: "Login realizado com sucesso!",
+          description: "Bem-vindo ao Painel Administrativo.",
+        });
+        
+        onSuccess();
+        return;
+      }
+      
+      // Regular Supabase authentication
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      // If rememberMe is checked, setup session persistence
+      if (rememberMe) {
+        // Store auth info with longer expiry
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          localStorage.setItem('adminAuthRemembered', JSON.stringify({
+            timestamp: Date.now(),
+            sessionExpiry: data.session.expires_at
+          }));
+        }
+      }
+
+      toast({
+        title: "Login realizado com sucesso!",
+        description: "Bem-vindo ao Painel Administrativo.",
+      });
+      
+      onSuccess();
+    } catch (error: any) {
+      setError(error.message);
+      toast({
+        title: "Erro de autenticação",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.form 
+      onSubmit={handleLogin} 
+      className="space-y-3 sm:space-y-4"
+      initial={{ y: 20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.4, delay: 0.4 }}
+    >
+      <div className="space-y-2">
+        <div className="relative">
+          <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="email"
+            type="email"
+            placeholder="admin@sistemasclaudio.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="pl-10 border-primary/20 focus-visible:ring-primary"
+          />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <div className="relative">
+          <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="pl-10 border-primary/20 focus-visible:ring-primary"
+          />
+        </div>
+      </div>
+      
+      {/* Remember Me Option - Mobile Optimized */}
+      <div className="flex items-center space-x-2">
+        <Switch 
+          id="remember-me" 
+          checked={rememberMe} 
+          onCheckedChange={setRememberMe}
+          className="data-[state=checked]:bg-primary"
+        />
+        <Label 
+          htmlFor="remember-me" 
+          className="text-xs sm:text-sm cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Manter conectado
+        </Label>
+      </div>
+      
+      {error && (
+        <motion.div 
+          className="text-xs sm:text-sm text-destructive bg-destructive/10 p-2 sm:p-3 rounded"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          {error}
+        </motion.div>
+      )}
+      
+      <Button 
+        type="submit" 
+        className="w-full transition-all hover:shadow-lg hover:shadow-primary/20"
+        disabled={loading}
+      >
+        {loading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Entrando...
+          </>
+        ) : (
+          "Entrar"
+        )}
+      </Button>
+
+      <div className="text-[10px] sm:text-xs text-center text-muted-foreground">
+        <p>Email padrão: <span className="font-medium">admin@sistemasclaudio.com</span></p>
+        <p>Senha padrão: <span className="font-medium">admin123</span></p>
+      </div>
+    </motion.form>
+  );
+};
+
+export default LoginForm;
