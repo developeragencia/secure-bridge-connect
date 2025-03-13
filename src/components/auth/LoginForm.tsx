@@ -30,8 +30,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     setError(null);
 
     try {
+      // Normalize email input
+      const normalizedEmail = email.trim().toLowerCase();
+      
       // Admin fallback login for demo purposes
-      if (email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      if (normalizedEmail === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         console.log('Using fallback admin login');
         
         // Set a mock session for demo purposes
@@ -53,15 +56,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           description: "Bem-vindo ao Painel Administrativo.",
         });
         
+        // Add a short delay before navigation to ensure toast is shown
         setTimeout(() => {
           onSuccess();
-        }, 500);
+        }, 800);
         return;
       }
       
       // Regular Supabase authentication
       const { error } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         password
       });
 
@@ -84,9 +88,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         description: "Bem-vindo ao Painel Administrativo.",
       });
       
+      // Add a short delay before navigation to ensure toast is shown
       setTimeout(() => {
         onSuccess();
-      }, 500);
+      }, 800);
     } catch (error: any) {
       console.error("Login error:", error);
       setError(error.message || "Erro ao fazer login. Verifique suas credenciais.");

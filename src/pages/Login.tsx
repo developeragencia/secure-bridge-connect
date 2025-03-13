@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 import LoginForm from '@/components/auth/LoginForm';
 import LoginHeader from '@/components/auth/LoginHeader';
@@ -13,6 +13,12 @@ import useLoginCheck from '@/hooks/useLoginCheck';
 const Login = () => {
   const { initializing } = useLoginCheck();
   const navigate = useNavigate();
+
+  const handleLoginSuccess = () => {
+    // Using navigate instead of a direct window.location change
+    // to maintain React Router's navigation stack
+    navigate('/admin', { replace: true });
+  };
 
   if (initializing) {
     return <LoginLoadingState />;
@@ -33,7 +39,7 @@ const Login = () => {
             <LoginHeader />
           </CardHeader>
           <CardContent>
-            <LoginForm onSuccess={() => navigate('/admin')} />
+            <LoginForm onSuccess={handleLoginSuccess} />
           </CardContent>
           <CardFooter className="flex justify-center text-center">
             <LoginFooter />

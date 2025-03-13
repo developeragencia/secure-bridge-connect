@@ -19,7 +19,9 @@ const useLoginCheck = () => {
             const authData = JSON.parse(rememberedAuth);
             // If saved session is less than 30 days old, use it
             if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
-              navigate('/admin');
+              setTimeout(() => {
+                navigate('/admin');
+              }, 100);
               return;
             } else {
               // Clear expired remembered login
@@ -35,7 +37,9 @@ const useLoginCheck = () => {
           try {
             const authData = JSON.parse(sessionAuth);
             if (authData) {
-              navigate('/admin');
+              setTimeout(() => {
+                navigate('/admin');
+              }, 100);
               return;
             }
           } catch (e) {
@@ -46,7 +50,9 @@ const useLoginCheck = () => {
         // Check Supabase session as fallback
         const { data } = await supabase.auth.getSession();
         if (data.session) {
-          navigate('/admin');
+          setTimeout(() => {
+            navigate('/admin');
+          }, 100);
         } else {
           setInitializing(false);
         }
@@ -61,7 +67,9 @@ const useLoginCheck = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          navigate('/admin');
+          setTimeout(() => {
+            navigate('/admin');
+          }, 100);
         }
       }
     );
