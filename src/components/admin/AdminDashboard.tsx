@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Layout, Users, Settings, FileText, CreditCard, Calculator, 
   PieChart, Shield, Paintbrush, LineChart, BookOpen, Building,
-  HardDrive, FileCheck, RefreshCw, Database 
+  HardDrive, FileCheck, RefreshCw, Database, BarChart, 
+  FileType, Mail, BriefcaseBusiness, Lightbulb, Receipt, 
+  Network, Truck, ChartPieIcon, Activity
 } from 'lucide-react';
 import MenuGrid from './dashboard/MenuGrid';
 import StatCards from './dashboard/StatCards';
@@ -20,7 +22,8 @@ const AdminDashboard = () => {
       description: 'Personalize a aparência e o conteúdo do seu site',
       icon: <Paintbrush className="h-6 w-6 text-white" />,
       color: 'bg-gradient-to-br from-purple-600 to-indigo-700 text-white',
-      route: 'site'
+      route: 'site',
+      highlight: true
     },
     {
       id: 'clients',
@@ -61,6 +64,30 @@ const AdminDashboard = () => {
       icon: <Users className="h-6 w-6 text-white" />,
       color: 'bg-gradient-to-br from-violet-500 to-purple-600 text-white',
       route: 'users'
+    },
+    {
+      id: 'fiscal_reports',
+      title: 'Relatórios Fiscais',
+      description: 'Acompanhe relatórios fiscais e tributários',
+      icon: <BarChart className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-pink-500 to-rose-600 text-white',
+      route: 'fiscal_reports'
+    },
+    {
+      id: 'proposals',
+      title: 'Propostas Comerciais',
+      description: 'Crie e gerencie propostas para clientes',
+      icon: <FileType className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-indigo-500 to-blue-600 text-white',
+      route: 'proposals'
+    },
+    {
+      id: 'notifications',
+      title: 'Notificações',
+      description: 'Configure e gerencie notificações do sistema',
+      icon: <Mail className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white',
+      route: 'notifications'
     }
   ];
 
@@ -88,6 +115,31 @@ const AdminDashboard = () => {
       icon: <FileCheck className="h-6 w-6 text-white" />,
       color: 'bg-gradient-to-br from-amber-500 to-yellow-600 text-white',
       route: 'audits'
+    },
+    {
+      id: 'credit_identification',
+      title: 'Identificação de Créditos',
+      description: 'Identifique novos créditos tributários',
+      icon: <Lightbulb className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-orange-500 to-red-600 text-white',
+      route: 'credit_identification'
+    },
+    {
+      id: 'retention_receipts',
+      title: 'Recibos de Retenção',
+      description: 'Gerencie recibos de retenção tributária',
+      icon: <Receipt className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white',
+      route: 'retention_receipts'
+    },
+    {
+      id: 'tax_dashboard',
+      title: 'Dashboard Interativo',
+      description: 'Visualize dados em tempo real',
+      icon: <Activity className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-fuchsia-500 to-pink-600 text-white',
+      route: 'interactive_dashboard',
+      highlight: true
     }
   ];
 
