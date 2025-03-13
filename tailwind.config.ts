@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -111,6 +112,28 @@ export default {
 				'blink': {
 					'0%, 45%, 55%, 100%': { transform: 'scaleY(1)' },
 					'50%': { transform: 'scaleY(0.1)' }
+				},
+				'spin-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
+				},
+				'bounce-light': {
+					'0%, 100%': {
+						transform: 'translateY(0)',
+						animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)'
+					},
+					'50%': {
+						transform: 'translateY(-5px)',
+						animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)'
+					}
+				},
+				'scale': {
+					'0%, 100%': { transform: 'scale(1)' },
+					'50%': { transform: 'scale(1.05)' }
+				},
+				'shimmer': {
+					'0%': { backgroundPosition: '-40rem 0' },
+					'100%': { backgroundPosition: '40rem 0' }
 				}
 			},
 			animation: {
@@ -124,6 +147,24 @@ export default {
 				'wave': 'wave 1s ease-in-out infinite',
 				'hop': 'hop 0.5s ease-in-out infinite',
 				'blink': 'blink 3s infinite',
+				'spin-slow': 'spin-slow 3s linear infinite',
+				'bounce-light': 'bounce-light 2s infinite',
+				'scale': 'scale 2s ease-in-out infinite',
+				'shimmer': 'shimmer 2s infinite linear'
+			},
+			background: {
+				'shimmer': 'linear-gradient(to right, var(--tw-gradient-stops))'
+			},
+			maxWidth: {
+				'8xl': '88rem',
+				'9xl': '96rem'
+			},
+			boxShadow: {
+				'glow': '0 0 10px rgba(59, 130, 246, 0.5)',
+				'glow-lg': '0 0 20px rgba(59, 130, 246, 0.7)'
+			},
+			backdropBlur: {
+				xs: '2px'
 			}
 		}
 	},

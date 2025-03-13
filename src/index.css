@@ -35,9 +35,9 @@
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 210 30% 97%;
     --sidebar-foreground: 240 5% 26%;
-    --sidebar-primary: 240 6% 10%;
+    --sidebar-primary: 210 100% 50%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 5% 96%;
     --sidebar-accent-foreground: 240 6% 10%;
@@ -73,6 +73,14 @@
     --border: 217 33% 18%;
     --input: 217 33% 18%;
     --ring: 213 27% 84%;
+    
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 40% 80%;
+    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 217 33% 18%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 18%;
   }
 }
 
@@ -169,6 +177,36 @@
     transition-delay: 0.5s;
   }
   
+  /* Novas classes de animação para o painel administrativo */
+  .animate-spin-slow {
+    animation: spin 3s linear infinite;
+  }
+  
+  .menu-item-hover {
+    @apply relative overflow-hidden;
+  }
+  
+  .menu-item-hover::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 ease-in-out;
+  }
+  
+  .menu-item-hover:hover::after {
+    @apply w-full;
+  }
+  
+  .card-hover-effect {
+    @apply transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-[1.02] hover:border-primary/30;
+  }
+  
+  .icon-bounce {
+    animation: bounce 2s infinite;
+  }
+  
+  .icon-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
   /* Grid pattern background */
   .bg-grid-pattern {
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
@@ -181,6 +219,15 @@
                       linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   }
 
+  /* Adaptações para dashboard */
+  .dashboard-card {
+    @apply bg-white dark:bg-card border border-border/40 rounded-lg shadow-sm transition-all duration-300;
+  }
+  
+  .dashboard-card:hover {
+    @apply shadow-md border-primary/30;
+  }
+  
   /* Admin panel styles */
   .admin-grid {
     display: grid;
@@ -211,6 +258,33 @@
     .admin-grid-3 {
       grid-template-columns: 1fr;
     }
+  }
+  
+  /* Glassmorphism enhanced */
+  .glassmorphism {
+    @apply bg-white/80 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg;
+  }
+  
+  /* Gradient borders */
+  .gradient-border {
+    position: relative;
+    border-radius: var(--radius);
+  }
+  
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    padding: 2px;
+    background: linear-gradient(45deg, hsl(var(--primary)), hsl(var(--primary)/40%));
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: 0;
+    pointer-events: none;
   }
 
   /* Logo animation effects */
@@ -310,6 +384,35 @@
     }
     50% {
       transform: scaleY(0.1);
+    }
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+    50% {
+      transform: translateY(-5px);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
     }
   }
 
