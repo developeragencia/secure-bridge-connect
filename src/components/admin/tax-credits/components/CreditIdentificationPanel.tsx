@@ -9,7 +9,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { 
   Search, Filter, ArrowRight, FileSearch, Upload, Clock, 
   CheckCircle, AlertTriangle, AlertCircle, FileText, BarChart4,
-  Building, Calendar, RefreshCw, Settings, Download, Percent, BarChart2
+  Building, Calendar, RefreshCw, Settings, Download, Percent, BarChart2,
+  XCircle
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useClientStore } from '@/hooks/useClientStore';

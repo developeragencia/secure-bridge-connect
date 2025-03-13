@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { format, subMonths, isAfter, parseISO, differenceInMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { SelicRate, MonetaryCorrection, SelicAPIResponse } from './types';
+import { SelicRate, MonetaryCorrection } from './types';
 import { generateMockSelicRates } from './utils';
 import { useClientStore } from '@/hooks/useClientStore';
 
@@ -32,10 +32,12 @@ export const useSelicCorrection = () => {
       // For demo purposes, we'll use mock data
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API delay
       
-      const mockData = generateMockSelicRates(60); // Generate 60 months of mock data
+      const mockData = generateMockSelicRates(); // Generate mock data without arguments
       
-      // Process and format the data
-      const processedRates = mockData.map((item, index) => ({
+      // Process and format the data to match our SelicRate type
+      const processedRates: SelicRate[] = mockData.map((item, index) => ({
+        month: new Date(item.date).getMonth() + 1,
+        year: new Date(item.date).getFullYear(),
         date: item.date,
         rate: item.rate,
         accumulated: index === 0 ? item.rate : (mockData[index - 1].accumulated + item.rate)
@@ -55,9 +57,17 @@ export const useSelicCorrection = () => {
       setApiConnectionStatus('error');
       
       // Fallback to mock data if API fails
-      const mockData = generateMockSelicRates(60);
-      setSelicRates(mockData);
-      setCurrentSelicRate(mockData[mockData.length - 1].rate);
+      const mockData = generateMockSelicRates(); // Generate mock data without arguments
+      const processedRates: SelicRate[] = mockData.map((item, index) => ({
+        month: new Date(item.date).getMonth() + 1,
+        year: new Date(item.date).getFullYear(),
+        date: item.date,
+        rate: item.rate,
+        accumulated: index === 0 ? item.rate : (mockData[index - 1].accumulated + item.rate)
+      }));
+      
+      setSelicRates(processedRates);
+      setCurrentSelicRate(processedRates[processedRates.length - 1].rate);
       
       toast({
         title: "Erro ao buscar taxas Selic",

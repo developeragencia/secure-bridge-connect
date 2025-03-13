@@ -1,20 +1,23 @@
 
 export type SelicRate = {
-  month: string;
+  month: number;
   year: number;
+  date?: string;
   rate: number;
   accumulated: number;
 };
 
 export type MonetaryCorrection = {
   id: string;
-  creditId: string;
+  creditId?: string;
   originalValue: number;
   correctedValue: number;
   difference: number;
-  correctionDate: string;
-  months: number;
-  accumulatedRate: number;
+  correctionDate?: string;
+  months?: number;
+  accumulatedRate?: number;
+  clientId?: string;
+  clientName?: string;
 };
 
 export type SelicAPIResponse = {
