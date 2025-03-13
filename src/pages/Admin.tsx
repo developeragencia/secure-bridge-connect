@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminUI } from '@/hooks/useAdminUI';
+import { useLocation } from 'react-router-dom';
 
 // Admin components
 import AdminSidebar from '@/components/admin/AdminSidebar';
@@ -28,6 +29,20 @@ const Admin = () => {
     toggleSection,
     toggleMobileMenu
   } = useAdminUI();
+  
+  const location = useLocation();
+  
+  // Parse the route path to set the active tab
+  useEffect(() => {
+    // Extract tab from URL path if present
+    const path = location.pathname.split('/');
+    if (path.length > 2) {
+      const tabFromPath = path[2];
+      if (tabFromPath && tabFromPath !== activeTab) {
+        setActiveTab(tabFromPath);
+      }
+    }
+  }, [location.pathname, setActiveTab, activeTab]);
 
   if (loading) {
     return <AdminLoading />;

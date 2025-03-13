@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,12 +26,10 @@ const MaintenanceRouteGuard = ({ element }: { element: JSX.Element }) => {
   
   useEffect(() => {
     const checkMaintenanceAndAuth = async () => {
-      // Check if site is in maintenance mode
       const maintenanceMode = localStorage.getItem('maintenanceMode') === 'true';
       setIsMaintenanceMode(maintenanceMode);
       
       if (maintenanceMode) {
-        // Check if user is admin
         const { data } = await supabase.auth.getSession();
         const adminAuth = localStorage.getItem('adminAuth');
         
@@ -55,12 +52,10 @@ const MaintenanceRouteGuard = ({ element }: { element: JSX.Element }) => {
     </div>;
   }
   
-  // If site is in maintenance mode and user is not admin, redirect to maintenance page
   if (isMaintenanceMode && !isAdmin) {
     return <Navigate to="/maintenance" />;
   }
   
-  // Otherwise, render the requested page
   return element;
 };
 
@@ -70,12 +65,10 @@ const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      // First check for remembered auth
       const rememberedAuth = localStorage.getItem('adminAuthRemembered');
       if (rememberedAuth) {
         try {
           const authData = JSON.parse(rememberedAuth);
-          // If remembered session is valid (less than 30 days old)
           if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
             setAuthenticated(true);
             setLoading(false);
@@ -86,12 +79,10 @@ const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
         }
       }
 
-      // Check for regular session
       const regularAuth = localStorage.getItem('adminAuth');
       if (regularAuth) {
         try {
           const authData = JSON.parse(regularAuth);
-          // Regular session valid for shorter time (e.g., 1 day)
           if (authData && (Date.now() - authData.timestamp) < 1 * 24 * 60 * 60 * 1000) {
             setAuthenticated(true);
             setLoading(false);
@@ -104,7 +95,6 @@ const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
         }
       }
 
-      // Fallback to Supabase auth check
       const { data } = await supabase.auth.getSession();
       if (data.session) {
         setAuthenticated(true);
@@ -133,15 +123,19 @@ const App = () => (
         <Routes>
           <Route path="/maintenance" element={<Maintenance />} />
           <Route path="/login" element={<Login />} />
+          
           <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
+          <Route path="/admin/*" element={<ProtectedRoute element={<Admin />} />} />
+          
           <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
           <Route path="/declarations" element={<ProtectedRoute element={<Declarations />} />} />
           <Route path="/declarations/new" element={<ProtectedRoute element={<NewDeclaration />} />} />
           <Route path="/declarations/:id" element={<ProtectedRoute element={<DeclarationDetail />} />} />
           <Route path="/credits/details/:id" element={<ProtectedRoute element={<CreditDetails />} />} />
           <Route path="/analysis/report/:id" element={<ProtectedRoute element={<AnalysisReport />} />} />
+          
           <Route path="/" element={<MaintenanceRouteGuard element={<Index />} />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          
           <Route path="*" element={<MaintenanceRouteGuard element={<NotFound />} />} />
         </Routes>
       </BrowserRouter>
