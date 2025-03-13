@@ -1,12 +1,12 @@
 
 import { useState, useCallback, useMemo } from 'react';
-import { AuditLogEntry, AuditTrail } from './types';
+import { AuditTrail, AuditAction } from './types';
 import { mockAuditLogs } from './mock-data';
 
 export const useAuditTrail = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [actionFilter, setActionFilter] = useState<string | null>(null);
-  const [userFilter, setUserFilter] = useState<string | null>(null);
+  const [actionFilter, setActionFilter] = useState<string | null>("all");
+  const [userFilter, setUserFilter] = useState<string | null>("all");
   const [selectedAudit, setSelectedAudit] = useState<AuditTrail | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   
@@ -43,10 +43,10 @@ export const useAuditTrail = () => {
         log.details.toLowerCase().includes(searchQuery.toLowerCase());
       
       // Apply action filter
-      const matchesAction = actionFilter === null || log.action === actionFilter;
+      const matchesAction = actionFilter === "all" || log.action === actionFilter;
       
       // Apply user filter
-      const matchesUser = userFilter === null || log.id === userFilter;
+      const matchesUser = userFilter === "all" || log.id === userFilter;
       
       return matchesSearch && matchesAction && matchesUser;
     });

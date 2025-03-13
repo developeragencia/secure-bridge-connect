@@ -40,9 +40,9 @@ const AuditTrailPanel: React.FC = () => {
             searchQuery={searchQuery}
             onSearchChange={handleSearch}
             actionFilter={actionFilter}
-            onActionFilterChange={(value) => setActionFilter(value === '' ? null : value)}
+            onActionFilterChange={(value) => setActionFilter(value)}
             userFilter={userFilter}
-            onUserFilterChange={(value) => setUserFilter(value === '' ? null : value)}
+            onUserFilterChange={(value) => setUserFilter(value)}
             uniqueUsers={uniqueUsers}
           />
           

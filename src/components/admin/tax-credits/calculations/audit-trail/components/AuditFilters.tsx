@@ -1,19 +1,14 @@
 
 import React from 'react';
 import { Input } from '@/components/ui/input';
-import { Filter, Search, User } from 'lucide-react';
-import {
+import { 
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-interface User {
-  id: string;
-  name: string;
-}
+import { AuditAction } from '../types';
 
 interface AuditFiltersProps {
   searchQuery: string;
@@ -22,7 +17,7 @@ interface AuditFiltersProps {
   onActionFilterChange: (value: string) => void;
   userFilter: string | null;
   onUserFilterChange: (value: string) => void;
-  uniqueUsers: User[];
+  uniqueUsers: { id: string; name: string }[];
 }
 
 const AuditFilters: React.FC<AuditFiltersProps> = ({
@@ -34,53 +29,65 @@ const AuditFilters: React.FC<AuditFiltersProps> = ({
   onUserFilterChange,
   uniqueUsers,
 }) => {
+  // Action types for filter
+  const actionTypes: { label: string; value: AuditAction | "all" }[] = [
+    { label: "Todas Ações", value: "all" },
+    { label: "Criação", value: "create" },
+    { label: "Atualização", value: "update" },
+    { label: "Exclusão", value: "delete" },
+    { label: "Mudança de Status", value: "status_change" },
+    { label: "Cálculo", value: "calculation" },
+    { label: "Exportação", value: "export" },
+    { label: "Importação", value: "import" },
+  ];
+
   return (
-    <div className="flex flex-col md:flex-row gap-3">
-      <div className="relative flex-1">
-        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+    <div className="flex flex-col sm:flex-row gap-4 p-4">
+      <div className="flex-1">
         <Input
-          placeholder="Buscar por usuário, recurso ou detalhes..."
-          className="pl-8"
+          placeholder="Buscar nos logs de auditoria..."
           value={searchQuery}
           onChange={onSearchChange}
+          className="w-full"
         />
       </div>
       
-      <Select
-        value={actionFilter || ''}
-        onValueChange={onActionFilterChange}
-      >
-        <SelectTrigger className="w-full md:w-[180px]">
-          <Filter className="mr-2 h-4 w-4" />
-          <SelectValue placeholder="Filtrar por ação" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="">Todas as ações</SelectItem>
-          <SelectItem value="create">Criação</SelectItem>
-          <SelectItem value="update">Atualização</SelectItem>
-          <SelectItem value="delete">Exclusão</SelectItem>
-          <SelectItem value="status_change">Mudança de Status</SelectItem>
-          <SelectItem value="calculation">Cálculo</SelectItem>
-          <SelectItem value="export">Exportação</SelectItem>
-          <SelectItem value="import">Importação</SelectItem>
-        </SelectContent>
-      </Select>
+      <div className="flex-1 sm:max-w-[200px]">
+        <Select
+          value={actionFilter || "all"}
+          onValueChange={onActionFilterChange}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Tipo de Ação" />
+          </SelectTrigger>
+          <SelectContent>
+            {actionTypes.map((type) => (
+              <SelectItem key={type.value} value={type.value}>
+                {type.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       
-      <Select
-        value={userFilter || ''}
-        onValueChange={onUserFilterChange}
-      >
-        <SelectTrigger className="w-full md:w-[180px]">
-          <User className="mr-2 h-4 w-4" />
-          <SelectValue placeholder="Filtrar por usuário" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="">Todos os usuários</SelectItem>
-          {uniqueUsers.map(user => (
-            <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="flex-1 sm:max-w-[200px]">
+        <Select
+          value={userFilter || "all"}
+          onValueChange={onUserFilterChange}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Usuário" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos Usuários</SelectItem>
+            {uniqueUsers.map((user) => (
+              <SelectItem key={user.id} value={user.id}>
+                {user.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 };
