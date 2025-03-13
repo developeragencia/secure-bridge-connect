@@ -20,6 +20,8 @@ import DataImports from '@/components/admin/tax-credits/DataImports';
 import FiscalReports from '@/components/admin/tax-credits/FiscalReports';
 import CommercialProposals from '@/components/admin/tax-credits/CommercialProposals';
 import TaxCreditCalculator from '@/components/admin/tax-credits/TaxCreditCalculator';
+import CreditIdentification from '@/components/admin/tax-credits/CreditIdentification';
+import DataProcessing from '@/components/admin/tax-credits/DataProcessing';
 
 interface MainContentProps {
   activeTab: string;
@@ -94,6 +96,10 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {activeTab === 'imports' && <DataImports />}
             {activeTab === 'reports' && <FiscalReports />}
             {activeTab === 'proposals' && <CommercialProposals />}
+            
+            {/* New tabs */}
+            {activeTab === 'credit_identification' && <CreditIdentification />}
+            {activeTab === 'data_processing' && <DataProcessing />}
             
             {/* Extra tabs */}
             <ExtraTabContent activeTab={activeTab} />
