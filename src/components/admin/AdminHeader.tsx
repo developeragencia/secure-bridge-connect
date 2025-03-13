@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import AnimatedLogo from '@/components/AnimatedLogo';
@@ -6,7 +7,7 @@ import { cn } from '@/lib/utils';
 import {
   Menu, BellRing, UserCircle, Sun, Moon,
   PanelLeftClose, PanelLeftOpen, User,
-  ChevronDown, Search, LogOut, X
+  ChevronDown, Search, LogOut, X, Building2
 } from 'lucide-react';
 import ActiveClientSelector from './ActiveClientSelector';
 import ActiveClientIndicator from './ActiveClientIndicator';
@@ -162,7 +163,7 @@ const AdminHeader = ({
       {activeClient && (
         <div className="md:hidden bg-primary/5 border-t border-primary/10 px-3 py-1 flex items-center justify-between">
           <div className="flex items-center">
-            <Building className="h-3.5 w-3.5 text-primary mr-1.5" />
+            <Building2 className="h-3.5 w-3.5 text-primary mr-1.5" />
             <span className="text-xs font-medium text-primary truncate max-w-[200px]">
               {activeClient.name}
             </span>
