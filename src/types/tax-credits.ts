@@ -1,5 +1,5 @@
 
-import { Client } from './recovery';
+import { Client as ClientBase } from './client';
 
 export interface TaxCredit {
   id: string;
@@ -25,3 +25,6 @@ export interface TaxCreditSummary {
   recoveredCredits: number;
   rejectedCredits: number;
 }
+
+// Use the correct client type to avoid conflicts with recovery.ts
+export type Client = ClientBase;

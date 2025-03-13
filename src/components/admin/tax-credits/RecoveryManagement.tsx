@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { RecoveryProcess, RecoverySummary } from '@/types/recovery';
@@ -11,6 +12,8 @@ import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates';
 
 // Mock data generators
 const generateMockRecoveryProcesses = (): RecoveryProcess[] => {
+  const statusOptions: ('INICIAL' | 'EM_ANDAMENTO' | 'PARCIAL' | 'CONCLUIDO')[] = ['INICIAL', 'EM_ANDAMENTO', 'PARCIAL', 'CONCLUIDO'];
+  
   return Array.from({ length: 12 }, (_, i) => ({
     id: `process-${i + 1}`,
     clientId: `client-${Math.floor(Math.random() * 5) + 1}`,
@@ -23,7 +26,7 @@ const generateMockRecoveryProcesses = (): RecoveryProcess[] => {
     recoveryPercent: Math.random() * 100,
     startDate: new Date(2022, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
     currentStatus: ['Em análise', 'Em processamento', 'Concluído', 'Cancelado'][Math.floor(Math.random() * 4)],
-    status: ['INICIAL', 'EM_ANDAMENTO', 'PARCIAL', 'CONCLUIDO'][Math.floor(Math.random() * 4)],
+    status: statusOptions[Math.floor(Math.random() * statusOptions.length)],
     responsiblePerson: `Responsável ${Math.floor(Math.random() * 5) + 1}`,
     processNumber: `${Math.floor(Math.random() * 9000) + 1000}.${Math.floor(Math.random() * 9000) + 1000}/${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 90) + 10}`,
     completionDate: Math.random() > 0.5 ? new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString() : undefined

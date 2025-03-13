@@ -12,6 +12,9 @@ import ClientsManagement from '@/components/admin/clients/ClientsManagement';
 import AdminUserProfile from '@/components/admin/AdminUserProfile';
 import ActiveClientHeader from '@/components/admin/ActiveClientHeader';
 import { useActiveClient } from '@/hooks/useActiveClient';
+import TaxCreditManagement from '@/components/admin/tax-credits/TaxCreditManagement';
+import RecoveryManagement from '@/components/admin/tax-credits/RecoveryManagement';
+import AuditManagement from '@/components/admin/tax-credits/AuditManagement';
 
 interface MainContentProps {
   activeTab: string;
@@ -76,6 +79,11 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             
             {/* Client Management tab */}
             {activeTab === 'clients' && <ClientsManagement />}
+            
+            {/* Tax Credit Management tabs */}
+            {activeTab === 'tax_credits' && <TaxCreditManagement />}
+            {activeTab === 'recovery' && <RecoveryManagement />}
+            {activeTab === 'audits' && <AuditManagement />}
             
             {/* Extra tabs */}
             <ExtraTabContent activeTab={activeTab} />

@@ -1,27 +1,20 @@
 
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useActiveClient } from '@/hooks/useActiveClient';
+import ClientDetail from './tax-credits/ClientDetail';
 
 interface ExtraTabContentProps {
   activeTab: string;
 }
 
-const ExtraTabContent = ({ activeTab }: ExtraTabContentProps) => {
-  // This component handles the tabs that are not explicitly included in MainContent
-  // Our new tabs are already handled in MainContent, so we don't need to add them here
+const ExtraTabContent: React.FC<ExtraTabContentProps> = ({ activeTab }) => {
+  // Check if this is a client detail view
+  const isClientDetail = activeTab.startsWith('client-');
+  const clientId = isClientDetail ? activeTab.replace('client-', '') : '';
   
-  if (activeTab === 'security' || activeTab === 'billing' || activeTab === 'support') {
-    return (
-      <div className="rounded-lg border border-dashed border-border p-8 text-center">
-        <h3 className="text-lg font-medium mb-2">
-          {activeTab === 'security' && 'Configurações de Segurança'}
-          {activeTab === 'billing' && 'Faturamento'}
-          {activeTab === 'support' && 'Central de Suporte'}
-        </h3>
-        <p className="text-muted-foreground">
-          Esta seção está em desenvolvimento. Em breve novos recursos estarão disponíveis.
-        </p>
-      </div>
-    );
+  if (isClientDetail && clientId) {
+    return <ClientDetail clientId={clientId} />;
   }
   
   return null;

@@ -1,580 +1,501 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Card, CardContent, CardDescription, CardHeader, CardTitle 
-} from '@/components/ui/card';
+
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { 
   Tabs, TabsContent, TabsList, TabsTrigger 
 } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Client } from '@/types/recovery';
-import { TaxCredit } from '@/types/tax-credits';
-import { useActiveClient } from '@/hooks/useActiveClient';
 import { 
-  ArrowLeft, Building, MapPin, Phone, Mail, User, 
-  Calendar, Edit, Trash2, CheckCircle, AlertCircle,
-  Receipt, FileText, Landmark, FileSpreadsheet, Clock
+  Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  Building, Calendar, MapPin, Phone, Mail, User, FileText,
+  Check, Clock, FileClock, Receipt, ChevronLeft, Share2, Edit
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
-} from '@/components/ui/table';
-import { Progress } from '@/components/ui/progress';
-import { useToast } from '@/components/ui/use-toast';
+import { Separator } from '@/components/ui/separator';
+import { Client } from '@/types/client';
+import { TaxCredit } from '@/types/tax-credits';
+import { toast } from '@/components/ui/use-toast';
+import { useActiveClient } from '@/hooks/useActiveClient';
+
+// Mock data function for tax credits
+const getMockTaxCredits = (clientId: string): TaxCredit[] => {
+  return Array.from({ length: 5 }, (_, i) => ({
+    id: `credit-${i+1}`,
+    clientId,
+    clientName: `Client ${clientId}`,
+    documentNumber: `${Math.floor(Math.random() * 90000000) + 10000000}/${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 90) + 10}`,
+    creditType: ['IRPJ', 'CSLL', 'PIS/COFINS', 'INSS', 'IRRF'][Math.floor(Math.random() * 5)],
+    creditAmount: Math.floor(Math.random() * 500000) + 10000,
+    originalAmount: Math.floor(Math.random() * 1000000) + 50000,
+    periodStart: new Date(2022, Math.floor(Math.random() * 12), 1).toISOString(),
+    periodEnd: new Date(2022, Math.floor(Math.random() * 12), 28).toISOString(),
+    status: ['PENDING', 'ANALYZING', 'APPROVED', 'REJECTED', 'RECOVERED'][Math.floor(Math.random() * 5)] as TaxCredit['status'],
+    createdAt: new Date(2022, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
+    updatedAt: new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
+    assignedTo: Math.random() > 0.5 ? `User ${Math.floor(Math.random() * 5) + 1}` : undefined,
+    notes: Math.random() > 0.5 ? `Note for client ${clientId}` : undefined,
+  }));
+};
+
+// Mock data for client
+const getMockClient = (clientId: string): Client => {
+  const mockClients: Client[] = [
+    {
+      id: "1",
+      name: "Empresa ABC Ltda",
+      documentNumber: "12.345.678/0001-90",
+      email: "contato@empresaabc.com.br",
+      phone: "(11) 3456-7890",
+      address: "Av. Paulista, 1000, São Paulo - SP",
+      contactPerson: "João Silva",
+      industry: "Tecnologia",
+      createdAt: "2023-01-15T10:30:00Z",
+      updatedAt: "2023-05-20T14:45:00Z",
+      status: "ACTIVE",
+      cnpj: "12.345.678/0001-90",
+      segment: "Tecnologia",
+      city: "São Paulo",
+      state: "SP",
+      contactName: "João Silva",
+      contactEmail: "joao.silva@empresaabc.com.br",
+      contactPhone: "(11) 98765-4321",
+      type: "private"
+    },
+    {
+      id: "2",
+      name: "Indústria XYZ S.A.",
+      documentNumber: "23.456.789/0001-10",
+      email: "financeiro@industriaxyz.com.br",
+      phone: "(11) 2345-6789",
+      address: "Rua Industrial, 500, Guarulhos - SP",
+      contactPerson: "Maria Oliveira",
+      industry: "Manufatura",
+      createdAt: "2023-02-10T09:15:00Z",
+      updatedAt: "2023-04-20T08:00:00Z",
+      status: "ACTIVE",
+      cnpj: "23.456.789/0001-10",
+      segment: "Manufatura",
+      city: "Guarulhos",
+      state: "SP",
+      contactName: "Maria Oliveira",
+      contactEmail: "maria.oliveira@industriaxyz.com.br",
+      contactPhone: "(11) 98765-1234",
+      type: "public"
+    },
+    {
+      id: "3",
+      name: "Comércio DEF Eireli",
+      documentNumber: "34.567.890/0001-21",
+      email: "contato@comerciodef.com.br",
+      phone: "(11) 4567-8901",
+      address: "Rua Comercial, 200, Campinas - SP",
+      contactPerson: "Carlos Santos",
+      industry: "Varejo",
+      createdAt: "2023-03-05T11:45:00Z",
+      updatedAt: "2023-06-18T16:30:00Z",
+      status: "INACTIVE",
+      cnpj: "34.567.890/0001-21",
+      segment: "Varejo",
+      city: "Campinas",
+      state: "SP",
+      contactName: "Carlos Santos",
+      contactEmail: "carlos.santos@comerciodef.com.br",
+      contactPhone: "(11) 91234-5678",
+      type: "private"
+    },
+    {
+      id: "4",
+      name: "Serviços GHI S.A.",
+      documentNumber: "45.678.901/0001-32",
+      email: "atendimento@servicosghi.com.br",
+      phone: "(11) 5678-9012",
+      address: "Av. Brasil, 1500, Rio de Janeiro - RJ",
+      contactPerson: "Ana Souza",
+      industry: "Consultoria",
+      createdAt: "2023-04-20T08:00:00Z",
+      updatedAt: "2023-04-20T08:00:00Z",
+      status: "ACTIVE",
+      cnpj: "45.678.901/0001-32",
+      segment: "Consultoria",
+      city: "Rio de Janeiro",
+      state: "RJ",
+      contactName: "Ana Souza",
+      contactEmail: "ana.souza@servicosghi.com.br",
+      contactPhone: "(21) 98765-9012",
+      type: "public"
+    },
+    {
+      id: "5",
+      name: "Transportes JKL Ltda",
+      documentNumber: "56.789.012/0001-43",
+      email: "operacoes@transportesjkl.com.br",
+      phone: "(11) 6789-0123",
+      address: "Rodovia BR 101, Km 200, Florianópolis - SC",
+      contactPerson: "Roberto Lima",
+      industry: "Logística",
+      createdAt: "2023-05-15T14:30:00Z",
+      updatedAt: "2023-05-15T14:30:00Z",
+      status: "ACTIVE",
+      cnpj: "56.789.012/0001-43",
+      segment: "Logística",
+      city: "Florianópolis",
+      state: "SC",
+      contactName: "Roberto Lima",
+      contactEmail: "roberto.lima@transportesjkl.com.br",
+      contactPhone: "(48) 98765-0123",
+      type: "private"
+    }
+  ];
+
+  const client = mockClients.find(c => c.id === clientId);
+  return client || mockClients[0];
+};
 
 interface ClientDetailProps {
   clientId: string;
 }
 
-const ClientDetail = ({ clientId }: ClientDetailProps) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('overview');
-  const { activeClient, setActiveClient } = useActiveClient();
+const ClientDetail: React.FC<ClientDetailProps> = ({ clientId }) => {
   const [client, setClient] = useState<Client | null>(null);
+  const [taxCredits, setTaxCredits] = useState<TaxCredit[]>([]);
+  const [activeTab, setActiveTab] = useState("overview");
+  const { setActiveClient } = useActiveClient();
   
-  const [credits, setCredits] = useState<TaxCredit[]>([
-    {
-      id: "1",
-      clientId: clientId,
-      clientName: "",
-      documentNumber: "",
-      creditType: "IRRF",
-      creditAmount: 45000.00,
-      originalAmount: 50000.00,
-      periodStart: "2023-01-01",
-      periodEnd: "2023-03-31",
-      status: "APPROVED",
-      createdAt: "2023-04-15T10:30:00Z",
-      updatedAt: "2023-05-10T14:20:00Z",
-      notes: "Aprovado após análise fiscal"
-    },
-    {
-      id: "2",
-      clientId: clientId,
-      clientName: "",
-      documentNumber: "",
-      creditType: "PIS",
-      creditAmount: 32000.00,
-      originalAmount: 32000.00,
-      periodStart: "2023-01-01",
-      periodEnd: "2023-06-30",
-      status: "PENDING",
-      createdAt: "2023-07-05T09:15:00Z",
-      updatedAt: "2023-07-05T09:15:00Z"
-    },
-    {
-      id: "3",
-      clientId: clientId,
-      clientName: "",
-      documentNumber: "",
-      creditType: "COFINS",
-      creditAmount: 78000.00,
-      originalAmount: 85000.00,
-      periodStart: "2022-07-01",
-      periodEnd: "2022-12-31",
-      status: "ANALYZING",
-      createdAt: "2023-02-20T11:45:00Z",
-      updatedAt: "2023-03-15T16:30:00Z",
-      notes: "Em análise pelo setor fiscal"
-    },
-  ]);
-
-  const clients: Client[] = [
-    {
-      id: "1",
-      name: "Empresa ABC Ltda",
-      cnpj: "12.345.678/0001-90",
-      status: 'ACTIVE',
-      type: 'private',
-      segment: "Tecnologia",
-      address: "Av. Paulista, 1000, São Paulo - SP",
-      city: "São Paulo",
-      state: "SP",
-      contactName: "João Silva",
-      contactEmail: "contato@empresaabc.com.br",
-      contactPhone: "(11) 3456-7890",
-      createdAt: "2023-01-15T10:30:00Z",
-      updatedAt: "2023-05-20T14:45:00Z",
-      email: "",
-      phone: "(11) 3456-7890",
-    },
-    {
-      id: "2",
-      name: "Indústria XYZ S.A.",
-      cnpj: "23.456.789/0001-10",
-      status: 'ACTIVE',
-      type: 'public',
-      segment: "Manufatura",
-      address: "Rua Industrial, 500, Guarulhos - SP",
-      city: "Guarulhos",
-      state: "SP",
-      contactName: "Maria Oliveira",
-      contactEmail: "financeiro@industriaxyz.com.br",
-      contactPhone: "(11) 2345-6789",
-      createdAt: "2023-02-10T09:15:00Z",
-      updatedAt: "2023-02-10T09:15:00Z",
-      email: "",
-      phone: "(11) 2345-6789",
-    },
-    {
-      id: "3",
-      name: "Comércio DEF Eireli",
-      cnpj: "34.567.890/0001-21",
-      status: 'INACTIVE',
-      type: 'private',
-      segment: "Varejo",
-      address: "Rua Comercial, 200, Campinas - SP",
-      city: "Campinas",
-      state: "SP",
-      contactName: "Carlos Santos",
-      contactEmail: "contato@comerciodef.com.br",
-      contactPhone: "(11) 4567-8901",
-      createdAt: "2023-03-05T11:45:00Z",
-      updatedAt: "2023-06-18T16:30:00Z",
-      email: "",
-      phone: "(11) 4567-8901",
-    },
-    {
-      id: "4",
-      name: "Serviços GHI S.A.",
-      cnpj: "45.678.901/0001-32",
-      status: 'ACTIVE',
-      type: 'public',
-      segment: "Consultoria",
-      address: "Av. Brasil, 1500, Rio de Janeiro - RJ",
-      city: "Rio de Janeiro",
-      state: "RJ",
-      contactName: "Ana Souza",
-      contactEmail: "atendimento@servicosghi.com.br",
-      contactPhone: "(11) 5678-9012",
-      createdAt: "2023-04-20T08:00:00Z",
-      updatedAt: "2023-04-20T08:00:00Z",
-      email: "",
-      phone: "(11) 5678-9012",
-    },
-    {
-      id: "5",
-      name: "Transportes JKL Ltda",
-      cnpj: "56.789.012/0001-43",
-      status: 'ACTIVE',
-      type: 'private',
-      segment: "Logística",
-      address: "Rodovia BR 101, Km 200, Florianópolis - SC",
-      city: "Florianópolis",
-      state: "SC",
-      contactName: "Roberto Lima",
-      contactEmail: "operacoes@transportesjkl.com.br",
-      contactPhone: "(11) 6789-0123",
-      createdAt: "2023-05-15T14:30:00Z",
-      updatedAt: "2023-05-15T14:30:00Z",
-      email: "",
-      phone: "(11) 6789-0123",
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    try {
+      return format(new Date(dateString), 'dd/MM/yyyy', { locale: ptBR });
+    } catch (e) {
+      return 'Data inválida';
     }
-  ];
+  };
   
+  // Load client data
   useEffect(() => {
-    const foundClient = clients.find(c => c.id === clientId);
+    // In a real app, this would be a database call
+    const mockClient = getMockClient(clientId);
+    setClient(mockClient);
     
-    if (foundClient) {
-      setClient(foundClient);
-      
-      setCredits(prevCredits => 
-        prevCredits.map(credit => ({
-          ...credit,
-          clientName: foundClient.name,
-          documentNumber: foundClient.cnpj
-        }))
-      );
-    }
+    // Load tax credits
+    const mockCredits = getMockTaxCredits(clientId);
+    setTaxCredits(mockCredits);
+    
   }, [clientId]);
   
-  const handleBack = () => {
-    navigate('/admin?tab=clients');
-  };
-  
-  const handleSetActive = () => {
-    if (client) {
-      setActiveClient(client);
-      toast({
-        title: "Cliente ativo definido",
-        description: `${client.name} definido como cliente ativo`,
-      });
-    }
-  };
+  if (!client) {
+    return (
+      <div className="flex items-center justify-center h-40">
+        <div className="animate-spin h-8 w-8 border-t-2 border-primary rounded-full"></div>
+      </div>
+    );
+  }
   
   const handleEdit = () => {
     toast({
       title: "Editar cliente",
-      description: `Editando cliente: ${client?.name}`,
+      description: `Editando cliente: ${client.name}`,
     });
   };
   
-  const handleDelete = () => {
+  const handleBack = () => {
+    window.history.back();
+  };
+  
+  const handleActivateClient = () => {
+    setActiveClient(client);
     toast({
-      variant: "destructive",
-      title: "Excluir cliente",
-      description: `Cliente ${client?.name} excluído com sucesso`,
+      title: "Cliente ativo definido",
+      description: `${client.name} definido como cliente ativo`,
     });
-    navigate('/admin?tab=clients');
   };
   
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'PENDING':
+        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300">Pendente</Badge>;
+      case 'ANALYZING':
+        return <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">Em análise</Badge>;
+      case 'APPROVED':
+        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Aprovado</Badge>;
+      case 'REJECTED':
+        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">Rejeitado</Badge>;
+      case 'RECOVERED':
+        return <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">Recuperado</Badge>;
+      default:
+        return <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300">{status}</Badge>;
+    }
   };
   
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-  
-  const statusColors: Record<string, string> = {
-    PENDING: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-    ANALYZING: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-    APPROVED: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-    REJECTED: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-    RECOVERED: "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300"
-  };
-  
-  const statusLabels: Record<string, string> = {
-    PENDING: "Pendente",
-    ANALYZING: "Em Análise",
-    APPROVED: "Aprovado",
-    REJECTED: "Rejeitado",
-    RECOVERED: "Recuperado"
-  };
-  
-  const totalCredits = credits.reduce((sum, credit) => sum + credit.originalAmount, 0);
-  const recoveredAmount = credits.reduce((sum, credit) => sum + credit.creditAmount, 0);
-  const recoveryRate = totalCredits ? Math.round((recoveredAmount / totalCredits) * 100) : 0;
-
-  if (!client) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
-        <h2 className="text-2xl font-semibold mb-2">Cliente não encontrado</h2>
-        <p className="text-muted-foreground mb-6">O cliente solicitado não existe ou foi removido.</p>
-        <Button onClick={handleBack}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar para a lista
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" onClick={handleBack}>
-            <ArrowLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Detalhes do Cliente</h1>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+              <Building className="h-5 w-5 text-primary" />
+              <span>{client.name}</span>
+              <Badge className={client.status === "ACTIVE" 
+                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 ml-2"
+                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 ml-2"
+              }>
+                {client.status === "ACTIVE" ? "Ativo" : "Inativo"}
+              </Badge>
+            </h2>
+            <p className="text-muted-foreground">
+              {client.cnpj} • {client.type === 'private' ? 'Empresa Privada' : 'Órgão Público'}
+            </p>
+          </div>
         </div>
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            onClick={handleSetActive}
-            disabled={activeClient?.id === client.id}
-          >
-            <CheckCircle className="mr-2 h-4 w-4" />
-            {activeClient?.id === client.id ? 'Cliente Ativo' : 'Definir como Ativo'}
+          <Button variant="outline" onClick={handleActivateClient}>
+            <Share2 className="h-4 w-4 mr-2" />
+            Definir como Ativo
           </Button>
-          <Button variant="outline" onClick={handleEdit}>
-            <Edit className="mr-2 h-4 w-4" />
+          <Button onClick={handleEdit}>
+            <Edit className="h-4 w-4 mr-2" />
             Editar
-          </Button>
-          <Button variant="destructive" onClick={handleDelete}>
-            <Trash2 className="mr-2 h-4 w-4" />
-            Excluir
           </Button>
         </div>
       </div>
       
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div>
-              <CardTitle className="text-2xl">{client.name}</CardTitle>
-              <CardDescription className="flex items-center mt-1">
-                CNPJ: {client.cnpj}
-                <Badge 
-                  className={`ml-4 ${client.status === 'ACTIVE' 
-                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" 
-                    : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"}`
-                  }
-                >
-                  {client.status === 'ACTIVE' ? 'Ativo' : 'Inativo'}
-                </Badge>
-                <Badge className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                  {client.type === 'public' ? 'Público' : 'Privado'}
-                </Badge>
-              </CardDescription>
-            </div>
-            <div className="mt-4 md:mt-0">
-              <p className="text-sm text-muted-foreground">
-                Cliente desde: {formatDate(client.createdAt)}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Última atualização: {formatDate(client.updatedAt)}
-              </p>
-            </div>
-          </div>
-        </CardHeader>
+      {/* Tab Navigation */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList className="grid grid-cols-3 sm:w-[400px]">
+          <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+          <TabsTrigger value="credits">Créditos</TabsTrigger>
+          <TabsTrigger value="documents">Documentos</TabsTrigger>
+        </TabsList>
         
-        <CardContent>
-          <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="mt-6">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-8">
-              <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-              <TabsTrigger value="credits">Créditos</TabsTrigger>
-              <TabsTrigger value="audits">Auditorias</TabsTrigger>
-              <TabsTrigger value="documents">Documentos</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Total de Créditos
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="text-2xl font-bold">{formatCurrency(totalCredits)}</div>
-                      <Receipt className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Valor Recuperado
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="text-2xl font-bold">{formatCurrency(recoveredAmount)}</div>
-                      <Landmark className="h-5 w-5 text-primary" />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                      Taxa de Recuperação
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="text-2xl font-bold">{recoveryRate}%</div>
-                      <Progress value={recoveryRate} className="w-1/2" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">Informações Comerciais</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-4">
-                      <li className="flex items-start gap-3">
-                        <Building className="h-5 w-5 text-muted-foreground mt-0.5" />
-                        <div>
-                          <p className="font-medium">Segmento</p>
-                          <p className="text-muted-foreground">{client.segment || 'Não informado'}</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
-                        <div>
-                          <p className="font-medium">Endereço</p>
-                          <p className="text-muted-foreground">{client.address || 'Não informado'}</p>
-                          <p className="text-muted-foreground">
-                            {client.city && client.state ? `${client.city}, ${client.state}` : ''}
-                          </p>
-                        </div>
-                      </li>
-                    </ul>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">Contato</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-4">
-                      <li className="flex items-start gap-3">
-                        <User className="h-5 w-5 text-muted-foreground mt-0.5" />
-                        <div>
-                          <p className="font-medium">Pessoa de Contato</p>
-                          <p className="text-muted-foreground">{client.contactName || 'Não informado'}</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />
-                        <div>
-                          <p className="font-medium">Email</p>
-                          <p className="text-muted-foreground">{client.contactEmail || 'Não informado'}</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3">
-                        <Phone className="h-5 w-5 text-muted-foreground mt-0.5" />
-                        <div>
-                          <p className="font-medium">Telefone</p>
-                          <p className="text-muted-foreground">{client.contactPhone || 'Não informado'}</p>
-                        </div>
-                      </li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="credits" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                      <CardTitle>Créditos Tributários</CardTitle>
-                      <CardDescription>
-                        Créditos tributários associados a {client.name}
-                      </CardDescription>
-                    </div>
-                    <div>
-                      <Button>
-                        <FileText className="mr-2 h-4 w-4" />
-                        Novo Crédito
-                      </Button>
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Client Info Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Building className="h-5 w-5 text-primary" />
+                  Informações do Cliente
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Segmento</p>
+                  <p className="text-base">{client.segment}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Endereço</p>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <p className="text-base">{client.address || `${client.city}, ${client.state}`}</p>
+                  </div>
+                </div>
+                <Separator />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Data de Cadastro</p>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-base">{formatDate(client.createdAt)}</p>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Período</TableHead>
-                        <TableHead>Valor Original</TableHead>
-                        <TableHead>Valor Atual</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Atualização</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {credits.map((credit) => (
-                        <TableRow key={credit.id}>
-                          <TableCell className="font-medium">{credit.creditType}</TableCell>
-                          <TableCell>
-                            {formatDate(credit.periodStart)} - {formatDate(credit.periodEnd)}
-                          </TableCell>
-                          <TableCell>{formatCurrency(credit.originalAmount)}</TableCell>
-                          <TableCell>{formatCurrency(credit.creditAmount)}</TableCell>
-                          <TableCell>
-                            <Badge className={statusColors[credit.status]}>
-                              {statusLabels[credit.status]}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{formatDate(credit.updatedAt)}</TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="sm">
-                              <FileSpreadsheet className="mr-2 h-3 w-3" />
-                              Detalhes
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {credits.length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={7} className="text-center py-8">
-                            <div className="flex flex-col items-center">
-                              <AlertCircle className="h-8 w-8 text-muted-foreground mb-3" />
-                              <p className="text-muted-foreground">Nenhum crédito encontrado para este cliente.</p>
-                            </div>
-                          </TableCell>
-                        </TableRow>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Última Atualização</p>
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-base">{formatDate(client.updatedAt)}</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Contact Info Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" />
+                  Informações de Contato
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Contato Principal</p>
+                  <p className="text-base">{client.contactName}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Email</p>
+                  <div className="flex items-center gap-1">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <p className="text-base">{client.contactEmail}</p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Telefone</p>
+                  <div className="flex items-center gap-1">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <p className="text-base">{client.contactPhone}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Recent Activity Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FileClock className="h-5 w-5 text-primary" />
+                Atividade Recente
+              </CardTitle>
+              <CardDescription>
+                Últimas atividades e processos relacionados a este cliente
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {[1, 2, 3].map((item) => (
+                  <div key={item} className="flex items-start gap-2 pb-3 border-b border-border/50 last:border-0">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      {item === 1 ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : item === 2 ? (
+                        <FileText className="h-4 w-4 text-primary" />
+                      ) : (
+                        <Receipt className="h-4 w-4 text-blue-500" />
                       )}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="audits" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                      <CardTitle>Auditorias</CardTitle>
-                      <CardDescription>
-                        Processos de auditoria fiscal para {client.name}
-                      </CardDescription>
                     </div>
                     <div>
-                      <Button>
-                        <Clock className="mr-2 h-4 w-4" />
-                        Nova Auditoria
-                      </Button>
+                      <p className="text-sm font-medium">
+                        {item === 1 
+                          ? "Crédito aprovado" 
+                          : item === 2 
+                            ? "Documento adicionado" 
+                            : "Processo iniciado"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDate(new Date(2023, 6 - item, 15).toISOString())} • Usuário: Admin
+                      </p>
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <Calendar className="h-16 w-16 text-muted-foreground mb-4" />
-                    <p className="text-lg font-medium mb-1">Nenhuma auditoria em andamento</p>
-                    <p className="text-muted-foreground mb-6">Não existem processos de auditoria para este cliente.</p>
-                    <Button>
-                      <Clock className="mr-2 h-4 w-4" />
-                      Iniciar Auditoria
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="documents" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                      <CardTitle>Documentos</CardTitle>
-                      <CardDescription>
-                        Documentos e arquivos relacionados a {client.name}
-                      </CardDescription>
+                ))}
+              </div>
+            </CardContent>
+            <CardFooter className="justify-end">
+              <Button variant="ghost" size="sm">
+                Ver todas as atividades
+              </Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+        
+        {/* Credits Tab */}
+        <TabsContent value="credits" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Receipt className="h-5 w-5 text-primary" />
+                    Créditos Tributários
+                  </CardTitle>
+                  <CardDescription>
+                    Processos de crédito tributário deste cliente
+                  </CardDescription>
+                </div>
+                <Button size="sm">
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Novo Crédito
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {taxCredits.length > 0 ? (
+                  taxCredits.map((credit) => (
+                    <div key={credit.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border border-border/50 hover:bg-secondary/50 transition-colors">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-medium">
+                            {credit.creditType} - R$ {new Intl.NumberFormat('pt-BR').format(credit.creditAmount)}
+                          </h3>
+                          {getStatusBadge(credit.status)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Período: {formatDate(credit.periodStart)} a {formatDate(credit.periodEnd)}
+                        </p>
+                        {credit.notes && (
+                          <p className="text-xs text-muted-foreground">
+                            {credit.notes}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                        <Button variant="outline" size="sm">
+                          Detalhes
+                        </Button>
+                      </div>
                     </div>
-                    <div>
-                      <Button>
-                        <FileText className="mr-2 h-4 w-4" />
-                        Novo Documento
-                      </Button>
-                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Nenhum crédito tributário encontrado para este cliente
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-                    <p className="text-lg font-medium mb-1">Sem documentos</p>
-                    <p className="text-muted-foreground mb-6">Não há documentos cadastrados para este cliente.</p>
-                    <Button>
-                      <FileText className="mr-2 h-4 w-4" />
-                      Fazer Upload
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+                )}
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <div className="text-sm text-muted-foreground">
+                Total: {taxCredits.length} créditos
+              </div>
+              {taxCredits.length > 5 && (
+                <Button variant="ghost" size="sm">
+                  Ver todos
+                </Button>
+              )}
+            </CardFooter>
+          </Card>
+        </TabsContent>
+        
+        {/* Documents Tab */}
+        <TabsContent value="documents" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    Documentos
+                  </CardTitle>
+                  <CardDescription>
+                    Documentos relacionados a este cliente
+                  </CardDescription>
+                </div>
+                <Button size="sm">
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  Adicionar Documento
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-12 text-muted-foreground">
+                <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+                <p>Nenhum documento encontrado para este cliente</p>
+                <p className="text-sm mt-1">
+                  Adicione documentos como contratos, notas fiscais ou outros arquivos relevantes
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
