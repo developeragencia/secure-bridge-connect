@@ -134,6 +134,18 @@ export default {
 				'shimmer': {
 					'0%': { backgroundPosition: '-40rem 0' },
 					'100%': { backgroundPosition: '40rem 0' }
+				},
+				'fade-out': {
+					'0%': { opacity: '1' },
+					'100%': { opacity: '0' }
+				},
+				'slide-in-from-right': {
+					'0%': { transform: 'translateX(100%)' },
+					'100%': { transform: 'translateX(0)' }
+				},
+				'slide-out-to-right': {
+					'0%': { transform: 'translateX(0)' },
+					'100%': { transform: 'translateX(100%)' }
 				}
 			},
 			animation: {
@@ -150,7 +162,10 @@ export default {
 				'spin-slow': 'spin-slow 3s linear infinite',
 				'bounce-light': 'bounce-light 2s infinite',
 				'scale': 'scale 2s ease-in-out infinite',
-				'shimmer': 'shimmer 2s infinite linear'
+				'shimmer': 'shimmer 2s infinite linear',
+				'fade-out': 'fade-out 0.3s ease-out forwards',
+				'slide-in-from-right': 'slide-in-from-right 0.3s ease-out',
+				'slide-out-to-right': 'slide-out-to-right 0.3s ease-out'
 			},
 			background: {
 				'shimmer': 'linear-gradient(to right, var(--tw-gradient-stops))'
@@ -165,6 +180,16 @@ export default {
 			},
 			backdropBlur: {
 				xs: '2px'
+			},
+			gridTemplateColumns: {
+				'auto-fill-100': 'repeat(auto-fill, minmax(100px, 1fr))',
+				'auto-fill-150': 'repeat(auto-fill, minmax(150px, 1fr))',
+				'auto-fill-200': 'repeat(auto-fill, minmax(200px, 1fr))',
+				'auto-fill-250': 'repeat(auto-fill, minmax(250px, 1fr))',
+				'auto-fit-100': 'repeat(auto-fit, minmax(100px, 1fr))',
+				'auto-fit-150': 'repeat(auto-fit, minmax(150px, 1fr))',
+				'auto-fit-200': 'repeat(auto-fit, minmax(200px, 1fr))',
+				'auto-fit-250': 'repeat(auto-fit, minmax(250px, 1fr))'
 			}
 		}
 	},
