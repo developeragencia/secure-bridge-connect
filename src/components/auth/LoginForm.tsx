@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
@@ -23,7 +22,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -33,7 +31,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
 
     try {
       // Admin fallback login for demo purposes
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      if (email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         console.log('Using fallback admin login');
         
         // Set a mock session for demo purposes
@@ -55,13 +53,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           description: "Bem-vindo ao Painel Administrativo.",
         });
         
-        onSuccess();
+        setTimeout(() => {
+          onSuccess();
+        }, 500);
         return;
       }
       
       // Regular Supabase authentication
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim().toLowerCase(),
         password
       });
 
@@ -84,12 +84,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         description: "Bem-vindo ao Painel Administrativo.",
       });
       
-      onSuccess();
+      setTimeout(() => {
+        onSuccess();
+      }, 500);
     } catch (error: any) {
-      setError(error.message);
+      console.error("Login error:", error);
+      setError(error.message || "Erro ao fazer login. Verifique suas credenciais.");
       toast({
         title: "Erro de autenticação",
-        description: error.message,
+        description: error.message || "Falha ao fazer login. Verifique suas credenciais.",
         variant: "destructive",
       });
     } finally {

@@ -12,6 +12,7 @@ const useLoginCheck = () => {
       try {
         // Check localStorage first for remembered session
         const rememberedAuth = localStorage.getItem('adminAuthRemembered');
+        const sessionAuth = localStorage.getItem('adminAuth');
         
         if (rememberedAuth) {
           try {
@@ -26,6 +27,19 @@ const useLoginCheck = () => {
             }
           } catch (e) {
             localStorage.removeItem('adminAuthRemembered');
+          }
+        }
+        
+        // Check regular session
+        if (sessionAuth) {
+          try {
+            const authData = JSON.parse(sessionAuth);
+            if (authData) {
+              navigate('/admin');
+              return;
+            }
+          } catch (e) {
+            localStorage.removeItem('adminAuth');
           }
         }
         
