@@ -47,8 +47,8 @@ export const mockAuditLogs: AuditTrail[] = [
     resourceId: "credit-004",
     details: "Alteração de status de crédito tributário de 'Em Análise' para 'Aprovado'.",
     ipAddress: "192.168.1.100",
-    previousStatus: "Em Análise",
-    newStatus: "Aprovado"
+    previousStatus: "ANALYZING",
+    newStatus: "APPROVED"
   },
   {
     id: "audit-005",

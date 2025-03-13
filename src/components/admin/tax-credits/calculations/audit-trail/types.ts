@@ -1,4 +1,6 @@
 
+import { StatusType } from '@/types/declarations';
+
 // Audit log entry interface
 export interface AuditLogEntry {
   id: string;
@@ -43,6 +45,6 @@ export interface AuditTrail {
   resourceId: string;
   ipAddress: string;
   details: string;
-  previousStatus?: string;
-  newStatus?: string;
+  previousStatus?: StatusType;
+  newStatus?: StatusType;
 }
