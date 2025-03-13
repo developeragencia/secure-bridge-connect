@@ -180,6 +180,9 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             
             {/* Admin routes - order matters for proper route matching */}
+            <Route path="/admin/profile" element={<ProtectedRoute element={<React.lazy(() => import('./pages/admin/UserProfile')).default />} />} />
+            <Route path="/admin/notifications" element={<ProtectedRoute element={<React.lazy(() => import('./pages/admin/NotificationsPage')).default />} />} />
+            <Route path="/admin/clients" element={<ProtectedRoute element={<React.lazy(() => import('./pages/admin/ClientsPage')).default />} />} />
             <Route path="/admin/*" element={<ProtectedRoute element={<Admin />} />} />
             
             <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />

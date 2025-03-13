@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -29,8 +28,13 @@ const ClientForm: React.FC<ClientFormProps> = ({
     email: '',
     phone: '',
     address: '',
-    contactPerson: '',
-    industry: '',
+    city: '',
+    state: '',
+    contactName: '',
+    contactEmail: '',
+    contactPhone: '',
+    segment: '',
+    type: 'private',
     status: 'ACTIVE'
   });
 
@@ -56,7 +60,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
             {isEdit ? 'Editar Cliente' : 'Novo Cliente'}
@@ -89,7 +93,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email *</Label>
                 <Input
@@ -127,44 +131,110 @@ const ClientForm: React.FC<ClientFormProps> = ({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="contactPerson">Pessoa de Contato</Label>
+                <Label htmlFor="city">Cidade</Label>
                 <Input
-                  id="contactPerson"
-                  name="contactPerson"
-                  value={formData.contactPerson}
+                  id="city"
+                  name="city"
+                  value={formData.city || ''}
+                  onChange={handleInputChange}
+                  placeholder="Cidade"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="state">Estado</Label>
+                <Input
+                  id="state"
+                  name="state"
+                  value={formData.state || ''}
+                  onChange={handleInputChange}
+                  placeholder="UF"
+                  maxLength={2}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="contactName">Nome do Contato</Label>
+                <Input
+                  id="contactName"
+                  name="contactName"
+                  value={formData.contactName || ''}
                   onChange={handleInputChange}
                   placeholder="Nome do contato"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="industry">Segmento</Label>
+                <Label htmlFor="contactEmail">Email do Contato</Label>
                 <Input
-                  id="industry"
-                  name="industry"
-                  value={formData.industry}
+                  id="contactEmail"
+                  name="contactEmail"
+                  type="email"
+                  value={formData.contactEmail || ''}
                   onChange={handleInputChange}
-                  placeholder="Ex: Tecnologia, Varejo"
+                  placeholder="contato@empresa.com.br"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contactPhone">Telefone do Contato</Label>
+                <Input
+                  id="contactPhone"
+                  name="contactPhone"
+                  value={formData.contactPhone || ''}
+                  onChange={handleInputChange}
+                  placeholder="(00) 00000-0000"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select 
-                value={formData.status} 
-                onValueChange={(value) => handleSelectChange('status', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecionar status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ACTIVE">Ativo</SelectItem>
-                  <SelectItem value="INACTIVE">Inativo</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="segment">Segmento</Label>
+                <Input
+                  id="segment"
+                  name="segment"
+                  value={formData.segment || ''}
+                  onChange={handleInputChange}
+                  placeholder="Ex: Tecnologia, Varejo"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="type">Tipo</Label>
+                <Select 
+                  value={formData.type || 'private'} 
+                  onValueChange={(value) => handleSelectChange('type', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecionar tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="private">Privado</SelectItem>
+                    <SelectItem value="public">Público</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select 
+                  value={formData.status} 
+                  onValueChange={(value) => handleSelectChange('status', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecionar status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ACTIVE">Ativo</SelectItem>
+                    <SelectItem value="INACTIVE">Inativo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 

@@ -1,13 +1,13 @@
 
-import React, { memo } from 'react';
+import React from 'react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { ChevronDown, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { SidebarSection as SectionType } from '@/types/admin-sidebar';
+import { SidebarSection as SidebarSectionType } from '@/types/admin-sidebar';
+import { useNavigate } from 'react-router-dom';
 
 interface SidebarSectionProps {
-  section: SectionType;
+  section: SidebarSectionType;
   activeTab: string;
   expandedSection: string | null;
   sidebarOpen: boolean;
@@ -23,117 +23,72 @@ const SidebarSection = ({
   toggleSection,
   setActiveTab
 }: SidebarSectionProps) => {
-  const sidebarItemVariants = {
-    initial: { x: -5, opacity: 0 },
-    animate: { 
-      x: 0, 
-      opacity: 1,
-      transition: { duration: 0.2 } 
-    },
-    hover: { 
-      x: 5, 
-      transition: { duration: 0.2 } 
+  const navigate = useNavigate();
+  const isExpanded = expandedSection === section.id;
+  
+  const handleTabClick = (tabId: string) => {
+    setActiveTab(tabId);
+    
+    // Navigate to the appropriate route
+    if (tabId === 'profile') {
+      navigate('/admin/profile');
+    } else if (tabId === 'notifications') {
+      navigate('/admin/notifications');
+    } else if (tabId === 'clients') {
+      navigate('/admin/clients');
+    } else {
+      navigate(`/admin/${tabId}`);
     }
   };
-
-  const handleItemClick = (id: string) => {
-    // Only update if the tab is actually changing to prevent re-renders
-    if (id === activeTab) return;
-    console.log("Desktop menu item clicked:", id);
-    setActiveTab(id);
-  };
-
-  // Check if any item in this section is active
-  const isSectionActive = section.items.some(item => item.id === activeTab);
   
-  // Auto-expand section if it contains the active tab
-  const isExpanded = sidebarOpen && (expandedSection === section.id || isSectionActive);
-
   return (
-    <div className="mb-4 w-full">
-      {sidebarOpen ? (
-        <div 
-          className={cn(
-            "flex items-center justify-between py-2 px-3 text-xs font-medium uppercase tracking-wider cursor-pointer rounded-md transition-all duration-200",
-            isSectionActive 
-              ? "text-primary bg-primary/5"
-              : "text-muted-foreground hover:text-foreground hover:bg-accent/30"
-          )}
+    <div className="my-2">
+      {/* Section header */}
+      {sidebarOpen && (
+        <button
+          className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-primary/5 rounded-md"
           onClick={() => toggleSection(section.id)}
         >
           <span>{section.title}</span>
-          <ChevronDown 
-            className={cn(
-              "h-3.5 w-3.5 transition-transform duration-200", 
-              isExpanded ? "transform rotate-0" : "transform rotate(-90deg)"
-            )} 
-          />
-        </div>
-      ) : (
-        <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent my-4"></div>
+          {isExpanded ? (
+            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/70" />
+          ) : (
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/70" />
+          )}
+        </button>
       )}
       
-      <motion.div 
+      {/* Section items */}
+      <div 
         className={cn(
-          "space-y-1 w-full",
-          sidebarOpen && !isExpanded && "hidden"
+          "space-y-1 mt-1",
+          sidebarOpen && !isExpanded ? "hidden" : "block",
+          !sidebarOpen ? "px-2" : ""
         )}
-        initial="initial"
-        animate="animate"
-        variants={{
-          animate: {
-            transition: {
-              staggerChildren: 0.05
-            }
-          }
-        }}
       >
         {section.items.map((item) => (
-          <motion.div 
+          <motion.button
             key={item.id}
-            variants={sidebarItemVariants}
-            whileHover="hover"
-            className="w-full"
-            layout="position"
+            className={cn(
+              "flex items-center w-full rounded-md px-3 py-2 text-sm",
+              activeTab === item.id 
+                ? "bg-primary/10 text-primary" 
+                : "text-muted-foreground hover:bg-primary/5 hover:text-foreground",
+              !sidebarOpen && "justify-center p-2"
+            )}
+            onClick={() => handleTabClick(item.id)}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <Button 
-              variant={activeTab === item.id ? 'secondary' : 'ghost'} 
-              className={cn(
-                activeTab === item.id 
-                  ? "bg-primary/10 text-primary font-medium border-l-2 border-primary shadow-sm"
-                  : "hover:bg-secondary/80",
-                sidebarOpen ? "w-full justify-start" : "w-full p-2 flex justify-center",
-                "rounded-md transition-all duration-200 min-h-[40px]"
-              )}
-              onClick={() => handleItemClick(item.id)}
-            >
-              <div className={cn(
-                "flex items-center",
-                !sidebarOpen ? "flex-col gap-1" : "w-full"
-              )}>
-                <span className={cn(
-                  activeTab === item.id 
-                    ? "text-primary" 
-                    : "text-muted-foreground group-hover:text-foreground",
-                  "transition-colors"
-                )}>
-                  {item.icon}
-                </span>
-                {sidebarOpen && <span className="ml-2 flex-1">{item.label}</span>}
-                {!sidebarOpen && (
-                  <span className="text-[10px]">{item.label.split(' ')[0]}</span>
-                )}
-                {activeTab === item.id && sidebarOpen && (
-                  <Sparkles className="h-3.5 w-3.5 text-primary ml-auto" />
-                )}
-              </div>
-            </Button>
-          </motion.div>
+            <span className={cn("mr-2", !sidebarOpen && "mr-0")}>
+              {item.icon}
+            </span>
+            {sidebarOpen && <span className="truncate">{item.label}</span>}
+          </motion.button>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 };
 
-// Use React.memo to prevent unnecessary rerenders
-export default memo(SidebarSection);
+export default SidebarSection;
