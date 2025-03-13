@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminUI } from '@/hooks/useAdminUI';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 // Admin components
 import AdminSidebar from '@/components/admin/AdminSidebar';
@@ -31,18 +31,33 @@ const Admin = () => {
   } = useAdminUI();
   
   const location = useLocation();
+  const params = useParams();
   
   // Parse the route path to set the active tab
   useEffect(() => {
-    // Extract tab from URL path if present
+    // First check URL params for a tab
+    if (params.tab) {
+      setActiveTab(params.tab);
+      return;
+    }
+    
+    // Fallback to path parsing
     const path = location.pathname.split('/');
     if (path.length > 2) {
       const tabFromPath = path[2];
       if (tabFromPath && tabFromPath !== activeTab) {
         setActiveTab(tabFromPath);
       }
+    } else {
+      // If we're at /admin with no subtab specified, use the stored tab or default to dashboard
+      const storedTab = sessionStorage.getItem('adminActiveTab');
+      if (storedTab && storedTab !== activeTab) {
+        setActiveTab(storedTab);
+      } else if (!activeTab) {
+        setActiveTab('dashboard');
+      }
     }
-  }, [location.pathname, setActiveTab, activeTab]);
+  }, [location.pathname, params.tab, setActiveTab, activeTab]);
 
   if (loading) {
     return <AdminLoading />;

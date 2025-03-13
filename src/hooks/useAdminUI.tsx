@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const useAdminUI = () => {
   // Default tab from session storage or 'dashboard'
@@ -6,10 +7,22 @@ export const useAdminUI = () => {
     return sessionStorage.getItem('adminActiveTab') || 'dashboard';
   });
   
+  const navigate = useNavigate();
+  
   // Persist active tab to session storage when it changes
   useEffect(() => {
-    sessionStorage.setItem('adminActiveTab', activeTab);
-  }, [activeTab]);
+    if (activeTab) {
+      sessionStorage.setItem('adminActiveTab', activeTab);
+      
+      // Update URL to match the active tab for better bookmarking and refresh handling
+      if (activeTab !== 'dashboard') {
+        navigate(`/admin/${activeTab}`, { replace: true });
+      } else {
+        // For dashboard, keep the URL clean
+        navigate('/admin', { replace: true });
+      }
+    }
+  }, [activeTab, navigate]);
   
   // Other state management
   const [sidebarOpen, setSidebarOpen] = useState(() => {
@@ -26,6 +39,11 @@ export const useAdminUI = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Custom setActiveTab function that also navigates
+  const handleSetActiveTab = useCallback((tab: string) => {
+    setActiveTab(tab);
+  }, []);
   
   // Toggle functions
   const toggleSidebar = useCallback(() => {
@@ -71,7 +89,7 @@ export const useAdminUI = () => {
   
   return {
     activeTab,
-    setActiveTab,
+    setActiveTab: handleSetActiveTab,
     sidebarOpen,
     darkMode,
     hasNotifications,
