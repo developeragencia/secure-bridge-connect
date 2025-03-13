@@ -63,7 +63,10 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         <div className="max-w-7xl mx-auto">
           <AdminTabHeader activeTab={activeTab} />
           
-          <motion.div variants={childVariants}>
+          <motion.div 
+            variants={childVariants}
+            className="mt-4"
+          >
             {/* Original tabs */}
             {activeTab === 'dashboard' && <AdminDashboard />}
             {activeTab === 'users' && <AdminUsers />}
@@ -81,6 +84,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {/* Client detail view */}
             {isClientDetail && <ClientDetail clientId={clientId} />}
             
+            {/* Extra tabs */}
             <ExtraTabContent activeTab={activeTab} />
           </motion.div>
         </div>
