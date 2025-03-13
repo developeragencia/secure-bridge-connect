@@ -16,7 +16,7 @@ export const getMenuSections = (): SidebarSection[] => {
       id: 'main',
       title: 'Principal',
       items: [
-        { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 className="h-4 w-4" /> },
+        { id: 'admin', label: 'Painel Principal', icon: <BarChart3 className="h-4 w-4" /> },
         { id: 'users', label: 'Usuários', icon: <Users className="h-4 w-4" /> },
         { id: 'profile', label: 'Meu Perfil', icon: <UserCircle className="h-4 w-4" /> },
         { id: 'notifications', label: 'Notificações', icon: <Bell className="h-4 w-4" /> }

@@ -10,12 +10,12 @@ import { MenuItem } from './MenuGrid';
 export const getMainMenuItems = (): MenuItem[] => {
   return [
     {
-      id: 'dashboard',
-      title: 'Dashboard',
+      id: 'admin',
+      title: 'Painel Principal',
       description: 'Visualize o painel principal do sistema',
       icon: <Layout className="h-6 w-6 text-white" />,
       color: 'bg-gradient-to-br from-indigo-500 via-indigo-600 to-indigo-700 text-white',
-      route: 'dashboard',
+      route: 'admin',
       highlight: true
     },
     {

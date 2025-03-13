@@ -3,6 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import AnimatedLogo from './AnimatedLogo';
 import { Menu, X } from 'lucide-react';
+import { 
+  NavigationMenu, 
+  NavigationMenuList, 
+  NavigationMenuItem, 
+  NavigationMenuLink, 
+  NavigationMenuContent, 
+  NavigationMenuTrigger 
+} from '@/components/ui/navigation-menu';
+import { cn } from '@/lib/utils';
 
 const NavBar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -49,6 +58,22 @@ const NavBar: React.FC = () => {
               hovering={isHovering}
             />
           </Link>
+          
+          {/* Desktop Navigation Menu */}
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <Link to="/" className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
+                  Início
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link to="/admin" className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
+                  Admin
+                </Link>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
           
           <button
             className="md:hidden p-2 rounded-md hover:bg-primary/10 transition-colors touch-target"
