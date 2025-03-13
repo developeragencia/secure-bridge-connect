@@ -1,155 +1,188 @@
 
-import React, { useState } from 'react';
-import { 
-  Card, CardContent, CardFooter, CardHeader
-} from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
-import { RecoveryProcess } from '@/types/recovery';
-
-// Import components
+import React, { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { RecoveryProcess, RecoverySummary } from '@/types/recovery';
+import { toast } from 'sonner';
 import RecoverySummaryCards from './components/recovery/RecoverySummaryCards';
 import RecoveryHeader from './components/recovery/RecoveryHeader';
 import RecoveryFilters from './components/recovery/RecoveryFilters';
 import RecoveryTable from './components/recovery/RecoveryTable';
 import RecoveryPagination from './components/recovery/RecoveryPagination';
+import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates';
 
-const RecoveryManagement = () => {
-  const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState<string | undefined>();
+// Mock data generators
+const generateMockRecoveryProcesses = (): RecoveryProcess[] => {
+  return Array.from({ length: 12 }, (_, i) => ({
+    id: `process-${i + 1}`,
+    clientId: `client-${Math.floor(Math.random() * 5) + 1}`,
+    clientName: `Cliente ${Math.floor(Math.random() * 5) + 1}`,
+    documentNumber: `${Math.floor(Math.random() * 90000000) + 10000000}/${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 90) + 10}`,
+    creditType: ['IRPJ', 'CSLL', 'PIS/COFINS', 'INSS', 'IRRF', 'OUTROS'][Math.floor(Math.random() * 6)],
+    originalAmount: Math.floor(Math.random() * 1000000) + 50000,
+    recoveredAmount: Math.floor(Math.random() * 500000) + 10000,
+    recoveryPercent: Math.random() * 100,
+    startDate: new Date(2022, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
+    status: ['INICIAL', 'EM_ANDAMENTO', 'PARCIAL', 'CONCLUIDO'][Math.floor(Math.random() * 4)] as any,
+    processNumber: `${Math.floor(Math.random() * 9000) + 1000}.${Math.floor(Math.random() * 9000) + 1000}/${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 90) + 10}`
+  }));
+};
+
+const generateMockSummary = (): RecoverySummary => {
+  return {
+    totalCredits: Math.floor(Math.random() * 10000000) + 1000000,
+    recoveredAmount: Math.floor(Math.random() * 5000000) + 500000,
+    avgRecoveryRate: Math.random() * 100,
+    completedProcesses: Math.floor(Math.random() * 100) + 10
+  };
+};
+
+const RecoveryManagement: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [processes, setProcesses] = useState<RecoveryProcess[]>([]);
+  const [summary, setSummary] = useState<RecoverySummary | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
   
-  const recoveryProcesses: RecoveryProcess[] = [
-    {
-      id: "1",
-      clientId: "client-001",
-      clientName: "Empresa ABC Ltda",
-      documentNumber: "12.345.678/0001-90",
-      creditType: "IRRF",
-      originalAmount: 78000.00,
-      recoveredAmount: 62400.00,
-      recoveryPercent: 80,
-      startDate: "2023-04-15T10:30:00Z",
-      status: "EM_ANDAMENTO",
-      processNumber: "10520.123456/2023-12"
+  const itemsPerPage = 6;
+
+  // Use real-time updates
+  const { isListening } = useRealtimeUpdates({
+    tableName: 'recovery_processes',
+    onInsert: (newProcess) => {
+      setProcesses(prev => [newProcess, ...prev]);
+      fetchSummaryData(); // Update summary when new data is added
     },
-    {
-      id: "2",
-      clientId: "client-002",
-      clientName: "Indústria XYZ S.A.",
-      documentNumber: "23.456.789/0001-10",
-      creditType: "PIS/COFINS",
-      originalAmount: 125000.00,
-      recoveredAmount: 125000.00,
-      recoveryPercent: 100,
-      startDate: "2023-02-20T09:15:00Z",
-      status: "CONCLUIDO",
-      processNumber: "10520.234567/2023-34"
+    onUpdate: (updatedProcess) => {
+      setProcesses(prev => 
+        prev.map(process => process.id === updatedProcess.id ? updatedProcess : process)
+      );
+      fetchSummaryData(); // Update summary when data is changed
     },
-    {
-      id: "3",
-      clientId: "client-003",
-      clientName: "Comércio DEF Eireli",
-      documentNumber: "34.567.890/0001-21",
-      creditType: "IRRF",
-      originalAmount: 45000.00,
-      recoveredAmount: 0.00,
-      recoveryPercent: 0,
-      startDate: "2023-06-10T11:45:00Z",
-      status: "INICIAL",
-      processNumber: "10520.345678/2023-56"
-    },
-    {
-      id: "4",
-      clientId: "client-004",
-      clientName: "Serviços GHI S.A.",
-      documentNumber: "45.678.901/0001-32",
-      creditType: "CSLL",
-      originalAmount: 35000.00,
-      recoveredAmount: 28000.00,
-      recoveryPercent: 80,
-      startDate: "2023-03-05T08:00:00Z",
-      status: "PARCIAL",
-      processNumber: "10520.456789/2023-78"
+    onDelete: (deletedProcess) => {
+      setProcesses(prev => prev.filter(process => process.id !== deletedProcess.id));
+      fetchSummaryData(); // Update summary when data is removed
     }
-  ];
-  
-  const statusColors: Record<string, string> = {
-    INICIAL: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-    EM_ANDAMENTO: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-    PARCIAL: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-    CONCLUIDO: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+  });
+
+  // Fetch data
+  useEffect(() => {
+    fetchData();
+  }, [refreshKey]);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      // In a real app, this would be a database call
+      // For now, we'll use mock data
+      setTimeout(() => {
+        const mockData = generateMockRecoveryProcesses();
+        setProcesses(mockData);
+        fetchSummaryData();
+        setIsLoading(false);
+      }, 800);
+    } catch (error) {
+      console.error('Error fetching recovery processes:', error);
+      toast.error('Erro ao carregar processos de recuperação');
+      setIsLoading(false);
+    }
   };
-  
-  const statusLabels: Record<string, string> = {
-    INICIAL: "Inicial",
-    EM_ANDAMENTO: "Em Andamento",
-    PARCIAL: "Recuperação Parcial",
-    CONCLUIDO: "Concluído"
+
+  const fetchSummaryData = () => {
+    // In a real app, this would be a database call
+    // For now, we'll use mock data
+    const mockSummary = generateMockSummary();
+    setSummary(mockSummary);
   };
-  
-  const summaryData = {
-    totalCredits: recoveryProcesses.reduce((sum, p) => sum + p.originalAmount, 0),
-    recoveredAmount: recoveryProcesses.reduce((sum, p) => sum + p.recoveredAmount, 0),
-    avgRecoveryRate: Math.round(
-      recoveryProcesses.reduce((sum, p) => sum + p.recoveryPercent, 0) / recoveryProcesses.length
-    ),
-    completedProcesses: recoveryProcesses.filter(p => p.status === "CONCLUIDO").length
+
+  const handleRefresh = () => {
+    toast.info('Atualizando dados...');
+    setRefreshKey(prev => prev + 1);
   };
-  
-  // First click functionality
-  const handleViewProcessDetails = (processId: string) => {
-    toast({
-      title: "Detalhes do processo",
-      description: `Visualizando detalhes do processo ID: ${processId}`,
-    });
-  };
-  
-  // Second click functionality
-  const handleGenerateReport = (processId: string) => {
-    toast({
-      title: "Relatório gerado",
-      description: `Relatório do processo ID: ${processId} gerado com sucesso`,
-    });
-  };
-  
+
   const handleNewProcess = () => {
-    toast({
-      title: "Novo processo",
-      description: "Iniciando cadastro de novo processo de recuperação",
+    toast.success('Novo processo', {
+      description: 'Formulário de criação aberto',
     });
+    // This would open a form in a real app
   };
-  
+
+  const handleViewProcessDetails = (processId: string) => {
+    toast.info('Visualizando detalhes', {
+      description: `Detalhes do processo #${processId}`,
+    });
+    // This would navigate to a details page in a real app
+  };
+
+  const handleGenerateReport = (processId: string) => {
+    toast.success('Gerando relatório', {
+      description: `Relatório do processo #${processId} será baixado em breve`,
+    });
+    // This would generate a report in a real app
+  };
+
+  // Filter and paginate processes
+  const filteredProcesses = processes.filter(process => {
+    const matchesSearch = process.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      process.documentNumber.includes(searchQuery) ||
+      process.processNumber.includes(searchQuery);
+    const matchesStatus = statusFilter ? process.status === statusFilter : true;
+    const matchesType = typeFilter ? process.creditType === typeFilter : true;
+    
+    return matchesSearch && matchesStatus && matchesType;
+  });
+
+  const paginatedProcesses = filteredProcesses.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredProcesses.length / itemsPerPage);
+
   return (
     <div className="space-y-6">
-      <RecoverySummaryCards summary={summaryData} />
-      
+      {/* Header */}
+      <RecoveryHeader 
+        onRefresh={handleRefresh} 
+        onNewProcess={handleNewProcess}
+        isListening={isListening}
+      />
+
+      {/* Summary Cards */}
+      {summary && (
+        <RecoverySummaryCards summary={summary} />
+      )}
+
+      {/* Filters */}
+      <RecoveryFilters
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        typeFilter={typeFilter}
+        setTypeFilter={setTypeFilter}
+      />
+
+      {/* Processes Table */}
       <Card>
-        <CardHeader>
-          <RecoveryHeader onNewProcess={handleNewProcess} />
-          <RecoveryFilters 
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            filterStatus={filterStatus}
-            setFilterStatus={setFilterStatus}
-            statusLabels={statusLabels}
-          />
-        </CardHeader>
-        <CardContent>
-          <RecoveryTable 
-            recoveryProcesses={recoveryProcesses}
-            statusColors={statusColors}
-            statusLabels={statusLabels}
-            onViewDetails={handleViewProcessDetails}
-            onGenerateReport={handleGenerateReport}
-          />
-        </CardContent>
-        <CardFooter>
-          <RecoveryPagination 
-            totalItems={recoveryProcesses.length}
-            itemsShown={recoveryProcesses.length}
-          />
-        </CardFooter>
+        <RecoveryTable 
+          processes={paginatedProcesses} 
+          isLoading={isLoading} 
+          onViewDetails={handleViewProcessDetails}
+          onGenerateReport={handleGenerateReport}
+        />
       </Card>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <RecoveryPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
     </div>
   );
 };

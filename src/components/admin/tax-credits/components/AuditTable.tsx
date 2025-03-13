@@ -1,83 +1,117 @@
 
 import React from 'react';
-import { 
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { Download, FileSearch } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Download, Eye } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Audit } from '@/types/audit';
-import { getStatusLabel } from './AuditFilters';
 
 interface AuditTableProps {
   audits: Audit[];
-  onDownloadDocuments: (auditId: string) => void;
+  isLoading: boolean;
   onViewDetails: (auditId: string) => void;
-  statusColors: Record<string, string>;
+  onDownloadDocuments: (auditId: string) => void;
 }
 
 const AuditTable: React.FC<AuditTableProps> = ({ 
   audits, 
-  onDownloadDocuments,
+  isLoading,
   onViewDetails,
-  statusColors 
+  onDownloadDocuments
 }) => {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b">
+            <th className="py-3 px-4 text-left font-medium">Cliente</th>
+            <th className="py-3 px-4 text-left font-medium">Documento</th>
+            <th className="py-3 px-4 text-left font-medium">Tipo</th>
+            <th className="py-3 px-4 text-left font-medium">Início</th>
+            <th className="py-3 px-4 text-left font-medium">Prazo</th>
+            <th className="py-3 px-4 text-left font-medium">Documentos</th>
+            <th className="py-3 px-4 text-left font-medium">Status</th>
+            <th className="py-3 px-4 text-left font-medium">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {isLoading ? (
+            // Loading skeleton
+            Array.from({ length: 5 }).map((_, index) => (
+              <tr key={`skeleton-${index}`} className="border-b">
+                <td colSpan={8} className="py-4 px-4">
+                  <div className="h-6 bg-secondary/50 rounded animate-pulse"></div>
+                </td>
+              </tr>
+            ))
+          ) : audits.length === 0 ? (
+            <tr>
+              <td colSpan={8} className="py-4 px-4 text-center text-muted-foreground">
+                Nenhuma auditoria encontrada.
+              </td>
+            </tr>
+          ) : (
+            audits.map((audit) => (
+              <tr key={audit.id} className="border-b hover:bg-muted/50">
+                <td className="py-3 px-4">{audit.clientName}</td>
+                <td className="py-3 px-4">{audit.documentNumber}</td>
+                <td className="py-3 px-4">{audit.auditType}</td>
+                <td className="py-3 px-4">{new Date(audit.startDate).toLocaleDateString('pt-BR')}</td>
+                <td className="py-3 px-4">{new Date(audit.deadline).toLocaleDateString('pt-BR')}</td>
+                <td className="py-3 px-4">{audit.documentsCount}</td>
+                <td className="py-3 px-4">
+                  <StatusBadge status={audit.status} />
+                </td>
+                <td className="py-3 px-4">
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={() => onViewDetails(audit.id)}
+                    >
+                      <FileSearch className="h-4 w-4" />
+                      <span className="sr-only">Ver detalhes</span>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={() => onDownloadDocuments(audit.id)}
+                    >
+                      <Download className="h-4 w-4" />
+                      <span className="sr-only">Baixar documentos</span>
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+// Status Badge component
+const StatusBadge: React.FC<{ status: Audit['status'] }> = ({ status }) => {
+  const statusConfig = {
+    PENDENTE: { label: 'Pendente', variant: 'secondary' as const },
+    EM_ANDAMENTO: { label: 'Em Andamento', variant: 'default' as const },
+    CONCLUIDA: { label: 'Concluída', variant: 'default' as const },
+    CANCELADA: { label: 'Cancelada', variant: 'destructive' as const },
   };
 
+  const config = statusConfig[status];
+
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Cliente</TableHead>
-          <TableHead>CNPJ</TableHead>
-          <TableHead>Tipo de Auditoria</TableHead>
-          <TableHead>Início</TableHead>
-          <TableHead>Prazo</TableHead>
-          <TableHead>Responsável</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead className="text-right">Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {audits.map((audit) => (
-          <TableRow key={audit.id}>
-            <TableCell className="font-medium">{audit.clientName}</TableCell>
-            <TableCell>{audit.documentNumber}</TableCell>
-            <TableCell>{audit.auditType}</TableCell>
-            <TableCell>{formatDate(audit.startDate)}</TableCell>
-            <TableCell>{formatDate(audit.deadline)}</TableCell>
-            <TableCell>{audit.assignedTo}</TableCell>
-            <TableCell>
-              <Badge className={statusColors[audit.status]}>
-                {getStatusLabel(audit.status)}
-              </Badge>
-            </TableCell>
-            <TableCell className="text-right">
-              <div className="flex justify-end gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => onDownloadDocuments(audit.id)}
-                >
-                  <Download className="mr-2 h-3 w-3" />
-                  {audit.documentsCount} docs
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => onViewDetails(audit.id)}
-                >
-                  <Eye className="mr-2 h-3 w-3" />
-                  Detalhes
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <Badge variant={config.variant} className={
+      status === 'PENDENTE' ? 'bg-amber-500/20 text-amber-700 hover:bg-amber-500/30' :
+      status === 'EM_ANDAMENTO' ? 'bg-blue-500/20 text-blue-700 hover:bg-blue-500/30' :
+      status === 'CONCLUIDA' ? 'bg-green-500/20 text-green-700 hover:bg-green-500/30' :
+      'bg-red-500/20 text-red-700 hover:bg-red-500/30'
+    }>
+      {config.label}
+    </Badge>
   );
 };
 

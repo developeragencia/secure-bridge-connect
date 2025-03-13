@@ -1,30 +1,46 @@
 
 import React from 'react';
-import { CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { PlusCircle, RefreshCw } from 'lucide-react';
 
 interface RecoveryHeaderProps {
-  onNewProcess?: () => void;
+  onRefresh: () => void;
+  onNewProcess: () => void;
+  isListening?: boolean;
 }
 
-const RecoveryHeader: React.FC<RecoveryHeaderProps> = ({ onNewProcess }) => {
+const RecoveryHeader: React.FC<RecoveryHeaderProps> = ({ 
+  onRefresh, 
+  onNewProcess,
+  isListening = false
+}) => {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
-        <CardTitle>Processos de Recuperação</CardTitle>
-        <CardDescription>
-          Acompanhamento de processos de recuperação de créditos tributários
-        </CardDescription>
+        <h1 className="text-2xl font-bold">Recuperação de Créditos</h1>
+        <p className="text-muted-foreground">
+          Gerencie os processos de recuperação de créditos tributários
+          {isListening && <span className="ml-2 text-xs text-green-500">• Atualizações em tempo real ativas</span>}
+        </p>
       </div>
-      {onNewProcess && (
-        <div className="flex flex-col sm:flex-row gap-2">
-          <Button onClick={onNewProcess}>
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Processo
-          </Button>
-        </div>
-      )}
+      <div className="flex items-center gap-2 w-full sm:w-auto">
+        <Button 
+          variant="default" 
+          className="w-full sm:w-auto"
+          onClick={onNewProcess}
+        >
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Novo Processo
+        </Button>
+        <Button 
+          variant="outline" 
+          className="w-full sm:w-auto"
+          onClick={onRefresh}
+        >
+          <RefreshCw className="mr-2 h-4 w-4" />
+          Atualizar
+        </Button>
+      </div>
     </div>
   );
 };
