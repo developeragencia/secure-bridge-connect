@@ -19,7 +19,7 @@ export type ToastProps = React.ComponentPropsWithoutRef<typeof Toast> & {
 };
 
 type ContextType = {
-  toast: ({ ...props }: ToastProps) => {
+  toast: (props: Omit<ToastProps, "id"> & { id?: string }) => {
     id: string
     dismiss: () => void
     update: (props: ToastProps) => void
@@ -81,7 +81,7 @@ function useSonner() {
   }, [])
 
   const toast = React.useCallback(
-    ({ ...props }: ToastProps) => {
+    (props: Omit<ToastProps, "id"> & { id?: string }) => {
       const id = props.id || String(Date.now())
       const update = (props: ToastProps) => {
         setToasts((toasts) => {

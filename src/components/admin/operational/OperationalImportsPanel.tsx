@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, FileType, Database, CheckCircle2, FileX } from "lucide-react";
+import { Upload, FileType, Database, CheckCircle2, FileX, FileText, FileImage } from "lucide-react";
 
 const OperationalImportsPanel = () => {
   return (
@@ -49,6 +49,18 @@ const OperationalImportsPanel = () => {
               <Button variant="outline" className="h-24 flex flex-col justify-center items-center gap-2 border-dashed">
                 <Database className="h-8 w-8 text-muted-foreground" />
                 <span>JSON</span>
+              </Button>
+              <Button variant="outline" className="h-24 flex flex-col justify-center items-center gap-2 border-dashed">
+                <FileText className="h-8 w-8 text-muted-foreground" />
+                <span>PDF</span>
+              </Button>
+              <Button variant="outline" className="h-24 flex flex-col justify-center items-center gap-2 border-dashed">
+                <FileText className="h-8 w-8 text-muted-foreground" />
+                <span>Word</span>
+              </Button>
+              <Button variant="outline" className="h-24 flex flex-col justify-center items-center gap-2 border-dashed">
+                <FileImage className="h-8 w-8 text-muted-foreground" />
+                <span>Outros</span>
               </Button>
             </CardContent>
           </Card>
