@@ -1,5 +1,5 @@
-
 import { AuditTrail } from './types';
+import { StatusType } from '@/types/declarations';
 
 // Generate mock audit logs
 export const mockAuditLogs: AuditTrail[] = [
@@ -35,6 +35,8 @@ export const mockAuditLogs: AuditTrail[] = [
     resourceId: 'TC-003',
     ipAddress: '192.168.1.102',
     details: 'Changed status from "Pending" to "Approved"',
+    previousStatus: 'PENDING',
+    newStatus: 'APPROVED'
   },
   {
     id: '4',

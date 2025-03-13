@@ -1,4 +1,6 @@
 
+import { StatusType } from '@/types/declarations';
+
 export type AuditAction = 
   | 'create' 
   | 'update' 
@@ -18,6 +20,6 @@ export interface AuditTrail {
   resourceId: string;
   ipAddress: string;
   details: string;
-  previousStatus?: string; // Adding optional previousStatus property
-  newStatus?: string; // Adding optional newStatus property
+  previousStatus?: StatusType; // Update type to StatusType
+  newStatus?: StatusType; // Update type to StatusType
 }
