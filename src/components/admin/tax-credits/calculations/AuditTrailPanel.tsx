@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Table,
@@ -38,6 +37,7 @@ import {
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import StatusBadge from '@/components/admin/tax-credits/components/StatusBadge';
+import { StatusType } from '@/types/declarations';
 
 type AuditAction = 
   | 'create' 
@@ -60,8 +60,8 @@ type AuditTrail = {
   resourceName: string;
   details: string;
   ipAddress: string;
-  previousStatus?: string;
-  newStatus?: string;
+  previousStatus?: StatusType;
+  newStatus?: StatusType;
 };
 
 // Mock data for audit trail
@@ -104,8 +104,8 @@ const mockAuditTrail: AuditTrail[] = [
     resourceName: 'Crédito Tributário - Empresa ABC',
     details: 'Alteração de status do crédito',
     ipAddress: '192.168.1.3',
-    previousStatus: 'pending',
-    newStatus: 'approved',
+    previousStatus: 'PENDING',
+    newStatus: 'APPROVED',
   },
   {
     id: '4',
@@ -197,8 +197,8 @@ const mockAuditTrail: AuditTrail[] = [
     resourceName: 'Crédito Tributário - Empresa XYZ',
     details: 'Alteração de status do crédito',
     ipAddress: '192.168.1.1',
-    previousStatus: 'analyzing',
-    newStatus: 'recovered',
+    previousStatus: 'ANALYZING',
+    newStatus: 'RECOVERED',
   },
 ];
 
