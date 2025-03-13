@@ -38,6 +38,12 @@ interface MainContentProps {
   user: any;
 }
 
+// Define interface for ExtraTabContent component props
+interface ExtraTabContentProps {
+  title: string;
+  description: string;
+}
+
 const MainContent = ({ activeTab, user }: MainContentProps) => {
   const containerVariants = {
     hidden: { opacity: 0, x: -10 },
@@ -63,11 +69,11 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
     switch (activeTab) {
       // Main Section
       case 'dashboard':
-        return <AdminDashboard user={user} />;
+        return <AdminDashboard />;
       case 'users':
-        return <AdminUsers user={user} />;
+        return <AdminUsers />;
       case 'profile':
-        return <UserProfilePermissions user={user} />;
+        return <UserProfilePermissions />;
       case 'notifications':
         return <ExtraTabContent title="Notificações" description="Gerenciamento de notificações do sistema" />;
       
@@ -117,13 +123,13 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       
       // Content Section
       case 'site':
-        return <SiteEditor user={user} />;
+        return <SiteEditor />;
       case 'content_reports':
-        return <AdminReports user={user} />;
+        return <AdminReports />;
       
       // System Section
       case 'settings':
-        return <AdminSettings user={user} />;
+        return <AdminSettings />;
       case 'security':
       case 'billing':
       case 'support':
@@ -133,7 +139,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         />;
       
       default:
-        return <AdminDashboard user={user} />;
+        return <AdminDashboard />;
     }
   };
 
