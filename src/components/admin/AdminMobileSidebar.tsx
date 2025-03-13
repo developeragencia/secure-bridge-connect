@@ -57,7 +57,7 @@ const AdminMobileSidebar = ({
               <AnimatedLogo size="sm" showText={false} />
             </div>
             <div>
-              <h2 className="text-base font-semibold">Painel Admin</h2>
+              <h2 className="text-base font-semibold">PAINEL ADMINISTRATIVO</h2>
               <p className="text-[10px] text-muted-foreground">Sistemas Claudio</p>
             </div>
           </div>

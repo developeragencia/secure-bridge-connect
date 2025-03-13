@@ -33,7 +33,7 @@ const SidebarHeader = ({ sidebarOpen, user }: SidebarHeaderProps) => {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center shadow-sm">
             <PanelTop className="h-4 w-4 text-primary" />
           </div>
-          <h2 className="font-medium text-foreground">Admin Panel</h2>
+          <h2 className="font-medium text-foreground">PAINEL ADMINISTRATIVO</h2>
         </motion.div>
       )}
       

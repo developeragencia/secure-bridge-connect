@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import AnimatedLogo from '@/components/AnimatedLogo';
@@ -77,7 +78,7 @@ const AdminHeader = ({
               <AnimatedLogo size="sm" showText={false} />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-semibold leading-none">Painel Admin</h1>
+              <h1 className="text-base sm:text-lg font-semibold leading-none">PAINEL ADMINISTRATIVO</h1>
               <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">Sistemas Claudio</p>
             </div>
           </div>
