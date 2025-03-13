@@ -1,206 +1,170 @@
-
 import { useState, useEffect } from 'react';
 import { Audit, AuditSummary } from '@/types/audit';
 import { toast } from 'sonner';
-import { useRealtimeUpdates } from './useRealtimeUpdates';
 
-// Mock data generator for audits
-const generateMockAudits = (): Audit[] => {
-  return Array.from({ length: 8 }, (_, i) => ({
-    id: `audit-${i + 1}`,
-    clientId: `client-${Math.floor(Math.random() * 5) + 1}`,
-    clientName: `Cliente ${Math.floor(Math.random() * 5) + 1}`,
-    documentNumber: `${Math.floor(Math.random() * 90000000) + 10000000}/${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 90) + 10}`,
-    auditType: ['Fiscal', 'Contábil', 'Trabalhista', 'Previdenciária'][Math.floor(Math.random() * 4)],
-    startDate: new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString(),
-    deadline: new Date(2023, Math.floor(Math.random() * 12) + 1, Math.floor(Math.random() * 28) + 1).toISOString(),
-    status: ['EM_ANDAMENTO', 'PENDENTE', 'CONCLUIDA', 'CANCELADA'][Math.floor(Math.random() * 4)] as any,
-    assignedTo: `Auditor ${Math.floor(Math.random() * 5) + 1}`,
-    documentsCount: Math.floor(Math.random() * 20) + 1,
-    createdAt: new Date(2023, Math.floor(Math.random() * 6), Math.floor(Math.random() * 28) + 1).toISOString(),
-    updatedAt: new Date(2023, Math.floor(Math.random() * 6) + 6, Math.floor(Math.random() * 28) + 1).toISOString()
-  }));
+// Mock data
+const mockAudits: Audit[] = [
+  {
+    id: 'audit-1',
+    clientId: 'client-1',
+    clientName: 'Empresa ABC Ltda',
+    documentNumber: '12.345.678/0001-99',
+    auditType: 'Fiscal',
+    startDate: '2023-03-15',
+    deadline: '2023-04-15',
+    status: 'EM_ANDAMENTO',
+    assignedTo: 'João Silva',
+    documentsCount: 24,
+    findings: 3,
+    createdAt: '2023-03-10T08:30:00Z',
+    updatedAt: '2023-03-15T14:20:00Z',
+  },
+  {
+    id: 'audit-2',
+    clientId: 'client-2',
+    clientName: 'Indústrias XYZ S/A',
+    documentNumber: '98.765.432/0001-10',
+    auditType: 'Contábil',
+    startDate: '2023-04-01',
+    deadline: '2023-05-01',
+    status: 'PENDENTE',
+    assignedTo: 'Maria Oliveira',
+    documentsCount: 18,
+    findings: 0,
+    createdAt: '2023-03-25T11:15:00Z',
+    updatedAt: '2023-04-01T09:00:00Z',
+  },
+  {
+    id: 'audit-3',
+    clientId: 'client-3',
+    clientName: 'Comércio FastShop Ltda',
+    documentNumber: '45.678.901/0001-23',
+    auditType: 'Financeira',
+    startDate: '2023-04-15',
+    deadline: '2023-05-15',
+    status: 'CONCLUIDA',
+    assignedTo: 'Carlos Pereira',
+    documentsCount: 30,
+    findings: 5,
+    createdAt: '2023-04-10T16:45:00Z',
+    updatedAt: '2023-04-15T17:30:00Z',
+  },
+  {
+    id: 'audit-4',
+    clientId: 'client-4',
+    clientName: 'Serviços GHI S/A',
+    documentNumber: '56.789.012/0001-34',
+    auditType: 'Trabalhista',
+    startDate: '2023-05-01',
+    deadline: '2023-06-01',
+    status: 'CANCELADA',
+    assignedTo: 'Ana Souza',
+    documentsCount: 12,
+    findings: 0,
+    createdAt: '2023-04-28T10:00:00Z',
+    updatedAt: '2023-05-01T11:00:00Z',
+  }
+];
+
+const mockSummary: AuditSummary = {
+  totalAudits: 35,
+  pendingAudits: 12,
+  inProgressAudits: 8,
+  completedAudits: 10,
+  canceledAudits: 5,
+  // Add properties used in components
+  total: 35,
+  emAndamento: 8,
+  pendente: 12,
+  concluida: 10,
+  cancelada: 5
 };
 
-// Mock summary generator
-const generateMockSummary = (): AuditSummary => {
-  const total = Math.floor(Math.random() * 50) + 20;
-  const emAndamento = Math.floor(Math.random() * 15) + 5;
-  const pendente = Math.floor(Math.random() * 10) + 2;
-  const concluida = Math.floor(Math.random() * 20) + 10;
-  const cancelada = Math.floor(Math.random() * 5);
-  
-  return {
-    total,
-    emAndamento,
-    pendente,
-    concluida,
-    cancelada,
-    totalAudits: total,
-    inProgressAudits: emAndamento,
-    pendingAudits: pendente,
-    completedAudits: concluida,
-    canceledAudits: cancelada
-  };
-};
-
-export function useAuditManagement() {
+export const useAuditManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
-  const [audits, setAudits] = useState<Audit[]>([]);
-  const [summary, setSummary] = useState<AuditSummary | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [audits, setAudits] = useState<Audit[]>(mockAudits);
+  const [summary, setSummary] = useState<AuditSummary>(mockSummary);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [currentAudit, setCurrentAudit] = useState<Partial<Audit> | undefined>(undefined);
+  const [currentAudit, setCurrentAudit] = useState<Audit | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Use real-time updates
-  const { isListening } = useRealtimeUpdates({
-    tableName: 'audits',
-    onInsert: (newAudit) => {
-      setAudits(prev => [newAudit, ...prev]);
-      fetchSummaryData(); // Update summary when new data is added
-    },
-    onUpdate: (updatedAudit) => {
-      setAudits(prev => 
-        prev.map(audit => audit.id === updatedAudit.id ? updatedAudit : audit)
-      );
-      fetchSummaryData(); // Update summary when data is changed
-    },
-    onDelete: (deletedAudit) => {
-      setAudits(prev => prev.filter(audit => audit.id !== deletedAudit.id));
-      fetchSummaryData(); // Update summary when data is removed
-    }
-  });
-
   useEffect(() => {
-    fetchData();
-  }, [refreshKey]);
-
-  const fetchData = async () => {
+    // Simulate loading data
     setIsLoading(true);
-    try {
-      // In a real app, this would be a database call
-      // For now, we'll use mock data
-      setTimeout(() => {
-        const mockData = generateMockAudits();
-        setAudits(mockData);
-        fetchSummaryData();
-        setIsLoading(false);
-      }, 800);
-    } catch (error) {
-      console.error('Error fetching audits:', error);
-      toast.error('Erro ao carregar auditorias');
+    setTimeout(() => {
       setIsLoading(false);
-    }
-  };
-
-  const fetchSummaryData = () => {
-    // In a real app, this would be a database call
-    // For now, we'll use mock data
-    const mockSummary = generateMockSummary();
-    setSummary(mockSummary);
-  };
+    }, 500);
+  }, []);
 
   const handleRefresh = () => {
     toast.info('Atualizando dados...');
-    setRefreshKey(prev => prev + 1);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      toast.success('Dados atualizados');
+    }, 500);
   };
 
   const handleCreateAudit = () => {
-    setCurrentAudit(undefined);
+    setCurrentAudit(null);
     setIsEditMode(false);
     setIsFormOpen(true);
   };
 
-  const handleSaveAudit = (auditData: Partial<Audit>) => {
-    if (isEditMode && currentAudit?.id) {
+  const handleSaveAudit = (auditData: Audit) => {
+    if (isEditMode && currentAudit) {
       // Update existing audit
-      const updatedAudit = { ...currentAudit, ...auditData } as Audit;
-      setAudits(prev => 
-        prev.map(audit => audit.id === currentAudit.id ? updatedAudit : audit)
-      );
-      toast.success('Auditoria atualizada', {
-        description: `A auditoria ${updatedAudit.clientName} foi atualizada com sucesso.`,
-      });
+      setAudits(audits.map(audit => audit.id === currentAudit.id ? auditData : audit));
+      toast.success(`Auditoria "${auditData.clientName}" atualizada com sucesso.`);
     } else {
       // Create new audit
-      const newAudit: Audit = {
-        id: `audit-${Date.now()}`,
-        clientId: `client-${Math.floor(Math.random() * 5) + 1}`,
-        ...auditData,
-      } as Audit;
-      
-      setAudits(prev => [newAudit, ...prev]);
-      toast.success('Nova auditoria', {
-        description: `A auditoria para ${newAudit.clientName} foi criada com sucesso.`,
-      });
+      setAudits([...audits, auditData]);
+      toast.success(`Auditoria "${auditData.clientName}" criada com sucesso.`);
     }
-    
-    // Update summary after changes
-    fetchSummaryData();
+    setIsFormOpen(false);
   };
 
   const handleViewDetails = (auditId: string) => {
     toast.info('Visualizando detalhes', {
       description: `Detalhes da auditoria #${auditId}`,
     });
-    // This would navigate to a details page in a real app
   };
 
   const handleDownloadDocuments = (auditId: string) => {
-    toast.success('Baixando documentos', {
-      description: `Documentos da auditoria #${auditId}`,
+    toast.success('Download dos documentos', {
+      description: `Download dos documentos da auditoria #${auditId} iniciado`,
     });
-    // This would generate a download in a real app
   };
 
-  const handleEditAudit = (auditId: string) => {
-    const auditToEdit = audits.find(audit => audit.id === auditId);
-    if (auditToEdit) {
-      setCurrentAudit(auditToEdit);
-      setIsEditMode(true);
-      setIsFormOpen(true);
-    } else {
-      toast.error('Auditoria não encontrada', {
-        description: `Não foi possível encontrar a auditoria #${auditId}`,
-      });
-    }
+  const handleEditAudit = (audit: Audit) => {
+    setCurrentAudit(audit);
+    setIsEditMode(true);
+    setIsFormOpen(true);
   };
 
-  const handleDeleteAudit = (auditId: string) => {
-    toast.success('Auditoria excluída', {
-      description: `A auditoria #${auditId} foi excluída com sucesso`,
+  const handleDeleteAudit = (audit: Audit) => {
+    toast.warning('Auditoria excluída', {
+      description: `Auditoria #${audit.id} excluída com sucesso`,
     });
-    // In a real app, this would call an API to delete the audit
-    setAudits(prev => prev.filter(audit => audit.id !== auditId));
-    fetchSummaryData();
   };
 
-  const handleApproveAudit = (auditId: string) => {
+  const handleApproveAudit = (audit: Audit) => {
     toast.success('Auditoria aprovada', {
-      description: `A auditoria #${auditId} foi aprovada com sucesso`,
+      description: `Auditoria #${audit.id} aprovada com sucesso`,
     });
-    // In a real app, this would call an API to update the audit status
-    setAudits(prev => 
-      prev.map(audit => 
-        audit.id === auditId 
-          ? { ...audit, status: 'CONCLUIDA' } 
-          : audit
-      )
-    );
-    fetchSummaryData();
   };
 
-  // Filter audits
   const filteredAudits = audits.filter(audit => {
-    const matchesSearch = audit.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const matchesSearch =
+      audit.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       audit.documentNumber.includes(searchQuery);
     const matchesStatus = statusFilter ? audit.status === statusFilter : true;
     const matchesType = typeFilter ? audit.auditType === typeFilter : true;
-    
+
     return matchesSearch && matchesStatus && matchesType;
   });
 
@@ -228,4 +192,4 @@ export function useAuditManagement() {
     handleDeleteAudit,
     handleApproveAudit
   };
-}
+};

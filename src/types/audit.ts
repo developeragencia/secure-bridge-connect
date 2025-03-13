@@ -16,12 +16,14 @@ export interface Audit {
 }
 
 export interface AuditSummary {
+  // Original properties
   totalAudits: number;
   pendingAudits: number;
   inProgressAudits: number;
   completedAudits: number;
   canceledAudits: number;
-  // Adding properties to match what's being used in components
+  
+  // Properties used in components
   total: number;
   emAndamento: number;
   pendente: number;

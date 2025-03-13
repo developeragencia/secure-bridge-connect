@@ -20,7 +20,7 @@ export interface Client {
   contactEmail: string;
   contactPhone: string;
   type: 'private' | 'public';
-  zipCode?: string; // Adding zipCode as optional to fix the errors
+  zipCode?: string;
 }
 
 export interface User {
@@ -31,7 +31,7 @@ export interface User {
   status: 'active' | 'inactive';
   lastLogin?: string;
   createdAt: string;
-  clientId?: string; // Adding clientId as optional to fix UserProfileHeader errors
+  clientId?: string;
 }
 
 export type UserRole = 'admin' | 'staff' | 'client' | 'representative' | 'office' | 'sales';
