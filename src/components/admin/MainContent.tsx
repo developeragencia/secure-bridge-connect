@@ -22,6 +22,7 @@ import CommercialProposals from '@/components/admin/tax-credits/CommercialPropos
 import TaxCreditCalculator from '@/components/admin/tax-credits/TaxCreditCalculator';
 import CreditIdentification from '@/components/admin/tax-credits/CreditIdentification';
 import DataProcessing from '@/components/admin/tax-credits/DataProcessing';
+import { useNavigate } from 'react-router-dom';
 
 interface MainContentProps {
   activeTab: string;
@@ -30,6 +31,7 @@ interface MainContentProps {
 
 const MainContent = ({ activeTab, user }: MainContentProps) => {
   const { activeClient } = useActiveClient();
+  const navigate = useNavigate();
   
   const fadeInVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -51,6 +53,13 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       transition: { duration: 0.3 }
     }
   };
+
+  // Handle notifications tab by redirecting to the notifications page
+  React.useEffect(() => {
+    if (activeTab === 'notifications') {
+      navigate('/notifications');
+    }
+  }, [activeTab, navigate]);
 
   // Check if we're on a client detail view
   const isClientDetail = activeTab.startsWith('client-');

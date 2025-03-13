@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +9,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import Notifications from "./pages/Notifications";
 import Maintenance from "./pages/Maintenance";
 import { supabase } from "./integrations/supabase/client";
 
@@ -127,6 +129,7 @@ const App = () => (
           <Route path="/maintenance" element={<Maintenance />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
+          <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
           <Route path="/" element={<MaintenanceRouteGuard element={<Index />} />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<MaintenanceRouteGuard element={<NotFound />} />} />

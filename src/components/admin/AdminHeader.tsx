@@ -1,17 +1,17 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import AnimatedLogo from '@/components/AnimatedLogo';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
-  Menu, BellRing, UserCircle, Sun, Moon,
+  Menu, UserCircle, Sun, Moon,
   PanelLeftClose, PanelLeftOpen, User,
   ChevronDown, Search, LogOut, X, Building2
 } from 'lucide-react';
 import ActiveClientSelector from './ActiveClientSelector';
 import ActiveClientIndicator from './ActiveClientIndicator';
 import { useClientStore } from '@/hooks/useClientStore';
+import NotificationBell from '@/components/NotificationBell';
 
 interface AdminHeaderProps {
   toggleSidebar: () => void;
@@ -113,16 +113,7 @@ const AdminHeader = ({
           </Button>
           
           <div className="relative">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="rounded-full h-8 w-8 sm:h-9 sm:w-9 hover:bg-primary/10"
-            >
-              <BellRing className="h-4 w-4 sm:h-5 sm:w-5" />
-              {hasNotifications && (
-                <span className="absolute top-1 right-1 h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-red-500 ring-2 ring-background animate-pulse"></span>
-              )}
-            </Button>
+            <NotificationBell />
           </div>
           
           <div className="relative group">

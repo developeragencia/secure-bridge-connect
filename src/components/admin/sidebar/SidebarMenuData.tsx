@@ -5,7 +5,7 @@ import {
   Globe, ShieldAlert, CreditCard, HelpCircle,
   Building, UserCircle, Receipt, FileBarChart2, Landmark,
   PercentCircle, FileSpreadsheet, FileStack, ClipboardList,
-  Calculator, FileCheck, Database, UploadCloud, List, Filter, ArrowDown, CheckCheck
+  Calculator, FileCheck, Database, UploadCloud, List, Filter, ArrowDown, CheckCheck, Bell
 } from 'lucide-react';
 import { SidebarSection } from '@/types/admin-sidebar';
 
@@ -17,7 +17,8 @@ export const getMenuSections = (): SidebarSection[] => {
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 className="h-4 w-4" /> },
         { id: 'users', label: 'Usuários', icon: <Users className="h-4 w-4" /> },
-        { id: 'profile', label: 'Meu Perfil', icon: <UserCircle className="h-4 w-4" /> }
+        { id: 'profile', label: 'Meu Perfil', icon: <UserCircle className="h-4 w-4" /> },
+        { id: 'notifications', label: 'Notificações', icon: <Bell className="h-4 w-4" /> }
       ]
     },
     {

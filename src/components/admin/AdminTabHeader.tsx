@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
   BarChart3, Users, FileText, Globe, Settings,
   ShieldAlert, CreditCard, HelpCircle, Building, UserCircle,
   Receipt, FileBarChart2, Landmark, PercentCircle, FileSpreadsheet,
-  FileStack, ClipboardList, Calculator, FileCheck, Database
+  FileStack, ClipboardList, Calculator, FileCheck, Database, Bell
 } from 'lucide-react';
 
 interface AdminTabHeaderProps {
@@ -194,6 +193,19 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
             <h1 className="text-2xl font-bold">Processamento de Dados</h1>
           </div>
           <p className="text-muted-foreground">Importação e processamento inteligente de dados fiscais</p>
+        </>
+      )}
+      
+      {/* Notifications Section */}
+      {activeTab === 'notifications' && (
+        <>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <Bell className="h-5 w-5" />
+            </div>
+            <h1 className="text-2xl font-bold">Notificações</h1>
+          </div>
+          <p className="text-muted-foreground">Visualize e gerencie as notificações do sistema</p>
         </>
       )}
     </motion.div>
