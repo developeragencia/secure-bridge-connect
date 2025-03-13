@@ -5,8 +5,8 @@ import {
   Globe, ShieldAlert, CreditCard, HelpCircle,
   Building, UserCircle, Receipt, FileBarChart2, Landmark,
   PercentCircle, FileSpreadsheet, FileStack, ClipboardList,
-  Calculator, FileCheck, Database, UploadCloud, List, Filter, ArrowDown, CheckCheck, Bell,
-  FileLineChart, Layout, ReceiptText, Key, Clock, Shield, ClipboardList as ClipboardListIcon
+  Calculator, FileCheck, Database, Bell,
+  FileLineChart, Layout, ReceiptText, Key, Clock, Shield, ClipboardListIcon
 } from 'lucide-react';
 import { SidebarSection } from '@/types/admin-sidebar';
 

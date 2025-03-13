@@ -22,6 +22,9 @@ import CommercialProposals from '@/components/admin/tax-credits/CommercialPropos
 import TaxCreditCalculator from '@/components/admin/tax-credits/TaxCreditCalculator';
 import CreditIdentification from '@/components/admin/tax-credits/CreditIdentification';
 import DataProcessing from '@/components/admin/tax-credits/DataProcessing';
+import DetailedReportsPanel from '@/components/admin/tax-reports/DetailedReportsPanel';
+import InteractiveDashboardPanel from '@/components/admin/tax-reports/InteractiveDashboardPanel';
+import RetentionReceiptsPanel from '@/components/admin/tax-reports/RetentionReceiptsPanel';
 import { useNavigate } from 'react-router-dom';
 
 interface MainContentProps {
@@ -109,6 +112,11 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {/* New tabs */}
             {activeTab === 'credit_identification' && <CreditIdentification />}
             {activeTab === 'data_processing' && <DataProcessing />}
+            
+            {/* Tax Reports tabs */}
+            {activeTab === 'detailed_reports' && <DetailedReportsPanel />}
+            {activeTab === 'interactive_dashboard' && <InteractiveDashboardPanel />}
+            {activeTab === 'retention_receipts' && <RetentionReceiptsPanel />}
             
             {/* Extra tabs */}
             <ExtraTabContent activeTab={activeTab} />

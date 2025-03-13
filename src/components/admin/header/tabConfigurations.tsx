@@ -1,4 +1,3 @@
-
 import {
   BarChart3, Users, FileText, Settings, Globe, ShieldAlert, CreditCard, HelpCircle,
   Building, UserCircle, Receipt, FileBarChart2, Landmark, PercentCircle,
@@ -114,7 +113,6 @@ export const tabConfigurations: Record<string, TabConfig> = {
     description: 'Gerenciar notificações e alertas do sistema.',
     icon: Bell,
   },
-  // New Tax Reports and Dossiers tabs
   detailed_reports: {
     title: 'Relatórios Detalhados',
     description: 'Relatórios detalhados para tributação e auditoria fiscal.',
@@ -130,7 +128,6 @@ export const tabConfigurations: Record<string, TabConfig> = {
     description: 'Emissão de comprovantes para fornecedores e órgãos públicos.',
     icon: ReceiptText,
   },
-  // New Security and Audit tabs
   two_factor_auth: {
     title: 'Autenticação de Dois Fatores',
     description: 'Configuração de autenticação de dois fatores para administradores.',
