@@ -48,7 +48,7 @@ const AuditFilters: React.FC<AuditFiltersProps> = ({
       
       <Select
         value={actionFilter || ''}
-        onValueChange={(value) => onActionFilterChange(value)}
+        onValueChange={onActionFilterChange}
       >
         <SelectTrigger className="w-full md:w-[180px]">
           <Filter className="mr-2 h-4 w-4" />
@@ -68,7 +68,7 @@ const AuditFilters: React.FC<AuditFiltersProps> = ({
       
       <Select
         value={userFilter || ''}
-        onValueChange={(value) => onUserFilterChange(value)}
+        onValueChange={onUserFilterChange}
       >
         <SelectTrigger className="w-full md:w-[180px]">
           <User className="mr-2 h-4 w-4" />
