@@ -125,11 +125,17 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'settings':
         return <AdminSettings />;
       case 'security':
+        return <ExtraTabContent activeTab="security" />;
       case 'billing':
+        return <ExtraTabContent activeTab="billing" />;
       case 'support':
-        return <ExtraTabContent activeTab={activeTab} />;
+        return <ExtraTabContent activeTab="support" />;
       
       default:
+        // Check if it's a client tab
+        if (activeTab.startsWith('client-')) {
+          return <ExtraTabContent activeTab={activeTab} />;
+        }
         return <AdminDashboard />;
     }
   };

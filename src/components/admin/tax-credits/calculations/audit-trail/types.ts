@@ -1,27 +1,30 @@
 
-import { StatusType } from '@/types/declarations';
-
-export type AuditAction = 
-  | 'create' 
-  | 'update' 
-  | 'delete'
-  | 'status_change'
-  | 'calculation'
-  | 'export'
-  | 'import';
-
-export interface AuditTrail {
+// Audit log entry interface
+export interface AuditLogEntry {
   id: string;
-  date: Date;
-  userId: string;
-  userName: string;
-  userRole: string;
-  action: AuditAction;
-  resourceType: string;
+  timestamp: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+  } | null;
+  action: string;
+  resource: string;
   resourceId: string;
-  resourceName: string;
   details: string;
-  ipAddress: string;
-  previousStatus?: StatusType;
-  newStatus?: StatusType;
+  ipAddress?: string;
+  changes: {
+    before: any;
+    after: any;
+  };
+}
+
+// Audit filter interface
+export interface AuditFilter {
+  searchQuery: string;
+  actionType: string | null;
+  userId: string | null;
+  dateFrom: Date | null;
+  dateTo: Date | null;
 }

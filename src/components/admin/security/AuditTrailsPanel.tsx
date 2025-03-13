@@ -4,7 +4,6 @@ import { useAuditTrail } from '../tax-credits/calculations/audit-trail/useAuditT
 import AuditFilters from '../tax-credits/calculations/audit-trail/components/AuditFilters';
 import AuditTable from '../tax-credits/calculations/audit-trail/components/AuditTable';
 import AuditDetailDialog from '../tax-credits/calculations/audit-trail/components/AuditDetailDialog';
-import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { DownloadCloud, Shield, ClipboardList } from 'lucide-react';

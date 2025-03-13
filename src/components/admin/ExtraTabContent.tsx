@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import { useActiveClient } from '@/hooks/useActiveClient';
 import ClientDetail from './tax-credits/ClientDetail';
 
