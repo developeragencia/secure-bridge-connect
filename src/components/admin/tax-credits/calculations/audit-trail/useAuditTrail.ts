@@ -1,12 +1,12 @@
 
 import { useState, useCallback, useMemo } from 'react';
-import { AuditTrail, AuditAction } from './types';
+import { AuditTrail } from './types';
 import { mockAuditLogs } from './mock-data';
 
 export const useAuditTrail = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [actionFilter, setActionFilter] = useState<string | null>("all");
-  const [userFilter, setUserFilter] = useState<string | null>("all");
+  const [actionFilter, setActionFilter] = useState<string>("all");
+  const [userFilter, setUserFilter] = useState<string>("all");
   const [selectedAudit, setSelectedAudit] = useState<AuditTrail | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   
@@ -19,7 +19,7 @@ export const useAuditTrail = () => {
     auditLogs.forEach(log => {
       if (!users.has(log.userName)) {
         users.set(log.userName, {
-          id: log.id,
+          id: log.userName, // Use username as ID for simplicity
           name: log.userName
         });
       }
@@ -46,7 +46,7 @@ export const useAuditTrail = () => {
       const matchesAction = actionFilter === "all" || log.action === actionFilter;
       
       // Apply user filter
-      const matchesUser = userFilter === "all" || log.id === userFilter;
+      const matchesUser = userFilter === "all" || log.userName === userFilter;
       
       return matchesSearch && matchesAction && matchesUser;
     });
