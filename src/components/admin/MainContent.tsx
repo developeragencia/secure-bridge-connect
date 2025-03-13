@@ -65,7 +65,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {activeTab === 'reports' && <AdminReports />}
             {activeTab === 'site' && <SiteEditor />}
             {activeTab === 'settings' && <AdminSettings user={user} />}
-            {activeTab === 'profile' && <AdminUserProfile />}
+            {activeTab === 'profile' && <AdminUserProfile user={user} />}
             
             {/* Tax Credit Management tabs */}
             {activeTab === 'tax_credits' && <TaxCreditManagement />}

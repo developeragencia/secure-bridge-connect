@@ -6,6 +6,10 @@ import UserProfileHeader from './user-profiles/UserProfileHeader';
 import ProfilePermissions from './user-profiles/ProfilePermissions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/components/ui/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/button';
+import { Info, Settings } from 'lucide-react';
 
 // Sample user data - replace with real data
 const mockUser: User = {
@@ -17,7 +21,13 @@ const mockUser: User = {
   createdAt: '2023-01-01',
 };
 
-const AdminUserProfile = () => {
+interface AdminUserProfileProps {
+  user?: User;
+}
+
+const AdminUserProfile = ({ user = mockUser }: AdminUserProfileProps) => {
+  const { toast } = useToast();
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -37,6 +47,13 @@ const AdminUserProfile = () => {
     }
   };
 
+  const handleSettingsUpdate = () => {
+    toast({
+      title: "Configurações atualizadas",
+      description: "As configurações do perfil foram atualizadas com sucesso.",
+    });
+  };
+
   return (
     <motion.div 
       className="space-y-6"
@@ -50,7 +67,7 @@ const AdminUserProfile = () => {
       </motion.div>
       
       <motion.div variants={itemVariants}>
-        <UserProfileHeader user={mockUser} />
+        <UserProfileHeader user={user} />
       </motion.div>
       
       <motion.div variants={itemVariants}>
@@ -70,7 +87,7 @@ const AdminUserProfile = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ProfilePermissions userRole={mockUser.role} />
+                <ProfilePermissions userRole={user.role} />
               </CardContent>
             </Card>
           </TabsContent>
@@ -99,10 +116,33 @@ const AdminUserProfile = () => {
                   Gerencie as configurações deste usuário no sistema.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-center py-8">
-                  Configurações não disponíveis nesta versão.
-                </p>
+              <CardContent className="space-y-4">
+                <div className="grid gap-6">
+                  <div className="flex justify-between items-center">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center">
+                        <h3 className="text-base font-medium">Notificações</h3>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Info className="h-4 w-4 text-muted-foreground" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Configurações de alertas e notificações do sistema</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Configure as notificações para este usuário</p>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={handleSettingsUpdate}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Configurar
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
