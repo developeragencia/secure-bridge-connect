@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,21 +29,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     setError(null);
 
     try {
-      // Normalize email input
       const normalizedEmail = email.trim().toLowerCase();
       
-      // Admin fallback login for demo purposes
       if (normalizedEmail === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
         console.log('Using fallback admin login');
         
-        // Set a mock session for demo purposes
         const authData = {
           email: ADMIN_EMAIL,
           isAdmin: true,
           timestamp: Date.now()
         };
         
-        // Store in the appropriate storage based on remember me option
         if (rememberMe) {
           localStorage.setItem('adminAuthRemembered', JSON.stringify(authData));
         } else {
@@ -56,14 +51,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           description: "Bem-vindo ao Painel Administrativo.",
         });
         
-        // Add a short delay before navigation to ensure toast is shown
         setTimeout(() => {
           onSuccess();
         }, 800);
         return;
       }
       
-      // Regular Supabase authentication
       const { error } = await supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password
@@ -71,9 +64,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
 
       if (error) throw error;
 
-      // If rememberMe is checked, setup session persistence
       if (rememberMe) {
-        // Store auth info with longer expiry
         const { data } = await supabase.auth.getSession();
         if (data.session) {
           localStorage.setItem('adminAuthRemembered', JSON.stringify({
@@ -88,7 +79,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         description: "Bem-vindo ao Painel Administrativo.",
       });
       
-      // Add a short delay before navigation to ensure toast is shown
       setTimeout(() => {
         onSuccess();
       }, 800);
@@ -142,7 +132,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         </div>
       </div>
       
-      {/* Remember Me Option - Mobile Optimized */}
       <div className="flex items-center space-x-2">
         <Switch 
           id="remember-me" 
@@ -188,4 +177,3 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
 };
 
 export default LoginForm;
-
