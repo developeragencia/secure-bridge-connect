@@ -4,18 +4,17 @@ export interface RecoveryProcess {
   clientId: string;
   clientName: string;
   documentNumber: string;
-  creditType: string;
+  processType: string;
   originalAmount: number;
-  recoveredAmount: number;
-  recoveryPercent: number;
+  currentStatus: string;
   startDate: string;
-  status: "INICIAL" | "EM_ANDAMENTO" | "PARCIAL" | "CONCLUIDO";
-  processNumber: string;
+  completionDate?: string;
+  responsiblePerson: string;
 }
 
 export interface RecoverySummary {
-  totalCredits: number;
-  recoveredAmount: number;
-  avgRecoveryRate: number;
+  totalProcesses: number;
   completedProcesses: number;
+  inProgressProcesses: number;
+  successRate: number;
 }

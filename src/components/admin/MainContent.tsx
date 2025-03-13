@@ -8,14 +8,10 @@ import AdminSettings from '@/components/admin/AdminSettings';
 import SiteEditor from '@/components/admin/SiteEditor';
 import AdminTabHeader from '@/components/admin/AdminTabHeader';
 import ExtraTabContent from '@/components/admin/ExtraTabContent';
-import TaxCreditManagement from '@/components/admin/tax-credits/TaxCreditManagement';
-import ClientManagement from '@/components/admin/tax-credits/ClientManagement';
-import AuditManagement from '@/components/admin/tax-credits/AuditManagement';
-import RecoveryManagement from '@/components/admin/tax-credits/RecoveryManagement';
+import ClientsManagement from '@/components/admin/clients/ClientsManagement';
 import AdminUserProfile from '@/components/admin/AdminUserProfile';
 import ActiveClientHeader from '@/components/admin/ActiveClientHeader';
 import { useActiveClient } from '@/hooks/useActiveClient';
-import ClientDetail from '@/components/admin/tax-credits/ClientDetail';
 
 interface MainContentProps {
   activeTab: string;
@@ -78,14 +74,8 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {activeTab === 'settings' && <AdminSettings user={user} />}
             {activeTab === 'profile' && <AdminUserProfile user={user} />}
             
-            {/* Tax Credit Management tabs */}
-            {activeTab === 'tax_credits' && <TaxCreditManagement />}
-            {activeTab === 'clients' && <ClientManagement />}
-            {activeTab === 'audits' && <AuditManagement />}
-            {activeTab === 'recovery' && <RecoveryManagement />}
-            
-            {/* Client detail view */}
-            {isClientDetail && <ClientDetail clientId={clientId} />}
+            {/* Client Management tab */}
+            {activeTab === 'clients' && <ClientsManagement />}
             
             {/* Extra tabs */}
             <ExtraTabContent activeTab={activeTab} />

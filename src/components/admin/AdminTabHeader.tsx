@@ -3,8 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
   BarChart3, Users, FileText, Globe, Settings,
-  ShieldAlert, CreditCard, HelpCircle, 
-  Receipt, Building, FileSearch, Landmark
+  ShieldAlert, CreditCard, HelpCircle, Building, UserCircle
 } from 'lucide-react';
 
 interface AdminTabHeaderProps {
@@ -38,18 +37,6 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
         </>
       )}
       
-      {activeTab === 'tax_credits' && (
-        <>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <Receipt className="h-5 w-5" />
-            </div>
-            <h1 className="text-2xl font-bold">Gestão de Créditos Tributários</h1>
-          </div>
-          <p className="text-muted-foreground">Gerencie créditos tributários de IRRF/PJ e outros</p>
-        </>
-      )}
-      
       {activeTab === 'clients' && (
         <>
           <div className="flex items-center gap-2 mb-1">
@@ -58,31 +45,7 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
             </div>
             <h1 className="text-2xl font-bold">Clientes</h1>
           </div>
-          <p className="text-muted-foreground">Cadastro e gestão de clientes para recuperação de créditos</p>
-        </>
-      )}
-      
-      {activeTab === 'audits' && (
-        <>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <FileSearch className="h-5 w-5" />
-            </div>
-            <h1 className="text-2xl font-bold">Auditorias</h1>
-          </div>
-          <p className="text-muted-foreground">Acompanhe processos de auditoria fiscal e análise de créditos</p>
-        </>
-      )}
-      
-      {activeTab === 'recovery' && (
-        <>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <Landmark className="h-5 w-5" />
-            </div>
-            <h1 className="text-2xl font-bold">Recuperação de Créditos</h1>
-          </div>
-          <p className="text-muted-foreground">Acompanhe o processo de recuperação de créditos tributários</p>
+          <p className="text-muted-foreground">Cadastro e gestão de clientes</p>
         </>
       )}
       
@@ -95,6 +58,18 @@ const AdminTabHeader = ({ activeTab }: AdminTabHeaderProps) => {
             <h1 className="text-2xl font-bold">Usuários</h1>
           </div>
           <p className="text-muted-foreground">Gerencie usuários e permissões</p>
+        </>
+      )}
+
+      {activeTab === 'profile' && (
+        <>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <UserCircle className="h-5 w-5" />
+            </div>
+            <h1 className="text-2xl font-bold">Meu Perfil</h1>
+          </div>
+          <p className="text-muted-foreground">Visualize e edite suas informações pessoais</p>
         </>
       )}
       

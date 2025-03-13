@@ -3,8 +3,7 @@ import React from 'react';
 import {
   Users, BarChart3, FileText, Settings, 
   Globe, ShieldAlert, CreditCard, HelpCircle,
-  Receipt, Building, FileSearch, Landmark,
-  UserCircle
+  Building, UserCircle
 } from 'lucide-react';
 import { SidebarSection } from '@/types/admin-sidebar';
 
@@ -20,13 +19,10 @@ export const getMenuSections = (): SidebarSection[] => {
       ]
     },
     {
-      id: 'tax_credits',
-      title: 'Créditos Tributários',
+      id: 'clients',
+      title: 'Clientes',
       items: [
-        { id: 'tax_credits', label: 'Gestão de Créditos', icon: <Receipt className="h-4 w-4" /> },
-        { id: 'clients', label: 'Clientes', icon: <Building className="h-4 w-4" /> },
-        { id: 'audits', label: 'Auditorias', icon: <FileSearch className="h-4 w-4" /> },
-        { id: 'recovery', label: 'Recuperação', icon: <Landmark className="h-4 w-4" /> }
+        { id: 'clients', label: 'Gestão de Clientes', icon: <Building className="h-4 w-4" /> }
       ]
     },
     {
