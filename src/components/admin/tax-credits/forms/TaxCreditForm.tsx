@@ -1,53 +1,39 @@
-
-import React, { useState } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { 
-  Dialog, DialogContent, DialogHeader, 
-  DialogTitle, DialogFooter, DialogDescription 
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Select, SelectContent, SelectItem, 
-  SelectTrigger, SelectValue 
-} from '@/components/ui/select';
+import React from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { TaxCredit } from '@/types/tax-credits';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { cn } from '@/lib/utils';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
 
+// Define form schema
 const formSchema = z.object({
-  clientName: z.string().min(2, { message: 'Nome do cliente é obrigatório' }),
-  documentNumber: z.string().min(5, { message: 'Documento inválido' }),
-  creditType: z.string().min(1, { message: 'Tipo de crédito é obrigatório' }),
-  creditAmount: z.string().min(1, { message: 'Valor é obrigatório' }),
-  periodStart: z.date({ required_error: 'Data inicial é obrigatória' }),
-  periodEnd: z.date({ required_error: 'Data final é obrigatória' }),
-  status: z.enum(['PENDING', 'ANALYZING', 'APPROVED', 'REJECTED', 'RECOVERED']),
-  notes: z.string().optional()
+  clientName: z.string().min(1, "Nome do cliente obrigatório"),
+  documentNumber: z.string().min(1, "Documento obrigatório"),
+  creditType: z.string().min(1, "Tipo de crédito obrigatório"),
+  creditAmount: z.string().min(1, "Valor obrigatório"),
+  periodStart: z.date(),
+  periodEnd: z.date(),
+  status: z.enum(["PENDING", "ANALYZING", "APPROVED", "REJECTED", "RECOVERED"]),
+  notes: z.string().optional(),
 });
 
-type FormData = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof formSchema>;
 
 interface TaxCreditFormProps {
   open: boolean;
   onClose: () => void;
-  onSave: (data: FormData) => void;
-  initialData?: Partial<TaxCredit>;
+  onSave: (data: FormValues) => void;
+  initialData?: TaxCredit;
   isEdit?: boolean;
 }
 
@@ -56,149 +42,135 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
   onClose,
   onSave,
   initialData,
-  isEdit = false
+  isEdit = false,
 }) => {
-  const form = useForm<FormData>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      clientName: initialData?.clientName || '',
-      documentNumber: initialData?.documentNumber || '',
-      creditType: initialData?.creditType || '',
-      creditAmount: initialData?.creditAmount ? String(initialData.creditAmount) : '',
-      periodStart: initialData?.periodStart ? new Date(initialData.periodStart) : undefined,
-      periodEnd: initialData?.periodEnd ? new Date(initialData.periodEnd) : undefined,
-      status: initialData?.status || 'PENDING',
-      notes: initialData?.notes || ''
-    },
+    defaultValues: initialData
+      ? {
+          clientName: initialData.clientName,
+          documentNumber: initialData.documentNumber,
+          creditType: initialData.creditType,
+          creditAmount: initialData.creditAmount.toString(),
+          periodStart: new Date(initialData.periodStart),
+          periodEnd: new Date(initialData.periodEnd),
+          status: initialData.status,
+          notes: initialData.notes || "",
+        }
+      : {
+          clientName: "",
+          documentNumber: "",
+          creditType: "",
+          creditAmount: "",
+          periodStart: new Date(),
+          periodEnd: new Date(),
+          status: "PENDING",
+          notes: "",
+        },
   });
 
-  const handleSubmit = (data: FormData) => {
-    // Convert creditAmount from string to number
-    const formattedData = {
-      ...data,
-      creditAmount: parseFloat(data.creditAmount.replace(/\./g, '').replace(',', '.'))
-    };
-    onSave(formattedData);
+  function onSubmit(data: FormValues) {
+    onSave(data);
     onClose();
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[550px]">
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Editar Crédito Tributário' : 'Novo Crédito Tributário'}</DialogTitle>
-          <DialogDescription>
-            {isEdit 
-              ? 'Edite os detalhes do crédito tributário existente' 
-              : 'Preencha os detalhes para criar um novo crédito tributário'}
-          </DialogDescription>
+          <DialogTitle>{isEdit ? "Editar Crédito" : "Novo Crédito"}</DialogTitle>
         </DialogHeader>
-        
+
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="clientName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Cliente</FormLabel>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="clientName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cliente</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Nome do cliente" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="documentNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CNPJ</FormLabel>
+                  <FormControl>
+                    <Input placeholder="00.000.000/0000-00" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="creditType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tipo de Crédito</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <Input placeholder="Nome do cliente" {...field} />
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o tipo" />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="documentNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CNPJ/CPF</FormLabel>
-                    <FormControl>
-                      <Input placeholder="00.000.000/0000-00" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="creditType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tipo de Crédito</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o tipo" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="PIS/COFINS">PIS/COFINS</SelectItem>
-                        <SelectItem value="ICMS">ICMS</SelectItem>
-                        <SelectItem value="IPI">IPI</SelectItem>
-                        <SelectItem value="IRRF">IRRF</SelectItem>
-                        <SelectItem value="CSLL">CSLL</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="creditAmount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Valor (R$)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="0,00" 
-                        {...field}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '');
-                          const formattedValue = (parseInt(value) / 100).toFixed(2).replace('.', ',');
-                          field.onChange(formattedValue);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <SelectContent>
+                      <SelectItem value="PIS/COFINS">PIS/COFINS</SelectItem>
+                      <SelectItem value="ICMS">ICMS</SelectItem>
+                      <SelectItem value="IPI">IPI</SelectItem>
+                      <SelectItem value="IRRF">IRRF</SelectItem>
+                      <SelectItem value="CSLL">CSLL</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="creditAmount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor do Crédito (R$)</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.01" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="periodStart"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Período Inicial</FormLabel>
+                    <FormLabel>Início do Período</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
                             variant={"outline"}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
+                              "w-[240px] pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
                             )}
                           >
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP")
                             ) : (
-                              <span>Selecione a data</span>
+                              <span>Escolha uma data</span>
                             )}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -209,8 +181,10 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date()
+                          }
                           initialFocus
-                          locale={ptBR}
                         />
                       </PopoverContent>
                     </Popover>
@@ -218,27 +192,27 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="periodEnd"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Período Final</FormLabel>
+                    <FormLabel>Fim do Período</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
                             variant={"outline"}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
+                              "w-[240px] pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
                             )}
                           >
                             {field.value ? (
-                              format(field.value, "PPP", { locale: ptBR })
+                              format(field.value, "PPP")
                             ) : (
-                              <span>Selecione a data</span>
+                              <span>Escolha uma data</span>
                             )}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
@@ -249,8 +223,10 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date()
+                          }
                           initialFocus
-                          locale={ptBR}
                         />
                       </PopoverContent>
                     </Popover>
@@ -259,17 +235,14 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                 )}
               />
             </div>
-            
+
             <FormField
               control={form.control}
               name="status"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o status" />
@@ -277,7 +250,7 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="PENDING">Pendente</SelectItem>
-                      <SelectItem value="ANALYZING">Em análise</SelectItem>
+                      <SelectItem value="ANALYZING">Em Análise</SelectItem>
                       <SelectItem value="APPROVED">Aprovado</SelectItem>
                       <SelectItem value="REJECTED">Rejeitado</SelectItem>
                       <SelectItem value="RECOVERED">Recuperado</SelectItem>
@@ -287,7 +260,7 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                 </FormItem>
               )}
             />
-            
+
             <FormField
               control={form.control}
               name="notes"
@@ -295,24 +268,18 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                 <FormItem>
                   <FormLabel>Observações</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Adicione notas ou observações sobre este crédito..." 
-                      className="min-h-[100px]"
-                      {...field} 
-                    />
+                    <Textarea placeholder="Observações sobre o crédito" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancelar
               </Button>
-              <Button type="submit">
-                {isEdit ? 'Salvar alterações' : 'Criar crédito'}
-              </Button>
+              <Button type="submit">Salvar</Button>
             </DialogFooter>
           </form>
         </Form>
