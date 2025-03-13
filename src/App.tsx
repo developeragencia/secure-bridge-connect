@@ -4,12 +4,74 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import { supabase } from "./integrations/supabase/client";
 
 const queryClient = new QueryClient();
+
+const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
+  const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      // First check for remembered auth
+      const rememberedAuth = localStorage.getItem('adminAuthRemembered');
+      if (rememberedAuth) {
+        try {
+          const authData = JSON.parse(rememberedAuth);
+          // If remembered session is valid (less than 30 days old)
+          if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
+            setAuthenticated(true);
+            setLoading(false);
+            return;
+          }
+        } catch (e) {
+          localStorage.removeItem('adminAuthRemembered');
+        }
+      }
+
+      // Check for regular session
+      const regularAuth = localStorage.getItem('adminAuth');
+      if (regularAuth) {
+        try {
+          const authData = JSON.parse(regularAuth);
+          // Regular session valid for shorter time (e.g., 1 day)
+          if (authData && (Date.now() - authData.timestamp) < 1 * 24 * 60 * 60 * 1000) {
+            setAuthenticated(true);
+            setLoading(false);
+            return;
+          } else {
+            localStorage.removeItem('adminAuth');
+          }
+        } catch (e) {
+          localStorage.removeItem('adminAuth');
+        }
+      }
+
+      // Fallback to Supabase auth check
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        setAuthenticated(true);
+      }
+      setLoading(false);
+    };
+
+    checkAuth();
+  }, []);
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin h-8 w-8 border-t-2 border-primary rounded-full"></div>
+    </div>;
+  }
+
+  return authenticated ? element : <Navigate to="/login" />;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -20,7 +82,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

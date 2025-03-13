@@ -9,6 +9,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Key, Mail, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 const ADMIN_EMAIL = 'admin@sistemasclaudio.com';
 const ADMIN_PASSWORD = 'admin123';
@@ -19,11 +21,32 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [initializing, setInitializing] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     const checkSession = async () => {
+      // Check localStorage first for remembered session
+      const rememberedAuth = localStorage.getItem('adminAuthRemembered');
+      
+      if (rememberedAuth) {
+        try {
+          const authData = JSON.parse(rememberedAuth);
+          // If saved session is less than 30 days old, use it
+          if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
+            navigate('/admin');
+            return;
+          } else {
+            // Clear expired remembered login
+            localStorage.removeItem('adminAuthRemembered');
+          }
+        } catch (e) {
+          localStorage.removeItem('adminAuthRemembered');
+        }
+      }
+      
+      // Check Supabase session as fallback
       const { data } = await supabase.auth.getSession();
       if (data.session) {
         navigate('/admin');
@@ -74,11 +97,18 @@ const Login = () => {
           console.log('Não foi possível criar usuário admin. Usando login alternativo.');
           
           // Set a mock session for demo purposes - only in development
-          localStorage.setItem('adminAuth', JSON.stringify({
+          const authData = {
             email: ADMIN_EMAIL,
             isAdmin: true,
             timestamp: Date.now()
-          }));
+          };
+          
+          // Store in the appropriate storage based on remember me option
+          if (rememberMe) {
+            localStorage.setItem('adminAuthRemembered', JSON.stringify(authData));
+          } else {
+            localStorage.setItem('adminAuth', JSON.stringify(authData));
+          }
           
           toast({
             title: "Login realizado com sucesso!",
@@ -100,6 +130,18 @@ const Login = () => {
       } else if (error) {
         // If error is not related to admin login
         throw error;
+      }
+
+      // If rememberMe is checked, setup session persistence
+      if (rememberMe) {
+        // Store auth info with longer expiry
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          localStorage.setItem('adminAuthRemembered', JSON.stringify({
+            timestamp: Date.now(),
+            sessionExpiry: data.session.expires_at
+          }));
+        }
       }
 
       toast({
@@ -224,6 +266,22 @@ const Login = () => {
                     className="pl-10 border-primary/20 focus-visible:ring-primary"
                   />
                 </div>
+              </div>
+              
+              {/* Remember Me Option */}
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="remember-me" 
+                  checked={rememberMe} 
+                  onCheckedChange={setRememberMe}
+                  className="data-[state=checked]:bg-primary"
+                />
+                <Label 
+                  htmlFor="remember-me" 
+                  className="text-sm cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Manter conectado
+                </Label>
               </div>
               
               {error && (
