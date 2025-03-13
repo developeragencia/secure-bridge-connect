@@ -8,6 +8,7 @@ import AuditTable from './AuditTable';
 import AuditForm from './AuditForm';
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
 import { useAuditManagement } from '@/hooks/useAuditManagement';
+import { Audit } from '@/types/audit';
 
 const AuditManagementContent: React.FC = () => {
   const {
@@ -39,6 +40,32 @@ const AuditManagementContent: React.FC = () => {
     threshold: 0.1,
     transitionType: 'fade-in',
   });
+
+  // Create wrapper functions to convert from audit to auditId
+  const onViewDetails = (auditId: string) => {
+    const audit = filteredAudits.find(a => a.id === auditId);
+    if (audit) handleViewDetails(audit);
+  };
+
+  const onDownloadDocuments = (auditId: string) => {
+    const audit = filteredAudits.find(a => a.id === auditId);
+    if (audit) handleDownloadDocuments(audit);
+  };
+
+  const onEdit = (auditId: string) => {
+    const audit = filteredAudits.find(a => a.id === auditId);
+    if (audit) handleEditAudit(audit);
+  };
+
+  const onDelete = (auditId: string) => {
+    const audit = filteredAudits.find(a => a.id === auditId);
+    if (audit) handleDeleteAudit(audit);
+  };
+
+  const onApprove = (auditId: string) => {
+    const audit = filteredAudits.find(a => a.id === auditId);
+    if (audit) handleApproveAudit(audit);
+  };
 
   return (
     <div className="space-y-6">
@@ -72,11 +99,11 @@ const AuditManagementContent: React.FC = () => {
         <AuditTable 
           audits={filteredAudits} 
           isLoading={isLoading} 
-          onViewDetails={handleViewDetails}
-          onDownloadDocuments={handleDownloadDocuments}
-          onEdit={handleEditAudit}
-          onDelete={handleDeleteAudit}
-          onApprove={handleApproveAudit}
+          onViewDetails={onViewDetails}
+          onDownloadDocuments={onDownloadDocuments}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onApprove={onApprove}
         />
       </Card>
 

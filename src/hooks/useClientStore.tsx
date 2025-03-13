@@ -6,11 +6,13 @@ import { Client as ClientType } from '@/types/client';
 interface ClientStore {
   activeClient: ClientType | null;
   recentClients: ClientType[];
-  allClients: ClientType[];
+  allClients: ClientType[]; // This is the correct property name
   setActiveClient: (client: ClientType | null) => void;
   addClient: (client: ClientType) => void;
   updateClient: (id: string, data: Partial<ClientType>) => void;
   removeClient: (id: string) => void;
+  // Alias for backward compatibility
+  get clients(): ClientType[];
 }
 
 export const useClientStore = create<ClientStore>()(
@@ -77,6 +79,10 @@ export const useClientStore = create<ClientStore>()(
           type: 'private',
         },
       ],
+      // Add a getter that returns allClients as clients
+      get clients() {
+        return get().allClients;
+      },
       setActiveClient: (client) => {
         set((state) => {
           // Update recent clients
