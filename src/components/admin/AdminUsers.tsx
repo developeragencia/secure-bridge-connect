@@ -77,7 +77,7 @@ const UserForm = ({ onSave, onCancel, editingUser = null }: { onSave: (user: any
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="role">Função</Label>
           <Select value={role} onValueChange={setRole}>
@@ -111,13 +111,13 @@ const UserForm = ({ onSave, onCancel, editingUser = null }: { onSave: (user: any
         </div>
       </div>
       
-      <DialogFooter className="pt-4">
+      <DialogFooter className="pt-4 flex flex-col sm:flex-row gap-2">
         <Button 
           type="button" 
           variant="outline" 
           onClick={onCancel}
           disabled={loading}
-          className="w-full sm:w-auto"
+          className="w-full"
         >
           <X className="w-4 h-4 mr-2" />
           Cancelar
@@ -125,7 +125,7 @@ const UserForm = ({ onSave, onCancel, editingUser = null }: { onSave: (user: any
         <Button 
           type="submit" 
           disabled={loading}
-          className="w-full sm:w-auto"
+          className="w-full"
         >
           {loading ? (
             <>
@@ -141,6 +141,61 @@ const UserForm = ({ onSave, onCancel, editingUser = null }: { onSave: (user: any
         </Button>
       </DialogFooter>
     </form>
+  );
+};
+
+const MobileUserCard = ({ user, onEdit, onDelete }: { user: any, onEdit: () => void, onDelete: () => void }) => {
+  return (
+    <div className="p-4 bg-card border border-border/50 rounded-lg shadow-sm mb-3">
+      <div className="flex items-center mb-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 mr-3">
+          <User className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <h3 className="font-medium">{user.name}</h3>
+          <p className="text-xs text-muted-foreground">{user.email}</p>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-2 text-sm mb-3">
+        <div>
+          <span className="text-xs text-muted-foreground">Função:</span>
+          <p>{user.role}</p>
+        </div>
+        <div>
+          <span className="text-xs text-muted-foreground">Status:</span>
+          <div className="mt-1">
+            <Badge variant={user.status === 'Ativo' ? 'default' : 'secondary'} className={
+              user.status === 'Ativo' 
+                ? 'bg-green-500/20 text-green-700 hover:bg-green-500/30 dark:bg-green-500/20 dark:text-green-300' 
+                : 'bg-amber-500/20 text-amber-700 hover:bg-amber-500/30 dark:bg-amber-500/20 dark:text-amber-300'
+            }>
+              {user.status}
+            </Badge>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex justify-end gap-2 border-t border-border/30 pt-3">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={onEdit}
+        >
+          <Edit className="h-3.5 w-3.5 mr-1" />
+          Editar
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={onDelete}
+          className="text-destructive hover:text-destructive border-destructive/20 hover:bg-destructive/10"
+        >
+          <Trash2 className="h-3.5 w-3.5 mr-1" />
+          Excluir
+        </Button>
+      </div>
+    </div>
   );
 };
 
@@ -225,10 +280,10 @@ const AdminUsers = () => {
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
       >
         <div>
-          <h1 className="text-2xl font-bold">Usuários</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Usuários</h1>
           <p className="text-muted-foreground">Gerenciar usuários do sistema</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -240,12 +295,12 @@ const AdminUsers = () => {
           </div>
           <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="w-full sm:w-auto mt-2 sm:mt-0">
                 <UserPlus className="h-4 w-4 mr-2" />
                 Novo Usuário
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>Adicionar Novo Usuário</DialogTitle>
                 <DialogDescription>
@@ -276,77 +331,94 @@ const AdminUsers = () => {
                 </p>
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Função</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <>
+                {/* Mobile view - cards */}
+                <div className="md:hidden">
                   {filteredUsers.map((user) => (
-                    <TableRow key={user.id} className="group hover:bg-accent/50 transition-colors">
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                            <User className="h-4 w-4 text-primary" />
-                          </div>
-                          <div>{user.name}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.role}</TableCell>
-                      <TableCell>
-                        <Badge variant={user.status === 'Ativo' ? 'default' : 'secondary'} className={
-                          user.status === 'Ativo' 
-                            ? 'bg-green-500/20 text-green-700 hover:bg-green-500/30 dark:bg-green-500/20 dark:text-green-300' 
-                            : 'bg-amber-500/20 text-amber-700 hover:bg-amber-500/30 dark:bg-amber-500/20 dark:text-amber-300'
-                        }>
-                          {user.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Dialog open={!!editingUser && editingUser.id === user.id} onOpenChange={(open) => !open && setEditingUser(null)}>
-                            <DialogTrigger asChild>
-                              <Button variant="ghost" size="icon" onClick={() => setEditingUser(user)}>
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Editar Usuário</DialogTitle>
-                                <DialogDescription>
-                                  Edite os dados do usuário abaixo.
-                                </DialogDescription>
-                              </DialogHeader>
-                              {editingUser && editingUser.id === user.id && (
-                                <UserForm 
-                                  onSave={handleUpdateUser} 
-                                  onCancel={() => setEditingUser(null)} 
-                                  editingUser={editingUser}
-                                />
-                              )}
-                            </DialogContent>
-                          </Dialog>
-                          
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={() => openDeleteDialog(user)}
-                            className="hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+                    <MobileUserCard 
+                      key={user.id} 
+                      user={user} 
+                      onEdit={() => setEditingUser(user)}
+                      onDelete={() => openDeleteDialog(user)}
+                    />
                   ))}
-                </TableBody>
-              </Table>
+                </div>
+                
+                {/* Desktop view - table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nome</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Função</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredUsers.map((user) => (
+                        <TableRow key={user.id} className="group hover:bg-accent/50 transition-colors">
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                                <User className="h-4 w-4 text-primary" />
+                              </div>
+                              <div>{user.name}</div>
+                            </div>
+                          </TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>{user.role}</TableCell>
+                          <TableCell>
+                            <Badge variant={user.status === 'Ativo' ? 'default' : 'secondary'} className={
+                              user.status === 'Ativo' 
+                                ? 'bg-green-500/20 text-green-700 hover:bg-green-500/30 dark:bg-green-500/20 dark:text-green-300' 
+                                : 'bg-amber-500/20 text-amber-700 hover:bg-amber-500/30 dark:bg-amber-500/20 dark:text-amber-300'
+                            }>
+                              {user.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Dialog open={!!editingUser && editingUser.id === user.id} onOpenChange={(open) => !open && setEditingUser(null)}>
+                                <DialogTrigger asChild>
+                                  <Button variant="ghost" size="icon" onClick={() => setEditingUser(user)}>
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-md">
+                                  <DialogHeader>
+                                    <DialogTitle>Editar Usuário</DialogTitle>
+                                    <DialogDescription>
+                                      Edite os dados do usuário abaixo.
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  {editingUser && editingUser.id === user.id && (
+                                    <UserForm 
+                                      onSave={handleUpdateUser} 
+                                      onCancel={() => setEditingUser(null)} 
+                                      editingUser={editingUser}
+                                    />
+                                  )}
+                                </DialogContent>
+                              </Dialog>
+                              
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                onClick={() => openDeleteDialog(user)}
+                                className="hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>
@@ -354,7 +426,7 @@ const AdminUsers = () => {
       
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Confirmar Exclusão</DialogTitle>
             <DialogDescription>
@@ -370,11 +442,11 @@ const AdminUsers = () => {
               <p className="text-sm text-muted-foreground">{userToDelete?.email}</p>
             </div>
           </div>
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+          <DialogFooter className="flex flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)} className="w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button variant="destructive" onClick={handleDeleteUser}>
+            <Button variant="destructive" onClick={handleDeleteUser} className="w-full sm:w-auto">
               <Trash2 className="h-4 w-4 mr-2" /> Excluir
             </Button>
           </DialogFooter>

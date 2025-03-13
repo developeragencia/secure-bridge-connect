@@ -91,6 +91,8 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv11", "ss01";
+    max-width: 100vw;
+    overflow-x: hidden;
   }
   
   body::-webkit-scrollbar {
@@ -176,114 +178,92 @@
     transition-delay: 0.5s;
   }
   
-  /* Novas classes de animação para o painel administrativo */
-  .animate-spin-slow {
-    animation: spin 3s linear infinite;
+  /* Center content for mobile */
+  .mobile-center {
+    @apply mx-auto text-center max-w-[440px];
   }
   
-  .menu-item-hover {
-    @apply relative overflow-hidden;
+  /* Container for mobile that centers content */
+  .center-container {
+    @apply w-full max-w-[480px] sm:max-w-[540px] md:max-w-[720px] lg:max-w-[960px] xl:max-w-[1140px] mx-auto px-3 sm:px-4;
   }
   
-  .menu-item-hover::after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 ease-in-out;
+  /* Mobile optimized form groups */
+  .form-group-mobile {
+    @apply flex flex-col gap-2 mb-4;
   }
   
-  .menu-item-hover:hover::after {
-    @apply w-full;
+  /* Mobile button group */
+  .btn-group-mobile {
+    @apply flex flex-col sm:flex-row gap-2 w-full;
   }
   
-  .card-hover-effect {
-    @apply transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-[1.02] hover:border-primary/30;
+  .btn-group-mobile > button {
+    @apply w-full sm:w-auto;
   }
   
-  .icon-bounce {
-    animation: bounce 2s infinite;
+  /* Mobile-friendly cards */
+  .mobile-card {
+    @apply p-3 sm:p-4 rounded-lg border border-border/50 bg-card shadow-sm;
   }
   
-  .icon-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  /* Grid pattern background */
-  .bg-grid-pattern {
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-                      linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
-    background-size: 20px 20px;
+  /* Mobile menu container */
+  .mobile-menu-container {
+    @apply fixed inset-0 z-50 bg-black/50 backdrop-blur-sm;
   }
   
-  .dark .bg-grid-pattern {
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  }
-
-  /* Adaptações para dashboard */
-  .dashboard-card {
-    @apply bg-white dark:bg-card border border-border/40 rounded-lg shadow-sm transition-all duration-300;
+  .mobile-menu {
+    @apply fixed top-0 left-0 h-full w-3/4 max-w-xs bg-card shadow-lg overflow-auto z-50 border-r border-border/40;
   }
   
-  .dashboard-card:hover {
-    @apply shadow-md border-primary/30;
+  /* Mobile-friendly data display */
+  .data-row-mobile {
+    @apply grid grid-cols-2 gap-2 py-2 border-b border-border/30 text-sm;
   }
   
-  /* Admin panel styles */
-  .admin-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
+  .data-label-mobile {
+    @apply text-muted-foreground font-medium;
   }
   
-  .admin-grid-2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+  .data-value-mobile {
+    @apply text-right font-medium;
   }
   
-  .admin-grid-3 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1rem;
+  /* Responsive table alternatives */
+  .responsive-table-card {
+    @apply p-3 border border-border/40 rounded-md mb-3 bg-card;
   }
   
-  .admin-grid-4 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+  /* Mobile-friendly tabs */
+  .tabs-mobile {
+    @apply flex overflow-x-auto py-2 gap-1 scrollbar-none;
   }
   
-  @media (max-width: 768px) {
-    .admin-grid-2,
-    .admin-grid-3 {
-      grid-template-columns: 1fr;
-    }
+  .tab-mobile {
+    @apply px-3 py-2 rounded-md text-sm whitespace-nowrap;
   }
   
-  /* Glassmorphism enhanced */
-  .glassmorphism {
-    @apply bg-white/80 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg;
+  /* Fixed mobile header */
+  .mobile-header-fixed {
+    @apply sticky top-0 bg-card/95 backdrop-blur-sm border-b border-border/40 z-20;
   }
   
-  /* Gradient borders */
-  .gradient-border {
-    position: relative;
-    border-radius: var(--radius);
+  /* Mobile-optimized grids */
+  .mobile-grid-2 {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4;
   }
   
-  .gradient-border::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: var(--radius);
-    padding: 2px;
-    background: linear-gradient(45deg, hsl(var(--primary)), hsl(var(--primary)/40%));
-    -webkit-mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    z-index: 0;
-    pointer-events: none;
+  .mobile-grid-3 {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4;
+  }
+  
+  .mobile-grid-4 {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4;
+  }
+  
+  /* Mobile-optimized charts */
+  .chart-container-mobile {
+    @apply w-full overflow-hidden flex justify-center items-center;
   }
 
   /* Logo animation effects */
