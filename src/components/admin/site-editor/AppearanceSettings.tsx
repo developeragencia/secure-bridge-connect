@@ -11,7 +11,7 @@ import { Loader2, Check, Image } from 'lucide-react';
 const AppearanceSettings = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [primaryColor, setPrimaryColor] = useState('#6E59A5');
+  const [primaryColor, setPrimaryColor] = useState('#1EAEDB');
   const [logoUrl, setLogoUrl] = useState('/favicon.svg');
   const [faviconUrl, setFaviconUrl] = useState('/favicon.ico');
 
