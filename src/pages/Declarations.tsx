@@ -83,6 +83,10 @@ const Declarations = () => {
   const pendingCount = MOCK_DECLARATIONS.filter(d => d.status === 'pending').length;
   const submittedCount = MOCK_DECLARATIONS.filter(d => d.status === 'approved' || d.status === 'analyzing').length;
   const rejectedCount = MOCK_DECLARATIONS.filter(d => d.status === 'rejected').length;
+
+  const handleNewDeclaration = () => {
+    navigate('/declarations/new');
+  };
   
   return (
     <div className="min-h-screen bg-background">
@@ -151,7 +155,7 @@ const Declarations = () => {
                 </CardDescription>
               </div>
               <div className="flex gap-2">
-                <Button>
+                <Button onClick={handleNewDeclaration}>
                   <Plus className="h-4 w-4 mr-2" />
                   Nova Declaração
                 </Button>

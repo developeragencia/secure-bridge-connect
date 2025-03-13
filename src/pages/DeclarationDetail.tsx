@@ -17,7 +17,7 @@ const MOCK_DECLARATION = {
   periodName: '1º Trimestre de 2023',
   dueDate: '2023-04-30',
   submissionDate: '2023-04-25',
-  status: 'approved',
+  status: 'approved', // This is now a valid status for StatusBadge
   amount: 'R$ 12.450,00',
   protocol: 'RF2023040012345678',
   fiscalYear: '2023',

@@ -13,6 +13,7 @@ import Notifications from "./pages/Notifications";
 import CreditDetails from "./pages/CreditDetails";
 import Declarations from "./pages/Declarations";
 import DeclarationDetail from "./pages/DeclarationDetail";
+import NewDeclaration from "./pages/NewDeclaration";
 import AnalysisReport from "./pages/AnalysisReport";
 import Maintenance from "./pages/Maintenance";
 import { supabase } from "./integrations/supabase/client";
@@ -135,6 +136,7 @@ const App = () => (
           <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
           <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
           <Route path="/declarations" element={<ProtectedRoute element={<Declarations />} />} />
+          <Route path="/declarations/new" element={<ProtectedRoute element={<NewDeclaration />} />} />
           <Route path="/declarations/:id" element={<ProtectedRoute element={<DeclarationDetail />} />} />
           <Route path="/credits/details/:id" element={<ProtectedRoute element={<CreditDetails />} />} />
           <Route path="/analysis/report/:id" element={<ProtectedRoute element={<AnalysisReport />} />} />
