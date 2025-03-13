@@ -30,8 +30,12 @@ export function useRealtimeUpdates({
     const channel = supabase
       .channel('schema-db-changes')
       .on(
-        'postgres_changes', // This was causing the type error
-        { event: events, schema: 'public', table: tableName },
+        'postgres_changes', // This needs to be passed as the first argument to the 'on' method
+        { 
+          event: events, 
+          schema: 'public', 
+          table: tableName 
+        },
         (payload) => {
           console.log(`Realtime update for ${tableName}:`, payload);
           
