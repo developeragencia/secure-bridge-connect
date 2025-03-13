@@ -78,7 +78,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {activeTab === 'settings' && <AdminSettings user={user} />}
             {activeTab === 'profile' && <AdminUserProfile user={user} />}
             
-            {/* Tax Credit Management tabs - Fixed explicit conditional rendering */}
+            {/* Tax Credit Management tabs */}
             {activeTab === 'tax_credits' && <TaxCreditManagement />}
             {activeTab === 'clients' && <ClientManagement />}
             {activeTab === 'audits' && <AuditManagement />}

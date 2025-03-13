@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const useLoginCheck = () => {
   const [initializing, setInitializing] = useState(true);
@@ -19,9 +20,10 @@ const useLoginCheck = () => {
             const authData = JSON.parse(rememberedAuth);
             // If saved session is less than 30 days old, use it
             if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
+              // Delay navigation to ensure smooth transition
               setTimeout(() => {
                 navigate('/admin');
-              }, 100);
+              }, 300);
               return;
             } else {
               // Clear expired remembered login
@@ -36,11 +38,15 @@ const useLoginCheck = () => {
         if (sessionAuth) {
           try {
             const authData = JSON.parse(sessionAuth);
-            if (authData) {
+            if (authData && (Date.now() - authData.timestamp) < 24 * 60 * 60 * 1000) {
+              // Delay navigation to ensure smooth transition
               setTimeout(() => {
                 navigate('/admin');
-              }, 100);
+              }, 300);
               return;
+            } else {
+              // Clear expired session
+              localStorage.removeItem('adminAuth');
             }
           } catch (e) {
             localStorage.removeItem('adminAuth');
@@ -48,11 +54,17 @@ const useLoginCheck = () => {
         }
         
         // Check Supabase session as fallback
-        const { data } = await supabase.auth.getSession();
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error("Error checking Supabase session:", error);
+          toast.error("Erro ao verificar a sessão");
+        }
+        
         if (data.session) {
+          // Delay navigation to ensure smooth transition
           setTimeout(() => {
             navigate('/admin');
-          }, 100);
+          }, 300);
         } else {
           setInitializing(false);
         }
@@ -69,7 +81,7 @@ const useLoginCheck = () => {
         if (event === 'SIGNED_IN' && session) {
           setTimeout(() => {
             navigate('/admin');
-          }, 100);
+          }, 300);
         }
       }
     );
