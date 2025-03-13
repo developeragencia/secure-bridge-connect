@@ -4,15 +4,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, FileType, Database, CheckCircle2, FileX, FileText, FileImage } from "lucide-react";
+import { Upload, FileType, Database, CheckCircle2, FileX, FileText, FileImage, Save } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import FileUploadModal from './FileUploadModal';
 
 const OperationalImportsPanel = () => {
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("files");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Settings form state
+  const [directory, setDirectory] = useState("/imports/operational");
+  const [defaultFormat, setDefaultFormat] = useState("XML");
+  const [validation, setValidation] = useState("Ativada");
+  const [schedule, setSchedule] = useState("Manual");
 
   const handleFormatClick = (format: string) => {
     setSelectedFormat(format);
@@ -36,7 +43,6 @@ const OperationalImportsPanel = () => {
     toast({
       title: "Iniciando importação",
       description: `Importando arquivo: ${file.name}`,
-      variant: "info"
     });
 
     setTimeout(() => {
@@ -64,6 +70,18 @@ const OperationalImportsPanel = () => {
     closeModal();
   };
 
+  const handleSaveSettings = () => {
+    toast({
+      title: "Configurações salvas",
+      description: "As configurações de importação foram salvas com sucesso.",
+      variant: "success"
+    });
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -85,7 +103,7 @@ const OperationalImportsPanel = () => {
         </Button>
       </div>
 
-      <Tabs defaultValue="files" className="w-full">
+      <Tabs defaultValue="files" value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="files">Arquivos</TabsTrigger>
           <TabsTrigger value="history">Histórico</TabsTrigger>
@@ -246,25 +264,41 @@ const OperationalImportsPanel = () => {
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Diretório Padrão</label>
-                  <Input placeholder="/imports/operational" />
+                  <Input 
+                    placeholder="/imports/operational" 
+                    value={directory}
+                    onChange={(e) => setDirectory(e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Formato Padrão</label>
-                  <Input placeholder="XML" />
+                  <Input 
+                    placeholder="XML" 
+                    value={defaultFormat}
+                    onChange={(e) => setDefaultFormat(e.target.value)}
+                  />
                 </div>
               </div>
               
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Validação Automática</label>
-                  <select className="w-full p-2 rounded-md border">
+                  <select 
+                    className="w-full p-2 rounded-md border"
+                    value={validation}
+                    onChange={(e) => setValidation(e.target.value)}
+                  >
                     <option>Ativada</option>
                     <option>Desativada</option>
                   </select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Agendamento</label>
-                  <select className="w-full p-2 rounded-md border">
+                  <select 
+                    className="w-full p-2 rounded-md border"
+                    value={schedule}
+                    onChange={(e) => setSchedule(e.target.value)}
+                  >
                     <option>Manual</option>
                     <option>Diário</option>
                     <option>Semanal</option>
@@ -273,7 +307,13 @@ const OperationalImportsPanel = () => {
                 </div>
               </div>
               
-              <Button className="w-full md:w-auto">Salvar Configurações</Button>
+              <Button 
+                className="w-full md:w-auto flex items-center gap-2" 
+                onClick={handleSaveSettings}
+              >
+                <Save className="h-4 w-4" />
+                Salvar Configurações
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
