@@ -1,94 +1,153 @@
 
 import {
-  BarChart3, Users, Globe, Building, UserCircle,
-  Receipt, FileBarChart2, Landmark, PercentCircle, FileSpreadsheet,
-  FileStack, ClipboardList, Calculator, FileCheck, Database, Bell
+  BarChart3, Users, FileText, Settings, Globe, ShieldAlert, CreditCard, HelpCircle,
+  Building, UserCircle, Receipt, FileBarChart2, Landmark, PercentCircle,
+  FileSpreadsheet, FileStack, ClipboardList, Calculator, FileCheck, Database,
+  FileLineChart, Layout, ReceiptText, Key, Clock, Shield, ClipboardListIcon, Bell
 } from 'lucide-react';
 
-interface TabConfig {
-  icon: typeof BarChart3;
+type TabConfig = {
   title: string;
   description: string;
-}
-
-type TabConfigurations = {
-  [key: string]: TabConfig;
+  icon: React.ElementType;
 };
 
-export const tabConfigurations: TabConfigurations = {
+export const tabConfigurations: Record<string, TabConfig> = {
   dashboard: {
-    icon: BarChart3,
     title: 'Dashboard',
-    description: 'Visualize dados e estatísticas do sistema'
-  },
-  clients: {
-    icon: Building,
-    title: 'Clientes',
-    description: 'Cadastro e gestão de clientes'
+    description: 'Visão geral das métricas do sistema e atividades recentes.',
+    icon: BarChart3,
   },
   users: {
+    title: 'Gestão de Usuários',
+    description: 'Gerenciar usuários do sistema, permissões e acessos.',
     icon: Users,
-    title: 'Usuários',
-    description: 'Gerencie usuários e permissões'
-  },
-  profile: {
-    icon: UserCircle,
-    title: 'Meu Perfil',
-    description: 'Visualize e edite suas informações pessoais'
-  },
-  tax_credits: {
-    icon: Receipt,
-    title: 'Créditos Tributários',
-    description: 'Gerencie créditos tributários e processos de recuperação'
-  },
-  recovery: {
-    icon: Landmark,
-    title: 'Recuperação de Créditos',
-    description: 'Processos de recuperação de créditos tributários'
-  },
-  audits: {
-    icon: FileBarChart2,
-    title: 'Auditorias',
-    description: 'Processos de auditoria tributária'
-  },
-  calculations: {
-    icon: PercentCircle,
-    title: 'Cálculos IRRF',
-    description: 'Cálculo e validação de retenções de IRRF'
-  },
-  imports: {
-    icon: FileSpreadsheet,
-    title: 'Importação de Dados',
-    description: 'Importação e processamento de arquivos fiscais'
   },
   reports: {
-    icon: FileStack,
-    title: 'Relatórios Fiscais',
-    description: 'Geração de relatórios e dossiês tributários'
+    title: 'Relatórios',
+    description: 'Acesso aos relatórios gerados pelo sistema.',
+    icon: FileText,
+  },
+  settings: {
+    title: 'Configurações',
+    description: 'Configurações gerais do sistema e da conta.',
+    icon: Settings,
+  },
+  site: {
+    title: 'Editor do Site',
+    description: 'Editar conteúdo e aparência do site público.',
+    icon: Globe,
+  },
+  security: {
+    title: 'Segurança',
+    description: 'Configurações de segurança e permissões do sistema.',
+    icon: ShieldAlert,
+  },
+  billing: {
+    title: 'Faturamento',
+    description: 'Gerenciar assinaturas, faturas e métodos de pagamento.',
+    icon: CreditCard,
+  },
+  support: {
+    title: 'Suporte',
+    description: 'Acesso ao suporte técnico e documentação.',
+    icon: HelpCircle,
+  },
+  clients: {
+    title: 'Gestão de Clientes',
+    description: 'Gerenciar informações de clientes e relacionamentos.',
+    icon: Building,
+  },
+  profile: {
+    title: 'Meu Perfil',
+    description: 'Gerenciar suas informações e preferências pessoais.',
+    icon: UserCircle,
+  },
+  tax_credits: {
+    title: 'Gestão de Créditos Tributários',
+    description: 'Gerenciar os créditos tributários e processos fiscais.',
+    icon: Receipt,
+  },
+  audits: {
+    title: 'Auditorias',
+    description: 'Gerenciar auditorias e análises fiscais.',
+    icon: FileBarChart2,
+  },
+  recovery: {
+    title: 'Recuperação de Créditos',
+    description: 'Gerenciar processos de recuperação de créditos tributários.',
+    icon: Landmark,
+  },
+  calculations: {
+    title: 'Cálculos IRRF',
+    description: 'Ferramenta para cálculos de IRRF e análises comparativas.',
+    icon: PercentCircle,
+  },
+  imports: {
+    title: 'Importação de Dados',
+    description: 'Importar dados fiscais e tributários para o sistema.',
+    icon: FileSpreadsheet,
   },
   proposals: {
-    icon: ClipboardList,
     title: 'Propostas Comerciais',
-    description: 'Gestão de propostas e contratos'
+    description: 'Gerenciar propostas comerciais para clientes.',
+    icon: ClipboardList,
   },
   tax_calculator: {
-    icon: Calculator,
     title: 'Calculadora de Crédito',
-    description: 'Cálculo de potenciais créditos tributários'
+    description: 'Calcular potenciais créditos tributários para clientes.',
+    icon: Calculator,
   },
   credit_identification: {
+    title: 'Identificação de Créditos',
+    description: 'Identificação automática de créditos tributários.',
     icon: FileCheck,
-    title: 'Identificação Automática',
-    description: 'Identificação automática de créditos tributários'
   },
   data_processing: {
-    icon: Database,
     title: 'Processamento de Dados',
-    description: 'Importação e processamento inteligente de dados fiscais'
+    description: 'Processamento e validação de dados fiscais.',
+    icon: Database,
   },
   notifications: {
-    icon: Bell,
     title: 'Notificações',
-    description: 'Visualize e gerencie as notificações do sistema'
-  }
+    description: 'Gerenciar notificações e alertas do sistema.',
+    icon: Bell,
+  },
+  // New Tax Reports and Dossiers tabs
+  detailed_reports: {
+    title: 'Relatórios Detalhados',
+    description: 'Relatórios detalhados para tributação e auditoria fiscal.',
+    icon: FileText,
+  },
+  interactive_dashboard: {
+    title: 'Dashboard Interativo',
+    description: 'Análise gerencial interativa de dados fiscais.',
+    icon: Layout,
+  },
+  retention_receipts: {
+    title: 'Comprovantes de Retenção',
+    description: 'Emissão de comprovantes para fornecedores e órgãos públicos.',
+    icon: ReceiptText,
+  },
+  // New Security and Audit tabs
+  two_factor_auth: {
+    title: 'Autenticação de Dois Fatores',
+    description: 'Configuração de autenticação de dois fatores para administradores.',
+    icon: Key,
+  },
+  session_expiration: {
+    title: 'Expiração de Sessão',
+    description: 'Configuração de logout remoto e expiração automática de sessão.',
+    icon: Clock,
+  },
+  access_protection: {
+    title: 'Proteção de Acessos',
+    description: 'Monitoramento de login e alertas para ações suspeitas.',
+    icon: Shield,
+  },
+  audit_trails: {
+    title: 'Trilhas de Auditoria',
+    description: 'Registro de todas as alterações realizadas no sistema.',
+    icon: ClipboardList,
+  },
 };

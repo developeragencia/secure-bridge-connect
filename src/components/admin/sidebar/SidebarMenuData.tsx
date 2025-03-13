@@ -5,7 +5,8 @@ import {
   Globe, ShieldAlert, CreditCard, HelpCircle,
   Building, UserCircle, Receipt, FileBarChart2, Landmark,
   PercentCircle, FileSpreadsheet, FileStack, ClipboardList,
-  Calculator, FileCheck, Database, UploadCloud, List, Filter, ArrowDown, CheckCheck, Bell
+  Calculator, FileCheck, Database, UploadCloud, List, Filter, ArrowDown, CheckCheck, Bell,
+  FileLineChart, Layout, ReceiptText, Key, Clock, Shield, ClipboardList as ClipboardListIcon
 } from 'lucide-react';
 import { SidebarSection } from '@/types/admin-sidebar';
 
@@ -42,6 +43,25 @@ export const getMenuSections = (): SidebarSection[] => {
         { id: 'imports', label: 'Importação de Dados', icon: <FileSpreadsheet className="h-4 w-4" /> },
         { id: 'reports', label: 'Relatórios Fiscais', icon: <FileStack className="h-4 w-4" /> },
         { id: 'proposals', label: 'Propostas Comerciais', icon: <ClipboardList className="h-4 w-4" /> }
+      ]
+    },
+    {
+      id: 'tax_reports',
+      title: 'Relatórios e Dossiês Tributários',
+      items: [
+        { id: 'detailed_reports', label: 'Relatórios Detalhados', icon: <FileText className="h-4 w-4" /> },
+        { id: 'interactive_dashboard', label: 'Dashboard Interativo', icon: <Layout className="h-4 w-4" /> },
+        { id: 'retention_receipts', label: 'Comprovantes de Retenção', icon: <ReceiptText className="h-4 w-4" /> }
+      ]
+    },
+    {
+      id: 'security',
+      title: 'Segurança e Auditoria',
+      items: [
+        { id: 'two_factor_auth', label: 'Autenticação 2FA', icon: <Key className="h-4 w-4" /> },
+        { id: 'session_expiration', label: 'Expiração de Sessão', icon: <Clock className="h-4 w-4" /> },
+        { id: 'access_protection', label: 'Proteção de Acessos', icon: <Shield className="h-4 w-4" /> },
+        { id: 'audit_trails', label: 'Trilhas de Auditoria', icon: <ClipboardListIcon className="h-4 w-4" /> }
       ]
     },
     {
