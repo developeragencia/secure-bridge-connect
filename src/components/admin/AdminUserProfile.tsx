@@ -1,19 +1,19 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { UserRole } from '@/types/client';
+import { User, UserRole } from '@/types/client';
 import UserProfileHeader from './user-profiles/UserProfileHeader';
 import ProfilePermissions from './user-profiles/ProfilePermissions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Sample user data - replace with real data
-const mockUser = {
+const mockUser: User = {
   id: '1',
   name: 'Claudio Figueiredo',
   email: 'admin@sistemasclaudio.com',
   role: 'admin' as UserRole,
-  status: 'active',
+  status: 'active' as const,
   createdAt: '2023-01-01',
 };
 
