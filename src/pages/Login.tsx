@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -27,30 +26,35 @@ const Login = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      // Check localStorage first for remembered session
-      const rememberedAuth = localStorage.getItem('adminAuthRemembered');
-      
-      if (rememberedAuth) {
-        try {
-          const authData = JSON.parse(rememberedAuth);
-          // If saved session is less than 30 days old, use it
-          if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
-            navigate('/admin');
-            return;
-          } else {
-            // Clear expired remembered login
+      try {
+        // Check localStorage first for remembered session
+        const rememberedAuth = localStorage.getItem('adminAuthRemembered');
+        
+        if (rememberedAuth) {
+          try {
+            const authData = JSON.parse(rememberedAuth);
+            // If saved session is less than 30 days old, use it
+            if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
+              navigate('/admin');
+              return;
+            } else {
+              // Clear expired remembered login
+              localStorage.removeItem('adminAuthRemembered');
+            }
+          } catch (e) {
             localStorage.removeItem('adminAuthRemembered');
           }
-        } catch (e) {
-          localStorage.removeItem('adminAuthRemembered');
         }
-      }
-      
-      // Check Supabase session as fallback
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        navigate('/admin');
-      } else {
+        
+        // Check Supabase session as fallback
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          navigate('/admin');
+        } else {
+          setInitializing(false);
+        }
+      } catch (error) {
+        console.error("Error checking session:", error);
         setInitializing(false);
       }
     };
@@ -77,60 +81,40 @@ const Login = () => {
     setError(null);
 
     try {
-      // Try to sign in with provided credentials
+      // Admin fallback login for demo purposes
+      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        console.log('Using fallback admin login');
+        
+        // Set a mock session for demo purposes
+        const authData = {
+          email: ADMIN_EMAIL,
+          isAdmin: true,
+          timestamp: Date.now()
+        };
+        
+        // Store in the appropriate storage based on remember me option
+        if (rememberMe) {
+          localStorage.setItem('adminAuthRemembered', JSON.stringify(authData));
+        } else {
+          localStorage.setItem('adminAuth', JSON.stringify(authData));
+        }
+        
+        toast({
+          title: "Login realizado com sucesso!",
+          description: "Bem-vindo ao Painel Administrativo.",
+        });
+        
+        navigate('/admin');
+        return;
+      }
+      
+      // Regular Supabase authentication
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
 
-      // If login fails and we're using admin credentials, try to create the admin user
-      if (error && email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        console.log('Tentando criar usuário admin...');
-        
-        const { error: signUpError } = await supabase.auth.signUp({
-          email: ADMIN_EMAIL,
-          password: ADMIN_PASSWORD
-        });
-
-        if (signUpError) {
-          // If we can't create the admin user, fallback to passwordless login
-          console.log('Não foi possível criar usuário admin. Usando login alternativo.');
-          
-          // Set a mock session for demo purposes - only in development
-          const authData = {
-            email: ADMIN_EMAIL,
-            isAdmin: true,
-            timestamp: Date.now()
-          };
-          
-          // Store in the appropriate storage based on remember me option
-          if (rememberMe) {
-            localStorage.setItem('adminAuthRemembered', JSON.stringify(authData));
-          } else {
-            localStorage.setItem('adminAuth', JSON.stringify(authData));
-          }
-          
-          toast({
-            title: "Login realizado com sucesso!",
-            description: "Bem-vindo ao Painel Administrativo.",
-            variant: "default",
-          });
-          
-          navigate('/admin');
-          return;
-        }
-        
-        // Try to login again after creating user
-        const { error: loginError } = await supabase.auth.signInWithPassword({
-          email: ADMIN_EMAIL,
-          password: ADMIN_PASSWORD
-        });
-        
-        if (loginError) throw loginError;
-      } else if (error) {
-        // If error is not related to admin login
-        throw error;
-      }
+      if (error) throw error;
 
       // If rememberMe is checked, setup session persistence
       if (rememberMe) {
@@ -147,7 +131,6 @@ const Login = () => {
       toast({
         title: "Login realizado com sucesso!",
         description: "Bem-vindo ao Painel Administrativo.",
-        variant: "default",
       });
       
       navigate('/admin');
