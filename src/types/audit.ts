@@ -22,6 +22,12 @@ export interface AuditSummary {
   emAndamento: number;
   concluidas: number;
   canceladas: number;
+  // Add aliases for compatibility with other components
+  totalAudits?: number;
+  pendingAudits?: number;
+  inProgressAudits?: number;
+  completedAudits?: number;
+  canceledAudits?: number;
 }
 
 export interface AuditFilterParams {

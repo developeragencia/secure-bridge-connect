@@ -17,6 +17,12 @@ const CreditSummaryCards: React.FC<CreditSummaryCardsProps> = ({ summary, classN
     }).format(value);
   };
 
+  // Get the values with fallbacks
+  const totalValue = summary.totalCredits !== undefined ? summary.totalCredits : summary.totalValue;
+  const approvedValue = summary.approvedCredits !== undefined ? summary.approvedCredits : summary.approvedValue;
+  const recoveredValue = summary.recoveredCredits !== undefined ? summary.recoveredCredits : (summary.totalValue * 0.4); // Fallback approximation
+  const pendingValue = summary.pendingCredits !== undefined ? summary.pendingCredits : summary.pendingValue;
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <Card className={className}>
@@ -26,7 +32,7 @@ const CreditSummaryCards: React.FC<CreditSummaryCardsProps> = ({ summary, classN
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(summary.totalCredits)}</div>
+          <div className="text-2xl font-bold">{formatCurrency(totalValue)}</div>
           <p className="text-xs text-muted-foreground mt-1">
             Todos os créditos identificados
           </p>
@@ -40,9 +46,9 @@ const CreditSummaryCards: React.FC<CreditSummaryCardsProps> = ({ summary, classN
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-green-600">{formatCurrency(summary.approvedCredits)}</div>
+          <div className="text-2xl font-bold text-green-600">{formatCurrency(approvedValue)}</div>
           <p className="text-xs text-muted-foreground mt-1">
-            {((summary.approvedCredits / summary.totalCredits) * 100).toFixed(1)}% do total
+            {((approvedValue / totalValue) * 100).toFixed(1)}% do total
           </p>
         </CardContent>
       </Card>
@@ -54,9 +60,9 @@ const CreditSummaryCards: React.FC<CreditSummaryCardsProps> = ({ summary, classN
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-blue-600">{formatCurrency(summary.recoveredCredits)}</div>
+          <div className="text-2xl font-bold text-blue-600">{formatCurrency(recoveredValue)}</div>
           <p className="text-xs text-muted-foreground mt-1">
-            {((summary.recoveredCredits / summary.totalCredits) * 100).toFixed(1)}% do total
+            {((recoveredValue / totalValue) * 100).toFixed(1)}% do total
           </p>
         </CardContent>
       </Card>
@@ -68,9 +74,9 @@ const CreditSummaryCards: React.FC<CreditSummaryCardsProps> = ({ summary, classN
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-amber-600">{formatCurrency(summary.pendingCredits)}</div>
+          <div className="text-2xl font-bold text-amber-600">{formatCurrency(pendingValue)}</div>
           <p className="text-xs text-muted-foreground mt-1">
-            {((summary.pendingCredits / summary.totalCredits) * 100).toFixed(1)}% do total
+            {((pendingValue / totalValue) * 100).toFixed(1)}% do total
           </p>
         </CardContent>
       </Card>

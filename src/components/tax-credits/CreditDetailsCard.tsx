@@ -10,7 +10,7 @@ import { TaxCredit } from '@/types/tax-credits';
 interface CreditDetailsCardProps {
   credit: TaxCredit;
   formatCurrency: (value: number) => string;
-  formatDate: (dateString: string) => string;
+  formatDate: (dateString: string | Date) => string; // Update type
   onEditClick: () => void;
   onStatusChangeClick: () => void;
   onExportReportClick: () => void;
@@ -69,7 +69,7 @@ const CreditDetailsCard: React.FC<CreditDetailsCardProps> = ({
           </div>
           <div>
             <p className="text-sm font-medium text-muted-foreground mb-1">Última Atualização</p>
-            <p>{formatDate(credit.updatedAt)}</p>
+            <p>{formatDate(credit.updatedAt || credit.createdAt)}</p>
           </div>
         </div>
         

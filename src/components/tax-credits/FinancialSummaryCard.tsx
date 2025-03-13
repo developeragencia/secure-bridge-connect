@@ -11,6 +11,9 @@ interface FinancialSummaryCardProps {
 }
 
 const FinancialSummaryCard: React.FC<FinancialSummaryCardProps> = ({ credit, formatCurrency }) => {
+  // Use originalAmount if available, or use creditAmount as fallback
+  const originalAmount = credit.originalAmount || credit.creditAmount;
+  
   return (
     <Card>
       <CardHeader>
@@ -20,7 +23,7 @@ const FinancialSummaryCard: React.FC<FinancialSummaryCardProps> = ({ credit, for
         <div className="space-y-3">
           <div>
             <p className="text-sm font-medium text-muted-foreground mb-1">Valor Original</p>
-            <p className="text-lg font-semibold">{formatCurrency(credit.originalAmount)}</p>
+            <p className="text-lg font-semibold">{formatCurrency(originalAmount)}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-muted-foreground mb-1">Valor Atual</p>

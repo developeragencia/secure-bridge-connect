@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,9 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
           creditAmount: initialData.creditAmount.toString(),
           periodStart: new Date(initialData.periodStart),
           periodEnd: new Date(initialData.periodEnd),
-          status: initialData.status,
+          status: initialData.status === "ACTIVE" || initialData.status === "INACTIVE" 
+            ? "PENDING" 
+            : (initialData.status as "PENDING" | "ANALYZING" | "APPROVED" | "REJECTED" | "RECOVERED"),
           notes: initialData.notes || "",
         }
       : {

@@ -48,7 +48,7 @@ const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className 
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.pendingAudits || summary.pendente || 0}</div>
+            <div className="text-2xl font-bold">{summary.pendingAudits || summary.pendentes || 0}</div>
             <Calendar className="h-5 w-5 text-yellow-500" />
           </div>
         </CardContent>
@@ -62,7 +62,7 @@ const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className 
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">{summary.completedAudits || summary.concluida || 0}</div>
+            <div className="text-2xl font-bold">{summary.completedAudits || summary.concluidas || 0}</div>
             <CheckCircle className="h-5 w-5 text-green-500" />
           </div>
         </CardContent>

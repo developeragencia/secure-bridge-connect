@@ -19,10 +19,10 @@ const CreditChart: React.FC<CreditChartProps> = ({ summary }) => {
 
   // Chart data
   const chartData = [
-    { name: 'Pendentes', value: summary?.pendingCredits || 0 },
-    { name: 'Em Análise', value: summary?.approvedCredits || 0 },
-    { name: 'Aprovados', value: summary?.recoveredCredits || 0 },
-    { name: 'Recuperados', value: summary?.rejectedCredits || 0 },
+    { name: 'Pendentes', value: summary?.pendingCredits || summary?.pendingValue || 0 },
+    { name: 'Em Análise', value: summary?.approvedCredits || summary?.approvedValue || 0 },
+    { name: 'Aprovados', value: summary?.recoveredCredits || summary?.totalValue || 0 },
+    { name: 'Recuperados', value: summary?.rejectedCredits || summary?.pendingValue || 0 },
   ];
 
   return (

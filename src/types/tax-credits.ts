@@ -8,6 +8,7 @@ export interface TaxCredit {
   documentNumber: string;
   creditType: string;
   creditAmount: number;
+  originalAmount?: number; // Add this for FinancialSummaryCard
   periodStart: string | Date;
   periodEnd: string | Date;
   status: StatusType;
@@ -27,6 +28,12 @@ export interface TaxCreditSummary {
   totalValue: number;
   pendingValue: number;
   approvedValue: number;
+  // Add aliases for component compatibility
+  totalCredits?: number;
+  pendingCredits?: number;
+  approvedCredits?: number;
+  recoveredCredits?: number;
+  rejectedCredits?: number;
 }
 
 export interface TaxCreditFilterParams {

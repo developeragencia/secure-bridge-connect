@@ -1,69 +1,92 @@
 
-import { useState, useEffect } from 'react';
-import { DeclarationType } from '@/types/declarations';
+import { useState } from 'react';
+import { Declaration, StatusType } from '@/types/declarations';
 
-// Mock declaration data
-const MOCK_DECLARATION: DeclarationType = {
-  id: '1',
-  type: 'IRPJ',
-  title: 'Declaração de Imposto de Renda Pessoa Jurídica',
-  period: '2023-Q1',
-  periodName: '1º Trimestre de 2023',
-  dueDate: '2023-04-30',
-  submissionDate: '2023-04-25',
-  status: 'APPROVED',
-  amount: 'R$ 12.450,00',
-  protocol: 'RF2023040012345678',
-  fiscalYear: '2023',
-  taxOffice: 'RFB - São Paulo',
-  company: 'Empresa XYZ Ltda.',
-  cnpj: '12.345.678/0001-90',
-  submittedBy: 'João Silva',
-  attachments: [
-    { id: '1', name: 'declaracao_IRPJ_2023_Q1.pdf', size: '1.2 MB', date: '2023-04-25' },
-    { id: '2', name: 'anexo_A_IRPJ_2023.xlsx', size: '890 KB', date: '2023-04-25' },
-    { id: '3', name: 'comprovante_pagamento.pdf', size: '500 KB', date: '2023-04-25' }
-  ],
-  history: [
-    { id: '1', date: '2023-04-25 14:30', action: 'Declaração enviada', user: 'João Silva', status: 'SUBMITTED' },
-    { id: '2', date: '2023-04-26 09:15', action: 'Recibo gerado', user: 'Sistema RFB', status: 'PROCESSING' },
-    { id: '3', date: '2023-04-28 11:45', action: 'Análise concluída', user: 'Sistema RFB', status: 'ANALYZING' },
-    { id: '4', date: '2023-04-30 10:20', action: 'Declaração aprovada', user: 'Sistema RFB', status: 'APPROVED' }
-  ]
-};
+// No need for DeclarationType since we've defined it in declarations.ts
+export const useDeclarationData = () => {
+  const [declarations, setDeclarations] = useState<Declaration[]>([
+    {
+      id: '1',
+      title: 'Declaração de Imposto de Renda 2023',
+      description: 'Declaração anual de IR da empresa XYZ',
+      status: 'PENDING',
+      createdAt: '2023-01-15T10:30:00Z',
+      updatedAt: '2023-01-16T14:20:00Z',
+      clientId: 'client-1',
+      clientName: 'Empresa XYZ Ltda',
+      documentNumber: '12.345.678/0001-99',
+      fiscalYear: '2022',
+      fiscalPeriod: 'Anual',
+      deadline: '2023-04-30T23:59:59Z',
+      assignedTo: 'João Silva',
+      taxType: 'IRPJ',
+      amount: 25000.00,
+      attachmentsCount: 5
+    },
+    {
+      id: '2',
+      title: 'Declaração de ICMS Janeiro/2023',
+      status: 'COMPLETED',
+      createdAt: '2023-02-05T09:15:00Z',
+      clientId: 'client-2',
+      clientName: 'Comércio ABC S/A',
+      documentNumber: '98.765.432/0001-10',
+      fiscalYear: '2023',
+      fiscalPeriod: 'Janeiro',
+      assignedTo: 'Maria Oliveira',
+      taxType: 'ICMS',
+      amount: 12350.75,
+      attachmentsCount: 3
+    },
+    {
+      id: '3',
+      title: 'Declaração de PIS/COFINS 1º Trimestre',
+      description: 'Declaração trimestral de PIS/COFINS',
+      status: 'PROCESSING',
+      createdAt: '2023-03-10T11:45:00Z',
+      clientId: 'client-1',
+      clientName: 'Empresa XYZ Ltda',
+      documentNumber: '12.345.678/0001-99',
+      fiscalYear: '2023',
+      fiscalPeriod: '1º Trimestre',
+      deadline: '2023-04-15T23:59:59Z',
+      taxType: 'PIS/COFINS',
+      amount: 18750.25,
+      attachmentsCount: 2
+    }
+  ]);
 
-export const useDeclarationData = (id: string | undefined) => {
-  const [declaration, setDeclaration] = useState<DeclarationType | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // In a real application, you would fetch the declaration data based on the ID
-    // Simulating a fetch operation
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        // Return mock data if ID matches
-        if (id === '1') {
-          setDeclaration(MOCK_DECLARATION);
-        } else {
-          setDeclaration(null);
-        }
-      } catch (error) {
-        console.error('Error fetching declaration:', error);
-        setDeclaration(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id]);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+  const fetchDeclarations = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Data is already set in useState
+      setLoading(false);
+    } catch (err) {
+      setError('Erro ao carregar declarações');
+      setLoading(false);
+    }
   };
 
-  return { declaration, loading, formatDate };
+  const updateDeclarationStatus = (id: string, status: StatusType) => {
+    setDeclarations(prev => 
+      prev.map(decl => 
+        decl.id === id ? { ...decl, status, updatedAt: new Date().toISOString() } : decl
+      )
+    );
+  };
+
+  return { 
+    declarations, 
+    loading, 
+    error, 
+    fetchDeclarations,
+    updateDeclarationStatus
+  };
 };
