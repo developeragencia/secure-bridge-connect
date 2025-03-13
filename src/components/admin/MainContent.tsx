@@ -69,10 +69,8 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
     }
   };
 
-  // Render content based on active tab
   const renderContent = () => {
     switch (activeTab) {
-      // Main Section
       case 'dashboard':
         return <AdminDashboard />;
       case 'users':
@@ -82,11 +80,9 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'notifications':
         return <NotificationsContent />;
       
-      // Clients Section
       case 'clients':
         return <ClientManagement />;
       
-      // Tax Credits Section
       case 'tax_credits':
         return <TaxCreditManagement />;
       case 'recovery':
@@ -108,7 +104,6 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'proposals':
         return <CommercialProposals />;
       
-      // Tax Reports Section
       case 'detailed_reports':
         return <DetailedReportsPanel />;
       case 'interactive_dashboard':
@@ -116,7 +111,6 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'retention_receipts':
         return <RetentionReceiptsPanel />;
       
-      // Operational Section
       case 'operational_imports':
         return <OperationalImportsPanel />;
       case 'operational_recovery':
@@ -130,7 +124,6 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'operational_audits':
         return <OperationalAuditsPanel />;
       
-      // Security Section
       case 'two_factor_auth':
         return <TwoFactorAuthPanel />;
       case 'session_expiration':
@@ -140,13 +133,11 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'audit_trails':
         return <AuditTrailsPanel />;
       
-      // Content Section
       case 'site':
         return <SiteEditor />;
       case 'content_reports':
         return <AdminReports />;
       
-      // System Section
       case 'settings':
         return <AdminSettings />;
       case 'security':
@@ -157,7 +148,6 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         return <SupportContent />;
       
       default:
-        // Check if it's a client tab
         if (activeTab.startsWith('client-')) {
           return <ExtraTabContent activeTab={activeTab} />;
         }

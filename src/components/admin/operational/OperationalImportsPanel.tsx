@@ -1,82 +1,25 @@
 
-import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, FileType, Database, CheckCircle2, FileX, FileText, FileImage, Save } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import React, { useState } from 'react';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FileUploadModal from './FileUploadModal';
+import { useFileUpload } from './imports/useFileUpload';
+import ImportsHeader from './imports/ImportsHeader';
+import FilesTabContent from './imports/FilesTabContent';
+import HistoryTabContent from './imports/HistoryTabContent';
+import SettingsTabContent from './imports/SettingsTabContent';
 
 const OperationalImportsPanel = () => {
-  const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("files");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
-
-  // Settings form state
-  const [directory, setDirectory] = useState("/imports/operational");
-  const [defaultFormat, setDefaultFormat] = useState("XML");
-  const [validation, setValidation] = useState("Ativada");
-  const [schedule, setSchedule] = useState("Manual");
-
-  const handleFormatClick = (format: string) => {
-    setSelectedFormat(format);
-    setIsModalOpen(true);
-  };
-
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFileUpload(files[0]);
-    }
-  };
-
-  const handleFileUpload = (file: File) => {
-    // In a real application, you would upload the file to your server here
-    // For demo purposes, we'll simulate the upload with a timeout
-    toast({
-      title: "Iniciando importação",
-      description: `Importando arquivo: ${file.name}`,
-    });
-
-    setTimeout(() => {
-      // Simulate successful upload after 2 seconds
-      toast({
-        title: "Arquivo importado com sucesso",
-        description: `O arquivo ${file.name} foi importado com sucesso.`,
-        variant: "success"
-      });
-      
-      // Reset the file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }, 2000);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedFormat(null);
-  };
-
-  const handleModalUpload = (file: File) => {
-    handleFileUpload(file);
-    closeModal();
-  };
-
-  const handleSaveSettings = () => {
-    toast({
-      title: "Configurações salvas",
-      description: "As configurações de importação foram salvas com sucesso.",
-      variant: "success"
-    });
-  };
+  const {
+    selectedFormat,
+    isModalOpen,
+    fileInputRef,
+    handleFormatClick,
+    handleUploadClick,
+    handleFileChange,
+    closeModal,
+    handleModalUpload
+  } = useFileUpload();
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -84,24 +27,11 @@ const OperationalImportsPanel = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Importação de Dados Operacionais</h2>
-          <p className="text-muted-foreground">
-            Importe dados de sistemas externos para processamento operacional.
-          </p>
-        </div>
-        <Button className="flex items-center gap-2" onClick={handleUploadClick}>
-          <Upload className="h-4 w-4" />
-          Importar Arquivo
-          <input 
-            type="file" 
-            ref={fileInputRef}
-            className="hidden" 
-            onChange={handleFileChange}
-          />
-        </Button>
-      </div>
+      <ImportsHeader 
+        onUploadClick={handleUploadClick}
+        fileInputRef={fileInputRef}
+        onFileChange={handleFileChange}
+      />
 
       <Tabs defaultValue="files" value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
@@ -110,213 +40,9 @@ const OperationalImportsPanel = () => {
           <TabsTrigger value="settings">Configurações</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="files" className="space-y-4 pt-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle>Formatos Suportados</CardTitle>
-              <CardDescription>
-                Selecione o tipo de arquivo que deseja importar para o sistema.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button 
-                variant="outline" 
-                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
-                onClick={() => handleFormatClick('XML')}
-              >
-                <FileType className="h-8 w-8 text-muted-foreground" />
-                <span>XML</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
-                onClick={() => handleFormatClick('CSV')}
-              >
-                <FileType className="h-8 w-8 text-muted-foreground" />
-                <span>CSV</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
-                onClick={() => handleFormatClick('JSON')}
-              >
-                <Database className="h-8 w-8 text-muted-foreground" />
-                <span>JSON</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
-                onClick={() => handleFormatClick('PDF')}
-              >
-                <FileText className="h-8 w-8 text-muted-foreground" />
-                <span>PDF</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
-                onClick={() => handleFormatClick('Word')}
-              >
-                <FileText className="h-8 w-8 text-muted-foreground" />
-                <span>Word</span>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
-                onClick={() => handleFormatClick('Outros')}
-              >
-                <FileImage className="h-8 w-8 text-muted-foreground" />
-                <span>Outros</span>
-              </Button>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle>Importações Recentes</CardTitle>
-              <CardDescription>
-                Lista dos últimos arquivos importados para o sistema.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <FileType className="h-6 w-6 text-primary" />
-                    <div>
-                      <p className="font-medium">dados_fiscais_2023.xml</p>
-                      <p className="text-sm text-muted-foreground">Importado em: 22/04/2023 às 14:30</p>
-                    </div>
-                  </div>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                </div>
-                
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <FileType className="h-6 w-6 text-primary" />
-                    <div>
-                      <p className="font-medium">clientes_ativos.csv</p>
-                      <p className="text-sm text-muted-foreground">Importado em: 21/04/2023 às 09:15</p>
-                    </div>
-                  </div>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                </div>
-                
-                <div className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <FileType className="h-6 w-6 text-primary" />
-                    <div>
-                      <p className="font-medium">notas_fiscais_2022.xml</p>
-                      <p className="text-sm text-muted-foreground">Importado em: 20/04/2023 às 16:45</p>
-                    </div>
-                  </div>
-                  <FileX className="h-5 w-5 text-red-500" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="history" className="space-y-4 pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Histórico de Importações</CardTitle>
-              <CardDescription>
-                Visualize todas as importações realizadas no sistema.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-md border">
-                <div className="grid grid-cols-5 bg-muted p-3 text-sm font-medium">
-                  <div>Arquivo</div>
-                  <div>Tipo</div>
-                  <div>Data</div>
-                  <div>Usuário</div>
-                  <div>Status</div>
-                </div>
-                <div className="divide-y">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="grid grid-cols-5 p-3 text-sm">
-                      <div>dados_operacionais_{i}.xml</div>
-                      <div>XML</div>
-                      <div>{`${i+20}/04/2023`}</div>
-                      <div>Administrador</div>
-                      <div className="flex items-center">
-                        <div className="h-2 w-2 rounded-full bg-green-500 mr-2" />
-                        Concluído
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="settings" className="space-y-4 pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Configurações de Importação</CardTitle>
-              <CardDescription>
-                Personalize o processo de importação de dados operacionais.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Diretório Padrão</label>
-                  <Input 
-                    placeholder="/imports/operational" 
-                    value={directory}
-                    onChange={(e) => setDirectory(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Formato Padrão</label>
-                  <Input 
-                    placeholder="XML" 
-                    value={defaultFormat}
-                    onChange={(e) => setDefaultFormat(e.target.value)}
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Validação Automática</label>
-                  <select 
-                    className="w-full p-2 rounded-md border"
-                    value={validation}
-                    onChange={(e) => setValidation(e.target.value)}
-                  >
-                    <option>Ativada</option>
-                    <option>Desativada</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Agendamento</label>
-                  <select 
-                    className="w-full p-2 rounded-md border"
-                    value={schedule}
-                    onChange={(e) => setSchedule(e.target.value)}
-                  >
-                    <option>Manual</option>
-                    <option>Diário</option>
-                    <option>Semanal</option>
-                    <option>Mensal</option>
-                  </select>
-                </div>
-              </div>
-              
-              <Button 
-                className="w-full md:w-auto flex items-center gap-2" 
-                onClick={handleSaveSettings}
-              >
-                <Save className="h-4 w-4" />
-                Salvar Configurações
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        <FilesTabContent onFormatClick={handleFormatClick} />
+        <HistoryTabContent />
+        <SettingsTabContent />
       </Tabs>
 
       {isModalOpen && (
