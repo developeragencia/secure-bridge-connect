@@ -1,12 +1,69 @@
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, FileType, Database, CheckCircle2, FileX, FileText, FileImage } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import FileUploadModal from './FileUploadModal';
 
 const OperationalImportsPanel = () => {
+  const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleFormatClick = (format: string) => {
+    setSelectedFormat(format);
+    setIsModalOpen(true);
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleFileUpload(files[0]);
+    }
+  };
+
+  const handleFileUpload = (file: File) => {
+    // In a real application, you would upload the file to your server here
+    // For demo purposes, we'll simulate the upload with a timeout
+    toast({
+      title: "Iniciando importação",
+      description: `Importando arquivo: ${file.name}`,
+      variant: "info"
+    });
+
+    setTimeout(() => {
+      // Simulate successful upload after 2 seconds
+      toast({
+        title: "Arquivo importado com sucesso",
+        description: `O arquivo ${file.name} foi importado com sucesso.`,
+        variant: "success"
+      });
+      
+      // Reset the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }, 2000);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedFormat(null);
+  };
+
+  const handleModalUpload = (file: File) => {
+    handleFileUpload(file);
+    closeModal();
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -16,9 +73,15 @@ const OperationalImportsPanel = () => {
             Importe dados de sistemas externos para processamento operacional.
           </p>
         </div>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2" onClick={handleUploadClick}>
           <Upload className="h-4 w-4" />
           Importar Arquivo
+          <input 
+            type="file" 
+            ref={fileInputRef}
+            className="hidden" 
+            onChange={handleFileChange}
+          />
         </Button>
       </div>
 
@@ -38,27 +101,51 @@ const OperationalImportsPanel = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button variant="outline" className="h-24 flex flex-col justify-center items-center gap-2 border-dashed">
+              <Button 
+                variant="outline" 
+                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
+                onClick={() => handleFormatClick('XML')}
+              >
                 <FileType className="h-8 w-8 text-muted-foreground" />
                 <span>XML</span>
               </Button>
-              <Button variant="outline" className="h-24 flex flex-col justify-center items-center gap-2 border-dashed">
+              <Button 
+                variant="outline" 
+                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
+                onClick={() => handleFormatClick('CSV')}
+              >
                 <FileType className="h-8 w-8 text-muted-foreground" />
                 <span>CSV</span>
               </Button>
-              <Button variant="outline" className="h-24 flex flex-col justify-center items-center gap-2 border-dashed">
+              <Button 
+                variant="outline" 
+                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
+                onClick={() => handleFormatClick('JSON')}
+              >
                 <Database className="h-8 w-8 text-muted-foreground" />
                 <span>JSON</span>
               </Button>
-              <Button variant="outline" className="h-24 flex flex-col justify-center items-center gap-2 border-dashed">
+              <Button 
+                variant="outline" 
+                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
+                onClick={() => handleFormatClick('PDF')}
+              >
                 <FileText className="h-8 w-8 text-muted-foreground" />
                 <span>PDF</span>
               </Button>
-              <Button variant="outline" className="h-24 flex flex-col justify-center items-center gap-2 border-dashed">
+              <Button 
+                variant="outline" 
+                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
+                onClick={() => handleFormatClick('Word')}
+              >
                 <FileText className="h-8 w-8 text-muted-foreground" />
                 <span>Word</span>
               </Button>
-              <Button variant="outline" className="h-24 flex flex-col justify-center items-center gap-2 border-dashed">
+              <Button 
+                variant="outline" 
+                className="h-24 flex flex-col justify-center items-center gap-2 border-dashed hover:bg-muted hover:border-primary"
+                onClick={() => handleFormatClick('Outros')}
+              >
                 <FileImage className="h-8 w-8 text-muted-foreground" />
                 <span>Outros</span>
               </Button>
@@ -191,6 +278,14 @@ const OperationalImportsPanel = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {isModalOpen && (
+        <FileUploadModal
+          format={selectedFormat || ''}
+          onClose={closeModal}
+          onUpload={handleModalUpload}
+        />
+      )}
     </div>
   );
 };
