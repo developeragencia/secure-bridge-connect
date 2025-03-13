@@ -18,4 +18,6 @@ export interface AuditTrail {
   resourceId: string;
   ipAddress: string;
   details: string;
+  previousStatus?: string; // Adding optional previousStatus property
+  newStatus?: string; // Adding optional newStatus property
 }
