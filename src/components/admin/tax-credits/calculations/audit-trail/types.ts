@@ -28,3 +28,21 @@ export interface AuditFilter {
   dateFrom: Date | null;
   dateTo: Date | null;
 }
+
+// AuditAction enum for action types
+export type AuditAction = 'create' | 'update' | 'delete' | 'status_change' | 'calculation' | 'export' | 'import';
+
+// AuditTrail interface for use in components
+export interface AuditTrail {
+  id: string;
+  date: Date;
+  userName: string;
+  userRole: string;
+  action: AuditAction;
+  resourceName: string;
+  resourceId: string;
+  ipAddress: string;
+  details: string;
+  previousStatus?: string;
+  newStatus?: string;
+}
