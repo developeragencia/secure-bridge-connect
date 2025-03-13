@@ -50,6 +50,9 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
   const isClientDetail = activeTab.startsWith('client-');
   const clientId = isClientDetail ? activeTab.replace('client-', '') : '';
 
+  // Debugging - log the active tab to help identify issues
+  console.log("Active Tab:", activeTab);
+
   return (
     <motion.main 
       className="flex-1 overflow-auto bg-background"
@@ -75,7 +78,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {activeTab === 'settings' && <AdminSettings user={user} />}
             {activeTab === 'profile' && <AdminUserProfile user={user} />}
             
-            {/* Tax Credit Management tabs */}
+            {/* Tax Credit Management tabs - Fixed explicit conditional rendering */}
             {activeTab === 'tax_credits' && <TaxCreditManagement />}
             {activeTab === 'clients' && <ClientManagement />}
             {activeTab === 'audits' && <AuditManagement />}

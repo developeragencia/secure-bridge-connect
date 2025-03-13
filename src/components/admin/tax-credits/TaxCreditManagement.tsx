@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
@@ -33,7 +32,6 @@ const TaxCreditManagement = () => {
   const [filterStatus, setFilterStatus] = useState<string | undefined>();
   const [sortBy, setSortBy] = useState<string | undefined>();
   
-  // Mock data for summary
   const summary: TaxCreditSummary = {
     totalCredits: 1250000.00,
     pendingCredits: 450000.00,
@@ -42,7 +40,6 @@ const TaxCreditManagement = () => {
     rejectedCredits: 200000.00
   };
   
-  // Mock data for tax credits
   const taxCredits: TaxCredit[] = [
     {
       id: "1",
@@ -148,9 +145,10 @@ const TaxCreditManagement = () => {
     });
   };
   
+  console.log("Rendering TaxCreditManagement component");
+  
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -223,7 +221,6 @@ const TaxCreditManagement = () => {
         </Card>
       </div>
       
-      {/* Tax Credits Table */}
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

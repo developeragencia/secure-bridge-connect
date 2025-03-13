@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
@@ -18,26 +17,13 @@ import {
   Filter, Search, Landmark, ArrowDownUp, ArrowUpRight,
   FileSpreadsheet, CircleDollarSign, Clock, CheckCircle 
 } from 'lucide-react';
-
-interface RecoveryProcess {
-  id: string;
-  clientName: string;
-  documentNumber: string;
-  creditType: string;
-  originalAmount: number;
-  recoveredAmount: number;
-  recoveryPercent: number;
-  startDate: string;
-  status: string;
-  processNumber: string;
-}
+import { RecoveryProcess } from '@/types/recovery';
 
 const RecoveryManagement = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<string | undefined>();
   
-  // Mock data for recovery processes
   const recoveryProcesses: RecoveryProcess[] = [
     {
       id: "1",
@@ -103,7 +89,6 @@ const RecoveryManagement = () => {
     CONCLUIDO: "Concluído"
   };
   
-  // Calculate summary data
   const summaryData = {
     totalCredits: recoveryProcesses.reduce((sum, p) => sum + p.originalAmount, 0),
     recoveredAmount: recoveryProcesses.reduce((sum, p) => sum + p.recoveredAmount, 0),
@@ -138,9 +123,10 @@ const RecoveryManagement = () => {
     });
   };
   
+  console.log("Rendering RecoveryManagement component");
+  
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -199,7 +185,6 @@ const RecoveryManagement = () => {
         </Card>
       </div>
       
-      {/* Recovery Processes Table */}
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

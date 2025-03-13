@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
@@ -17,6 +16,7 @@ import {
   FileSearch, Filter, PlusCircle, Search, 
   CheckCircle, XCircle, Clock, Calendar, Download 
 } from 'lucide-react';
+import { Audit } from '@/types/audit';
 
 interface AuditProcess {
   id: string;
@@ -35,7 +35,6 @@ const AuditManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<string | undefined>();
   
-  // Mock data for audit processes
   const auditProcesses: AuditProcess[] = [
     {
       id: "1",
@@ -122,9 +121,10 @@ const AuditManagement = () => {
     });
   };
   
+  console.log("Rendering AuditManagement component");
+  
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -183,7 +183,6 @@ const AuditManagement = () => {
         </Card>
       </div>
       
-      {/* Audit Processes Table */}
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
