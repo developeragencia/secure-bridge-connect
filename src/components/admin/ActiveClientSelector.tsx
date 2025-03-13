@@ -20,51 +20,56 @@ const mockClients: Client[] = [
     id: '1',
     name: 'Prefeitura Municipal de São Paulo',
     cnpj: '12.345.678/0001-01',
-    status: 'active',
+    status: 'ACTIVE',
     type: 'public',
     segment: 'Municipal',
     createdAt: '2023-01-01',
     updatedAt: '2023-01-01',
+    email: ''
   },
   {
     id: '2',
     name: 'Secretaria Estadual de Educação',
     cnpj: '23.456.789/0001-02',
-    status: 'active',
+    status: 'ACTIVE',
     type: 'public',
     segment: 'Estadual',
     createdAt: '2023-02-15',
     updatedAt: '2023-02-15',
+    email: ''
   },
   {
     id: '3',
     name: 'Hospital Municipal Dr. João Silva',
     cnpj: '34.567.890/0001-03',
-    status: 'inactive',
+    status: 'INACTIVE',
     type: 'public',
     segment: 'Saúde',
     createdAt: '2023-03-20',
     updatedAt: '2023-03-20',
+    email: ''
   },
   {
     id: '4',
     name: 'Departamento de Infraestrutura',
     cnpj: '45.678.901/0001-04',
-    status: 'pending',
+    status: 'PROSPECT',
     type: 'public',
     segment: 'Federal',
     createdAt: '2023-04-10',
     updatedAt: '2023-04-10',
+    email: ''
   },
   {
     id: '5',
     name: 'Universidade Estadual',
     cnpj: '56.789.012/0001-05',
-    status: 'active',
+    status: 'ACTIVE',
     type: 'public',
     segment: 'Educação',
     createdAt: '2023-05-05',
     updatedAt: '2023-05-05',
+    email: ''
   },
 ];
 
@@ -155,14 +160,14 @@ const ActiveClientSelector = () => {
                     variant="secondary"
                     className={cn(
                       "text-xs",
-                      client.status === 'active' && "bg-green-500/20 text-green-700 dark:text-green-300",
-                      client.status === 'inactive' && "bg-amber-500/20 text-amber-700 dark:text-amber-300",
-                      client.status === 'pending' && "bg-blue-500/20 text-blue-700 dark:text-blue-300"
+                      client.status === 'ACTIVE' && "bg-green-500/20 text-green-700 dark:text-green-300",
+                      client.status === 'INACTIVE' && "bg-amber-500/20 text-amber-700 dark:text-amber-300",
+                      client.status === 'PROSPECT' && "bg-blue-500/20 text-blue-700 dark:text-blue-300"
                     )}
                   >
-                    {client.status === 'active' && 'Ativo'}
-                    {client.status === 'inactive' && 'Inativo'}
-                    {client.status === 'pending' && 'Pendente'}
+                    {client.status === 'ACTIVE' && 'Ativo'}
+                    {client.status === 'INACTIVE' && 'Inativo'}
+                    {client.status === 'PROSPECT' && 'Prospect'}
                   </Badge>
                 </div>
               ))

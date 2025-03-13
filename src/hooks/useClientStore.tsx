@@ -1,29 +1,15 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-export interface Client {
-  id: string;
-  name: string;
-  cnpj: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  contactName?: string;
-  active?: boolean;
-  createdAt?: string;
-}
+import { Client as ClientType } from '@/types/client';
 
 interface ClientStore {
-  activeClient: Client | null;
-  recentClients: Client[];
-  allClients: Client[];
-  setActiveClient: (client: Client | null) => void;
-  addClient: (client: Client) => void;
-  updateClient: (id: string, data: Partial<Client>) => void;
+  activeClient: ClientType | null;
+  recentClients: ClientType[];
+  allClients: ClientType[];
+  setActiveClient: (client: ClientType | null) => void;
+  addClient: (client: ClientType) => void;
+  updateClient: (id: string, data: Partial<ClientType>) => void;
   removeClient: (id: string) => void;
 }
 
@@ -44,8 +30,9 @@ export const useClientStore = create<ClientStore>()(
           state: 'SP',
           zipCode: '01310-000',
           contactName: 'João Silva',
-          active: true,
+          status: 'ACTIVE',
           createdAt: '2023-06-01T10:00:00Z',
+          updatedAt: '2023-06-01T10:00:00Z',
         },
         {
           id: '2',
@@ -58,8 +45,9 @@ export const useClientStore = create<ClientStore>()(
           state: 'SP',
           zipCode: '01304-000',
           contactName: 'Maria Oliveira',
-          active: true,
+          status: 'ACTIVE',
           createdAt: '2023-07-15T14:30:00Z',
+          updatedAt: '2023-07-15T14:30:00Z',
         },
         {
           id: '3',
@@ -72,8 +60,9 @@ export const useClientStore = create<ClientStore>()(
           state: 'RJ',
           zipCode: '20040-007',
           contactName: 'Roberto Santos',
-          active: true,
+          status: 'ACTIVE',
           createdAt: '2023-08-10T09:15:00Z',
+          updatedAt: '2023-08-10T09:15:00Z',
         },
       ],
       setActiveClient: (client) => {

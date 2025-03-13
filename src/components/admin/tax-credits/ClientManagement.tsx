@@ -30,7 +30,7 @@ const ClientManagement = () => {
       id: "1",
       name: "Empresa ABC Ltda",
       cnpj: "12.345.678/0001-90",
-      status: 'active',
+      status: 'ACTIVE',
       type: 'private',
       segment: "Tecnologia",
       address: "Av. Paulista, 1000, São Paulo - SP",
@@ -40,13 +40,14 @@ const ClientManagement = () => {
       contactEmail: "contato@empresaabc.com.br",
       contactPhone: "(11) 3456-7890",
       createdAt: "2023-01-15T10:30:00Z",
-      updatedAt: "2023-05-20T14:45:00Z"
+      updatedAt: "2023-05-20T14:45:00Z",
+      email: ""
     },
     {
       id: "2",
       name: "Indústria XYZ S.A.",
       cnpj: "23.456.789/0001-10",
-      status: 'active',
+      status: 'ACTIVE',
       type: 'public',
       segment: "Manufatura",
       address: "Rua Industrial, 500, Guarulhos - SP",
@@ -56,13 +57,14 @@ const ClientManagement = () => {
       contactEmail: "financeiro@industriaxyz.com.br",
       contactPhone: "(11) 2345-6789",
       createdAt: "2023-02-10T09:15:00Z",
-      updatedAt: "2023-02-10T09:15:00Z"
+      updatedAt: "2023-02-10T09:15:00Z",
+      email: ""
     },
     {
       id: "3",
       name: "Comércio DEF Eireli",
       cnpj: "34.567.890/0001-21",
-      status: 'inactive',
+      status: 'INACTIVE',
       type: 'private',
       segment: "Varejo",
       address: "Rua Comercial, 200, Campinas - SP",
@@ -72,13 +74,14 @@ const ClientManagement = () => {
       contactEmail: "contato@comerciodef.com.br",
       contactPhone: "(11) 4567-8901",
       createdAt: "2023-03-05T11:45:00Z",
-      updatedAt: "2023-06-18T16:30:00Z"
+      updatedAt: "2023-06-18T16:30:00Z",
+      email: ""
     },
     {
       id: "4",
       name: "Serviços GHI S.A.",
       cnpj: "45.678.901/0001-32",
-      status: 'active',
+      status: 'ACTIVE',
       type: 'public',
       segment: "Consultoria",
       address: "Av. Brasil, 1500, Rio de Janeiro - RJ",
@@ -88,13 +91,14 @@ const ClientManagement = () => {
       contactEmail: "atendimento@servicosghi.com.br",
       contactPhone: "(11) 5678-9012",
       createdAt: "2023-04-20T08:00:00Z",
-      updatedAt: "2023-04-20T08:00:00Z"
+      updatedAt: "2023-04-20T08:00:00Z",
+      email: ""
     },
     {
       id: "5",
       name: "Transportes JKL Ltda",
       cnpj: "56.789.012/0001-43",
-      status: 'active',
+      status: 'ACTIVE',
       type: 'private',
       segment: "Logística",
       address: "Rodovia BR 101, Km 200, Florianópolis - SC",
@@ -104,7 +108,8 @@ const ClientManagement = () => {
       contactEmail: "operacoes@transportesjkl.com.br",
       contactPhone: "(11) 6789-0123",
       createdAt: "2023-05-15T14:30:00Z",
-      updatedAt: "2023-05-15T14:30:00Z"
+      updatedAt: "2023-05-15T14:30:00Z",
+      email: ""
     }
   ];
   
@@ -190,7 +195,7 @@ const ClientManagement = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold">
-                {clients.filter(c => c.status === "active").length}
+                {clients.filter(c => c.status === "ACTIVE").length}
               </div>
               <Users className="h-5 w-5 text-green-500" />
             </div>
@@ -206,7 +211,7 @@ const ClientManagement = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold">
-                {clients.filter(c => c.status === "inactive").length}
+                {clients.filter(c => c.status === "INACTIVE").length}
               </div>
               <Users className="h-5 w-5 text-red-500" />
             </div>
@@ -277,11 +282,11 @@ const ClientManagement = () => {
                   <TableCell>{client.contactEmail}</TableCell>
                   <TableCell>{client.contactPhone}</TableCell>
                   <TableCell>
-                    <Badge className={client.status === "active" 
+                    <Badge className={client.status === "ACTIVE" 
                       ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
                       : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
                     }>
-                      {client.status === "active" ? "Ativo" : "Inativo"}
+                      {client.status === "ACTIVE" ? "Ativo" : "Inativo"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">

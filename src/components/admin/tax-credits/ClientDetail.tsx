@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -88,7 +87,7 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
       id: "1",
       name: "Empresa ABC Ltda",
       cnpj: "12.345.678/0001-90",
-      status: 'active',
+      status: 'ACTIVE',
       type: 'private',
       segment: "Tecnologia",
       address: "Av. Paulista, 1000, São Paulo - SP",
@@ -98,13 +97,14 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
       contactEmail: "contato@empresaabc.com.br",
       contactPhone: "(11) 3456-7890",
       createdAt: "2023-01-15T10:30:00Z",
-      updatedAt: "2023-05-20T14:45:00Z"
+      updatedAt: "2023-05-20T14:45:00Z",
+      email: ""
     },
     {
       id: "2",
       name: "Indústria XYZ S.A.",
       cnpj: "23.456.789/0001-10",
-      status: 'active',
+      status: 'ACTIVE',
       type: 'public',
       segment: "Manufatura",
       address: "Rua Industrial, 500, Guarulhos - SP",
@@ -114,13 +114,14 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
       contactEmail: "financeiro@industriaxyz.com.br",
       contactPhone: "(11) 2345-6789",
       createdAt: "2023-02-10T09:15:00Z",
-      updatedAt: "2023-02-10T09:15:00Z"
+      updatedAt: "2023-02-10T09:15:00Z",
+      email: ""
     },
     {
       id: "3",
       name: "Comércio DEF Eireli",
       cnpj: "34.567.890/0001-21",
-      status: 'inactive',
+      status: 'INACTIVE',
       type: 'private',
       segment: "Varejo",
       address: "Rua Comercial, 200, Campinas - SP",
@@ -130,13 +131,14 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
       contactEmail: "contato@comerciodef.com.br",
       contactPhone: "(11) 4567-8901",
       createdAt: "2023-03-05T11:45:00Z",
-      updatedAt: "2023-06-18T16:30:00Z"
+      updatedAt: "2023-06-18T16:30:00Z",
+      email: ""
     },
     {
       id: "4",
       name: "Serviços GHI S.A.",
       cnpj: "45.678.901/0001-32",
-      status: 'active',
+      status: 'ACTIVE',
       type: 'public',
       segment: "Consultoria",
       address: "Av. Brasil, 1500, Rio de Janeiro - RJ",
@@ -146,13 +148,14 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
       contactEmail: "atendimento@servicosghi.com.br",
       contactPhone: "(11) 5678-9012",
       createdAt: "2023-04-20T08:00:00Z",
-      updatedAt: "2023-04-20T08:00:00Z"
+      updatedAt: "2023-04-20T08:00:00Z",
+      email: ""
     },
     {
       id: "5",
       name: "Transportes JKL Ltda",
       cnpj: "56.789.012/0001-43",
-      status: 'active',
+      status: 'ACTIVE',
       type: 'private',
       segment: "Logística",
       address: "Rodovia BR 101, Km 200, Florianópolis - SC",
@@ -162,7 +165,8 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
       contactEmail: "operacoes@transportesjkl.com.br",
       contactPhone: "(11) 6789-0123",
       createdAt: "2023-05-15T14:30:00Z",
-      updatedAt: "2023-05-15T14:30:00Z"
+      updatedAt: "2023-05-15T14:30:00Z",
+      email: ""
     }
   ];
   
@@ -297,12 +301,12 @@ const ClientDetail = ({ clientId }: ClientDetailProps) => {
               <CardDescription className="flex items-center mt-1">
                 CNPJ: {client.cnpj}
                 <Badge 
-                  className={`ml-4 ${client.status === 'active' 
+                  className={`ml-4 ${client.status === 'ACTIVE' 
                     ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" 
                     : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"}`
                   }
                 >
-                  {client.status === 'active' ? 'Ativo' : 'Inativo'}
+                  {client.status === 'ACTIVE' ? 'Ativo' : 'Inativo'}
                 </Badge>
                 <Badge className="ml-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                   {client.type === 'public' ? 'Público' : 'Privado'}
