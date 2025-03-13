@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -6,7 +5,7 @@ import { ArrowRight, ExternalLink, Sparkles, MousePointerClick } from 'lucide-re
 import { cn } from '@/lib/utils';
 
 // Definição do tipo para os itens de menu
-interface MenuItem {
+export interface MenuItem {
   id: string;
   title: string;
   description: string;
