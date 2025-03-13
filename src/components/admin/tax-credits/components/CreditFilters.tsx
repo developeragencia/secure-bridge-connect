@@ -1,9 +1,15 @@
 
 import React from 'react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Download } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface CreditFiltersProps {
   searchQuery: string;
@@ -22,51 +28,66 @@ const CreditFilters: React.FC<CreditFiltersProps> = ({
   setStatusFilter,
   typeFilter,
   setTypeFilter,
-  onExportData
+  onExportData,
 }) => {
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
-      <div className="flex-1">
+    <div className="flex flex-col sm:flex-row gap-3 items-end mb-4">
+      <div className="flex-1 space-y-1">
+        <label htmlFor="search" className="text-sm font-medium">
+          Buscar
+        </label>
         <Input
-          placeholder="Buscar por cliente ou documento..."
+          id="search"
+          placeholder="Buscar por cliente, documento..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full"
+          className="max-w-sm"
         />
       </div>
-      <div className="flex gap-2">
+
+      <div className="w-full sm:w-[180px] space-y-1">
+        <label htmlFor="statusFilter" className="text-sm font-medium">
+          Status
+        </label>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="Status" />
+          <SelectTrigger id="statusFilter">
+            <SelectValue placeholder="Todos os status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos os status</SelectItem>
-            <SelectItem value="PENDING">Pendente</SelectItem>
-            <SelectItem value="ANALYZING">Em Análise</SelectItem>
-            <SelectItem value="APPROVED">Aprovado</SelectItem>
-            <SelectItem value="REJECTED">Rejeitado</SelectItem>
-            <SelectItem value="RECOVERED">Recuperado</SelectItem>
+            <SelectItem value="all">Todos os status</SelectItem>
+            <SelectItem value="approved">Aprovado</SelectItem>
+            <SelectItem value="pending">Pendente</SelectItem>
+            <SelectItem value="rejected">Rejeitado</SelectItem>
           </SelectContent>
         </Select>
-        
-        <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="Tipo de Crédito" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">Todos os tipos</SelectItem>
-            <SelectItem value="IRRF">IRRF</SelectItem>
-            <SelectItem value="PIS">PIS</SelectItem>
-            <SelectItem value="COFINS">COFINS</SelectItem>
-            <SelectItem value="CSLL">CSLL</SelectItem>
-            <SelectItem value="OTHER">Outros</SelectItem>
-          </SelectContent>
-        </Select>
-        
-        <Button variant="outline" onClick={onExportData}>
-          <Download className="h-4 w-4" />
-        </Button>
       </div>
+
+      <div className="w-full sm:w-[180px] space-y-1">
+        <label htmlFor="typeFilter" className="text-sm font-medium">
+          Tipo
+        </label>
+        <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <SelectTrigger id="typeFilter">
+            <SelectValue placeholder="Todos os tipos" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os tipos</SelectItem>
+            <SelectItem value="PIS/COFINS">PIS/COFINS</SelectItem>
+            <SelectItem value="ICMS">ICMS</SelectItem>
+            <SelectItem value="IPI">IPI</SelectItem>
+            <SelectItem value="IRRF">IRRF</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <Button
+        variant="outline"
+        className="w-full sm:w-auto"
+        onClick={onExportData}
+      >
+        <Download className="h-4 w-4 mr-2" />
+        Exportar
+      </Button>
     </div>
   );
 };

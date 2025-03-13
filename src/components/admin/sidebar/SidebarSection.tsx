@@ -30,6 +30,11 @@ const SidebarSection = ({
     }
   };
 
+  const handleItemClick = (id: string) => {
+    console.log("Menu item clicked:", id);
+    setActiveTab(id);
+  };
+
   return (
     <div className="mb-4">
       {sidebarOpen ? (
@@ -68,7 +73,7 @@ const SidebarSection = ({
                 sidebarOpen ? "w-full justify-start" : "w-full p-2 flex justify-center",
                 "rounded-md transition-all duration-200"
               )}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => handleItemClick(item.id)}
             >
               <div className={cn(
                 "flex items-center",

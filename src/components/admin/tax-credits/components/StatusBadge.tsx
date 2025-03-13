@@ -1,33 +1,40 @@
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
-import { TaxCredit } from '@/types/tax-credits';
+import { cn } from '@/lib/utils';
 
 interface StatusBadgeProps {
-  status: TaxCredit['status'];
+  status: 'approved' | 'pending' | 'rejected';
+  className?: string;
 }
 
-const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
+const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className }) => {
   const statusConfig = {
-    PENDING: { label: 'Pendente', variant: 'secondary' as const },
-    ANALYZING: { label: 'Em Análise', variant: 'default' as const },
-    APPROVED: { label: 'Aprovado', variant: 'default' as const },
-    REJECTED: { label: 'Rejeitado', variant: 'destructive' as const },
-    RECOVERED: { label: 'Recuperado', variant: 'default' as const },
+    approved: {
+      label: 'Aprovado',
+      classes: 'bg-green-100 text-green-800',
+    },
+    pending: {
+      label: 'Pendente',
+      classes: 'bg-yellow-100 text-yellow-800',
+    },
+    rejected: {
+      label: 'Rejeitado',
+      classes: 'bg-red-100 text-red-800',
+    },
   };
 
-  const config = statusConfig[status];
+  const { label, classes } = statusConfig[status];
 
   return (
-    <Badge variant={config.variant} className={
-      status === 'PENDING' ? 'bg-amber-500/20 text-amber-700 hover:bg-amber-500/30' :
-      status === 'ANALYZING' ? 'bg-blue-500/20 text-blue-700 hover:bg-blue-500/30' :
-      status === 'APPROVED' ? 'bg-green-500/20 text-green-700 hover:bg-green-500/30' :
-      status === 'REJECTED' ? 'bg-red-500/20 text-red-700 hover:bg-red-500/30' :
-      'bg-purple-500/20 text-purple-700 hover:bg-purple-500/30'
-    }>
-      {config.label}
-    </Badge>
+    <span
+      className={cn(
+        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+        classes,
+        className
+      )}
+    >
+      {label}
+    </span>
   );
 };
 
