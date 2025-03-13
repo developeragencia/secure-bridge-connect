@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Sparkles } from 'lucide-react';
@@ -108,4 +108,5 @@ const SidebarSection = ({
   );
 };
 
-export default SidebarSection;
+// Use React.memo to prevent unnecessary rerenders
+export default memo(SidebarSection);

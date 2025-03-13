@@ -23,7 +23,9 @@ const MobileSidebarSection = ({
   toggleMobileMenu
 }: MobileSidebarSectionProps) => {
   const handleItemClick = (id: string) => {
-    if (id === activeTab) return; // Prevent re-clicking the same tab
+    // Skip if already on this tab
+    if (id === activeTab) return;
+    
     setActiveTab(id);
     toggleMobileMenu();
   };

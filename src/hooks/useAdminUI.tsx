@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -22,6 +21,20 @@ export const useAdminUI = () => {
   const navigate = useNavigate();
   const initialRender = useRef(true);
   const navigationInProgress = useRef(false);
+  const navigationLock = useRef(false);
+  
+  // Prevent rapid navigation changes
+  const navigateWithLock = useCallback((path: string, options = {}) => {
+    if (navigationLock.current) return;
+    
+    navigationLock.current = true;
+    navigate(path, options);
+    
+    // Release lock after navigation completes
+    setTimeout(() => {
+      navigationLock.current = false;
+    }, 300);
+  }, [navigate]);
   
   // Persist active tab to session storage when it changes
   useEffect(() => {
@@ -36,18 +49,18 @@ export const useAdminUI = () => {
         const expectedPath = activeTab === 'dashboard' ? '/admin' : `/admin/${activeTab}`;
         
         if (currentPath !== expectedPath && !currentPath.includes(expectedPath)) {
-          navigate(expectedPath, { replace: true });
+          navigateWithLock(expectedPath, { replace: true });
         }
         
         // Reset navigation flag after a short delay
         setTimeout(() => {
           navigationInProgress.current = false;
-        }, 100);
+        }, 300);
       } else {
         initialRender.current = false;
       }
     }
-  }, [activeTab, navigate, location.pathname]);
+  }, [activeTab, navigateWithLock, location.pathname]);
   
   // Other state management
   const [sidebarOpen, setSidebarOpen] = useState(() => {
@@ -67,8 +80,9 @@ export const useAdminUI = () => {
   
   // Custom setActiveTab function
   const handleSetActiveTab = useCallback((tab: string) => {
-    // Only update if tab is actually changing
-    if (tab && tab !== activeTab) {
+    // Only update if tab is actually changing and no navigation is in progress
+    if (tab && tab !== activeTab && !navigationLock.current) {
+      console.log("Setting active tab:", tab);
       setActiveTab(tab);
     }
   }, [activeTab]);
