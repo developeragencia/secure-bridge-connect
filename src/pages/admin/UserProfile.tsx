@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import AdminUserProfile from '@/components/admin/AdminUserProfile';
 import { useToast } from '@/components/ui/use-toast';
+import { UserRole } from '@/types/client';
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const UserProfile = () => {
     id: '1',
     name: 'Claudio Figueiredo',
     email: 'admin@sistemasclaudio.com',
-    role: 'admin',
+    role: 'admin' as UserRole,
     status: 'active' as const,
     createdAt: '2023-01-01',
   };
