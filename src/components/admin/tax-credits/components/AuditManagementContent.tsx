@@ -41,6 +41,32 @@ const AuditManagementContent: React.FC = () => {
     transitionType: 'fade-in',
   });
 
+  // Create wrapper functions to convert from auditId to audit
+  const onViewDetails = (auditId: string) => {
+    const audit = filteredAudits.find(a => a.id === auditId);
+    if (audit) handleViewDetails(audit);
+  };
+
+  const onDownloadDocuments = (auditId: string) => {
+    const audit = filteredAudits.find(a => a.id === auditId);
+    if (audit) handleDownloadDocuments(audit);
+  };
+
+  const onEdit = (auditId: string) => {
+    const audit = filteredAudits.find(a => a.id === auditId);
+    if (audit) handleEditAudit(audit);
+  };
+
+  const onDelete = (auditId: string) => {
+    const audit = filteredAudits.find(a => a.id === auditId);
+    if (audit) handleDeleteAudit(audit);
+  };
+
+  const onApprove = (auditId: string) => {
+    const audit = filteredAudits.find(a => a.id === auditId);
+    if (audit) handleApproveAudit(audit);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -91,32 +117,6 @@ const AuditManagementContent: React.FC = () => {
       />
     </div>
   );
-};
-
-// Create wrapper functions to convert from auditId to audit
-const onViewDetails = (auditId: string) => {
-  const audit = filteredAudits.find(a => a.id === auditId);
-  if (audit) handleViewDetails(audit);
-};
-
-const onDownloadDocuments = (auditId: string) => {
-  const audit = filteredAudits.find(a => a.id === auditId);
-  if (audit) handleDownloadDocuments(audit);
-};
-
-const onEdit = (auditId: string) => {
-  const audit = filteredAudits.find(a => a.id === auditId);
-  if (audit) handleEditAudit(audit);
-};
-
-const onDelete = (auditId: string) => {
-  const audit = filteredAudits.find(a => a.id === auditId);
-  if (audit) handleDeleteAudit(audit);
-};
-
-const onApprove = (auditId: string) => {
-  const audit = filteredAudits.find(a => a.id === auditId);
-  if (audit) handleApproveAudit(audit);
 };
 
 export default AuditManagementContent;
