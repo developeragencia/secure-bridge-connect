@@ -1,10 +1,9 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -17,6 +16,11 @@ import NewDeclaration from "./pages/NewDeclaration";
 import AnalysisReport from "./pages/AnalysisReport";
 import Maintenance from "./pages/Maintenance";
 import { supabase } from "./integrations/supabase/client";
+
+// Lazy load admin pages
+const UserProfilePage = lazy(() => import('./pages/admin/UserProfile'));
+const NotificationsPage = lazy(() => import('./pages/admin/NotificationsPage'));
+const ClientsPage = lazy(() => import('./pages/admin/ClientsPage'));
 
 // Create QueryClient with proper configuration
 const queryClient = new QueryClient({
@@ -169,6 +173,13 @@ const App = () => {
     }
   }, []);
   
+  // Render loading spinner for lazy-loaded components
+  const renderLoading = () => (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin h-8 w-8 border-t-2 border-primary rounded-full"></div>
+    </div>
+  );
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -180,9 +191,42 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             
             {/* Admin routes - order matters for proper route matching */}
-            <Route path="/admin/profile" element={<ProtectedRoute element={<React.lazy(() => import('./pages/admin/UserProfile')).default />} />} />
-            <Route path="/admin/notifications" element={<ProtectedRoute element={<React.lazy(() => import('./pages/admin/NotificationsPage')).default />} />} />
-            <Route path="/admin/clients" element={<ProtectedRoute element={<React.lazy(() => import('./pages/admin/ClientsPage')).default />} />} />
+            <Route 
+              path="/admin/profile" 
+              element={
+                <ProtectedRoute 
+                  element={
+                    <Suspense fallback={renderLoading()}>
+                      <UserProfilePage />
+                    </Suspense>
+                  } 
+                />
+              } 
+            />
+            <Route 
+              path="/admin/notifications" 
+              element={
+                <ProtectedRoute 
+                  element={
+                    <Suspense fallback={renderLoading()}>
+                      <NotificationsPage />
+                    </Suspense>
+                  } 
+                />
+              } 
+            />
+            <Route 
+              path="/admin/clients" 
+              element={
+                <ProtectedRoute 
+                  element={
+                    <Suspense fallback={renderLoading()}>
+                      <ClientsPage />
+                    </Suspense>
+                  } 
+                />
+              } 
+            />
             <Route path="/admin/*" element={<ProtectedRoute element={<Admin />} />} />
             
             <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
