@@ -17,12 +17,12 @@ interface LogoTypeSelectorProps {
 const LogoTypeSelector = ({ logoType, setLogoType }: LogoTypeSelectorProps) => {
   return (
     <div className="space-y-3">
-      <Label>Tipo de Logo</Label>
+      <Label className="text-sm font-medium">Tipo de Logo</Label>
       <Select
         value={logoType}
         onValueChange={setLogoType}
       >
-        <SelectTrigger>
+        <SelectTrigger className="w-full bg-card border-input hover:border-primary/50 transition-colors">
           <SelectValue placeholder="Selecione o tipo de logo" />
         </SelectTrigger>
         <SelectContent>

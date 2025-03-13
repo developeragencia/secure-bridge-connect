@@ -45,7 +45,7 @@ const AdminHeader = ({
   
   return (
     <motion.header 
-      className="bg-card border-b border-border/40 shadow-sm z-20 sticky top-0"
+      className="bg-card/95 backdrop-blur-sm border-b border-border/40 shadow-sm z-20 sticky top-0"
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
@@ -78,7 +78,7 @@ const AdminHeader = ({
               <AnimatedLogo size="sm" showText={false} />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-semibold leading-none">PAINEL ADMINISTRATIVO</h1>
+              <h1 className="text-base sm:text-lg font-semibold leading-none bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">PAINEL ADMINISTRATIVO</h1>
               <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">Sistemas Claudio Figueiredo</p>
             </div>
           </div>
@@ -95,7 +95,7 @@ const AdminHeader = ({
             <input
               type="text"
               placeholder="Buscar..."
-              className="rounded-full bg-secondary/70 pl-9 pr-4 py-2 text-sm w-40 focus:w-60 transition-all focus:outline-none focus:ring-1 focus:ring-primary"
+              className="rounded-full bg-secondary/70 pl-9 pr-4 py-2 text-sm w-40 focus:w-60 transition-all focus:outline-none focus:ring-1 focus:ring-primary/40"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

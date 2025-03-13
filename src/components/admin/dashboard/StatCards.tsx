@@ -20,12 +20,12 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, change, delay =
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: delay * 0.1, duration: 0.3 }}
-      className="bg-card shadow-sm rounded-xl border p-5 hover:shadow-md transition-all duration-200"
+      className="bg-card shadow-sm rounded-xl border p-5 hover:shadow-md transition-all duration-200 group hover:border-primary/20"
     >
       <div className="flex justify-between">
         <div>
           <p className="text-sm text-muted-foreground">{title}</p>
-          <h3 className="text-2xl font-bold mt-1">{value}</h3>
+          <h3 className="text-2xl font-bold mt-1 group-hover:text-primary transition-colors">{value}</h3>
           
           <div className="flex items-center mt-2">
             {change.positive ? (
@@ -43,7 +43,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, change, delay =
           </div>
         </div>
         
-        <div className="p-3 rounded-full bg-primary/10">
+        <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
           {icon}
         </div>
       </div>

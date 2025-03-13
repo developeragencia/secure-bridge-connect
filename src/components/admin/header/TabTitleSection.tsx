@@ -27,7 +27,7 @@ const TabTitleSection = ({ Icon, title, description }: TabTitleSectionProps) => 
     >
       <div className="flex items-center gap-2 mb-1">
         <HeaderIcon Icon={Icon} />
-        <h1 className="text-2xl font-bold">{title}</h1>
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">{title}</h1>
       </div>
       <p className="text-muted-foreground">{description}</p>
     </motion.div>

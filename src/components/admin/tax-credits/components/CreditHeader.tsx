@@ -15,12 +15,12 @@ const CreditHeader: React.FC<CreditHeaderProps> = ({
   isListening = false
 }) => {
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
       <div>
-        <h1 className="text-2xl font-bold">Gestão de Créditos Tributários</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">Gestão de Créditos Tributários</h1>
+        <p className="text-muted-foreground mt-1">
           Gerencie os créditos tributários dos seus clientes
-          {isListening && <span className="ml-2 text-xs text-green-500">• Atualizações em tempo real ativas</span>}
+          {isListening && <span className="ml-2 text-xs text-green-500 inline-flex items-center"><span className="h-1.5 w-1.5 bg-green-500 rounded-full mr-1 animate-pulse"></span>Atualizações em tempo real ativas</span>}
         </p>
       </div>
       <div className="flex items-center gap-2 w-full sm:w-auto">

@@ -26,32 +26,32 @@ interface ComparisonTableProps {
 
 const ComparisonTable: React.FC<ComparisonTableProps> = ({ data }) => {
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
+    <div className="rounded-md border overflow-hidden">
+      <Table className="w-full">
+        <TableHeader className="bg-muted/30">
           <TableRow>
-            <TableHead>Nota Fiscal</TableHead>
-            <TableHead>Fornecedor</TableHead>
-            <TableHead>Data</TableHead>
-            <TableHead className="text-right">Valor (R$)</TableHead>
-            <TableHead className="text-right">Retido (R$)</TableHead>
-            <TableHead className="text-right">Devido (R$)</TableHead>
-            <TableHead className="text-right">Diferença (R$)</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-center">Ações</TableHead>
+            <TableHead className="font-medium">Nota Fiscal</TableHead>
+            <TableHead className="font-medium">Fornecedor</TableHead>
+            <TableHead className="font-medium">Data</TableHead>
+            <TableHead className="text-right font-medium">Valor (R$)</TableHead>
+            <TableHead className="text-right font-medium">Retido (R$)</TableHead>
+            <TableHead className="text-right font-medium">Devido (R$)</TableHead>
+            <TableHead className="text-right font-medium">Diferença (R$)</TableHead>
+            <TableHead className="font-medium">Status</TableHead>
+            <TableHead className="text-center font-medium">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.id} className="hover:bg-muted/20 transition-colors">
               <TableCell>{item.invoiceNumber}</TableCell>
               <TableCell>{item.supplierName}</TableCell>
               <TableCell>{item.date}</TableCell>
-              <TableCell className="text-right">{formatCurrency(item.value)}</TableCell>
-              <TableCell className="text-right">{formatCurrency(item.retainedValue)}</TableCell>
-              <TableCell className="text-right">{formatCurrency(item.correctValue)}</TableCell>
+              <TableCell className="text-right font-mono">{formatCurrency(item.value)}</TableCell>
+              <TableCell className="text-right font-mono">{formatCurrency(item.retainedValue)}</TableCell>
+              <TableCell className="text-right font-mono">{formatCurrency(item.correctValue)}</TableCell>
               <TableCell 
-                className={`text-right font-medium ${
+                className={`text-right font-medium font-mono ${
                   item.difference > 0 
                     ? 'text-green-600' 
                     : item.difference < 0 
@@ -66,7 +66,7 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({ data }) => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
                         <Eye className="h-4 w-4" />
                       </Button>
                     </TooltipTrigger>
@@ -79,7 +79,7 @@ const ComparisonTable: React.FC<ComparisonTableProps> = ({ data }) => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon">
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
                         <FileText className="h-4 w-4" />
                       </Button>
                     </TooltipTrigger>
