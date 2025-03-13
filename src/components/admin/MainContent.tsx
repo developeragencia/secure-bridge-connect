@@ -34,6 +34,14 @@ import DetailedReportsPanel from './tax-reports/DetailedReportsPanel';
 import InteractiveDashboardPanel from './tax-reports/InteractiveDashboardPanel';
 import RetentionReceiptsPanel from './tax-reports/RetentionReceiptsPanel';
 
+// Operational Components
+import OperationalImportsPanel from './operational/OperationalImportsPanel';
+import OperationalRecoveryPanel from './operational/OperationalRecoveryPanel';
+import OperationalCreditIdentificationPanel from './operational/OperationalCreditIdentificationPanel';
+import OperationalDashboardPanel from './operational/OperationalDashboardPanel';
+import OperationalReceiptsPanel from './operational/OperationalReceiptsPanel';
+import OperationalAuditsPanel from './operational/OperationalAuditsPanel';
+
 // Extra Tab Content for any other tabs that are not yet implemented
 import ExtraTabContent from './ExtraTabContent';
 
@@ -108,6 +116,20 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         return <InteractiveDashboardPanel />;
       case 'retention_receipts':
         return <RetentionReceiptsPanel />;
+      
+      // Operational Section
+      case 'operational_imports':
+        return <OperationalImportsPanel />;
+      case 'operational_recovery':
+        return <OperationalRecoveryPanel />;
+      case 'operational_credit_identification':
+        return <OperationalCreditIdentificationPanel />;
+      case 'operational_dashboard':
+        return <OperationalDashboardPanel />;
+      case 'operational_receipts':
+        return <OperationalReceiptsPanel />;
+      case 'operational_audits':
+        return <OperationalAuditsPanel />;
       
       // Security Section
       case 'two_factor_auth':

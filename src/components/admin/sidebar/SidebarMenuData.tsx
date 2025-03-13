@@ -5,8 +5,8 @@ import {
   Globe, ShieldAlert, CreditCard, HelpCircle,
   Building, UserCircle, Receipt, FileBarChart2, Landmark,
   PercentCircle, FileSpreadsheet, FileStack, ClipboardList,
-  Calculator, FileCheck, Database, Bell,
-  FileLineChart, Layout, ReceiptText, Key, Clock, Shield, ClipboardListIcon
+  Calculator, FileCheck, Database, Bell, Activity,
+  FileLineChart, Layout, ReceiptText, Key, Clock, Shield, ClipboardListIcon, RefreshCw, Lightbulb
 } from 'lucide-react';
 import { SidebarSection } from '@/types/admin-sidebar';
 
@@ -16,7 +16,7 @@ export const getMenuSections = (): SidebarSection[] => {
       id: 'main',
       title: 'Principal',
       items: [
-        { id: 'admin', label: 'Painel Principal', icon: <BarChart3 className="h-4 w-4" /> },
+        { id: 'dashboard', label: 'Painel Principal', icon: <BarChart3 className="h-4 w-4" /> },
         { id: 'users', label: 'Usuários', icon: <Users className="h-4 w-4" /> },
         { id: 'profile', label: 'Meu Perfil', icon: <UserCircle className="h-4 w-4" /> },
         { id: 'notifications', label: 'Notificações', icon: <Bell className="h-4 w-4" /> }
@@ -43,6 +43,18 @@ export const getMenuSections = (): SidebarSection[] => {
         { id: 'imports', label: 'Importação de Dados', icon: <FileSpreadsheet className="h-4 w-4" /> },
         { id: 'fiscal_reports', label: 'Relatórios Fiscais', icon: <FileStack className="h-4 w-4" /> },
         { id: 'proposals', label: 'Propostas Comerciais', icon: <ClipboardList className="h-4 w-4" /> }
+      ]
+    },
+    {
+      id: 'operational',
+      title: 'Operacional',
+      items: [
+        { id: 'operational_dashboard', label: 'Dashboard Operacional', icon: <Activity className="h-4 w-4" /> },
+        { id: 'operational_imports', label: 'Importação de Dados', icon: <Database className="h-4 w-4" /> },
+        { id: 'operational_recovery', label: 'Recuperação', icon: <RefreshCw className="h-4 w-4" /> },
+        { id: 'operational_credit_identification', label: 'Identificação de Créditos', icon: <Lightbulb className="h-4 w-4" /> },
+        { id: 'operational_receipts', label: 'Recibos de Retenção', icon: <ReceiptText className="h-4 w-4" /> },
+        { id: 'operational_audits', label: 'Auditorias', icon: <FileCheck className="h-4 w-4" /> }
       ]
     },
     {

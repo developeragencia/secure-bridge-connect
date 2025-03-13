@@ -167,6 +167,38 @@ export const tabConfigurations: Record<string, TabConfig> = {
     title: 'Suporte',
     description: 'Central de ajuda e suporte técnico',
     icon: HelpCircle
+  },
+  
+  // Operational submenu items
+  operational_imports: {
+    title: 'Importação de Dados Operacionais',
+    description: 'Importe dados operacionais de sistemas externos',
+    icon: Database
+  },
+  operational_recovery: {
+    title: 'Recuperação Operacional',
+    description: 'Acompanhamento de processos de recuperação operacional',
+    icon: RefreshCw
+  },
+  operational_credit_identification: {
+    title: 'Identificação Operacional de Créditos',
+    description: 'Identificação operacional de oportunidades de créditos',
+    icon: Lightbulb
+  },
+  operational_dashboard: {
+    title: 'Dashboard Operacional',
+    description: 'Visualizações e análises operacionais de dados',
+    icon: Activity
+  },
+  operational_receipts: {
+    title: 'Gestão de Recibos Operacionais',
+    description: 'Gestão operacional de comprovantes e recibos',
+    icon: ReceiptText
+  },
+  operational_audits: {
+    title: 'Auditorias Operacionais',
+    description: 'Gestão de auditorias operacionais',
+    icon: FileCheck
   }
 };
 
