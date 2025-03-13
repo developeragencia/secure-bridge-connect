@@ -16,6 +16,23 @@ const ActiveClientHeader = () => {
 
   if (!activeClient) return null;
 
+  // Map the status values correctly
+  const getStatusBadge = () => {
+    const status = activeClient.status;
+    
+    if (status === "ACTIVE") {
+      return { text: 'Ativo', className: 'bg-green-500/20 text-green-700 dark:text-green-300' };
+    } else if (status === "INACTIVE") {
+      return { text: 'Inativo', className: 'bg-amber-500/20 text-amber-700 dark:text-amber-300' };
+    } else if (status === "PROSPECT") {
+      return { text: 'Prospecto', className: 'bg-blue-500/20 text-blue-700 dark:text-blue-300' };
+    } else {
+      return { text: 'Desconhecido', className: 'bg-gray-500/20 text-gray-700 dark:text-gray-300' };
+    }
+  };
+
+  const statusBadge = getStatusBadge();
+
   return (
     <div className="bg-card/50 backdrop-blur-sm border-b border-primary/5 py-2 px-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -30,14 +47,10 @@ const ActiveClientHeader = () => {
                 variant="secondary"
                 className={cn(
                   "text-xs px-1.5 h-5",
-                  activeClient.status === 'active' && "bg-green-500/20 text-green-700 dark:text-green-300",
-                  activeClient.status === 'inactive' && "bg-amber-500/20 text-amber-700 dark:text-amber-300",
-                  activeClient.status === 'pending' && "bg-blue-500/20 text-blue-700 dark:text-blue-300"
+                  statusBadge.className
                 )}
               >
-                {activeClient.status === 'active' && 'Ativo'}
-                {activeClient.status === 'inactive' && 'Inativo'}
-                {activeClient.status === 'pending' && 'Pendente'}
+                {statusBadge.text}
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground">{activeClient.cnpj}</p>
