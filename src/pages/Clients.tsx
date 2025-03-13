@@ -1,451 +1,517 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Building, Search, PlusCircle, Edit2, Trash2, 
-  ArrowUpDown, MoreHorizontal, UserCheck,
-  Download, Upload, Filter
-} from 'lucide-react';
+import { useClientStore, Client } from '@/hooks/useClientStore';
+import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Table, TableBody, TableCell, TableHead, 
-  TableHeader, TableRow 
-} from '@/components/ui/table';
-import { 
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, 
-  DropdownMenuSeparator, DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
+import { Label } from '@/components/ui/label';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useToast } from '@/components/ui/use-toast';
-import { useClientStore, Client } from '@/hooks/useClientStore';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import ActiveClientHeader from '@/components/ActiveClientHeader';
-
-const formSchema = z.object({
-  name: z.string().min(3, { message: 'Nome deve ter pelo menos 3 caracteres' }),
-  cnpj: z.string().regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, { 
-    message: 'CNPJ inválido. Use o formato XX.XXX.XXX/XXXX-XX' 
-  }),
-  email: z.string().email({ message: 'Email inválido' }).optional().or(z.literal('')),
-  phone: z.string().optional().or(z.literal('')),
-  address: z.string().optional().or(z.literal('')),
-  city: z.string().optional().or(z.literal('')),
-  state: z.string().optional().or(z.literal('')),
-  zipCode: z.string().optional().or(z.literal('')),
-  contactName: z.string().optional().or(z.literal('')),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
+import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from "@/components/ui/separator"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { CalendarIcon } from "@radix-ui/react-icons"
+import { Calendar } from "@/components/ui/calendar"
+import { format } from "date-fns"
+import { enUS } from 'date-fns/locale';
+import { DateRange } from "react-day-picker"
+import { PopoverClose } from '@radix-ui/react-popover';
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const Clients = () => {
   const { allClients, addClient, updateClient, removeClient, setActiveClient } = useClientStore();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isOpenDialog, setIsOpenDialog] = useState(false);
-  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [clients, setClients] = useState(allClients);
   const { toast } = useToast();
+  const [newClientData, setNewClientData] = useState<Partial<Client>>({});
+  const [editClientId, setEditClientId] = useState<string | null>(null);
+  const [editClientData, setEditClientData] = useState<Partial<Client>>({});
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: new Date(2023, 0, 1),
+    to: new Date(),
+  })
   const navigate = useNavigate();
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      cnpj: '',
-      email: '',
-      phone: '',
-      address: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      contactName: '',
-    }
-  });
+  useEffect(() => {
+    setClients(allClients);
+  }, [allClients]);
 
-  const filteredClients = allClients.filter(client => 
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.cnpj.includes(searchTerm) ||
-    (client.email && client.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (client.contactName && client.contactName.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  useEffect(() => {
+    const filteredClients = allClients.filter(client =>
+      client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.cnpj.includes(searchQuery)
+    );
+    setClients(filteredClients);
+  }, [searchQuery, allClients]);
 
-  const handleAddNewClient = () => {
-    setEditingClient(null);
-    form.reset({
-      name: '',
-      cnpj: '',
-      email: '',
-      phone: '',
-      address: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      contactName: '',
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
+    setNewClientData({ ...newClientData, [field]: e.target.value });
+  };
+
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, field: string) => {
+    setEditClientData({ ...editClientData, [field]: e.target.value });
+  };
+
+  const handleAddClient = () => {
+    const newClient: Client = {
+      id: Date.now().toString(),
+      name: newClientData.name || 'New Client', // Ensure name is always provided
+      cnpj: newClientData.cnpj || '',
+      email: newClientData.email,
+      phone: newClientData.phone,
+      address: newClientData.address,
+      city: newClientData.city,
+      state: newClientData.state,
+      zipCode: newClientData.zipCode,
+      contactName: newClientData.contactName,
+      active: true,
+      createdAt: new Date().toISOString(),
+    };
+
+    addClient(newClient);
+    setNewClientData({});
+    setOpen(false);
+    toast({
+      title: "Cliente adicionado",
+      description: "O cliente foi adicionado com sucesso.",
     });
-    setIsOpenDialog(true);
   };
 
   const handleEditClient = (client: Client) => {
-    setEditingClient(client);
-    form.reset({
-      name: client.name,
-      cnpj: client.cnpj,
-      email: client.email || '',
-      phone: client.phone || '',
-      address: client.address || '',
-      city: client.city || '',
-      state: client.state || '',
-      zipCode: client.zipCode || '',
-      contactName: client.contactName || '',
-    });
-    setIsOpenDialog(true);
+    setEditClientId(client.id);
+    setEditClientData(client);
+  };
+
+  const handleUpdateClient = () => {
+    if (editClientId) {
+      updateClient(editClientId, editClientData);
+      setEditClientId(null);
+      setEditClientData({});
+      toast({
+        title: "Cliente atualizado",
+        description: "As informações do cliente foram atualizadas com sucesso.",
+      });
+    }
   };
 
   const handleRemoveClient = (id: string) => {
     removeClient(id);
     toast({
       title: "Cliente removido",
-      description: "O cliente foi removido com sucesso",
+      description: "O cliente foi removido com sucesso.",
     });
   };
 
-  const handleSetActive = (client: Client) => {
+  const handleSetActiveClient = (client: Client) => {
     setActiveClient(client);
-    toast({
-      title: "Cliente ativo alterado",
-      description: `${client.name} agora é o cliente ativo`,
-    });
     navigate('/dashboard');
   };
 
-  const onSubmit = (data: FormValues) => {
-    if (editingClient) {
-      updateClient(editingClient.id, data);
-      toast({
-        title: "Cliente atualizado",
-        description: "As informações do cliente foram atualizadas com sucesso",
-      });
-    } else {
-      const newClient: Client = {
-        id: Date.now().toString(),
-        ...data,
-        active: true,
-        createdAt: new Date().toISOString(),
-      };
-      addClient(newClient);
-      toast({
-        title: "Cliente adicionado",
-        description: "O novo cliente foi adicionado com sucesso",
-      });
-    }
-    setIsOpenDialog(false);
-  };
-
   return (
-    <div className="min-h-screen bg-background">
-      <ActiveClientHeader />
-      <div className="container mx-auto p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Gerenciamento de Clientes</h1>
-            <p className="text-muted-foreground mt-1">
-              Cadastre e gerencie seus clientes para recuperação de créditos tributários
-            </p>
-          </div>
-          <div className="mt-4 sm:mt-0 w-full sm:w-auto flex flex-col sm:flex-row gap-2">
-            <div className="relative w-full sm:w-auto">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Buscar clientes..."
-                className="pl-9 w-full"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Button onClick={handleAddNewClient}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Novo Cliente
+    <div className="container py-8 max-w-7xl mx-auto">
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Clientes</h1>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="primary">
+              <Plus className="w-4 h-4 mr-2" />
+              Adicionar Cliente
             </Button>
-          </div>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Adicionar Cliente</DialogTitle>
+              <DialogDescription>
+                Adicione um novo cliente à sua lista.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Nome
+                </Label>
+                <Input
+                  type="text"
+                  id="name"
+                  value={newClientData.name || ''}
+                  onChange={(e) => handleInputChange(e, 'name')}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="cnpj" className="text-right">
+                  CNPJ
+                </Label>
+                <Input
+                  type="text"
+                  id="cnpj"
+                  value={newClientData.cnpj || ''}
+                  onChange={(e) => handleInputChange(e, 'cnpj')}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Email
+                </Label>
+                <Input
+                  type="email"
+                  id="email"
+                  value={newClientData.email || ''}
+                  onChange={(e) => handleInputChange(e, 'email')}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="phone" className="text-right">
+                  Telefone
+                </Label>
+                <Input
+                  type="tel"
+                  id="phone"
+                  value={newClientData.phone || ''}
+                  onChange={(e) => handleInputChange(e, 'phone')}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="address" className="text-right">
+                  Endereço
+                </Label>
+                <Input
+                  type="text"
+                  id="address"
+                  value={newClientData.address || ''}
+                  onChange={(e) => handleInputChange(e, 'address')}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="city" className="text-right">
+                  Cidade
+                </Label>
+                <Input
+                  type="text"
+                  id="city"
+                  value={newClientData.city || ''}
+                  onChange={(e) => handleInputChange(e, 'city')}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="state" className="text-right">
+                  Estado
+                </Label>
+                <Input
+                  type="text"
+                  id="state"
+                  value={newClientData.state || ''}
+                  onChange={(e) => handleInputChange(e, 'state')}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="zipCode" className="text-right">
+                  CEP
+                </Label>
+                <Input
+                  type="text"
+                  id="zipCode"
+                  value={newClientData.zipCode || ''}
+                  onChange={(e) => handleInputChange(e, 'zipCode')}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="contactName" className="text-right">
+                  Contato
+                </Label>
+                <Input
+                  type="text"
+                  id="contactName"
+                  value={newClientData.contactName || ''}
+                  onChange={(e) => handleInputChange(e, 'contactName')}
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" onClick={handleAddClient}>
+                Adicionar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="mb-6 flex items-center space-x-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Buscar cliente..."
+            className="pl-9 pr-4 py-2 text-sm"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
 
-        <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
-          <div className="flex flex-col sm:flex-row justify-between p-4 border-b">
-            <div className="text-sm text-muted-foreground mb-2 sm:mb-0">
-              {filteredClients.length} {filteredClients.length === 1 ? 'cliente' : 'clientes'} encontrados
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm">
-                <Filter className="mr-2 h-4 w-4" />
-                Filtrar
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className={cn(
+                "w-[280px] justify-start text-left font-normal",
+                !date && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date?.from ? (
+                date.to ? (
+                  <>
+                    {format(date.from, "dd MMM yyyy", { locale: enUS })} -{" "}
+                    {format(date.to, "dd MMM yyyy", { locale: enUS })}
+                  </>
+                ) : (
+                  format(date.from, "dd MMM yyyy", { locale: enUS })
+                )
+              ) : (
+                <span>Pick a date</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="center">
+            <Calendar
+              mode="range"
+              defaultMonth={date?.from}
+              selected={date}
+              onSelect={setDate}
+              numberOfMonths={2}
+              pagedNavigation
+              locale={enUS}
+              className="border-0 rounded-md"
+              components={{
+                HeadCell: ({ children, ...props }) => (
+                  <th className="h-10 w-10 text-center [&[data-state=selected]]:bg-accent" {...props}>
+                    <span className="text-muted-foreground">{children}</span>
+                  </th>
+                ),
+                Day: ({ children, ...props }) => (
+                  <td className="p-0">
+                    <Button
+                      variant="ghost"
+                      className="h-10 w-10 p-0 font-normal text-muted-foreground [&:has([data-state=selected])]:bg-accent [&:has([data-state=selected])]:text-accent-foreground"
+                      {...props}
+                    >
+                      <span>{children}</span>
+                    </Button>
+                  </td>
+                ),
+                // Caption: ({ children }) => <div className="text-center">{children}</div>,
+              }}
+            />
+            <Separator />
+            <CardFooter className="justify-between space-x-2">
+              <Button variant="outline" size="sm" className="h-8" onClick={() => setDate(undefined)}>
+                Limpar
               </Button>
-              <Button variant="outline" size="sm">
-                <Download className="mr-2 h-4 w-4" />
-                Exportar
-              </Button>
-              <Button variant="outline" size="sm">
-                <Upload className="mr-2 h-4 w-4" />
-                Importar
-              </Button>
-            </div>
-          </div>
+              <PopoverClose>
+                <Button size="sm" className="h-8">
+                  OK
+                </Button>
+              </PopoverClose>
+            </CardFooter>
+          </PopoverContent>
+        </Popover>
+      </div>
 
-          <div className="overflow-x-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle>Lista de Clientes</CardTitle>
+          <CardDescription>Gerencie seus clientes e suas informações.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[250px]">
-                    <div className="flex items-center space-x-1">
-                      <span>Nome</span>
-                      <ArrowUpDown className="h-3 w-3" />
-                    </div>
-                  </TableHead>
+                  <TableHead>Nome</TableHead>
                   <TableHead>CNPJ</TableHead>
-                  <TableHead className="hidden md:table-cell">Contato</TableHead>
-                  <TableHead className="hidden lg:table-cell">Email</TableHead>
-                  <TableHead className="hidden lg:table-cell">Cidade/UF</TableHead>
-                  <TableHead className="w-[100px] text-right">Ações</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Telefone</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredClients.length > 0 ? (
-                  filteredClients.map((client) => (
-                    <TableRow key={client.id}>
-                      <TableCell className="font-medium">
-                        <div className="flex items-center">
-                          <Building className="h-4 w-4 mr-2 text-muted-foreground" />
-                          {client.name}
-                        </div>
-                      </TableCell>
-                      <TableCell>{client.cnpj}</TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {client.contactName || '-'}
-                      </TableCell>
-                      <TableCell className="hidden lg:table-cell">
-                        {client.email || '-'}
-                      </TableCell>
-                      <TableCell className="hidden lg:table-cell">
-                        {client.city && client.state ? `${client.city}/${client.state}` : '-'}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <span className="sr-only">Abrir menu</span>
-                              <MoreHorizontal className="h-4 w-4" />
+                {clients.map((client) => (
+                  <TableRow key={client.id}>
+                    <TableCell className="font-medium">{client.name}</TableCell>
+                    <TableCell>{client.cnpj}</TableCell>
+                    <TableCell>{client.email}</TableCell>
+                    <TableCell>{client.phone}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="secondary" size="sm" onClick={() => handleSetActiveClient(client)}>
+                        Acessar
+                      </Button>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <Edit className="w-4 h-4 mr-2" />
+                            Editar
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Editar Cliente</DialogTitle>
+                            <DialogDescription>
+                              Edite as informações do cliente.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="name" className="text-right">
+                                Nome
+                              </Label>
+                              <Input
+                                type="text"
+                                id="name"
+                                value={editClientData.name || ''}
+                                onChange={(e) => handleEditInputChange(e, 'name')}
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="cnpj" className="text-right">
+                                CNPJ
+                              </Label>
+                              <Input
+                                type="text"
+                                id="cnpj"
+                                value={editClientData.cnpj || ''}
+                                onChange={(e) => handleEditInputChange(e, 'cnpj')}
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="email" className="text-right">
+                                Email
+                              </Label>
+                              <Input
+                                type="email"
+                                id="email"
+                                value={editClientData.email || ''}
+                                onChange={(e) => handleEditInputChange(e, 'email')}
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="phone" className="text-right">
+                                Telefone
+                              </Label>
+                              <Input
+                                type="tel"
+                                id="phone"
+                                value={editClientData.phone || ''}
+                                onChange={(e) => handleEditInputChange(e, 'phone')}
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="address" className="text-right">
+                                Endereço
+                              </Label>
+                              <Input
+                                type="text"
+                                id="address"
+                                value={editClientData.address || ''}
+                                onChange={(e) => handleEditInputChange(e, 'address')}
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="city" className="text-right">
+                                Cidade
+                              </Label>
+                              <Input
+                                type="text"
+                                id="city"
+                                value={editClientData.city || ''}
+                                onChange={(e) => handleEditInputChange(e, 'city')}
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="state" className="text-right">
+                                Estado
+                              </Label>
+                              <Input
+                                type="text"
+                                id="state"
+                                value={editClientData.state || ''}
+                                onChange={(e) => handleEditInputChange(e, 'state')}
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="zipCode" className="text-right">
+                                CEP
+                              </Label>
+                              <Input
+                                type="text"
+                                id="zipCode"
+                                value={editClientData.zipCode || ''}
+                                onChange={(e) => handleEditInputChange(e, 'zipCode')}
+                                className="col-span-3"
+                              />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="contactName" className="text-right">
+                                Contato
+                              </Label>
+                              <Input
+                                type="text"
+                                id="contactName"
+                                value={editClientData.contactName || ''}
+                                onChange={(e) => handleEditInputChange(e, 'contactName')}
+                                className="col-span-3"
+                              />
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <Button type="button" onClick={handleUpdateClient}>
+                              Atualizar
                             </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleSetActive(client)}>
-                              <UserCheck className="mr-2 h-4 w-4" />
-                              <span>Tornar Ativo</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleEditClient(client)}>
-                              <Edit2 className="mr-2 h-4 w-4" />
-                              <span>Editar</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => handleRemoveClient(client.id)}
-                              className="text-destructive focus:text-destructive"
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              <span>Remover</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
-                      Nenhum cliente encontrado.
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                      <Button variant="destructive" size="sm" onClick={() => handleRemoveClient(client.id)}>
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Remover
+                      </Button>
                     </TableCell>
                   </TableRow>
-                )}
+                ))}
               </TableBody>
             </Table>
-          </div>
-        </div>
-      </div>
-
-      <Dialog open={isOpenDialog} onOpenChange={setIsOpenDialog}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>
-              {editingClient ? 'Editar Cliente' : 'Adicionar Novo Cliente'}
-            </DialogTitle>
-            <DialogDescription>
-              Preencha os dados do cliente abaixo. Os campos marcados com * são obrigatórios.
-            </DialogDescription>
-          </DialogHeader>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome da Empresa *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nome da empresa" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="cnpj"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>CNPJ *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="XX.XXX.XXX/XXXX-XX" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="contactName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome do Contato</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nome do contato" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="email@empresa.com.br" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Telefone</FormLabel>
-                      <FormControl>
-                        <Input placeholder="(XX) XXXXX-XXXX" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Endereço</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Endereço" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cidade</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Cidade" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="state"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>UF</FormLabel>
-                      <FormControl>
-                        <Input placeholder="UF" maxLength={2} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="zipCode"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormLabel>CEP</FormLabel>
-                      <FormControl>
-                        <Input placeholder="XXXXX-XXX" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <DialogFooter>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => setIsOpenDialog(false)}
-                >
-                  Cancelar
-                </Button>
-                <Button type="submit">
-                  {editingClient ? 'Atualizar' : 'Adicionar'} Cliente
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+          </ScrollArea>
+        </CardContent>
+      </Card>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,7 +13,7 @@ import {
   ChevronRight, User, FileBarChart2, Search,
   ChevronDown, PanelLeftClose, PanelLeftOpen,
   Database, HelpCircle, Inbox, CreditCard,
-  ShieldAlert, Sparkles
+  ShieldAlert, Sparkles, X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
