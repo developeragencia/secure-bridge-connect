@@ -1,3 +1,4 @@
+
 import {
   BarChart3, Users, FileText, Settings, Globe, ShieldAlert, CreditCard, HelpCircle,
   Building, UserCircle, Receipt, FileBarChart2, Landmark, PercentCircle,
@@ -23,10 +24,15 @@ export const tabConfigurations: Record<string, TabConfig> = {
     description: 'Gerenciar usuários do sistema, permissões e acessos.',
     icon: Users,
   },
-  reports: {
-    title: 'Relatórios',
+  content_reports: {
+    title: 'Relatórios de Conteúdo',
     description: 'Acesso aos relatórios gerados pelo sistema.',
     icon: FileText,
+  },
+  fiscal_reports: {
+    title: 'Relatórios Fiscais',
+    description: 'Acesso aos relatórios fiscais gerados pelo sistema.',
+    icon: FileStack,
   },
   settings: {
     title: 'Configurações',

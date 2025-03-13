@@ -106,7 +106,8 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {activeTab === 'calculations' && <IRRFCalculations />}
             {activeTab === 'tax_calculator' && <TaxCreditCalculator />}
             {activeTab === 'imports' && <DataImports />}
-            {activeTab === 'reports' && <FiscalReports />}
+            {activeTab === 'content_reports' && <AdminReports />}
+            {activeTab === 'fiscal_reports' && <FiscalReports />}
             {activeTab === 'proposals' && <CommercialProposals />}
             
             {/* New tabs */}

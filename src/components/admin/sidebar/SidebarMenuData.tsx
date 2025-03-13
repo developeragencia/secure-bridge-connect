@@ -41,7 +41,7 @@ export const getMenuSections = (): SidebarSection[] => {
         { id: 'calculations', label: 'Cálculos IRRF', icon: <PercentCircle className="h-4 w-4" /> },
         { id: 'tax_calculator', label: 'Calculadora de Crédito', icon: <Calculator className="h-4 w-4" /> },
         { id: 'imports', label: 'Importação de Dados', icon: <FileSpreadsheet className="h-4 w-4" /> },
-        { id: 'reports', label: 'Relatórios Fiscais', icon: <FileStack className="h-4 w-4" /> },
+        { id: 'fiscal_reports', label: 'Relatórios Fiscais', icon: <FileStack className="h-4 w-4" /> },
         { id: 'proposals', label: 'Propostas Comerciais', icon: <ClipboardList className="h-4 w-4" /> }
       ]
     },
@@ -69,7 +69,7 @@ export const getMenuSections = (): SidebarSection[] => {
       title: 'Conteúdo',
       items: [
         { id: 'site', label: 'Editor do Site', icon: <Globe className="h-4 w-4" /> },
-        { id: 'reports', label: 'Relatórios', icon: <FileText className="h-4 w-4" /> }
+        { id: 'content_reports', label: 'Relatórios', icon: <FileText className="h-4 w-4" /> }
       ]
     },
     {
