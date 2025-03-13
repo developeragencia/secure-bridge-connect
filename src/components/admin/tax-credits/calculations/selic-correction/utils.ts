@@ -21,9 +21,11 @@ export const generateMockSelicRates = (): SelicRate[] => {
   // Create mock selic rates
   const mockRates = Array.from({ length: 12 }, (_, i) => {
     const date = subMonths(new Date(), i);
+    const dateStr = date.toISOString();
     return {
-      month: format(date, 'MMMM', { locale: ptBR }),
+      month: date.getMonth() + 1, // Convert to number (1-12)
       year: date.getFullYear(),
+      date: dateStr,
       rate: 0.75 + (Math.random() * 0.5),
       accumulated: 0, // Will be calculated
     };

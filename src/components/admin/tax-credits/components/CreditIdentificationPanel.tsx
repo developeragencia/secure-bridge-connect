@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,6 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { useClientStore } from '@/hooks/useClientStore';
 
-// Mock data for identified tax credits
 const MOCK_CREDITS = [
   {
     id: 'CR-1001',
@@ -111,7 +109,6 @@ const CreditIdentificationPanel = () => {
   const { activeClient } = useClientStore();
   const { toast } = useToast();
 
-  // Filter credits based on search query
   const filteredCredits = MOCK_CREDITS.filter(credit => 
     credit.supplier.toLowerCase().includes(searchQuery.toLowerCase()) ||
     credit.cnpj.includes(searchQuery) ||
@@ -131,7 +128,6 @@ const CreditIdentificationPanel = () => {
     setIsAnalyzing(true);
     setAnalysisProgress(0);
     
-    // Simulate progress
     const interval = setInterval(() => {
       setAnalysisProgress(prev => {
         if (prev >= 100) {
@@ -152,7 +148,7 @@ const CreditIdentificationPanel = () => {
     toast({
       title: "Crédito aprovado",
       description: `O crédito ${creditId} foi aprovado e será incluído nos relatórios.`,
-      variant: "success"
+      variant: "default"
     });
   };
 

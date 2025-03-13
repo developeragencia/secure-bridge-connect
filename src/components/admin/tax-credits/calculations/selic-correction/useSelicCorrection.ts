@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { format, subMonths, isAfter, parseISO, differenceInMonths } from 'date-fns';
@@ -19,22 +18,15 @@ export const useSelicCorrection = () => {
   const [lastUpdate, setLastUpdate] = useState<string | null>(null);
   const [apiConnectionStatus, setApiConnectionStatus] = useState<'connected' | 'error' | 'idle'>('idle');
 
-  // Function to fetch Selic rates from Central Bank API
   const fetchSelicRates = useCallback(async () => {
     setLoadingRates(true);
     setApiConnectionStatus('idle');
     
     try {
-      // This would be the actual API call in production
-      // const response = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?formato=json');
-      // const data = await response.json();
-      
-      // For demo purposes, we'll use mock data
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API delay
       
       const mockData = generateMockSelicRates(); // Generate mock data without arguments
       
-      // Process and format the data to match our SelicRate type
       const processedRates: SelicRate[] = mockData.map((item, index) => ({
         month: new Date(item.date).getMonth() + 1,
         year: new Date(item.date).getFullYear(),
@@ -56,7 +48,6 @@ export const useSelicCorrection = () => {
       console.error("Erro ao buscar taxas Selic:", error);
       setApiConnectionStatus('error');
       
-      // Fallback to mock data if API fails
       const mockData = generateMockSelicRates(); // Generate mock data without arguments
       const processedRates: SelicRate[] = mockData.map((item, index) => ({
         month: new Date(item.date).getMonth() + 1,
@@ -79,20 +70,16 @@ export const useSelicCorrection = () => {
     }
   }, [toast]);
 
-  // Load rates on initial mount
   useEffect(() => {
-    // Check if we have any rates data
     if (selicRates.length === 0) {
       fetchSelicRates();
     }
   }, [fetchSelicRates, selicRates.length]);
 
-  // Function to refresh rates manually
   const refreshSelicRates = () => {
     fetchSelicRates();
   };
-  
-  // Calculate the monetary correction for a tax credit
+
   const calculateCorrection = () => {
     if (!creditValue || !creditDate) {
       toast({
@@ -124,7 +111,6 @@ export const useSelicCorrection = () => {
     
     let date: Date;
     try {
-      // Handle different date formats (DD/MM/YYYY or YYYY-MM-DD)
       if (creditDate.includes('/')) {
         const dateParts = creditDate.split('/');
         date = new Date(
@@ -158,7 +144,6 @@ export const useSelicCorrection = () => {
       return;
     }
     
-    // Calculate months difference
     const diffMonths = differenceInMonths(today, date);
     if (diffMonths <= 0) {
       toast({
@@ -169,17 +154,15 @@ export const useSelicCorrection = () => {
       return;
     }
     
-    // Find the accumulated rate for the period
     let accumulatedRate: number;
     if (diffMonths <= selicRates.length) {
       accumulatedRate = selicRates[diffMonths - 1]?.accumulated || 0;
     } else {
-      // If we need more historical data than we have, use the max we have
       accumulatedRate = selicRates[selicRates.length - 1].accumulated;
       toast({
         title: "Alerta de Período",
         description: `Só temos dados de ${selicRates.length} meses, usando taxa acumulada disponível.`,
-        variant: "warning",
+        variant: "destructive",
       });
     }
     
@@ -204,11 +187,10 @@ export const useSelicCorrection = () => {
     toast({
       title: "Correção calculada com sucesso",
       description: `Valor original: ${formatCurrency(value)} → Valor corrigido: ${formatCurrency(correctedValue)}`,
-      variant: "success",
+      variant: "default",
     });
   };
 
-  // Function to apply a correction to a list of credits automatically
   const applyBulkCorrection = (credits: any[]) => {
     if (!credits || credits.length === 0) {
       toast({
@@ -243,7 +225,6 @@ export const useSelicCorrection = () => {
           continue;
         }
         
-        // Find the accumulated rate
         const accumulatedRate = diffMonths <= selicRates.length
           ? selicRates[diffMonths - 1]?.accumulated || 0
           : selicRates[selicRates.length - 1].accumulated;
@@ -278,7 +259,7 @@ export const useSelicCorrection = () => {
       toast({
         title: "Correções calculadas",
         description: `${successCount} créditos corrigidos com sucesso. ${errorCount > 0 ? `${errorCount} erros.` : ''}`,
-        variant: successCount > 0 ? "success" : "destructive",
+        variant: errorCount > 0 ? "destructive" : "default",
       });
       
       return newCorrections;
@@ -298,7 +279,7 @@ export const useSelicCorrection = () => {
       toast({
         title: "Nenhuma correção para exportar",
         description: "Calcule algumas correções antes de exportar.",
-        variant: "warning",
+        variant: "destructive",
       });
       return;
     }
@@ -308,17 +289,15 @@ export const useSelicCorrection = () => {
       description: "O histórico de correções está sendo exportado.",
     });
     
-    // In a real scenario, we would generate a CSV/Excel file here
     setTimeout(() => {
       toast({
         title: "Exportação concluída",
         description: "O arquivo foi gerado e está disponível para download.",
-        variant: "success",
+        variant: "default",
       });
     }, 1500);
   };
 
-  // Helper function to format currency
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
