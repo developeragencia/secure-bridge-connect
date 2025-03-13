@@ -32,11 +32,11 @@ export function useRealtimeUpdates({
       .on(
         'postgres_changes',
         { 
-          event: '*', // Listen to all events and filter them in the callback
+          event: events as any, 
           schema: 'public', 
           table: tableName 
         },
-        (payload) => {
+        (payload: any) => {
           console.log(`Realtime update for ${tableName}:`, payload);
           
           // Handle different events

@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface RecoveryPaginationProps {
-  currentPage: number; // Added currentPage
-  totalPages: number; // Added totalPages
-  onPageChange: (page: number) => void; // Added onPageChange
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
 const RecoveryPagination: React.FC<RecoveryPaginationProps> = ({ 
@@ -25,6 +25,7 @@ const RecoveryPagination: React.FC<RecoveryPaginationProps> = ({
           size="sm" 
           onClick={() => onPageChange(currentPage - 1)} 
           disabled={currentPage <= 1}
+          className="flex items-center"
         >
           <ChevronLeft className="h-4 w-4 mr-1" />
           Anterior
@@ -34,6 +35,7 @@ const RecoveryPagination: React.FC<RecoveryPaginationProps> = ({
           size="sm" 
           onClick={() => onPageChange(currentPage + 1)} 
           disabled={currentPage >= totalPages}
+          className="flex items-center"
         >
           Próximo
           <ChevronRight className="h-4 w-4 ml-1" />

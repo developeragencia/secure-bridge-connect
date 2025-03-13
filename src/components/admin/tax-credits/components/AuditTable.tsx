@@ -1,22 +1,27 @@
 
 import React from 'react';
-import { Download, FileSearch } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Audit } from '@/types/audit';
+import AuditActionButtons from './AuditActionButtons';
 
 interface AuditTableProps {
   audits: Audit[];
   isLoading: boolean;
   onViewDetails: (auditId: string) => void;
   onDownloadDocuments: (auditId: string) => void;
+  onEdit?: (auditId: string) => void;
+  onDelete?: (auditId: string) => void;
+  onApprove?: (auditId: string) => void;
 }
 
 const AuditTable: React.FC<AuditTableProps> = ({ 
   audits, 
   isLoading,
   onViewDetails,
-  onDownloadDocuments
+  onDownloadDocuments,
+  onEdit = () => {},
+  onDelete = () => {},
+  onApprove = () => {}
 }) => {
   return (
     <div className="overflow-x-auto">
@@ -62,26 +67,14 @@ const AuditTable: React.FC<AuditTableProps> = ({
                   <StatusBadge status={audit.status} />
                 </td>
                 <td className="py-3 px-4">
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      onClick={() => onViewDetails(audit.id)}
-                    >
-                      <FileSearch className="h-4 w-4" />
-                      <span className="sr-only">Ver detalhes</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      onClick={() => onDownloadDocuments(audit.id)}
-                    >
-                      <Download className="h-4 w-4" />
-                      <span className="sr-only">Baixar documentos</span>
-                    </Button>
-                  </div>
+                  <AuditActionButtons 
+                    audit={audit}
+                    onViewDetails={onViewDetails}
+                    onDownloadDocuments={onDownloadDocuments}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onApprove={onApprove}
+                  />
                 </td>
               </tr>
             ))

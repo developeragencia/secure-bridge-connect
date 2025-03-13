@@ -1,22 +1,28 @@
 
 import React from 'react';
-import { FileSearch, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RecoveryProcess } from '@/types/recovery';
+import RecoveryActionButtons from './RecoveryActionButtons';
 
 interface RecoveryTableProps {
   processes: RecoveryProcess[];
   isLoading: boolean;
   onViewDetails: (processId: string) => void;
   onGenerateReport: (processId: string) => void;
+  onEdit: (processId: string) => void;
+  onDelete: (processId: string) => void;
+  onApprove: (processId: string) => void;
 }
 
 const RecoveryTable: React.FC<RecoveryTableProps> = ({ 
   processes, 
   isLoading,
   onViewDetails,
-  onGenerateReport
+  onGenerateReport,
+  onEdit,
+  onDelete,
+  onApprove
 }) => {
   // Function to format currency values
   const formatCurrency = (value: number) => {
@@ -70,26 +76,13 @@ const RecoveryTable: React.FC<RecoveryTableProps> = ({
                   <StatusBadge status={process.status} />
                 </td>
                 <td className="py-3 px-4">
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      onClick={() => onViewDetails(process.id)}
-                    >
-                      <FileSearch className="h-4 w-4" />
-                      <span className="sr-only">Ver detalhes</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      onClick={() => onGenerateReport(process.id)}
-                    >
-                      <FileText className="h-4 w-4" />
-                      <span className="sr-only">Gerar relatório</span>
-                    </Button>
-                  </div>
+                  <RecoveryActionButtons 
+                    process={process}
+                    onViewDetails={onViewDetails}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onApprove={onApprove}
+                  />
                 </td>
               </tr>
             ))
