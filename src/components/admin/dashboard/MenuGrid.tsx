@@ -29,10 +29,19 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     event.stopPropagation();
     event.preventDefault();
     
+    // Add console.log to debug navigation
+    console.log('Navigating to:', item.route, 'isExternal:', item.isExternal);
+    
     if (item.isExternal) {
       window.open(item.route, '_blank');
     } else {
-      navigate(`/admin/${item.route}`);
+      // Check if we need to add /admin prefix or not
+      if (item.route === 'dashboard') {
+        // For dashboard, navigate to the admin root
+        navigate('/admin');
+      } else {
+        navigate(`/admin/${item.route}`);
+      }
     }
   };
 

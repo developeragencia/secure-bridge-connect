@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -15,6 +16,15 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   
   const mainMenuItems = [
+    {
+      id: 'dashboard',
+      title: 'Dashboard',
+      description: 'Visualize o painel principal do sistema',
+      icon: <Layout className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-indigo-500 via-indigo-600 to-indigo-700 text-white',
+      route: 'dashboard',
+      highlight: true
+    },
     {
       id: 'site',
       title: 'Editor do Site',
