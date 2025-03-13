@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -46,17 +45,14 @@ const Admin = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      // Check for Supabase session
       const { data } = await supabase.auth.getSession();
       
-      // Check for our demo auth (fallback)
       const adminAuth = localStorage.getItem('adminAuth');
       let adminAuthData = null;
       
       if (adminAuth) {
         try {
           adminAuthData = JSON.parse(adminAuth);
-          // Check if auth is expired (24 hours)
           const now = Date.now();
           const authTime = adminAuthData.timestamp || 0;
           if (now - authTime > 24 * 60 * 60 * 1000) {
@@ -82,7 +78,6 @@ const Admin = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === 'SIGNED_OUT') {
-          // Also clear our fallback auth
           localStorage.removeItem('adminAuth');
           navigate('/login');
         } else if (session) {
@@ -97,17 +92,12 @@ const Admin = () => {
   }, [navigate]);
 
   const handleLogout = async () => {
-    // Clear our fallback auth
     localStorage.removeItem('adminAuth');
-    
-    // Also sign out from Supabase if logged in
     await supabase.auth.signOut();
-    
     toast({
       title: "Sessão encerrada",
       description: "Você foi desconectado com sucesso.",
     });
-    
     navigate('/login');
   };
 
@@ -204,38 +194,37 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground overflow-hidden">
-      {/* Header */}
       <motion.header 
         className="bg-card border-b border-border/40 shadow-sm z-10"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="container flex items-center justify-between p-3">
-          <div className="flex items-center gap-4">
+        <div className="container flex items-center justify-between p-2 sm:p-3">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={toggleSidebar} 
-              className="rounded-full h-9 w-9 hover:bg-primary/10"
+              className="rounded-full h-8 w-8 sm:h-9 sm:w-9 hover:bg-primary/10 md:flex hidden"
             >
               {sidebarOpen ? 
-                <PanelLeftClose className="h-5 w-5 text-primary" /> : 
-                <PanelLeftOpen className="h-5 w-5 text-primary" />
+                <PanelLeftClose className="h-4 w-4 sm:h-5 sm:w-5 text-primary" /> : 
+                <PanelLeftOpen className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               }
             </Button>
             <div className="flex items-center space-x-2">
-              <div className="bg-primary/10 p-2 rounded-md">
+              <div className="bg-primary/10 p-1.5 sm:p-2 rounded-md">
                 <AnimatedLogo size="sm" showText={false} />
               </div>
               <div>
-                <h1 className="text-lg font-semibold leading-none">Painel Administrativo</h1>
-                <p className="text-xs text-muted-foreground mt-1">Sistemas Claudio Figueiredo</p>
+                <h1 className="text-base sm:text-lg font-semibold leading-none">Painel Admin</h1>
+                <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">Sistemas Claudio</p>
               </div>
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <div className="relative max-w-xs hidden md:block">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
               <input
@@ -251,11 +240,11 @@ const Admin = () => {
               variant="ghost" 
               size="icon" 
               onClick={toggleDarkMode} 
-              className="rounded-full h-9 w-9 hover:bg-primary/10"
+              className="rounded-full h-8 w-8 sm:h-9 sm:w-9 hover:bg-primary/10"
             >
               {darkMode ? 
-                <Sun className="h-5 w-5 text-amber-400" /> : 
-                <Moon className="h-5 w-5" />
+                <Sun className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" /> : 
+                <Moon className="h-4 w-4 sm:h-5 sm:w-5" />
               }
             </Button>
             
@@ -263,11 +252,11 @@ const Admin = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="rounded-full h-9 w-9 hover:bg-primary/10"
+                className="rounded-full h-8 w-8 sm:h-9 sm:w-9 hover:bg-primary/10"
               >
-                <BellRing className="h-5 w-5" />
+                <BellRing className="h-4 w-4 sm:h-5 sm:w-5" />
                 {hasNotifications && (
-                  <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-background animate-pulse"></span>
+                  <span className="absolute top-1 right-1 h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full bg-red-500 ring-2 ring-background animate-pulse"></span>
                 )}
               </Button>
             </div>
@@ -275,15 +264,15 @@ const Admin = () => {
             <div className="relative group">
               <Button 
                 variant="ghost" 
-                className="h-9 flex items-center gap-2 text-xs rounded-full px-3 hover:bg-primary/10"
+                className="h-8 sm:h-9 flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs rounded-full px-2 sm:px-3 hover:bg-primary/10"
               >
-                <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center text-primary ring-2 ring-background">
-                  <User className="h-4 w-4" />
+                <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-primary/20 flex items-center justify-center text-primary ring-2 ring-background">
+                  <User className="h-3 w-3 sm:h-4 sm:w-4" />
                 </div>
                 <span className="hidden sm:inline-block max-w-[120px] truncate font-medium">
                   {user?.email?.split('@')[0] || 'admin'}
                 </span>
-                <ChevronDown className="h-4 w-4 opacity-70" />
+                <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 opacity-70" />
               </Button>
               <div className="absolute right-0 mt-2 w-56 p-2 bg-card rounded-lg shadow-lg border border-border hidden group-hover:block z-20 animate-fade-in">
                 <div className="px-4 py-2 rounded-md hover:bg-secondary transition-colors">
@@ -306,9 +295,7 @@ const Admin = () => {
         </div>
       </motion.header>
       
-      {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
         <motion.aside 
           className={cn(
             "bg-sidebar transition-all duration-300 ease-in-out border-r border-border/40 overflow-hidden hidden md:block",
@@ -475,75 +462,73 @@ const Admin = () => {
           </div>
         </motion.aside>
         
-        {/* Mobile Nav */}
         <div className="md:hidden w-full border-b border-border sticky top-0 z-10 bg-card/95 backdrop-blur-sm">
           <div className="grid grid-cols-5 gap-1 p-1 w-full">
             <Button 
               variant={activeTab === 'dashboard' ? 'secondary' : 'ghost'} 
               size="sm"
               className={cn(
-                "flex flex-col items-center py-2 h-auto rounded-md",
+                "flex flex-col items-center py-1.5 h-auto rounded-md",
                 activeTab === 'dashboard' && "bg-primary/10 text-primary"
               )}
               onClick={() => setActiveTab('dashboard')}
             >
-              <BarChart3 className="h-4 w-4" />
-              <span className="text-xs mt-1">Dashboard</span>
+              <BarChart3 className="h-3.5 w-3.5" />
+              <span className="text-[10px] mt-0.5">Dashboard</span>
             </Button>
             <Button 
               variant={activeTab === 'users' ? 'secondary' : 'ghost'}
               size="sm"
               className={cn(
-                "flex flex-col items-center py-2 h-auto rounded-md",
+                "flex flex-col items-center py-1.5 h-auto rounded-md",
                 activeTab === 'users' && "bg-primary/10 text-primary"
               )}
               onClick={() => setActiveTab('users')}
             >
-              <Users className="h-4 w-4" />
-              <span className="text-xs mt-1">Usuários</span>
+              <Users className="h-3.5 w-3.5" />
+              <span className="text-[10px] mt-0.5">Usuários</span>
             </Button>
             <Button 
               variant={activeTab === 'reports' ? 'secondary' : 'ghost'}
               size="sm"
               className={cn(
-                "flex flex-col items-center py-2 h-auto rounded-md",
+                "flex flex-col items-center py-1.5 h-auto rounded-md",
                 activeTab === 'reports' && "bg-primary/10 text-primary"
               )}
               onClick={() => setActiveTab('reports')}
             >
-              <FileBarChart2 className="h-4 w-4" />
-              <span className="text-xs mt-1">Relatórios</span>
+              <FileBarChart2 className="h-3.5 w-3.5" />
+              <span className="text-[10px] mt-0.5">Relatórios</span>
             </Button>
             <Button 
               variant={activeTab === 'site' ? 'secondary' : 'ghost'}
               size="sm"
               className={cn(
-                "flex flex-col items-center py-2 h-auto rounded-md",
+                "flex flex-col items-center py-1.5 h-auto rounded-md",
                 activeTab === 'site' && "bg-primary/10 text-primary"
               )}
               onClick={() => setActiveTab('site')}
             >
-              <Globe className="h-4 w-4" />
-              <span className="text-xs mt-1">Site</span>
+              <Globe className="h-3.5 w-3.5" />
+              <span className="text-[10px] mt-0.5">Site</span>
             </Button>
             <Button 
               variant={activeTab === 'settings' ? 'secondary' : 'ghost'}
               size="sm"
               className={cn(
-                "flex flex-col items-center py-2 h-auto rounded-md",
+                "flex flex-col items-center py-1.5 h-auto rounded-md",
                 activeTab === 'settings' && "bg-primary/10 text-primary"
               )}
               onClick={() => setActiveTab('settings')}
             >
-              <Settings className="h-4 w-4" />
-              <span className="text-xs mt-1">Config</span>
+              <Settings className="h-3.5 w-3.5" />
+              <span className="text-[10px] mt-0.5">Config</span>
             </Button>
           </div>
         </div>
         
-        {/* Content */}
         <motion.main 
-          className="flex-1 overflow-auto p-6 bg-background"
+          className="flex-1 overflow-auto p-3 sm:p-4 md:p-6 bg-background"
           initial="hidden"
           animate="visible"
           variants={fadeInVariants}
@@ -551,7 +536,7 @@ const Admin = () => {
           <div className="max-w-7xl mx-auto">
             <motion.div 
               variants={childVariants}
-              className="mb-6 pb-4 border-b border-border/40"
+              className="mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-border/40"
             >
               {activeTab === 'dashboard' && (
                 <>

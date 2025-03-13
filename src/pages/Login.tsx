@@ -180,24 +180,24 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center overflow-hidden relative bg-gradient-to-br from-primary/5 to-secondary/10 dark:from-background dark:to-background/80">
+    <div className="min-h-screen flex items-center justify-center overflow-hidden relative bg-gradient-to-br from-primary/5 to-secondary/10 dark:from-background dark:to-background/80 px-4">
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       
       {/* Animated background shapes */}
       <div className="absolute pointer-events-none">
         <motion.div
-          className="absolute w-64 h-64 rounded-full bg-primary/10 -top-20 -right-20"
+          className="absolute w-48 sm:w-64 h-48 sm:h-64 rounded-full bg-primary/10 -top-20 -right-20"
           animate={{ scale: [1, 1.2, 1], rotate: [0, 45, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute w-72 h-72 rounded-full bg-secondary/10 -bottom-20 -left-20"
+          className="absolute w-56 sm:w-72 h-56 sm:h-72 rounded-full bg-secondary/10 -bottom-20 -left-20"
           animate={{ scale: [1, 1.3, 1], rotate: [0, -45, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         />
       </div>
       
-      <div className="absolute top-6 left-6 z-10">
+      <div className="absolute top-4 sm:top-6 left-4 sm:left-6 z-10">
         <motion.div
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -220,13 +220,13 @@ const Login = () => {
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.3 }}
             >
-              <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                <Shield className="h-7 w-7 text-primary" />
+              <div className="mx-auto w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-primary/10 flex items-center justify-center mb-2 sm:mb-3">
+                <Shield className="h-6 sm:h-7 w-6 sm:w-7 text-primary" />
               </div>
-              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 Acesso Administrativo
               </CardTitle>
-              <CardDescription className="text-muted-foreground">
+              <CardDescription className="text-sm text-muted-foreground">
                 Entre com suas credenciais para acessar o painel
               </CardDescription>
             </motion.div>
@@ -234,7 +234,7 @@ const Login = () => {
           <CardContent>
             <motion.form 
               onSubmit={handleLogin} 
-              className="space-y-4"
+              className="space-y-3 sm:space-y-4"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.4 }}
@@ -268,7 +268,7 @@ const Login = () => {
                 </div>
               </div>
               
-              {/* Remember Me Option */}
+              {/* Remember Me Option - Mobile Optimized */}
               <div className="flex items-center space-x-2">
                 <Switch 
                   id="remember-me" 
@@ -278,7 +278,7 @@ const Login = () => {
                 />
                 <Label 
                   htmlFor="remember-me" 
-                  className="text-sm cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-xs sm:text-sm cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Manter conectado
                 </Label>
@@ -286,7 +286,7 @@ const Login = () => {
               
               {error && (
                 <motion.div 
-                  className="text-sm text-destructive bg-destructive/10 p-3 rounded"
+                  className="text-xs sm:text-sm text-destructive bg-destructive/10 p-2 sm:p-3 rounded"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
@@ -310,7 +310,7 @@ const Login = () => {
                 )}
               </Button>
 
-              <div className="text-xs text-center text-muted-foreground">
+              <div className="text-[10px] sm:text-xs text-center text-muted-foreground">
                 <p>Email padrão: <span className="font-medium">admin@sistemasclaudio.com</span></p>
                 <p>Senha padrão: <span className="font-medium">admin123</span></p>
               </div>
@@ -318,7 +318,7 @@ const Login = () => {
           </CardContent>
           <CardFooter className="flex justify-center text-center">
             <motion.p 
-              className="text-xs text-muted-foreground"
+              className="text-[10px] sm:text-xs text-muted-foreground"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.7 }}
