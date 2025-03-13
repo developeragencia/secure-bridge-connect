@@ -53,7 +53,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     },
     hover: {
       scale: 1.05,
-      boxShadow: '0 10px 30px -15px rgba(0, 0, 0, 0.2)',
+      boxShadow: '0 10px 30px -15px rgba(0, 0, 0, 0.3)',
       transition: { duration: 0.3, ease: 'easeOut' }
     }
   };
@@ -70,7 +70,8 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
           key={item.id}
           className={cn(
             "relative overflow-hidden rounded-xl p-6 cursor-pointer",
-            "border group transition-all duration-300",
+            "border border-white/10 group transition-all duration-300",
+            "hover:shadow-xl hover:shadow-[var(--accent)]",
             item.color
           )}
           variants={itemVariants}
@@ -78,8 +79,16 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
           onClick={() => handleMenuClick(item)}
           layoutId={`menu-card-${item.id}`}
         >
-          {/* Gradiente de fundo */}
-          <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-white via-white/20 to-transparent" />
+          {/* Gradiente de fundo com transição melhorada */}
+          <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-white via-white/20 to-transparent gradient-shift" />
+          
+          {/* Rastro luminoso que aparece no hover */}
+          <motion.div 
+            className="absolute inset-0 opacity-0 bg-white/5 group-hover:opacity-20 transition-opacity duration-700"
+            initial={{ x: '-100%' }}
+            whileHover={{ x: '200%' }}
+            transition={{ duration: 1.5, ease: 'easeInOut' }}
+          />
           
           {/* Efeito de highlight */}
           {item.highlight && (
@@ -100,7 +109,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
           
           {/* Ícone do card com animação */}
           <motion.div 
-            className="h-14 w-14 rounded-lg bg-white/15 flex items-center justify-center mb-4 overflow-hidden"
+            className="h-14 w-14 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center mb-4 overflow-hidden"
             initial={{ rotate: 0 }}
             whileHover={{ rotate: [0, -5, 5, -5, 0], transition: { duration: 0.5 } }}
           >
@@ -113,12 +122,12 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
             </motion.div>
           </motion.div>
 
-          <h3 className="text-lg font-medium mb-2">{item.title}</h3>
-          <p className="text-sm opacity-80 mb-4">{item.description}</p>
+          <h3 className="text-lg font-medium mb-2 group-hover:text-white transition-colors duration-300">{item.title}</h3>
+          <p className="text-sm opacity-80 mb-4 group-hover:opacity-100 transition-opacity duration-300">{item.description}</p>
           
           {/* Ação de navegação com efeito hover */}
           <div className="flex items-center mt-auto text-sm font-medium">
-            <span>Acessar</span>
+            <span className="group-hover:text-white transition-colors duration-300">Acessar</span>
             {item.isExternal ? (
               <motion.div
                 initial={{ x: 0 }}

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -21,7 +20,7 @@ const AdminDashboard = () => {
       title: 'Editor do Site',
       description: 'Personalize a aparência e o conteúdo do seu site',
       icon: <Paintbrush className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-purple-600 to-indigo-700 text-white',
+      color: 'bg-gradient-to-br from-violet-600 via-violet-700 to-purple-800 text-white',
       route: 'site',
       highlight: true
     },
@@ -30,7 +29,7 @@ const AdminDashboard = () => {
       title: 'Gestão de Clientes',
       description: 'Cadastre e gerencie seus clientes',
       icon: <Building className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-blue-500 to-cyan-600 text-white',
+      color: 'bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 text-white',
       route: 'clients'
     },
     {
@@ -38,7 +37,7 @@ const AdminDashboard = () => {
       title: 'Créditos Tributários',
       description: 'Gerencie os créditos tributários dos clientes',
       icon: <CreditCard className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-emerald-500 to-green-600 text-white',
+      color: 'bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600 text-white',
       route: 'tax_credits'
     },
     {
@@ -46,7 +45,7 @@ const AdminDashboard = () => {
       title: 'Cálculos IRRF',
       description: 'Realize cálculos e simulações de IRRF',
       icon: <Calculator className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white',
+      color: 'bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600 text-white',
       route: 'calculations'
     },
     {
@@ -54,7 +53,7 @@ const AdminDashboard = () => {
       title: 'Relatórios Detalhados',
       description: 'Visualize relatórios detalhados sobre os créditos',
       icon: <LineChart className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-rose-500 to-red-600 text-white',
+      color: 'bg-gradient-to-br from-rose-400 via-rose-500 to-red-600 text-white',
       route: 'detailed_reports'
     },
     {
@@ -62,7 +61,7 @@ const AdminDashboard = () => {
       title: 'Usuários e Permissões',
       description: 'Gerencie usuários e suas permissões no sistema',
       icon: <Users className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-violet-500 to-purple-600 text-white',
+      color: 'bg-gradient-to-br from-fuchsia-400 via-fuchsia-500 to-purple-600 text-white',
       route: 'users'
     },
     {
@@ -70,7 +69,7 @@ const AdminDashboard = () => {
       title: 'Relatórios Fiscais',
       description: 'Acompanhe relatórios fiscais e tributários',
       icon: <BarChart className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-pink-500 to-rose-600 text-white',
+      color: 'bg-gradient-to-br from-pink-400 via-pink-500 to-rose-600 text-white',
       route: 'fiscal_reports'
     },
     {
@@ -78,7 +77,7 @@ const AdminDashboard = () => {
       title: 'Propostas Comerciais',
       description: 'Crie e gerencie propostas para clientes',
       icon: <FileType className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-indigo-500 to-blue-600 text-white',
+      color: 'bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 text-white',
       route: 'proposals'
     },
     {
@@ -86,7 +85,7 @@ const AdminDashboard = () => {
       title: 'Notificações',
       description: 'Configure e gerencie notificações do sistema',
       icon: <Mail className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-blue-400 to-cyan-500 text-white',
+      color: 'bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white',
       route: 'notifications'
     }
   ];
