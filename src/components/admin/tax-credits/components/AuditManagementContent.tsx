@@ -41,7 +41,7 @@ const AuditManagementContent: React.FC = () => {
     transitionType: 'fade-in',
   });
 
-  // Create wrapper functions to convert from audit to auditId
+  // Create wrapper functions to convert from auditId to audit
   const onViewDetails = (auditId: string) => {
     const audit = filteredAudits.find(a => a.id === auditId);
     if (audit) handleViewDetails(audit);

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import AnimatedLogo from '@/components/AnimatedLogo';
@@ -7,9 +6,11 @@ import { cn } from '@/lib/utils';
 import {
   Menu, BellRing, UserCircle, Sun, Moon,
   PanelLeftClose, PanelLeftOpen, User,
-  ChevronDown, Search, LogOut
+  ChevronDown, Search, LogOut, X
 } from 'lucide-react';
 import ActiveClientSelector from './ActiveClientSelector';
+import ActiveClientIndicator from './ActiveClientIndicator';
+import { useClientStore } from '@/hooks/useClientStore';
 
 interface AdminHeaderProps {
   toggleSidebar: () => void;
@@ -38,6 +39,8 @@ const AdminHeader = ({
   user,
   setActiveTab
 }: AdminHeaderProps) => {
+  const { activeClient } = useClientStore();
+  
   return (
     <motion.header 
       className="bg-card border-b border-border/40 shadow-sm z-20 sticky top-0"
@@ -80,7 +83,7 @@ const AdminHeader = ({
           
           {/* Add ActiveClientSelector */}
           <div className="hidden md:block ml-2">
-            <ActiveClientSelector />
+            {!activeClient ? <ActiveClientSelector /> : <ActiveClientIndicator />}
           </div>
         </div>
         
@@ -154,6 +157,26 @@ const AdminHeader = ({
           </div>
         </div>
       </div>
+      
+      {/* Add active client bar for mobile view */}
+      {activeClient && (
+        <div className="md:hidden bg-primary/5 border-t border-primary/10 px-3 py-1 flex items-center justify-between">
+          <div className="flex items-center">
+            <Building className="h-3.5 w-3.5 text-primary mr-1.5" />
+            <span className="text-xs font-medium text-primary truncate max-w-[200px]">
+              {activeClient.name}
+            </span>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => useClientStore.getState().clearActiveClient()}
+            className="h-6 w-6 text-muted-foreground"
+          >
+            <X className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      )}
     </motion.header>
   );
 };

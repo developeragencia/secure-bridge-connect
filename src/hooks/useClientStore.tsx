@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Client as ClientType } from '@/types/client';
+import { toast } from 'sonner';
 
 interface ClientStore {
   activeClient: ClientType | null;
@@ -11,6 +12,7 @@ interface ClientStore {
   addClient: (client: ClientType) => void;
   updateClient: (id: string, data: Partial<ClientType>) => void;
   removeClient: (id: string) => void;
+  clearActiveClient: () => void;
   // Alias for backward compatibility
   get clients(): ClientType[];
 }
@@ -95,12 +97,24 @@ export const useClientStore = create<ClientStore>()(
             recentClients.unshift(client);
             // Limit to 5 recent clients
             recentClients = recentClients.slice(0, 5);
+            
+            // Show toast notification
+            toast.success(`Cliente ativo: ${client.name}`, {
+              description: `CNPJ: ${client.cnpj}`,
+              duration: 3000,
+            });
           }
           
           return {
             activeClient: client,
             recentClients
           };
+        });
+      },
+      clearActiveClient: () => {
+        set({ activeClient: null });
+        toast.info('Cliente ativo removido', {
+          duration: 2000,
         });
       },
       addClient: (client) => {
