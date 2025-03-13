@@ -29,7 +29,7 @@ export function useRealtimeUpdates({
     // Create channel for real-time updates
     const channel = supabase
       .channel('schema-db-changes')
-      .on('postgres_changes', { event: events, schema: 'public', table: tableName }, (payload) => {
+      .on('broadcast', { event: 'postgres_changes', schema: 'public', table: tableName }, (payload) => {
         console.log(`Realtime update for ${tableName}:`, payload);
         
         // Handle different events
