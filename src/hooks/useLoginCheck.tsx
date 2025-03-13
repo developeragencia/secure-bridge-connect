@@ -9,6 +9,10 @@ const useLoginCheck = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Log domain information for debugging
+    const hostname = window.location.hostname;
+    console.log("Login check initialized on domain:", hostname);
+    
     const checkSession = async () => {
       try {
         // Check localStorage first for remembered session
@@ -30,6 +34,7 @@ const useLoginCheck = () => {
               localStorage.removeItem('adminAuthRemembered');
             }
           } catch (e) {
+            console.error("Error parsing remembered auth:", e);
             localStorage.removeItem('adminAuthRemembered');
           }
         }
@@ -49,6 +54,7 @@ const useLoginCheck = () => {
               localStorage.removeItem('adminAuth');
             }
           } catch (e) {
+            console.error("Error parsing session auth:", e);
             localStorage.removeItem('adminAuth');
           }
         }
@@ -70,6 +76,7 @@ const useLoginCheck = () => {
         }
       } catch (error) {
         console.error("Error checking session:", error);
+        toast.error("Erro ao verificar sua sessão. Por favor, tente novamente.");
         setInitializing(false);
       }
     };

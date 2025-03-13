@@ -18,6 +18,7 @@ import AnalysisReport from "./pages/AnalysisReport";
 import Maintenance from "./pages/Maintenance";
 import { supabase } from "./integrations/supabase/client";
 
+// Create QueryClient with proper configuration
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -145,33 +146,57 @@ const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
   return authenticated ? element : <Navigate to="/login" />;
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/maintenance" element={<Maintenance />} />
-          <Route path="/login" element={<Login />} />
-          
-          {/* Admin routes - order matters for proper route matching */}
-          <Route path="/admin/*" element={<ProtectedRoute element={<Admin />} />} />
-          
-          <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
-          <Route path="/declarations" element={<ProtectedRoute element={<Declarations />} />} />
-          <Route path="/declarations/new" element={<ProtectedRoute element={<NewDeclaration />} />} />
-          <Route path="/declarations/:id" element={<ProtectedRoute element={<DeclarationDetail />} />} />
-          <Route path="/credits/details/:id" element={<ProtectedRoute element={<CreditDetails />} />} />
-          <Route path="/analysis/report/:id" element={<ProtectedRoute element={<AnalysisReport />} />} />
-          
-          <Route path="/" element={<MaintenanceRouteGuard element={<Index />} />} />
-          
-          <Route path="*" element={<MaintenanceRouteGuard element={<NotFound />} />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Add domain detection for better error handling
+  const [domainError, setDomainError] = useState(false);
+  
+  useEffect(() => {
+    // Check if we're on the correct domain and log for debugging
+    const hostname = window.location.hostname;
+    console.log("Current hostname:", hostname);
+    
+    // Normalize the domain check to handle www and non-www versions
+    const isValidDomain = 
+      hostname === 'sistemasclaudiofigueiredo.com.br' || 
+      hostname === 'www.sistemasclaudiofigueiredo.com.br' ||
+      hostname === 'localhost' || 
+      hostname.includes('192.168.') ||
+      hostname.includes('127.0.0.1') ||
+      hostname.endsWith('.vercel.app');
+      
+    if (!isValidDomain) {
+      console.warn(`Running on potentially invalid domain: ${hostname}`);
+    }
+  }, []);
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/maintenance" element={<Maintenance />} />
+            <Route path="/login" element={<Login />} />
+            
+            {/* Admin routes - order matters for proper route matching */}
+            <Route path="/admin/*" element={<ProtectedRoute element={<Admin />} />} />
+            
+            <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
+            <Route path="/declarations" element={<ProtectedRoute element={<Declarations />} />} />
+            <Route path="/declarations/new" element={<ProtectedRoute element={<NewDeclaration />} />} />
+            <Route path="/declarations/:id" element={<ProtectedRoute element={<DeclarationDetail />} />} />
+            <Route path="/credits/details/:id" element={<ProtectedRoute element={<CreditDetails />} />} />
+            <Route path="/analysis/report/:id" element={<ProtectedRoute element={<AnalysisReport />} />} />
+            
+            <Route path="/" element={<MaintenanceRouteGuard element={<Index />} />} />
+            
+            <Route path="*" element={<MaintenanceRouteGuard element={<NotFound />} />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -22,6 +23,12 @@ export const useAdminUI = () => {
   const initialRender = useRef(true);
   const navigationInProgress = useRef(false);
   const navigationLock = useRef(false);
+  const hostname = window.location.hostname;
+  
+  // Log domain information for debugging
+  useEffect(() => {
+    console.log("Admin UI initialized on domain:", hostname);
+  }, [hostname]);
   
   // Prevent rapid navigation changes
   const navigateWithLock = useCallback((path: string, options = {}) => {

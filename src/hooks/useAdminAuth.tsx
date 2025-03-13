@@ -3,12 +3,19 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 export const useAdminAuth = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Log domain information for debugging
+  useEffect(() => {
+    const hostname = window.location.hostname;
+    console.log("Admin auth initialized on domain:", hostname);
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -74,6 +81,7 @@ export const useAdminAuth = () => {
         }
       } catch (error) {
         console.error("Authentication error:", error);
+        toast.error("Erro de autenticação. Por favor, faça login novamente.");
         setLoading(false);
         navigate('/login');
       }
@@ -105,14 +113,14 @@ export const useAdminAuth = () => {
       localStorage.removeItem('adminAuth');
       localStorage.removeItem('adminAuthRemembered');
       await supabase.auth.signOut();
-      toast({
+      uiToast({
         title: "Sessão encerrada",
         description: "Você foi desconectado com sucesso.",
       });
       navigate('/login');
     } catch (error) {
       console.error("Logout error:", error);
-      toast({
+      uiToast({
         variant: "destructive",
         title: "Erro ao fazer logout",
         description: "Ocorreu um erro ao tentar encerrar sua sessão.",
