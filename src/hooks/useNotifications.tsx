@@ -27,8 +27,28 @@ export const useNotifications = () => {
 
   const handleNotificationClick = useCallback((id: string, link?: string) => {
     markAsRead(id);
-    return link;
-  }, [markAsRead]);
+    
+    // Return the link for navigation
+    if (link) {
+      // Check if the link exists before returning it
+      const validRoutes = ['/admin', '/credits/details/', '/declarations', '/analysis/report/'];
+      const isValidRoute = validRoutes.some(route => link.startsWith(route));
+      
+      if (isValidRoute) {
+        return link;
+      } else {
+        toast({
+          title: "Rota não encontrada",
+          description: `A rota ${link} não está disponível no momento.`,
+          variant: "destructive"
+        });
+        // Return a fallback route
+        return '/admin';
+      }
+    }
+    
+    return null;
+  }, [markAsRead, toast]);
 
   const handleRemove = useCallback((id: string, e: React.MouseEvent) => {
     e.stopPropagation();

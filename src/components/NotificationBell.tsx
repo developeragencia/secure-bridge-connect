@@ -16,11 +16,13 @@ import { useNotificationStore, Notification } from '@/hooks/useNotificationStore
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/components/ui/use-toast';
 
 const NotificationBell = () => {
   const { notifications, markAsRead, markAllAsRead, getUnreadCount } = useNotificationStore();
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     setUnreadCount(getUnreadCount());
@@ -29,7 +31,19 @@ const NotificationBell = () => {
   const handleNotificationClick = (notification: Notification) => {
     markAsRead(notification.id);
     if (notification.link) {
-      navigate(notification.link);
+      // Check if the link exists before navigating
+      const validRoutes = ['/admin', '/credits/details/', '/declarations', '/analysis/report/'];
+      const isValidRoute = validRoutes.some(route => notification.link?.startsWith(route));
+      
+      if (isValidRoute) {
+        navigate(notification.link);
+      } else {
+        toast({
+          title: "Rota não encontrada",
+          description: `A rota ${notification.link} não está disponível no momento.`,
+          variant: "destructive"
+        });
+      }
     }
   };
 
