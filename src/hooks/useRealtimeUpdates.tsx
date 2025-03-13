@@ -36,7 +36,7 @@ export function useRealtimeUpdates({
           schema: 'public', 
           table: tableName 
         },
-        (payload: any) => {
+        (payload) => {
           console.log(`Realtime update for ${tableName}:`, payload);
           
           // Handle different events

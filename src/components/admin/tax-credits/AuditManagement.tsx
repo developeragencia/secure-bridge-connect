@@ -125,6 +125,37 @@ const AuditManagement: React.FC = () => {
     // This would navigate to a details page in a real app
   };
 
+  const handleEditAudit = (auditId: string) => {
+    toast.info('Editando auditoria', {
+      description: `Formulário de edição para a auditoria #${auditId}`,
+    });
+    // This would open an edit form in a real app
+  };
+
+  const handleDeleteAudit = (auditId: string) => {
+    toast.success('Auditoria excluída', {
+      description: `A auditoria #${auditId} foi excluída com sucesso`,
+    });
+    // In a real app, this would call an API to delete the audit
+    setAudits(prev => prev.filter(audit => audit.id !== auditId));
+    fetchSummaryData();
+  };
+
+  const handleApproveAudit = (auditId: string) => {
+    toast.success('Auditoria aprovada', {
+      description: `A auditoria #${auditId} foi aprovada com sucesso`,
+    });
+    // In a real app, this would call an API to update the audit status
+    setAudits(prev => 
+      prev.map(audit => 
+        audit.id === auditId 
+          ? { ...audit, status: 'CONCLUIDA' } 
+          : audit
+      )
+    );
+    fetchSummaryData();
+  };
+
   // Filter audits
   const filteredAudits = audits.filter(audit => {
     const matchesSearch = audit.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -169,6 +200,9 @@ const AuditManagement: React.FC = () => {
           isLoading={isLoading} 
           onViewDetails={handleViewDetails}
           onDownloadDocuments={handleDownloadDocuments}
+          onEdit={handleEditAudit}
+          onDelete={handleDeleteAudit}
+          onApprove={handleApproveAudit}
         />
       </Card>
     </div>

@@ -123,6 +123,37 @@ const RecoveryManagement: React.FC = () => {
     // This would generate a report in a real app
   };
 
+  const handleEditProcess = (processId: string) => {
+    toast.info('Editando processo', {
+      description: `Formulário de edição para o processo #${processId}`,
+    });
+    // This would open an edit form in a real app
+  };
+
+  const handleDeleteProcess = (processId: string) => {
+    toast.success('Processo excluído', {
+      description: `O processo #${processId} foi excluído com sucesso`,
+    });
+    // In a real app, this would call an API to delete the process
+    setProcesses(prev => prev.filter(process => process.id !== processId));
+    fetchSummaryData();
+  };
+
+  const handleApproveProcess = (processId: string) => {
+    toast.success('Processo aprovado', {
+      description: `O processo #${processId} foi aprovado com sucesso`,
+    });
+    // In a real app, this would call an API to update the process status
+    setProcesses(prev => 
+      prev.map(process => 
+        process.id === processId 
+          ? { ...process, status: 'CONCLUIDO' } 
+          : process
+      )
+    );
+    fetchSummaryData();
+  };
+
   // Filter and paginate processes
   const filteredProcesses = processes.filter(process => {
     const matchesSearch = process.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -172,6 +203,9 @@ const RecoveryManagement: React.FC = () => {
           isLoading={isLoading} 
           onViewDetails={handleViewProcessDetails}
           onGenerateReport={handleGenerateReport}
+          onEdit={handleEditProcess}
+          onDelete={handleDeleteProcess}
+          onApprove={handleApproveProcess}
         />
       </Card>
 
