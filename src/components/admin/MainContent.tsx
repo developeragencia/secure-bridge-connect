@@ -19,6 +19,7 @@ import IRRFCalculations from '@/components/admin/tax-credits/IRRFCalculations';
 import DataImports from '@/components/admin/tax-credits/DataImports';
 import FiscalReports from '@/components/admin/tax-credits/FiscalReports';
 import CommercialProposals from '@/components/admin/tax-credits/CommercialProposals';
+import TaxCreditCalculator from '@/components/admin/tax-credits/TaxCreditCalculator';
 
 interface MainContentProps {
   activeTab: string;
@@ -89,6 +90,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
             {activeTab === 'recovery' && <RecoveryManagement />}
             {activeTab === 'audits' && <AuditManagement />}
             {activeTab === 'calculations' && <IRRFCalculations />}
+            {activeTab === 'tax_calculator' && <TaxCreditCalculator />}
             {activeTab === 'imports' && <DataImports />}
             {activeTab === 'reports' && <FiscalReports />}
             {activeTab === 'proposals' && <CommercialProposals />}
