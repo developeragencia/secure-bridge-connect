@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,9 +8,54 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import Maintenance from "./pages/Maintenance";
 import { supabase } from "./integrations/supabase/client";
 
 const queryClient = new QueryClient();
+
+const MaintenanceRouteGuard = ({ element }: { element: JSX.Element }) => {
+  const [loading, setLoading] = useState(true);
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  useEffect(() => {
+    const checkMaintenanceAndAuth = async () => {
+      // Check if site is in maintenance mode
+      const maintenanceMode = localStorage.getItem('maintenanceMode') === 'true';
+      setIsMaintenanceMode(maintenanceMode);
+      
+      if (maintenanceMode) {
+        // Check if user is admin
+        const { data } = await supabase.auth.getSession();
+        const adminAuth = localStorage.getItem('adminAuth');
+        
+        if (data.session || adminAuth) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      }
+      
+      setLoading(false);
+    };
+    
+    checkMaintenanceAndAuth();
+  }, []);
+  
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin h-8 w-8 border-t-2 border-primary rounded-full"></div>
+    </div>;
+  }
+  
+  // If site is in maintenance mode and user is not admin, redirect to maintenance page
+  if (isMaintenanceMode && !isAdmin) {
+    return <Navigate to="/maintenance" />;
+  }
+  
+  // Otherwise, render the requested page
+  return element;
+};
 
 const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
   const [loading, setLoading] = useState(true);
@@ -80,11 +124,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/maintenance" element={<Maintenance />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
+          <Route path="/" element={<MaintenanceRouteGuard element={<Index />} />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<MaintenanceRouteGuard element={<NotFound />} />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
