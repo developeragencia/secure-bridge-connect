@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAdminUI } from '@/hooks/useAdminUI';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 
 // Admin components
 import AdminSidebar from '@/components/admin/AdminSidebar';
@@ -14,6 +14,7 @@ import MobileMenuOverlay from '@/components/admin/MobileMenuOverlay';
 
 const Admin = () => {
   const { user, loading, handleLogout } = useAdminAuth();
+  const navigate = useNavigate();
   const {
     activeTab,
     setActiveTab,
@@ -35,19 +36,34 @@ const Admin = () => {
   
   // Parse the route path to set the active tab
   useEffect(() => {
-    // First check URL params for a tab
-    if (params.tab) {
-      setActiveTab(params.tab);
-    } else {
-      // If we're at /admin with no subtab specified, use dashboard or the stored tab
-      const storedTab = sessionStorage.getItem('adminActiveTab');
-      if (storedTab) {
-        setActiveTab(storedTab);
-      } else {
-        setActiveTab('dashboard');
+    try {
+      // Extract the tab from the current URL path
+      const pathParts = location.pathname.split('/');
+      
+      // If we're at /admin with subtabs
+      if (pathParts.length >= 3) {
+        const tabFromUrl = pathParts[2];
+        if (tabFromUrl && tabFromUrl !== activeTab) {
+          setActiveTab(tabFromUrl);
+          // Store in session storage for persistence
+          sessionStorage.setItem('adminActiveTab', tabFromUrl);
+        }
+      } else if (pathParts.length === 2 && pathParts[1] === 'admin') {
+        // We're at /admin with no subtab specified
+        const storedTab = sessionStorage.getItem('adminActiveTab');
+        if (storedTab && storedTab !== activeTab) {
+          setActiveTab(storedTab);
+        } else if (!storedTab && activeTab !== 'dashboard') {
+          setActiveTab('dashboard');
+          sessionStorage.setItem('adminActiveTab', 'dashboard');
+        }
       }
+    } catch (error) {
+      console.error("Error parsing admin route:", error);
+      // Fallback to dashboard
+      setActiveTab('dashboard');
     }
-  }, [location.pathname, params.tab, setActiveTab]);
+  }, [location.pathname, setActiveTab, activeTab]);
 
   if (loading) {
     return <AdminLoading />;

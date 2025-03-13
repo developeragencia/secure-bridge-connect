@@ -8,8 +8,11 @@ export function useReportGeneration() {
   const [reportType, setReportType] = useState('complete');
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeTab, setActiveTab] = useState('fiscal');
+  const [exportFormat, setExportFormat] = useState('pdf');
 
   const handleGenerateReport = () => {
+    if (isGenerating) return; // Prevent multiple clicks
+    
     setIsGenerating(true);
     
     // Simulate report generation
@@ -17,9 +20,16 @@ export function useReportGeneration() {
       setIsGenerating(false);
       toast({
         title: "Relatório gerado com sucesso",
-        description: "Seu relatório está pronto para download.",
+        description: `Seu relatório está pronto para download no formato ${reportType}.`,
       });
     }, 2000);
+  };
+
+  const handleExportReport = () => {
+    toast({
+      title: "Exportando relatório",
+      description: `Exportando no formato ${exportFormat.toUpperCase()}.`,
+    });
   };
 
   return {
@@ -30,6 +40,9 @@ export function useReportGeneration() {
     isGenerating,
     activeTab,
     setActiveTab,
-    handleGenerateReport
+    exportFormat,
+    setExportFormat,
+    handleGenerateReport,
+    handleExportReport
   };
 }

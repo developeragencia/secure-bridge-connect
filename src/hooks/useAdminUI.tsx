@@ -1,14 +1,25 @@
-
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const useAdminUI = () => {
+  // Get the current route path
+  const location = useLocation();
+  
   // Default tab from session storage or 'dashboard'
   const [activeTab, setActiveTab] = useState(() => {
+    // Attempt to get from URL first
+    const path = location.pathname;
+    if (path.startsWith('/admin/')) {
+      const tabFromUrl = path.split('/')[2];
+      if (tabFromUrl) return tabFromUrl;
+    }
+    
+    // Then try session storage
     return sessionStorage.getItem('adminActiveTab') || 'dashboard';
   });
   
   const navigate = useNavigate();
+  const initialRender = useRef(true);
   
   // Persist active tab to session storage when it changes
   useEffect(() => {
@@ -16,16 +27,19 @@ export const useAdminUI = () => {
       // Always store the active tab in session storage
       sessionStorage.setItem('adminActiveTab', activeTab);
       
-      // Only update URL if we're not already on the correct path
-      // This prevents unnecessary history entries and potential refresh issues
-      const currentPath = window.location.pathname;
-      const expectedPath = activeTab === 'dashboard' ? '/admin' : `/admin/${activeTab}`;
-      
-      if (currentPath !== expectedPath) {
-        navigate(expectedPath, { replace: true });
+      // Only update URL if not during initial render to prevent unnecessary redirects
+      if (!initialRender.current) {
+        const currentPath = location.pathname;
+        const expectedPath = activeTab === 'dashboard' ? '/admin' : `/admin/${activeTab}`;
+        
+        if (currentPath !== expectedPath && !currentPath.includes(expectedPath)) {
+          navigate(expectedPath, { replace: true });
+        }
+      } else {
+        initialRender.current = false;
       }
     }
-  }, [activeTab, navigate]);
+  }, [activeTab, navigate, location.pathname]);
   
   // Other state management
   const [sidebarOpen, setSidebarOpen] = useState(() => {

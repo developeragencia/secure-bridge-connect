@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,7 +18,14 @@ import AnalysisReport from "./pages/AnalysisReport";
 import Maintenance from "./pages/Maintenance";
 import { supabase } from "./integrations/supabase/client";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const MaintenanceRouteGuard = ({ element }: { element: JSX.Element }) => {
   const [loading, setLoading] = useState(true);
@@ -26,21 +34,25 @@ const MaintenanceRouteGuard = ({ element }: { element: JSX.Element }) => {
   
   useEffect(() => {
     const checkMaintenanceAndAuth = async () => {
-      const maintenanceMode = localStorage.getItem('maintenanceMode') === 'true';
-      setIsMaintenanceMode(maintenanceMode);
-      
-      if (maintenanceMode) {
-        const { data } = await supabase.auth.getSession();
-        const adminAuth = localStorage.getItem('adminAuth');
+      try {
+        const maintenanceMode = localStorage.getItem('maintenanceMode') === 'true';
+        setIsMaintenanceMode(maintenanceMode);
         
-        if (data.session || adminAuth) {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
+        if (maintenanceMode) {
+          const { data } = await supabase.auth.getSession();
+          const adminAuth = localStorage.getItem('adminAuth');
+          
+          if (data.session || adminAuth) {
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(false);
+          }
         }
+      } catch (error) {
+        console.error("Maintenance check error:", error);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
     
     checkMaintenanceAndAuth();
@@ -65,44 +77,63 @@ const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const rememberedAuth = localStorage.getItem('adminAuthRemembered');
-      if (rememberedAuth) {
-        try {
-          const authData = JSON.parse(rememberedAuth);
-          if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
-            setAuthenticated(true);
-            setLoading(false);
-            return;
+      try {
+        const rememberedAuth = localStorage.getItem('adminAuthRemembered');
+        if (rememberedAuth) {
+          try {
+            const authData = JSON.parse(rememberedAuth);
+            if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
+              setAuthenticated(true);
+              setLoading(false);
+              return;
+            }
+          } catch (e) {
+            localStorage.removeItem('adminAuthRemembered');
           }
-        } catch (e) {
-          localStorage.removeItem('adminAuthRemembered');
         }
-      }
 
-      const regularAuth = localStorage.getItem('adminAuth');
-      if (regularAuth) {
-        try {
-          const authData = JSON.parse(regularAuth);
-          if (authData && (Date.now() - authData.timestamp) < 1 * 24 * 60 * 60 * 1000) {
-            setAuthenticated(true);
-            setLoading(false);
-            return;
-          } else {
+        const regularAuth = localStorage.getItem('adminAuth');
+        if (regularAuth) {
+          try {
+            const authData = JSON.parse(regularAuth);
+            if (authData && (Date.now() - authData.timestamp) < 1 * 24 * 60 * 60 * 1000) {
+              setAuthenticated(true);
+              setLoading(false);
+              return;
+            } else {
+              localStorage.removeItem('adminAuth');
+            }
+          } catch (e) {
             localStorage.removeItem('adminAuth');
           }
-        } catch (e) {
-          localStorage.removeItem('adminAuth');
         }
-      }
 
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        setAuthenticated(true);
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          setAuthenticated(true);
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     checkAuth();
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          setAuthenticated(true);
+        } else if (event === 'SIGNED_OUT') {
+          setAuthenticated(false);
+        }
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   if (loading) {
@@ -124,10 +155,8 @@ const App = () => (
           <Route path="/maintenance" element={<Maintenance />} />
           <Route path="/login" element={<Login />} />
           
-          <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
-          <Route path="/admin/:tab" element={<ProtectedRoute element={<Admin />} />} />
-          <Route path="/admin/:tab/:subRoute" element={<ProtectedRoute element={<Admin />} />} />
-          <Route path="/admin/:tab/:subRoute/:id" element={<ProtectedRoute element={<Admin />} />} />
+          {/* Admin routes - order matters for proper route matching */}
+          <Route path="/admin/*" element={<ProtectedRoute element={<Admin />} />} />
           
           <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
           <Route path="/declarations" element={<ProtectedRoute element={<Declarations />} />} />
