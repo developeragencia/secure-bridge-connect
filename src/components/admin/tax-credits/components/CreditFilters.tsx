@@ -55,11 +55,11 @@ const CreditFilters: React.FC<CreditFiltersProps> = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os status</SelectItem>
-            <SelectItem value="approved">Aprovado</SelectItem>
-            <SelectItem value="pending">Pendente</SelectItem>
-            <SelectItem value="rejected">Rejeitado</SelectItem>
-            <SelectItem value="analyzing">Em Análise</SelectItem>
-            <SelectItem value="recovered">Recuperado</SelectItem>
+            <SelectItem value="APPROVED">Aprovado</SelectItem>
+            <SelectItem value="PENDING">Pendente</SelectItem>
+            <SelectItem value="REJECTED">Rejeitado</SelectItem>
+            <SelectItem value="ANALYZING">Em Análise</SelectItem>
+            <SelectItem value="RECOVERED">Recuperado</SelectItem>
           </SelectContent>
         </Select>
       </div>

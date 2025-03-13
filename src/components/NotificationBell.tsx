@@ -16,7 +16,7 @@ import { useNotificationStore, Notification } from '@/hooks/useNotificationStore
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 const NotificationBell = () => {
   const { notifications, markAsRead, markAllAsRead, getUnreadCount } = useNotificationStore();
@@ -32,8 +32,20 @@ const NotificationBell = () => {
     markAsRead(notification.id);
     if (notification.link) {
       // Check if the link exists before navigating
-      const validRoutes = ['/admin', '/credits/details/', '/declarations', '/analysis/report/'];
-      const isValidRoute = validRoutes.some(route => notification.link?.startsWith(route));
+      const validRoutes = [
+        '/admin', 
+        '/credits/details/', 
+        '/declarations', 
+        '/analysis/report/', 
+        '/notifications'
+      ];
+      
+      const isValidRoute = validRoutes.some(route => {
+        if (typeof notification.link === 'string') {
+          return notification.link.startsWith(route);
+        }
+        return false;
+      });
       
       if (isValidRoute) {
         navigate(notification.link);
@@ -54,6 +66,10 @@ const NotificationBell = () => {
   const handleMarkAllAsRead = (e: React.MouseEvent) => {
     e.stopPropagation();
     markAllAsRead();
+    toast({
+      title: "Notificações lidas",
+      description: "Todas as notificações foram marcadas como lidas",
+    });
   };
 
   const formatTime = (dateString: string) => {

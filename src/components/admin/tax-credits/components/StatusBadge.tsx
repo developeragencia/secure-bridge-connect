@@ -3,7 +3,9 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 // Update to handle both lowercase and uppercase status values
-type StatusType = 'approved' | 'pending' | 'rejected' | 'APPROVED' | 'PENDING' | 'REJECTED' | 'ANALYZING' | 'RECOVERED';
+type StatusType = 
+  | 'approved' | 'pending' | 'rejected' | 'analyzing' | 'recovered'
+  | 'APPROVED' | 'PENDING' | 'REJECTED' | 'ANALYZING' | 'RECOVERED';
 
 interface StatusBadgeProps {
   status: StatusType;

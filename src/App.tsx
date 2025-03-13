@@ -11,6 +11,8 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Notifications from "./pages/Notifications";
 import CreditDetails from "./pages/CreditDetails";
+import Declarations from "./pages/Declarations";
+import AnalysisReport from "./pages/AnalysisReport";
 import Maintenance from "./pages/Maintenance";
 import { supabase } from "./integrations/supabase/client";
 
@@ -131,7 +133,9 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
           <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
+          <Route path="/declarations" element={<ProtectedRoute element={<Declarations />} />} />
           <Route path="/credits/details/:id" element={<ProtectedRoute element={<CreditDetails />} />} />
+          <Route path="/analysis/report/:id" element={<ProtectedRoute element={<AnalysisReport />} />} />
           <Route path="/" element={<MaintenanceRouteGuard element={<Index />} />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<MaintenanceRouteGuard element={<NotFound />} />} />

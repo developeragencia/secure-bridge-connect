@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect } from 'react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { useNotificationStore } from '@/hooks/useNotificationStore';
 
 export const useNotifications = () => {
@@ -31,8 +31,20 @@ export const useNotifications = () => {
     // Return the link for navigation
     if (link) {
       // Check if the link exists before returning it
-      const validRoutes = ['/admin', '/credits/details/', '/declarations', '/analysis/report/'];
-      const isValidRoute = validRoutes.some(route => link.startsWith(route));
+      const validRoutes = [
+        '/admin', 
+        '/credits/details/', 
+        '/declarations', 
+        '/analysis/report/',
+        '/notifications'
+      ];
+      
+      const isValidRoute = validRoutes.some(route => {
+        if (typeof link === 'string') {
+          return link.startsWith(route);
+        }
+        return false;
+      });
       
       if (isValidRoute) {
         return link;

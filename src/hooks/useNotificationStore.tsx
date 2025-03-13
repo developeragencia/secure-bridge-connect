@@ -57,6 +57,25 @@ export const useNotificationStore = create<NotificationStore>()(
           clientId: '3',
           link: '/analysis/report/456'
         },
+        {
+          id: '4',
+          title: 'Nova recuperação de crédito',
+          message: 'Processo de recuperação de crédito iniciado para Empresa Beta S.A.',
+          type: 'info',
+          read: false,
+          createdAt: new Date(Date.now() - 259200000).toISOString(),
+          clientId: '4',
+          link: '/admin'
+        },
+        {
+          id: '5',
+          title: 'Atualização do sistema',
+          message: 'Uma nova versão do sistema está disponível com melhorias de performance',
+          type: 'info',
+          read: true,
+          createdAt: new Date(Date.now() - 345600000).toISOString(),
+          link: '/notifications'
+        },
       ],
       addNotification: (notification) => {
         const newNotification: Notification = {
