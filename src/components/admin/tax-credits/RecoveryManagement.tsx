@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
@@ -27,6 +28,7 @@ const RecoveryManagement = () => {
   const recoveryProcesses: RecoveryProcess[] = [
     {
       id: "1",
+      clientId: "client-001",
       clientName: "Empresa ABC Ltda",
       documentNumber: "12.345.678/0001-90",
       creditType: "IRRF",
@@ -39,6 +41,7 @@ const RecoveryManagement = () => {
     },
     {
       id: "2",
+      clientId: "client-002",
       clientName: "Indústria XYZ S.A.",
       documentNumber: "23.456.789/0001-10",
       creditType: "PIS/COFINS",
@@ -51,6 +54,7 @@ const RecoveryManagement = () => {
     },
     {
       id: "3",
+      clientId: "client-003",
       clientName: "Comércio DEF Eireli",
       documentNumber: "34.567.890/0001-21",
       creditType: "IRRF",
@@ -63,6 +67,7 @@ const RecoveryManagement = () => {
     },
     {
       id: "4",
+      clientId: "client-004",
       clientName: "Serviços GHI S.A.",
       documentNumber: "45.678.901/0001-32",
       creditType: "CSLL",
