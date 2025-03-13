@@ -1,30 +1,38 @@
 
-import { Client } from './client';
+import { StatusType } from './declarations';
 
 export interface TaxCredit {
   id: string;
-  clientId: string;
   clientName: string;
+  clientId: string;
   documentNumber: string;
   creditType: string;
   creditAmount: number;
-  originalAmount: number;
-  periodStart: string;
-  periodEnd: string;
-  status: 'PENDING' | 'ANALYZING' | 'APPROVED' | 'REJECTED' | 'RECOVERED';
-  createdAt: string;
-  updatedAt: string;
-  assignedTo?: string;
+  periodStart: string | Date;
+  periodEnd: string | Date;
+  status: StatusType;
+  createdAt: string | Date;
+  updatedAt?: string | Date;
+  approvedAt?: string | Date;
+  submittedAt?: string | Date;
   notes?: string;
+  attachmentsCount?: number;
 }
 
 export interface TaxCreditSummary {
-  totalCredits: number;
-  pendingCredits: number;
-  approvedCredits: number;
-  recoveredCredits: number;
-  rejectedCredits: number;
+  total: number;
+  pendingCount: number;
+  approvedCount: number;
+  rejectedCount: number;
+  totalValue: number;
+  pendingValue: number;
+  approvedValue: number;
 }
 
-// Use the correct client type to avoid conflicts with recovery.ts
-export type TaxCreditClient = Client;
+export interface TaxCreditFilterParams {
+  status?: StatusType;
+  type?: string;
+  startDate?: Date | null;
+  endDate?: Date | null;
+  searchQuery?: string;
+}

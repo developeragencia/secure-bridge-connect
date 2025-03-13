@@ -1,37 +1,31 @@
 
-export type StatusType = 'PENDING' | 'ANALYZING' | 'APPROVED' | 'REJECTED' | 'RECOVERED' | 'SUBMITTED' | 'PROCESSING';
+// Define status types used across the application
 
-export interface Attachment {
-  id: string;
-  name: string;
-  size: string;
-  date: string;
-}
+export type StatusType = 
+  | 'PENDING'
+  | 'PROCESSING' 
+  | 'APPROVED' 
+  | 'REJECTED' 
+  | 'CANCELED'
+  | 'COMPLETED'
+  | 'ACTIVE'
+  | 'INACTIVE';
 
-export interface HistoryItem {
+export interface Declaration {
   id: string;
-  date: string;
-  action: string;
-  user: string;
-  status: StatusType;
-}
-
-export interface DeclarationType {
-  id: string;
-  type: string;
   title: string;
-  period: string;
-  periodName: string;
-  dueDate: string;
-  submissionDate: string;
+  description?: string;
   status: StatusType;
-  amount: string;
-  protocol: string;
+  createdAt: string;
+  updatedAt?: string;
+  clientId: string;
+  clientName: string;
+  documentNumber: string;
   fiscalYear: string;
-  taxOffice: string;
-  company: string;
-  cnpj: string;
-  submittedBy: string;
-  attachments: Attachment[];
-  history: HistoryItem[];
+  fiscalPeriod: string;
+  deadline?: string;
+  assignedTo?: string;
+  taxType: string;
+  amount?: number;
+  attachmentsCount: number;
 }
