@@ -53,7 +53,7 @@ export interface HistoryItem {
   date: string;
   user: string;
   details?: string;
-  status?: StatusType;
+  status?: StatusType; // Keep as optional to maintain compatibility
 }
 
 export type DeclarationType = 'TAX_RETURN' | 'FINANCIAL_STATEMENT' | 'AUDIT_REPORT' | 'REGULATORY_FILING';
@@ -61,6 +61,7 @@ export type DeclarationType = 'TAX_RETURN' | 'FINANCIAL_STATEMENT' | 'AUDIT_REPO
 // Add a new interface for declaration details
 export interface DeclarationDetails {
   id: string;
+  title: string; // Add title field for DeclarationDetail page
   type: string;
   status: StatusType;
   periodName: string;

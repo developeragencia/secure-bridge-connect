@@ -6,11 +6,12 @@ import { LineChart, CheckCircle, AlertTriangle, Clock } from 'lucide-react';
 
 interface AuditStatusCardsProps {
   summary: AuditSummary;
+  className?: string; // Added className prop
 }
 
-const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary }) => {
+const AuditStatusCards: React.FC<AuditStatusCardsProps> = ({ summary, className }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ${className || ''}`}>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total de Auditorias</CardTitle>
