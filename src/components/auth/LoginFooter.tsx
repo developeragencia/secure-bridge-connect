@@ -16,7 +16,7 @@ const LoginFooter: React.FC = () => {
       <Button 
         variant="outline" 
         size="sm" 
-        className="w-full text-xs sm:text-sm hover:bg-background/80"
+        className="w-full text-xs sm:text-sm hover:bg-primary/10 hover:text-primary border-primary/20 transition-all hover:shadow-sm hover:shadow-primary/10"
         asChild
       >
         <Link to="/">
