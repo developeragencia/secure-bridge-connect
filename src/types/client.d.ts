@@ -17,6 +17,7 @@ export interface Client {
   updatedAt: string;
   segment: string;
   type: string;
+  zipCode?: string;
   userRoles?: {
     canViewOperations: boolean;
     canEditOperations: boolean;

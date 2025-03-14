@@ -1,131 +1,111 @@
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-import { 
-  Shield, 
-  CheckCircle, 
-  XCircle, 
-  EyeIcon, 
-  PenIcon, 
-  User, 
-  UserCog 
-} from 'lucide-react';
-import { Client } from '@/types/client.d';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Check, X } from "lucide-react";
+import { Client } from '@/types/client';
 
-interface ClientOperationsAccessProps {
-  client: Client;
-  compact?: boolean;
+// Create interface for client with optional userRoles property
+interface ClientWithPermissions extends Client {
+  userRoles?: {
+    canViewOperations: boolean;
+    canEditOperations: boolean;
+    canApproveOperations: boolean;
+    isAdmin: boolean;
+    isRepresentative: boolean;
+  };
 }
 
-const ClientOperationsAccess: React.FC<ClientOperationsAccessProps> = ({ 
-  client, 
-  compact = false 
-}) => {
-  // Get user roles from client (default to some basic permissions if not defined)
-  const userRoles = client.userRoles || {
-    canViewOperations: true,
+interface ClientOperationsAccessProps {
+  client: ClientWithPermissions;
+}
+
+const ClientOperationsAccess: React.FC<ClientOperationsAccessProps> = ({ client }) => {
+  // Default values if userRoles doesn't exist
+  const defaultPermissions = {
+    canViewOperations: false,
     canEditOperations: false,
     canApproveOperations: false,
     isAdmin: false,
     isRepresentative: false
   };
-
-  // Define access badges
-  const accessBadges = [
-    {
-      name: 'Visualização',
-      icon: <EyeIcon className="h-3 w-3" />,
-      enabled: userRoles.canViewOperations,
-      tooltip: 'Pode visualizar operações'
-    },
-    {
-      name: 'Edição',
-      icon: <PenIcon className="h-3 w-3" />,
-      enabled: userRoles.canEditOperations,
-      tooltip: 'Pode editar operações'
-    },
-    {
-      name: 'Aprovação',
-      icon: <Shield className="h-3 w-3" />,
-      enabled: userRoles.canApproveOperations, 
-      tooltip: 'Pode aprovar operações'
-    },
-    {
-      name: 'Admin',
-      icon: <UserCog className="h-3 w-3" />,
-      enabled: userRoles.isAdmin,
-      tooltip: 'Acesso de administrador'
-    },
-    {
-      name: 'Representante',
-      icon: <User className="h-3 w-3" />,
-      enabled: userRoles.isRepresentative,
-      tooltip: 'Acesso de representante'
-    }
-  ];
-
-  if (compact) {
-    // Compact view shows only enabled permissions as simple icons
-    const enabledBadges = accessBadges.filter(badge => badge.enabled);
-    
-    if (enabledBadges.length === 0) {
-      return <Badge variant="outline" className="text-xs px-1.5 h-5 bg-red-500/10 text-red-600">Sem Acesso</Badge>;
-    }
-    
-    return (
-      <div className="flex items-center gap-1">
-        {enabledBadges.map((badge, index) => (
-          <TooltipProvider key={index}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Badge 
-                  variant="outline" 
-                  className="p-1 h-5 w-5 flex items-center justify-center bg-primary/5 text-primary"
-                >
-                  {badge.icon}
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{badge.tooltip}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        ))}
-      </div>
-    );
-  }
-
-  // Full view shows all permissions with names and status indicators
+  
+  // Use userRoles if available, otherwise use defaults
+  const permissions = client.userRoles || defaultPermissions;
+  
   return (
-    <div className="space-y-2">
-      <h4 className="text-sm font-medium mb-1.5">Permissões de Acesso</h4>
-      <div className="flex flex-wrap gap-2">
-        {accessBadges.map((badge, index) => (
-          <Badge 
-            key={index}
-            variant="outline" 
-            className={cn(
-              "flex items-center gap-1.5 text-xs px-2 py-1",
-              badge.enabled 
-                ? "bg-green-500/10 text-green-700 dark:text-green-400" 
-                : "bg-muted text-muted-foreground"
-            )}
-          >
-            {badge.enabled ? (
-              <CheckCircle className="h-3 w-3" />
-            ) : (
-              <XCircle className="h-3 w-3" />
-            )}
-            <span>{badge.name}</span>
-          </Badge>
-        ))}
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="flex items-center justify-between space-x-2">
+          <Label htmlFor="canViewOperations" className="flex-1">Visualizar Operações</Label>
+          <div className="flex items-center">
+            {permissions.canViewOperations ? 
+              <Check className="h-4 w-4 text-green-500 mr-2" /> : 
+              <X className="h-4 w-4 text-red-500 mr-2" />}
+            <Switch 
+              id="canViewOperations" 
+              checked={permissions.canViewOperations}
+              disabled
+            />
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between space-x-2">
+          <Label htmlFor="canEditOperations" className="flex-1">Editar Operações</Label>
+          <div className="flex items-center">
+            {permissions.canEditOperations ? 
+              <Check className="h-4 w-4 text-green-500 mr-2" /> : 
+              <X className="h-4 w-4 text-red-500 mr-2" />}
+            <Switch 
+              id="canEditOperations" 
+              checked={permissions.canEditOperations}
+              disabled
+            />
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between space-x-2">
+          <Label htmlFor="canApproveOperations" className="flex-1">Aprovar Operações</Label>
+          <div className="flex items-center">
+            {permissions.canApproveOperations ? 
+              <Check className="h-4 w-4 text-green-500 mr-2" /> : 
+              <X className="h-4 w-4 text-red-500 mr-2" />}
+            <Switch 
+              id="canApproveOperations" 
+              checked={permissions.canApproveOperations}
+              disabled
+            />
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between space-x-2">
+          <Label htmlFor="isAdmin" className="flex-1">Administrador</Label>
+          <div className="flex items-center">
+            {permissions.isAdmin ? 
+              <Check className="h-4 w-4 text-green-500 mr-2" /> : 
+              <X className="h-4 w-4 text-red-500 mr-2" />}
+            <Switch 
+              id="isAdmin" 
+              checked={permissions.isAdmin}
+              disabled
+            />
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-between space-x-2">
+          <Label htmlFor="isRepresentative" className="flex-1">Representante</Label>
+          <div className="flex items-center">
+            {permissions.isRepresentative ? 
+              <Check className="h-4 w-4 text-green-500 mr-2" /> : 
+              <X className="h-4 w-4 text-red-500 mr-2" />}
+            <Switch 
+              id="isRepresentative" 
+              checked={permissions.isRepresentative}
+              disabled
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
