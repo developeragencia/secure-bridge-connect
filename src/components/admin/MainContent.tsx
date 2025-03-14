@@ -74,7 +74,6 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
   };
 
   const renderContent = () => {
-    // Check if this is a client detail view
     if (activeTab.startsWith('client/')) {
       return <ClientDetailView />;
     }
