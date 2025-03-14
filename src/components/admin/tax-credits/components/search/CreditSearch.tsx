@@ -13,6 +13,11 @@ interface CreditSearchProps {
 }
 
 const CreditSearch: React.FC<CreditSearchProps> = ({ searchQuery, setSearchQuery }) => {
+  const handleSearch = () => {
+    console.log("Realizando busca:", searchQuery);
+    // Implementação da lógica de busca
+  };
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -49,7 +54,7 @@ const CreditSearch: React.FC<CreditSearchProps> = ({ searchQuery, setSearchQuery
               </Button>
             </motion.div>
             <ButtonEffect 
-              onClick={() => {}} 
+              onClick={handleSearch} 
               icon={<Search className="h-4 w-4" />}
               label="Buscar" 
               variant="default" 

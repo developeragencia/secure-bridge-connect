@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Building, Calendar, Edit, FileText, Mail, MapPin, Phone, Plus, Shield, Trash, User } from 'lucide-react';
@@ -22,7 +21,6 @@ const ClientDetailView = () => {
   const { activeClient, setActiveClient } = useActiveClient();
   const [activeTab, setActiveTab] = useState('info');
   
-  // Find client by ID
   const client = clients.find(c => c.id === clientId);
   
   if (!client) {
@@ -89,7 +87,6 @@ const ClientDetailView = () => {
     });
   };
   
-  // Format client status for display
   const getStatusBadge = () => {
     switch (client.status) {
       case 'ACTIVE':
@@ -105,7 +102,6 @@ const ClientDetailView = () => {
   
   return (
     <div className="space-y-6">
-      {/* Client header card */}
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -150,7 +146,6 @@ const ClientDetailView = () => {
         </CardHeader>
       </Card>
       
-      {/* Tabs for client details */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="bg-card border">
           <TabsTrigger value="info">Informações</TabsTrigger>
@@ -160,7 +155,6 @@ const ClientDetailView = () => {
           <TabsTrigger value="documents">Documentos</TabsTrigger>
         </TabsList>
         
-        {/* Info tab */}
         <TabsContent value="info" className="space-y-4">
           <Card>
             <CardHeader>
@@ -201,7 +195,7 @@ const ClientDetailView = () => {
                       
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <span>Endereço: {client.address}, {client.city}/{client.state}</span>
+                        <span>Endereço: {client.address || 'Não informado'}, {client.city || 'N/A'}/{client.state || 'N/A'}</span>
                       </div>
                       
                       <div className="flex items-center gap-2">
@@ -264,7 +258,6 @@ const ClientDetailView = () => {
           </Card>
         </TabsContent>
         
-        {/* Tax Credits tab */}
         <TabsContent value="tax-credits">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -291,7 +284,6 @@ const ClientDetailView = () => {
           </Card>
         </TabsContent>
         
-        {/* Recovery tab */}
         <TabsContent value="recovery">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -318,7 +310,6 @@ const ClientDetailView = () => {
           </Card>
         </TabsContent>
         
-        {/* Audits tab */}
         <TabsContent value="audits">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -345,7 +336,6 @@ const ClientDetailView = () => {
           </Card>
         </TabsContent>
         
-        {/* Documents tab */}
         <TabsContent value="documents">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

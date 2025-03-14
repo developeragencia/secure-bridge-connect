@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
+import NewAuditButton from '@/components/admin/audit/NewAuditButton';
 
 interface AuditHeaderProps {
   onRefresh: () => void;
@@ -24,14 +25,10 @@ const AuditHeader: React.FC<AuditHeaderProps> = ({
         </p>
       </div>
       <div className="flex items-center gap-2 w-full sm:w-auto">
-        <Button 
-          variant="default" 
-          className="w-full sm:w-auto"
+        <NewAuditButton
           onClick={onCreateAudit}
-        >
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Nova Auditoria
-        </Button>
+          className="w-full sm:w-auto"
+        />
         <Button 
           variant="outline" 
           className="w-full sm:w-auto"
