@@ -228,7 +228,13 @@ const ClientDetailView = () => {
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-md font-semibold mb-2">Permissões e Acesso</h3>
-                    <ClientOperationsAccess client={client} />
+                    <ClientOperationsAccess client={{
+                      ...client,
+                      address: client.address || '',
+                      city: client.city || '',
+                      state: client.state || '',
+                      postalCode: client.postalCode || '',
+                    }} />
                   </div>
                   
                   <Separator />

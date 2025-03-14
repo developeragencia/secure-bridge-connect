@@ -18,7 +18,7 @@ const AuditoriaPage = () => {
   } = useAuditManagement();
   
   return (
-    <AdminLayout>
+    <AdminLayout activeTab="auditorias">
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
