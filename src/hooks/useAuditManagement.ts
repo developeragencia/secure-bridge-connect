@@ -1,197 +1,258 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Audit, AuditSummary } from '@/types/audit';
-import { toast } from 'sonner';
-
-// Mock data
-const mockAudits: Audit[] = [
-  {
-    id: 'audit-1',
-    clientName: 'Empresa ABC Ltda',
-    documentNumber: '12.345.678/0001-99',
-    auditType: 'Fiscal',
-    startDate: '2023-03-15',
-    deadline: '2023-04-15',
-    status: 'EM_ANDAMENTO',
-    assignedTo: 'João Silva',
-    documentsCount: 24,
-    createdAt: '2023-03-10T08:30:00Z',
-    updatedAt: '2023-03-15T14:20:00Z',
-  },
-  {
-    id: 'audit-2',
-    clientName: 'Indústrias XYZ S/A',
-    documentNumber: '98.765.432/0001-10',
-    auditType: 'Contábil',
-    startDate: '2023-04-01',
-    deadline: '2023-05-01',
-    status: 'PENDENTE',
-    assignedTo: 'Maria Oliveira',
-    documentsCount: 18,
-    createdAt: '2023-03-25T11:15:00Z',
-    updatedAt: '2023-04-01T09:00:00Z',
-  },
-  {
-    id: 'audit-3',
-    clientName: 'Comércio FastShop Ltda',
-    documentNumber: '45.678.901/0001-23',
-    auditType: 'Financeira',
-    startDate: '2023-04-15',
-    deadline: '2023-05-15',
-    status: 'CONCLUIDA',
-    assignedTo: 'Carlos Pereira',
-    documentsCount: 30,
-    createdAt: '2023-04-10T16:45:00Z',
-    updatedAt: '2023-04-15T17:30:00Z',
-  },
-  {
-    id: 'audit-4',
-    clientName: 'Serviços GHI S/A',
-    documentNumber: '56.789.012/0001-34',
-    auditType: 'Trabalhista',
-    startDate: '2023-05-01',
-    deadline: '2023-06-01',
-    status: 'CANCELADA',
-    assignedTo: 'Ana Souza',
-    documentsCount: 12,
-    createdAt: '2023-04-28T10:00:00Z',
-    updatedAt: '2023-05-01T11:00:00Z',
-  }
-];
-
-const mockSummary: AuditSummary = {
-  total: 35,
-  pendentes: 12,
-  emAndamento: 8,
-  concluidas: 10,
-  canceladas: 5,
-  // Add properties used in components
-  totalAudits: 35,
-  pendingAudits: 12,
-  inProgressAudits: 8,
-  completedAudits: 10,
-  canceledAudits: 5
-};
+import { useToast } from '@/components/ui/use-toast';
 
 export const useAuditManagement = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
-  const [audits, setAudits] = useState<Audit[]>(mockAudits);
-  const [summary, setSummary] = useState<AuditSummary>(mockSummary);
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [currentAudit, setCurrentAudit] = useState<Audit | null>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-
-  useEffect(() => {
-    // Simulate loading data
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, []);
-
-  const handleRefresh = () => {
-    toast.info('Atualizando dados...');
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success('Dados atualizados');
-    }, 500);
-  };
-
-  const handleCreateAudit = () => {
-    setCurrentAudit(null);
-    setIsEditMode(false);
-    setIsFormOpen(true);
-  };
-
-  const handleSaveAudit = (auditData: Audit) => {
-    // Ensure the status is of the correct type
-    const validStatus: 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANCELADA' = 
-      (auditData.status as 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANCELADA') || 'PENDENTE';
-    
-    const validatedAudit: Audit = {
-      ...auditData,
-      status: validStatus
-    };
-    
-    if (isEditMode && currentAudit) {
-      // Update existing audit
-      setAudits(audits.map(audit => audit.id === currentAudit.id ? validatedAudit : audit));
-      toast.success(`Auditoria "${validatedAudit.clientName}" atualizada com sucesso.`);
-    } else {
-      // Create new audit
-      setAudits([...audits, validatedAudit]);
-      toast.success(`Auditoria "${validatedAudit.clientName}" criada com sucesso.`);
+  const [audits, setAudits] = useState<Audit[]>([
+    {
+      id: '1',
+      clientName: 'Empresa ABC Ltda',
+      documentNumber: '12.345.678/0001-90',
+      auditType: 'IRPJ',
+      status: 'PENDENTE',
+      date: '2023-08-15',
+      startDate: '2023-08-15',
+      deadline: '2023-09-15',
+      assignedTo: 'João Silva',
+      priority: 'Alta',
+      documentsCount: 5,
+      notes: 'Auditoria regular anual'
+    },
+    {
+      id: '2',
+      clientName: 'Tech Solutions S.A.',
+      documentNumber: '23.456.789/0001-23',
+      auditType: 'CSLL',
+      status: 'EM_ANDAMENTO',
+      date: '2023-07-20',
+      startDate: '2023-07-20',
+      deadline: '2023-08-20',
+      assignedTo: 'Maria Oliveira',
+      priority: 'Média',
+      documentsCount: 8,
+      notes: 'Verificação de despesas operacionais'
+    },
+    {
+      id: '3',
+      clientName: 'Distribuidora XYZ',
+      documentNumber: '34.567.890/0001-45',
+      auditType: 'PIS/COFINS',
+      status: 'CONCLUIDA',
+      date: '2023-06-10',
+      startDate: '2023-06-10',
+      deadline: '2023-07-10',
+      completionDate: '2023-07-08',
+      assignedTo: 'Carlos Santos',
+      priority: 'Baixa',
+      documentsCount: 12,
+      notes: 'Créditos de exportação'
+    },
+    {
+      id: '4',
+      clientName: 'Indústrias Reunidas',
+      documentNumber: '45.678.901/0001-67',
+      auditType: 'IPI',
+      status: 'PENDENTE',
+      date: '2023-09-01',
+      startDate: '2023-09-01',
+      deadline: '2023-10-01',
+      assignedTo: 'Paulo Mendes',
+      priority: 'Alta',
+      documentsCount: 3,
+      notes: 'Auditoria de créditos acumulados'
+    },
+    {
+      id: '5',
+      clientName: 'Consultoria Financeira',
+      documentNumber: '56.789.012/0001-89',
+      auditType: 'IRRF',
+      status: 'CANCELADA',
+      date: '2023-05-15',
+      startDate: '2023-05-15',
+      deadline: '2023-06-15',
+      assignedTo: 'Ana Pereira',
+      priority: 'Média',
+      documentsCount: 6,
+      notes: 'Cancelada a pedido do cliente'
     }
-    setIsFormOpen(false);
-  };
+  ]);
 
-  const handleViewDetails = (audit: Audit) => {
-    toast.info('Visualizando detalhes', {
-      description: `Detalhes da auditoria #${audit.id}`,
-    });
-  };
-
-  const handleDownloadDocuments = (audit: Audit) => {
-    toast.success('Download dos documentos', {
-      description: `Download dos documentos da auditoria #${audit.id} iniciado`,
-    });
-  };
-
-  const handleEditAudit = (audit: Audit) => {
-    setCurrentAudit(audit);
-    setIsEditMode(true);
-    setIsFormOpen(true);
-  };
-
-  const handleDeleteAudit = (audit: Audit) => {
-    toast.warning('Auditoria excluída', {
-      description: `Auditoria #${audit.id} excluída com sucesso`,
-    });
-  };
-
-  const handleApproveAudit = (audit: Audit) => {
-    toast.success('Auditoria aprovada', {
-      description: `Auditoria #${audit.id} aprovada com sucesso`,
-    });
-  };
-
-  const filteredAudits = audits.filter(audit => {
-    const matchesSearch =
-      audit.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      audit.documentNumber.includes(searchQuery);
-    const matchesStatus = statusFilter ? audit.status === statusFilter : true;
-    const matchesType = typeFilter ? audit.auditType === typeFilter : true;
-
-    return matchesSearch && matchesStatus && matchesType;
+  const [auditSummary, setAuditSummary] = useState<AuditSummary>({
+    totalAudits: 5,
+    pendingAudits: 2,
+    inProgressAudits: 1,
+    completedAudits: 1,
+    total: 5,
+    pendentes: 2,
+    emAndamento: 1,
+    concluidas: 1
   });
 
+  const viewDetails = (auditId: string) => {
+    toast({
+      title: "Detalhes da Auditoria",
+      description: `Visualizando detalhes da auditoria ID: ${auditId}`,
+    });
+  };
+
+  const downloadDocuments = (auditId: string) => {
+    toast({
+      title: "Download de Documentos",
+      description: `Iniciando download dos documentos da auditoria ID: ${auditId}`,
+    });
+  };
+
+  const editAudit = (auditId: string) => {
+    toast({
+      title: "Editar Auditoria",
+      description: `Editando auditoria ID: ${auditId}`,
+    });
+  };
+
+  const deleteAudit = (auditId: string) => {
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setAudits(audits.filter(audit => audit.id !== auditId));
+      
+      // Update summary
+      const updatedSummary = { ...auditSummary };
+      updatedSummary.totalAudits -= 1;
+      updatedSummary.total -= 1;
+      
+      const deletedAudit = audits.find(audit => audit.id === auditId);
+      if (deletedAudit) {
+        if (deletedAudit.status === 'PENDENTE') {
+          updatedSummary.pendingAudits -= 1;
+          updatedSummary.pendentes -= 1;
+        } else if (deletedAudit.status === 'EM_ANDAMENTO') {
+          updatedSummary.inProgressAudits -= 1;
+          updatedSummary.emAndamento -= 1;
+        } else if (deletedAudit.status === 'CONCLUIDA') {
+          updatedSummary.completedAudits -= 1;
+          updatedSummary.concluidas -= 1;
+        }
+      }
+      
+      setAuditSummary(updatedSummary);
+      setIsLoading(false);
+      
+      toast({
+        title: "Auditoria Excluída",
+        description: `A auditoria ID: ${auditId} foi excluída com sucesso`,
+      });
+    }, 1000);
+  };
+
+  const approveAudit = (auditId: string) => {
+    setIsLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      const updatedAudits = audits.map(audit => {
+        if (audit.id === auditId) {
+          return {
+            ...audit,
+            status: 'CONCLUIDA',
+            completionDate: new Date().toISOString().split('T')[0]
+          };
+        }
+        return audit;
+      });
+      
+      setAudits(updatedAudits);
+      
+      // Update summary
+      const updatedSummary = { ...auditSummary };
+      const updatedAudit = updatedAudits.find(audit => audit.id === auditId);
+      
+      if (updatedAudit) {
+        if (updatedAudit.status === 'CONCLUIDA') {
+          const oldAudit = audits.find(audit => audit.id === auditId);
+          if (oldAudit?.status === 'PENDENTE') {
+            updatedSummary.pendingAudits -= 1;
+            updatedSummary.pendentes -= 1;
+          } else if (oldAudit?.status === 'EM_ANDAMENTO') {
+            updatedSummary.inProgressAudits -= 1;
+            updatedSummary.emAndamento -= 1;
+          }
+          updatedSummary.completedAudits += 1;
+          updatedSummary.concluidas += 1;
+        }
+      }
+      
+      setAuditSummary(updatedSummary);
+      setIsLoading(false);
+      
+      toast({
+        title: "Auditoria Aprovada",
+        description: `A auditoria ID: ${auditId} foi aprovada com sucesso`,
+        variant: "success",
+      });
+    }, 1000);
+  };
+
+  const addNewAudit = (newAudit: Audit) => {
+    setIsLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      // Add new audit to list
+      setAudits([newAudit, ...audits]);
+      
+      // Update summary
+      const updatedSummary = { ...auditSummary };
+      updatedSummary.totalAudits += 1;
+      updatedSummary.total += 1;
+      
+      if (newAudit.status === 'PENDENTE') {
+        updatedSummary.pendingAudits += 1;
+        updatedSummary.pendentes += 1;
+      } else if (newAudit.status === 'EM_ANDAMENTO') {
+        updatedSummary.inProgressAudits += 1;
+        updatedSummary.emAndamento += 1;
+      } else if (newAudit.status === 'CONCLUIDA') {
+        updatedSummary.completedAudits += 1;
+        updatedSummary.concluidas += 1;
+      }
+      
+      setAuditSummary(updatedSummary);
+      setIsLoading(false);
+      
+      toast({
+        title: "Auditoria Criada",
+        description: `Nova auditoria criada com sucesso para ${newAudit.clientName}`,
+        variant: "success",
+      });
+    }, 1000);
+  };
+
+  const filterAudits = (searchTerm: string) => {
+    if (!searchTerm) {
+      return audits;
+    }
+    
+    searchTerm = searchTerm.toLowerCase();
+    return audits.filter(audit => 
+      audit.clientName.toLowerCase().includes(searchTerm) ||
+      audit.documentNumber.toLowerCase().includes(searchTerm) ||
+      audit.auditType.toLowerCase().includes(searchTerm)
+    );
+  };
+
   return {
-    searchQuery,
-    setSearchQuery,
-    statusFilter,
-    setStatusFilter,
-    typeFilter,
-    setTypeFilter,
-    filteredAudits,
-    summary,
+    audits,
+    auditSummary,
     isLoading,
-    isListening,
-    isFormOpen,
-    setIsFormOpen,
-    currentAudit,
-    isEditMode,
-    handleRefresh,
-    handleCreateAudit,
-    handleSaveAudit,
-    handleViewDetails,
-    handleDownloadDocuments,
-    handleEditAudit,
-    handleDeleteAudit,
-    handleApproveAudit
+    viewDetails,
+    downloadDocuments,
+    editAudit,
+    deleteAudit,
+    approveAudit,
+    addNewAudit,
+    filterAudits
   };
 };

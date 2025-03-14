@@ -10,6 +10,12 @@ export interface Audit {
   completionDate?: string;
   observations?: string;
   documents?: string[];
+  // Add missing properties
+  documentNumber: string;
+  startDate: string;
+  deadline: string;
+  documentsCount: number;
+  notes?: string;
 }
 
 export interface AuditSummary {
@@ -17,4 +23,9 @@ export interface AuditSummary {
   pendingAudits: number;
   completedAudits: number;
   inProgressAudits: number;
+  // Add missing properties
+  total: number;
+  emAndamento: number;
+  pendentes: number;
+  concluidas: number;
 }
