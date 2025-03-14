@@ -4,6 +4,7 @@ import {
   HelpCircle, User, DatabaseIcon, FileCheck, ChevronDown, 
   FileSearch, ListChecks, BarChart, File, Paintbrush, Newspaper
 } from 'lucide-react';
+import { SidebarSection } from '@/types/admin-sidebar';
 
 export type MenuItem = {
   id: string;
@@ -236,3 +237,109 @@ export const adminMenuItems: MenuItem[] = [
     path: '/admin/support',
   },
 ];
+
+// Add the getMenuSections function that's being imported by other components
+export const getMenuSections = (): SidebarSection[] => {
+  // Convert the flat structure to the expected sidebar sections format
+  return [
+    {
+      id: 'main',
+      title: 'Principal',
+      items: [
+        {
+          id: 'dashboard',
+          label: 'Dashboard',
+          icon: <Home className="h-4 w-4" />,
+        },
+        {
+          id: 'users',
+          label: 'Usuários',
+          icon: <Users className="h-4 w-4" />,
+        },
+        {
+          id: 'admin_profile',
+          label: 'Meu Perfil',
+          icon: <User className="h-4 w-4" />,
+        }
+      ]
+    },
+    {
+      id: 'tax_credits',
+      title: 'Créditos Tributários',
+      items: [
+        {
+          id: 'clients',
+          label: 'Clientes',
+          icon: <Users className="h-4 w-4" />,
+        },
+        {
+          id: 'recovery',
+          label: 'Recuperação',
+          icon: <FileCheck className="h-4 w-4" />,
+        },
+        {
+          id: 'credit_identification',
+          label: 'Identificação de Créditos',
+          icon: <FileSearch className="h-4 w-4" />,
+        },
+        {
+          id: 'data_processing',
+          label: 'Processamento de Dados',
+          icon: <ListChecks className="h-4 w-4" />,
+        },
+        {
+          id: 'imports',
+          label: 'Importações',
+          icon: <File className="h-4 w-4" />,
+        }
+      ]
+    },
+    {
+      id: 'reports',
+      title: 'Relatórios',
+      items: [
+        {
+          id: 'detailed_reports',
+          label: 'Relatórios Detalhados',
+          icon: <FileText className="h-4 w-4" />,
+        },
+        {
+          id: 'interactive_dashboard',
+          label: 'Dashboard Interativo',
+          icon: <BarChart className="h-4 w-4" />,
+        },
+        {
+          id: 'content_reports',
+          label: 'Relatórios de Conteúdo',
+          icon: <Newspaper className="h-4 w-4" />,
+        }
+      ]
+    },
+    {
+      id: 'system',
+      title: 'Sistema',
+      items: [
+        {
+          id: 'site',
+          label: 'Editor do Site',
+          icon: <Paintbrush className="h-4 w-4" />,
+        },
+        {
+          id: 'settings',
+          label: 'Configurações',
+          icon: <Settings className="h-4 w-4" />,
+        },
+        {
+          id: 'billing',
+          label: 'Faturamento',
+          icon: <CreditCard className="h-4 w-4" />,
+        },
+        {
+          id: 'support',
+          label: 'Suporte',
+          icon: <HelpCircle className="h-4 w-4" />,
+        }
+      ]
+    }
+  ];
+};
