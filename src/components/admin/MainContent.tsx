@@ -25,6 +25,7 @@ import DataImports from './tax-credits/DataImports';
 import DataProcessing from './tax-credits/DataProcessing';
 import AuditManagement from './tax-credits/AuditManagement';
 import IRRFCalculations from './tax-credits/IRRFCalculations';
+import IRRFRecovery from './tax-credits/IRRFRecovery';
 import TaxCreditCalculator from './tax-credits/TaxCreditCalculator';
 import CreditIdentification from './tax-credits/CreditIdentification';
 import FiscalReports from './tax-credits/FiscalReports';
@@ -103,6 +104,8 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         return <AuditManagement />;
       case 'calculations':
         return <IRRFCalculations />;
+      case 'irrf_recovery':
+        return <IRRFRecovery />;
       case 'tax_calculator':
         return <TaxCreditCalculator />;
       case 'imports':
@@ -111,6 +114,8 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         return <FiscalReports />;
       case 'proposals':
         return <CommercialProposals />;
+      case 'audit_management':
+        return <AuditManagement />;
       
       case 'detailed_reports':
         return <DetailedReportsPanel />;

@@ -15,28 +15,15 @@ export interface Client {
   status: string;
   createdAt: string;
   updatedAt: string;
-  segment?: string;
-  type?: 'public' | 'private'; 
+  segment: string;
+  type: string;
+  userRoles?: {
+    canViewOperations: boolean;
+    canEditOperations: boolean;
+    canApproveOperations: boolean;
+    isAdmin: boolean;
+    isRepresentative: boolean;
+  };
 }
 
-export interface ClientUserRoles {
-  canViewOperations: boolean;
-  canEditOperations: boolean;
-  canApproveOperations: boolean;
-  isAdmin: boolean;
-  isRepresentative: boolean;
-}
-
-export interface ClientWithPermissions extends Client {
-  userRoles?: ClientUserRoles;
-}
-
-export interface ClientIdentification {
-  clientId: string;
-  identificationDate: string;
-  sourceType: string;
-  sourceDocument: string;
-  identifiedAmount: number;
-  status: 'pending' | 'approved' | 'rejected';
-  notes?: string;
-}
+export type UserRole = 'admin' | 'office' | 'client' | 'sales' | 'representative' | 'staff';

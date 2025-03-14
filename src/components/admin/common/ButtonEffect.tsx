@@ -1,68 +1,63 @@
+
 import React from 'react';
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import {
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { 
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 
-interface ButtonEffectProps extends React.ComponentPropsWithoutRef<typeof Button> {
-  icon?: React.ReactNode;
-  label: string;
-  shimmer?: boolean;
+interface ButtonEffectProps {
+  onClick: () => void;
+  icon: React.ReactNode;
+  label?: string;
   tooltip?: string;
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  disabled?: boolean;
+  className?: string;
+  showTooltip?: boolean;
 }
 
-const ButtonEffect: React.FC<ButtonEffectProps> = ({ 
-  icon, 
-  label, 
-  shimmer = true,
+const ButtonEffect: React.FC<ButtonEffectProps> = ({
+  onClick,
+  icon,
+  label,
   tooltip,
+  variant = 'default',
+  size = 'default',
+  disabled = false,
   className,
-  ...props 
+  showTooltip = true
 }) => {
-  const buttonContent = (
+  const button = (
     <motion.div
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className="inline-block"
+      transition={{ duration: 0.2 }}
     >
-      <Button 
-        className={cn(
-          "relative overflow-hidden group transition-colors duration-300",
-          className
-        )}
-        {...props}
+      <Button
+        onClick={onClick}
+        variant={variant}
+        size={size}
+        disabled={disabled}
+        className={cn("flex items-center gap-1.5", className)}
       >
-        {shimmer && (
-          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
-        )}
-        
-        <span className="flex items-center gap-1.5">
-          {icon && (
-            <motion.span
-              initial={{ rotate: 0 }}
-              whileHover={{ rotate: [0, -10, 10, 0] }}
-              transition={{ duration: 0.5 }}
-            >
-              {icon}
-            </motion.span>
-          )}
-          {label}
-        </span>
+        {icon}
+        {label && <span className="whitespace-nowrap">{label}</span>}
       </Button>
     </motion.div>
   );
 
-  if (tooltip) {
+  if (tooltip && showTooltip) {
     return (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            {buttonContent}
+            {button}
           </TooltipTrigger>
           <TooltipContent>
             <p>{tooltip}</p>
@@ -72,7 +67,7 @@ const ButtonEffect: React.FC<ButtonEffectProps> = ({
     );
   }
 
-  return buttonContent;
+  return button;
 };
 
 export default ButtonEffect;

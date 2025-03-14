@@ -3,7 +3,8 @@ import React from 'react';
 import { 
   Layout, Users, Settings, FileText, CreditCard, Calculator, 
   PieChart, Shield, Paintbrush, LineChart, BookOpen, Building,
-  FileType, Mail, BriefcaseBusiness
+  FileType, Mail, BriefcaseBusiness, Dices, Landmark, Receipt,
+  ServerCog, FileDigit, FileClock
 } from 'lucide-react';
 import { MenuItem } from './MenuGrid';
 
@@ -52,6 +53,15 @@ export const getMainMenuItems = (): MenuItem[] => {
       route: 'calculations'
     },
     {
+      id: 'irrf_recovery',
+      title: 'Recuperação IRRF/PJ',
+      description: 'Automação de recuperação de créditos IRRF/PJ',
+      icon: <Landmark className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-green-400 via-green-500 to-emerald-600 text-white',
+      route: 'irrf_recovery',
+      highlight: true
+    },
+    {
       id: 'detailed_reports',
       title: 'Relatórios Detalhados',
       description: 'Visualize relatórios detalhados sobre os créditos',
@@ -84,12 +94,36 @@ export const getMainMenuItems = (): MenuItem[] => {
       route: 'proposals'
     },
     {
+      id: 'audit_management',
+      title: 'Gestão de Auditorias',
+      description: 'Automatize processos de auditoria fiscal',
+      icon: <Shield className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-slate-400 via-slate-500 to-gray-600 text-white',
+      route: 'audit_management'
+    },
+    {
       id: 'notifications',
       title: 'Notificações',
       description: 'Configure e gerencie notificações do sistema',
       icon: <Mail className="h-6 w-6 text-white" />,
       color: 'bg-gradient-to-br from-sky-400 via-sky-500 to-blue-600 text-white',
       route: 'notifications'
+    },
+    {
+      id: 'retention_receipts',
+      title: 'Comprovantes de Retenção',
+      description: 'Gerencie e emita comprovantes de retenção',
+      icon: <Receipt className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-yellow-400 via-yellow-500 to-amber-600 text-white',
+      route: 'retention_receipts'
+    },
+    {
+      id: 'audit_automation',
+      title: 'Automação de Auditoria',
+      description: 'Configure processos automáticos de auditoria',
+      icon: <ServerCog className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-stone-400 via-stone-500 to-neutral-600 text-white',
+      route: 'audit_automation'
     }
   ];
 };

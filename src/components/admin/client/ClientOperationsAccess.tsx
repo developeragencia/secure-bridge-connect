@@ -1,122 +1,133 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { FileCheck, FileSearch, Calculator, BarChart, HelpCircle, Settings } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { 
+  Shield, 
+  CheckCircle, 
+  XCircle, 
+  EyeIcon, 
+  PenIcon, 
+  User, 
+  UserCog 
+} from 'lucide-react';
 import { Client } from '@/types/client';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/components/ui/use-toast';
-
-interface OperationButton {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  route: string;
-  color: string;
-}
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface ClientOperationsAccessProps {
   client: Client;
+  compact?: boolean;
 }
 
-const ClientOperationsAccess: React.FC<ClientOperationsAccessProps> = ({ client }) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  
-  const operationButtons: OperationButton[] = [
-    {
-      id: 'recovery',
-      title: 'Recuperação',
-      description: 'Processos de recuperação fiscal',
-      icon: <FileCheck className="h-5 w-5 text-white" />,
-      route: `/admin/recovery?client=${client.id}`,
-      color: 'bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700'
-    },
-    {
-      id: 'credit_identification',
-      title: 'Identificação',
-      description: 'Identificação de créditos tributários',
-      icon: <FileSearch className="h-5 w-5 text-white" />,
-      route: `/admin/credit-identification?client=${client.id}`,
-      color: 'bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700'
-    },
-    {
-      id: 'calculations',
-      title: 'Cálculos IRRF',
-      description: 'Cálculo e simulação de IRRF',
-      icon: <Calculator className="h-5 w-5 text-white" />,
-      route: `/admin/calculations?client=${client.id}`,
-      color: 'bg-gradient-to-br from-amber-500 via-amber-600 to-orange-700'
-    },
-    {
-      id: 'reports',
-      title: 'Relatórios',
-      description: 'Relatórios e análises fiscais',
-      icon: <BarChart className="h-5 w-5 text-white" />,
-      route: `/admin/fiscal-reports?client=${client.id}`,
-      color: 'bg-gradient-to-br from-rose-500 via-rose-600 to-red-700'
-    },
-    {
-      id: 'settings',
-      title: 'Configurações',
-      description: 'Configurações do cliente',
-      icon: <Settings className="h-5 w-5 text-white" />,
-      route: `/admin/client-settings?client=${client.id}`,
-      color: 'bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-700'
-    },
-    {
-      id: 'support',
-      title: 'Suporte',
-      description: 'Suporte técnico e ajuda',
-      icon: <HelpCircle className="h-5 w-5 text-white" />,
-      route: `/admin/support?client=${client.id}`,
-      color: 'bg-gradient-to-br from-gray-500 via-gray-600 to-gray-700'
-    },
-  ];
-
-  const handleButtonClick = (operation: OperationButton) => {
-    toast({
-      title: `Acessando ${operation.title}`,
-      description: `Gerenciando ${operation.title} para ${client.name}`,
-    });
-    navigate(operation.route);
+const ClientOperationsAccess: React.FC<ClientOperationsAccessProps> = ({ 
+  client, 
+  compact = false 
+}) => {
+  // Get user roles from client (default to some basic permissions if not defined)
+  const userRoles = client.userRoles || {
+    canViewOperations: true,
+    canEditOperations: false,
+    canApproveOperations: false,
+    isAdmin: false,
+    isRepresentative: false
   };
 
+  // Define access badges
+  const accessBadges = [
+    {
+      name: 'Visualização',
+      icon: <EyeIcon className="h-3 w-3" />,
+      enabled: userRoles.canViewOperations,
+      tooltip: 'Pode visualizar operações'
+    },
+    {
+      name: 'Edição',
+      icon: <PenIcon className="h-3 w-3" />,
+      enabled: userRoles.canEditOperations,
+      tooltip: 'Pode editar operações'
+    },
+    {
+      name: 'Aprovação',
+      icon: <Shield className="h-3 w-3" />,
+      enabled: userRoles.canApproveOperations, 
+      tooltip: 'Pode aprovar operações'
+    },
+    {
+      name: 'Admin',
+      icon: <UserCog className="h-3 w-3" />,
+      enabled: userRoles.isAdmin,
+      tooltip: 'Acesso de administrador'
+    },
+    {
+      name: 'Representante',
+      icon: <User className="h-3 w-3" />,
+      enabled: userRoles.isRepresentative,
+      tooltip: 'Acesso de representante'
+    }
+  ];
+
+  if (compact) {
+    // Compact view shows only enabled permissions as simple icons
+    const enabledBadges = accessBadges.filter(badge => badge.enabled);
+    
+    if (enabledBadges.length === 0) {
+      return <Badge variant="outline" className="text-xs px-1.5 h-5 bg-red-500/10 text-red-600">Sem Acesso</Badge>;
+    }
+    
+    return (
+      <div className="flex items-center gap-1">
+        {enabledBadges.map((badge, index) => (
+          <TooltipProvider key={index}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge 
+                  variant="outline" 
+                  className="p-1 h-5 w-5 flex items-center justify-center bg-primary/5 text-primary"
+                >
+                  {badge.icon}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{badge.tooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ))}
+      </div>
+    );
+  }
+
+  // Full view shows all permissions with names and status indicators
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Operações Disponíveis</CardTitle>
-        <CardDescription>
-          Acesse as operações disponíveis para este cliente
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {operationButtons.map((operation) => (
-            <motion.button
-              key={operation.id}
-              onClick={() => handleButtonClick(operation)}
-              className={`${operation.color} text-white p-4 rounded-lg shadow-md flex flex-col items-center gap-2 hover:shadow-lg transition-all duration-300`}
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <motion.div
-                initial={{ y: 0 }}
-                whileHover={{ y: -3 }}
-                className="bg-white/20 p-2 rounded-full"
-              >
-                {operation.icon}
-              </motion.div>
-              <div className="text-center">
-                <h3 className="text-lg font-semibold">{operation.title}</h3>
-                <p className="text-xs opacity-80">{operation.description}</p>
-              </div>
-            </motion.button>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-2">
+      <h4 className="text-sm font-medium mb-1.5">Permissões de Acesso</h4>
+      <div className="flex flex-wrap gap-2">
+        {accessBadges.map((badge, index) => (
+          <Badge 
+            key={index}
+            variant="outline" 
+            className={cn(
+              "flex items-center gap-1.5 text-xs px-2 py-1",
+              badge.enabled 
+                ? "bg-green-500/10 text-green-700 dark:text-green-400" 
+                : "bg-muted text-muted-foreground"
+            )}
+          >
+            {badge.enabled ? (
+              <CheckCircle className="h-3 w-3" />
+            ) : (
+              <XCircle className="h-3 w-3" />
+            )}
+            <span>{badge.name}</span>
+          </Badge>
+        ))}
+      </div>
+    </div>
   );
 };
 
