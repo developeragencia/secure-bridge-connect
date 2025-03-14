@@ -1,201 +1,160 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Audit, AuditSummary } from '@/types/audit';
 import { toast } from 'sonner';
 
-// Mock data
+// Mock data for now
 const mockAudits: Audit[] = [
   {
-    id: 'audit-1',
+    id: '1',
+    title: 'Auditoria Fiscal PIS/COFINS',
+    status: 'in_progress',
+    type: 'fiscal',
+    date: '2023-05-15',
+    clientId: '101',
     clientName: 'Empresa ABC Ltda',
-    documentNumber: '12.345.678/0001-99',
-    auditType: 'Fiscal',
-    startDate: '2023-03-15',
-    deadline: '2023-04-15',
-    status: 'EM_ANDAMENTO',
-    assignedTo: 'João Silva',
-    documentsCount: 24,
-    date: '2023-03-10',
-    priority: 'Alta',
+    description: 'Auditoria completa para verificação de créditos tributários PIS/COFINS.',
+    findings: 'Discrepâncias identificadas nos cálculos de compensação.',
+    recommendations: 'Revisar procedimentos de apuração de créditos.',
+    documents: ['doc1.pdf', 'doc2.pdf'],
+    assignedTo: 'José Silva',
+    createdAt: '2023-05-10',
+    updatedAt: '2023-05-15',
   },
-  {
-    id: 'audit-2',
-    clientName: 'Indústrias XYZ S/A',
-    documentNumber: '98.765.432/0001-10',
-    auditType: 'Contábil',
-    startDate: '2023-04-01',
-    deadline: '2023-05-01',
-    status: 'PENDENTE',
-    assignedTo: 'Maria Oliveira',
-    documentsCount: 18,
-    date: '2023-03-25',
-    priority: 'Média',
-  },
-  {
-    id: 'audit-3',
-    clientName: 'Comércio FastShop Ltda',
-    documentNumber: '45.678.901/0001-23',
-    auditType: 'Financeira',
-    startDate: '2023-04-15',
-    deadline: '2023-05-15',
-    status: 'CONCLUIDA',
-    assignedTo: 'Carlos Pereira',
-    documentsCount: 30,
-    date: '2023-04-10',
-    priority: 'Baixa',
-  },
-  {
-    id: 'audit-4',
-    clientName: 'Serviços GHI S/A',
-    documentNumber: '56.789.012/0001-34',
-    auditType: 'Trabalhista',
-    startDate: '2023-05-01',
-    deadline: '2023-06-01',
-    status: 'CANCELADA',
-    assignedTo: 'Ana Souza',
-    documentsCount: 12,
-    date: '2023-04-28',
-    priority: 'Alta',
-  }
+  // Add more mock audits as needed
 ];
 
 const mockSummary: AuditSummary = {
-  totalAudits: 35,
-  pendingAudits: 12,
-  inProgressAudits: 8,
-  completedAudits: 10,
-  // Add properties used in components
-  total: 35,
-  emAndamento: 8,
-  pendentes: 12,
-  concluidas: 10
+  total: 10,
+  inProgress: 3,
+  completed: 5,
+  pending: 2,
+  highRisk: 1,
 };
 
 export const useAuditManagement = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
   const [audits, setAudits] = useState<Audit[]>(mockAudits);
-  const [summary, setSummary] = useState<AuditSummary>(mockSummary);
+  const [auditSummary, setAuditSummary] = useState<AuditSummary>(mockSummary);
   const [isLoading, setIsLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [currentAudit, setCurrentAudit] = useState<Audit | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isListening, setIsListening] = useState(false);
 
-  useEffect(() => {
-    // Simulate loading data
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, []);
-
-  const handleRefresh = () => {
-    toast.info('Atualizando dados...');
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success('Dados atualizados');
-    }, 500);
-  };
-
-  const handleCreateAudit = () => {
-    setCurrentAudit(null);
-    setIsEditMode(false);
-    setIsFormOpen(true);
-  };
-
-  const handleSaveAudit = (auditData: Audit) => {
-    if (isEditMode && currentAudit) {
-      // Update existing audit
-      setAudits(audits.map(audit => audit.id === currentAudit.id ? auditData : audit));
-      toast.success(`Auditoria "${auditData.clientName}" atualizada com sucesso.`);
-    } else {
-      // Create new audit
-      setAudits([...audits, auditData]);
-      toast.success(`Auditoria "${auditData.clientName}" criada com sucesso.`);
-    }
-    setIsFormOpen(false);
-  };
-
-  const handleViewDetails = (audit: Audit) => {
-    toast.info('Visualizando detalhes', {
-      description: `Detalhes da auditoria #${audit.id}`,
-    });
-  };
-
-  const handleDownloadDocuments = (audit: Audit) => {
-    toast.success('Download dos documentos', {
-      description: `Download dos documentos da auditoria #${audit.id} iniciado`,
-    });
-  };
-
-  const handleEditAudit = (audit: Audit) => {
-    setCurrentAudit(audit);
-    setIsEditMode(true);
-    setIsFormOpen(true);
-  };
-
-  const handleDeleteAudit = (audit: Audit) => {
-    toast.warning('Auditoria excluída', {
-      description: `Auditoria #${audit.id} excluída com sucesso`,
-    });
-  };
-
-  const handleApproveAudit = (audit: Audit) => {
-    toast.success('Auditoria aprovada', {
-      description: `Auditoria #${audit.id} aprovada com sucesso`,
-    });
-  };
-
+  // Computed property for filtered audits
   const filteredAudits = audits.filter(audit => {
-    const matchesSearch =
-      audit.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      audit.documentNumber.includes(searchQuery);
-    const matchesStatus = statusFilter ? audit.status === statusFilter : true;
-    const matchesType = typeFilter ? audit.auditType === typeFilter : true;
-
+    const matchesSearch = searchQuery === '' || 
+      audit.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      audit.clientName.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || audit.status === statusFilter;
+    const matchesType = typeFilter === 'all' || audit.type === typeFilter;
+    
     return matchesSearch && matchesStatus && matchesType;
   });
 
-  // Create wrapper functions to handle auditId instead of full objects
-  const viewDetails = (auditId: string) => {
+  // Alias for summary to maintain backward compatibility
+  const summary = auditSummary;
+
+  // Action handlers
+  const viewDetails = useCallback((auditId: string) => {
+    console.log('View details for audit', auditId);
+    toast.info(`Visualizando detalhes da auditoria ${auditId}`);
+    // Additional implementation
+  }, []);
+
+  const downloadDocuments = useCallback((auditId: string) => {
+    console.log('Download documents for audit', auditId);
+    toast.info(`Baixando documentos da auditoria ${auditId}`);
+    // Additional implementation
+  }, []);
+
+  const editAudit = useCallback((auditId: string) => {
+    console.log('Edit audit', auditId);
     const audit = audits.find(a => a.id === auditId);
-    if (audit) handleViewDetails(audit);
-  };
+    if (audit) {
+      setCurrentAudit(audit);
+      setIsEditMode(true);
+      setIsFormOpen(true);
+      toast.info(`Editando auditoria ${auditId}`);
+    }
+  }, [audits]);
 
-  const downloadDocuments = (auditId: string) => {
-    const audit = audits.find(a => a.id === auditId);
-    if (audit) handleDownloadDocuments(audit);
-  };
+  const deleteAudit = useCallback((auditId: string) => {
+    console.log('Delete audit', auditId);
+    toast.error(`Auditoria ${auditId} removida`);
+    setAudits(prev => prev.filter(a => a.id !== auditId));
+  }, []);
 
-  const editAudit = (auditId: string) => {
-    const audit = audits.find(a => a.id === auditId);
-    if (audit) handleEditAudit(audit);
-  };
+  const approveAudit = useCallback((auditId: string) => {
+    console.log('Approve audit', auditId);
+    toast.success(`Auditoria ${auditId} aprovada`);
+    setAudits(prev => prev.map(a => a.id === auditId ? {...a, status: 'completed'} : a));
+  }, []);
 
-  const deleteAudit = (auditId: string) => {
-    const audit = audits.find(a => a.id === auditId);
-    if (audit) handleDeleteAudit(audit);
-  };
+  const addNewAudit = useCallback((newAudit: Audit) => {
+    console.log('Add new audit', newAudit);
+    setAudits(prev => [...prev, newAudit]);
+    toast.success('Nova auditoria criada com sucesso');
+  }, []);
 
-  const approveAudit = (auditId: string) => {
-    const audit = audits.find(a => a.id === auditId);
-    if (audit) handleApproveAudit(audit);
-  };
-
-  const addNewAudit = (auditData: Audit) => {
-    handleSaveAudit(auditData);
-  };
-
-  const filterAudits = (query: string) => {
+  const filterAudits = useCallback((query: string, status: string, type: string) => {
     setSearchQuery(query);
-    return filteredAudits;
-  };
+    setStatusFilter(status);
+    setTypeFilter(type);
+  }, []);
+
+  // Compatibility wrappers
+  const handleViewDetails = useCallback((auditId: string) => viewDetails(auditId), [viewDetails]);
+  const handleDownloadDocuments = useCallback((auditId: string) => downloadDocuments(auditId), [downloadDocuments]);
+  const handleEditAudit = useCallback((auditId: string) => editAudit(auditId), [editAudit]);
+  const handleDeleteAudit = useCallback((auditId: string) => deleteAudit(auditId), [deleteAudit]);
+  const handleApproveAudit = useCallback((auditId: string) => approveAudit(auditId), [approveAudit]);
+  
+  const handleRefresh = useCallback(() => {
+    setIsLoading(true);
+    // Mock refresh - in a real app would fetch from API
+    setTimeout(() => {
+      setIsLoading(false);
+      toast.success('Dados atualizados');
+    }, 1000);
+  }, []);
+
+  const handleCreateAudit = useCallback(() => {
+    setCurrentAudit(null);
+    setIsEditMode(false);
+    setIsFormOpen(true);
+  }, []);
+
+  const handleSaveAudit = useCallback((audit: Audit) => {
+    if (isEditMode && currentAudit) {
+      // Update existing audit
+      setAudits(prev => prev.map(a => a.id === currentAudit.id ? {...audit, id: currentAudit.id} : a));
+      toast.success(`Auditoria ${currentAudit.id} atualizada`);
+    } else {
+      // Add new audit
+      const newId = String(Date.now());
+      const newAudit = {...audit, id: newId, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()};
+      addNewAudit(newAudit);
+    }
+    setIsFormOpen(false);
+    setCurrentAudit(null);
+    setIsEditMode(false);
+  }, [isEditMode, currentAudit, addNewAudit]);
+
+  // Other compatibility wrappers
+  const onViewDetails = handleViewDetails;
+  const onDownloadDocuments = handleDownloadDocuments;
+  const onEdit = handleEditAudit;
+  const onDelete = handleDeleteAudit;
+  const onApprove = handleApproveAudit;
 
   return {
-    // Original properties
+    audits,
+    auditSummary,
+    isLoading,
     searchQuery,
     setSearchQuery,
     statusFilter,
@@ -204,7 +163,7 @@ export const useAuditManagement = () => {
     setTypeFilter,
     filteredAudits,
     summary,
-    isLoading,
+    
     isListening,
     isFormOpen,
     setIsFormOpen,
@@ -219,15 +178,22 @@ export const useAuditManagement = () => {
     handleDeleteAudit,
     handleApproveAudit,
     
-    // Compatibility properties
-    audits,
-    auditSummary: summary,
+    // Original action methods
     viewDetails,
     downloadDocuments,
     editAudit,
     deleteAudit,
     approveAudit,
     addNewAudit,
-    filterAudits
+    filterAudits,
+    
+    // New compatibility methods
+    onViewDetails,
+    onDownloadDocuments,
+    onEdit,
+    onDelete,
+    onApprove
   };
 };
+
+export default useAuditManagement;

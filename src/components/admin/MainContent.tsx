@@ -1,4 +1,3 @@
-
 import React from 'react';
 import AdminDashboard from './AdminDashboard';
 import AdminUsers from './AdminUsers';
@@ -16,6 +15,7 @@ import BillingContent from './billing/BillingContent';
 import SupportContent from './support/SupportContent';
 import AdminTabHeader from './AdminTabHeader';
 import AdminProfileSettings from './profile/AdminProfileSettings';
+import DocumentationContent from './documentation/DocumentationContent';
 
 // Tax Credits Components
 import TaxCreditManagement from './tax-credits/TaxCreditManagement';
@@ -161,6 +161,8 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         return <BillingContent />;
       case 'support':
         return <SupportContent />;
+      case 'system_documentation':
+        return <DocumentationContent />;
       
       default:
         if (activeTab.startsWith('client-')) {

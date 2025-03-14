@@ -144,7 +144,6 @@ const DocumentationContent: React.FC = () => {
           </Card>
         </TabsContent>
 
-        {/* Outros TabsContent serão implementados conforme necessidade */}
         <TabsContent value="users">
           <Card>
             <CardHeader>
@@ -152,13 +151,58 @@ const DocumentationContent: React.FC = () => {
               <CardDescription>Documentação sobre o módulo de usuários e permissões</CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Conteúdo será implementado */}
               <p>Documentação do módulo de usuários em desenvolvimento...</p>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Adicione mais TabsContent para as outras seções */}
+        <TabsContent value="tax-credits">
+          <Card>
+            <CardHeader>
+              <CardTitle>Créditos Tributários</CardTitle>
+              <CardDescription>Documentação sobre o módulo de créditos tributários</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Documentação do módulo de créditos tributários em desenvolvimento...</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="audits">
+          <Card>
+            <CardHeader>
+              <CardTitle>Auditorias</CardTitle>
+              <CardDescription>Documentação sobre o módulo de auditorias</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Documentação do módulo de auditorias em desenvolvimento...</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="reports">
+          <Card>
+            <CardHeader>
+              <CardTitle>Relatórios</CardTitle>
+              <CardDescription>Documentação sobre o módulo de relatórios</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Documentação do módulo de relatórios em desenvolvimento...</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="settings">
+          <Card>
+            <CardHeader>
+              <CardTitle>Configurações</CardTitle>
+              <CardDescription>Documentação sobre o módulo de configurações do sistema</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Documentação do módulo de configurações em desenvolvimento...</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );

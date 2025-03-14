@@ -14,6 +14,7 @@ const Login = lazy(() => import('@/pages/Login'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 const ClientDetailPage = lazy(() => import('@/pages/admin/ClientDetailPage'));
 const AuditoriaPage = lazy(() => import('@/pages/admin/AuditoriaPage'));
+const DocumentationPage = lazy(() => import('@/pages/admin/DocumentationPage'));
 
 // Layout providers
 import { ThemeProvider } from '@/components/ThemeProvider';
@@ -32,6 +33,7 @@ function App() {
             <Route path="/admin/:tab" element={<Admin />} />
             <Route path="/admin/client/:clientId" element={<ClientDetailPage />} />
             <Route path="/admin/auditorias" element={<AuditoriaPage />} />
+            <Route path="/admin/documentation" element={<DocumentationPage />} />
             
             {/* Auth Routes */}
             <Route path="/login" element={<Login />} />
