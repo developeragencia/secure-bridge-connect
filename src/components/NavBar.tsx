@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import AnimatedLogo from './AnimatedLogo';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Home, Settings } from 'lucide-react';
 import { 
   NavigationMenu, 
   NavigationMenuList, 
@@ -11,6 +11,8 @@ import {
   NavigationMenuContent, 
   NavigationMenuTrigger 
 } from '@/components/ui/navigation-menu';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 const NavBar: React.FC = () => {
@@ -60,20 +62,10 @@ const NavBar: React.FC = () => {
           </Link>
           
           {/* Desktop Navigation Menu */}
-          <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <Link to="/" className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
-                  Início
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link to="/admin" className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
-                  Admin
-                </Link>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+          <div className="hidden md:flex space-x-3">
+            <NavButton to="/" label="Início" icon={<Home className="h-4 w-4" />} />
+            <NavButton to="/admin" label="Admin" icon={<Settings className="h-4 w-4" />} />
+          </div>
           
           <button
             className="md:hidden p-2 rounded-md hover:bg-primary/10 transition-colors touch-target"
@@ -93,24 +85,82 @@ const NavBar: React.FC = () => {
       {mobileMenuOpen && (
         <div className="md:hidden bg-background/95 backdrop-blur-md shadow-lg animate-fade-in">
           <div className="px-4 py-3 space-y-2">
-            <Link 
-              to="/" 
-              className="block py-2 px-3 rounded-md hover:bg-primary/10 transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Início
-            </Link>
-            <Link 
-              to="/admin" 
-              className="block py-2 px-3 rounded-md hover:bg-primary/10 transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Admin
-            </Link>
+            <MobileNavButton to="/" label="Início" icon={<Home className="h-4 w-4" />} onClick={() => setMobileMenuOpen(false)} />
+            <MobileNavButton to="/admin" label="Admin" icon={<Settings className="h-4 w-4" />} onClick={() => setMobileMenuOpen(false)} />
           </div>
         </div>
       )}
     </nav>
+  );
+};
+
+interface NavButtonProps {
+  to: string;
+  label: string;
+  icon: React.ReactNode;
+}
+
+const NavButton: React.FC<NavButtonProps> = ({ to, label, icon }) => {
+  const location = useLocation();
+  const isActive = location.pathname === to || 
+    (to === '/admin' && location.pathname.startsWith('/admin'));
+
+  return (
+    <Link to={to}>
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="inline-block"
+      >
+        <Button 
+          variant={isActive ? "default" : "outline"}
+          size="sm"
+          className={cn(
+            "relative overflow-hidden group",
+            isActive ? "bg-primary text-primary-foreground" : "bg-background text-foreground"
+          )}
+        >
+          {/* Shimmer effect on hover */}
+          <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+          
+          <span className="flex items-center gap-1.5">
+            <motion.span
+              initial={{ rotate: 0 }}
+              whileHover={{ rotate: [0, -10, 10, 0] }}
+              transition={{ duration: 0.5 }}
+            >
+              {icon}
+            </motion.span>
+            {label}
+          </span>
+        </Button>
+      </motion.div>
+    </Link>
+  );
+};
+
+interface MobileNavButtonProps extends NavButtonProps {
+  onClick: () => void;
+}
+
+const MobileNavButton: React.FC<MobileNavButtonProps> = ({ to, label, icon, onClick }) => {
+  const location = useLocation();
+  const isActive = location.pathname === to || 
+    (to === '/admin' && location.pathname.startsWith('/admin'));
+
+  return (
+    <Link to={to} onClick={onClick} className="block w-full">
+      <Button 
+        variant={isActive ? "default" : "ghost"}
+        className={cn(
+          "w-full justify-start px-3 py-2 transition-all",
+          isActive ? "bg-primary/10 text-primary" : "hover:bg-accent/50"
+        )}
+      >
+        <span className="mr-2">{icon}</span>
+        {label}
+      </Button>
+    </Link>
   );
 };
 
