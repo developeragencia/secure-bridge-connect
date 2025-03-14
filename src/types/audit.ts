@@ -10,7 +10,6 @@ export interface Audit {
   completionDate?: string;
   observations?: string;
   documents?: string[];
-  // Add missing properties
   documentNumber: string;
   startDate: string;
   deadline: string;
@@ -23,7 +22,7 @@ export interface AuditSummary {
   pendingAudits: number;
   completedAudits: number;
   inProgressAudits: number;
-  // Add missing properties
+  // Additional properties for Portuguese labels
   total: number;
   emAndamento: number;
   pendentes: number;
