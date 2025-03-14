@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as SonnerToaster } from 'sonner';
 
 // Pages
+import Index from '@/pages/Index';
 import Admin from '@/pages/Admin';
 import Login from '@/pages/Login';
 import NotFound from '@/pages/NotFound';
@@ -19,8 +20,8 @@ function App() {
     <ThemeProvider defaultTheme="light" storageKey="theme">
       <Router>
         <Routes>
-          {/* Default route redirects to admin panel */}
-          <Route path="/" element={<Navigate to="/admin" replace />} />
+          {/* Home route shows the Index component */}
+          <Route path="/" element={<Index />} />
           
           {/* Admin Panel Routes */}
           <Route path="/admin" element={<Admin />} />
