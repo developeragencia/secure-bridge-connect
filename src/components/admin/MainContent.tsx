@@ -2,7 +2,7 @@ import React from 'react';
 import AdminDashboard from './AdminDashboard';
 import AdminUsers from './AdminUsers';
 import SiteEditor from './SiteEditor';
-import AdminReports from './AdminReports';
+import AdminReports from './reports';
 import AdminSettings from './AdminSettings';
 import UserProfilePermissions from './user-profiles/UserProfilePermissions';
 import TwoFactorAuthPanel from './security/TwoFactorAuthPanel';
