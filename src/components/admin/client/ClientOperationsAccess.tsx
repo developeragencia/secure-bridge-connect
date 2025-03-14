@@ -11,7 +11,7 @@ import {
   User, 
   UserCog 
 } from 'lucide-react';
-import { Client } from '@/types/client';
+import { Client } from '@/types/client.d';
 import { 
   Tooltip,
   TooltipContent,

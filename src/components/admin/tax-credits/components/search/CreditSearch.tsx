@@ -49,6 +49,8 @@ const CreditSearch: React.FC<CreditSearchProps> = ({ searchQuery, setSearchQuery
               </Button>
             </motion.div>
             <ButtonEffect 
+              onClick={() => {}} 
+              icon={<Search className="h-4 w-4" />}
               label="Buscar" 
               variant="default" 
               className="bg-primary hover:bg-primary/90"
