@@ -29,43 +29,17 @@ const AuditManagementContent: React.FC = () => {
     handleRefresh,
     handleCreateAudit,
     handleSaveAudit,
-    handleViewDetails,
-    handleDownloadDocuments,
-    handleEditAudit,
-    handleDeleteAudit,
-    handleApproveAudit
+    onViewDetails,
+    onDownloadDocuments,
+    onEdit,
+    onDelete,
+    onApprove
   } = useAuditManagement();
 
   const { classes: cardClasses } = useAnimationOnScroll<HTMLDivElement>({
     threshold: 0.1,
     transitionType: 'fade-in',
   });
-
-  // Create wrapper functions to handle audit IDs instead of full objects
-  const onViewDetails = (auditId: string) => {
-    const audit = filteredAudits.find(a => a.id === auditId);
-    if (audit) handleViewDetails(audit);
-  };
-
-  const onDownloadDocuments = (auditId: string) => {
-    const audit = filteredAudits.find(a => a.id === auditId);
-    if (audit) handleDownloadDocuments(audit);
-  };
-
-  const onEdit = (auditId: string) => {
-    const audit = filteredAudits.find(a => a.id === auditId);
-    if (audit) handleEditAudit(audit);
-  };
-
-  const onDelete = (auditId: string) => {
-    const audit = filteredAudits.find(a => a.id === auditId);
-    if (audit) handleDeleteAudit(audit);
-  };
-
-  const onApprove = (auditId: string) => {
-    const audit = filteredAudits.find(a => a.id === auditId);
-    if (audit) handleApproveAudit(audit);
-  };
 
   return (
     <div className="space-y-6">
