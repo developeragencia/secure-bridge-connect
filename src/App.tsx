@@ -21,6 +21,7 @@ import { supabase } from "./integrations/supabase/client";
 const UserProfilePage = lazy(() => import('./pages/admin/UserProfile'));
 const NotificationsPage = lazy(() => import('./pages/admin/NotificationsPage'));
 const ClientsPage = lazy(() => import('./pages/admin/ClientsPage'));
+const ClientDetailPage = lazy(() => import('./pages/admin/ClientDetailPage'));
 
 // Create QueryClient with proper configuration
 const queryClient = new QueryClient({
@@ -151,15 +152,12 @@ const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
 };
 
 const App = () => {
-  // Add domain detection for better error handling
   const [domainError, setDomainError] = useState(false);
   
   useEffect(() => {
-    // Check if we're on the correct domain and log for debugging
     const hostname = window.location.hostname;
     console.log("Current hostname:", hostname);
     
-    // Normalize the domain check to handle www and non-www versions
     const isValidDomain = 
       hostname === 'sistemasclaudiofigueiredo.com.br' || 
       hostname === 'www.sistemasclaudiofigueiredo.com.br' ||
@@ -173,7 +171,6 @@ const App = () => {
     }
   }, []);
   
-  // Render loading spinner for lazy-loaded components
   const renderLoading = () => (
     <div className="flex items-center justify-center min-h-screen">
       <div className="animate-spin h-8 w-8 border-t-2 border-primary rounded-full"></div>
@@ -190,7 +187,6 @@ const App = () => {
             <Route path="/maintenance" element={<Maintenance />} />
             <Route path="/login" element={<Login />} />
             
-            {/* Admin routes - order matters for proper route matching */}
             <Route 
               path="/admin/profile" 
               element={
@@ -222,6 +218,18 @@ const App = () => {
                   element={
                     <Suspense fallback={renderLoading()}>
                       <ClientsPage />
+                    </Suspense>
+                  } 
+                />
+              } 
+            />
+            <Route 
+              path="/admin/client/:clientId" 
+              element={
+                <ProtectedRoute 
+                  element={
+                    <Suspense fallback={renderLoading()}>
+                      <ClientDetailPage />
                     </Suspense>
                   } 
                 />

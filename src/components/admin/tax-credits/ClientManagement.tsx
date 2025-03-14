@@ -1,8 +1,6 @@
 
 import React, { useState } from 'react';
-import { 
-  Card
-} from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { Client } from '@/types/client';
 import { useActiveClient } from '@/hooks/useActiveClient';
@@ -41,7 +39,8 @@ const ClientManagement = () => {
   };
   
   const handleViewClient = (client: Client) => {
-    navigate(`/admin/client-${client.id}`);
+    // Navigate to the client detail page with the client ID
+    navigate(`/admin/client/${client.id}`);
   };
   
   const handleEditClient = (client: Client) => {

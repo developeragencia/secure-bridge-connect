@@ -29,6 +29,7 @@ import TaxCreditCalculator from './tax-credits/TaxCreditCalculator';
 import CreditIdentification from './tax-credits/CreditIdentification';
 import FiscalReports from './tax-credits/FiscalReports';
 import CommercialProposals from './tax-credits/CommercialProposals';
+import ClientDetailView from './tax-credits/components/client/ClientDetailView';
 
 // Tax Reports Components
 import DetailedReportsPanel from './tax-reports/DetailedReportsPanel';
@@ -72,6 +73,11 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
   };
 
   const renderContent = () => {
+    // Check if this is a client detail view
+    if (activeTab.startsWith('client/')) {
+      return <ClientDetailView />;
+    }
+
     switch (activeTab) {
       case 'dashboard':
         return <AdminDashboard />;

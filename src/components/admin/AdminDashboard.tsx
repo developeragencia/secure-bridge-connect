@@ -8,6 +8,7 @@ import DashboardSection from './dashboard/DashboardSection';
 import StatCards from './dashboard/StatCards';
 import { getMainMenuItems } from './dashboard/MainMenuItems';
 import { getOperationalMenuItems } from './dashboard/OperationalMenuItems';
+import ActiveClientHeader from './client/ActiveClientHeader';
 
 const AdminDashboard = () => {
   // Get menu items from the separate files
@@ -16,6 +17,9 @@ const AdminDashboard = () => {
   
   return (
     <div className="space-y-8">
+      {/* Active Client Header */}
+      <ActiveClientHeader />
+      
       {/* Dashboard header */}
       <DashboardHeader />
 
