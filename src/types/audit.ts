@@ -1,39 +1,20 @@
 
-import { StatusType } from './declarations';
-
 export interface Audit {
   id: string;
   clientName: string;
-  documentNumber: string;
   auditType: string;
-  startDate: string | Date;
-  deadline: string | Date;
-  status: 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANCELADA';
-  documentsCount: number;
+  status: string;
+  priority?: string;
   assignedTo?: string;
-  notes?: string;
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
+  date: string;
+  completionDate?: string;
+  observations?: string;
+  documents?: string[];
 }
 
 export interface AuditSummary {
-  total: number;
-  pendentes: number;
-  emAndamento: number;
-  concluidas: number;
-  canceladas: number;
-  // Add aliases for compatibility with other components
-  totalAudits?: number;
-  pendingAudits?: number;
-  inProgressAudits?: number;
-  completedAudits?: number;
-  canceledAudits?: number;
-}
-
-export interface AuditFilterParams {
-  status?: string;
-  type?: string;
-  startDate?: Date | null;
-  endDate?: Date | null;
-  searchQuery?: string;
+  totalAudits: number;
+  pendingAudits: number;
+  completedAudits: number;
+  inProgressAudits: number;
 }
