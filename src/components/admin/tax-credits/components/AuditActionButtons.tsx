@@ -3,6 +3,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2, CheckCircle, FileSearch, Download } from 'lucide-react';
 import { Audit } from '@/types/audit';
+import { motion } from 'framer-motion';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface AuditActionButtonsProps {
   audit: Audit;
@@ -21,58 +23,73 @@ const AuditActionButtons: React.FC<AuditActionButtonsProps> = ({
   onDelete, 
   onApprove
 }) => {
+  const actionButtons = [
+    {
+      icon: <FileSearch className="h-4 w-4" />,
+      tooltip: "Ver detalhes",
+      action: () => onViewDetails(audit.id),
+      ariaLabel: "Ver detalhes"
+    },
+    {
+      icon: <Download className="h-4 w-4" />,
+      tooltip: "Baixar documentos",
+      action: () => onDownloadDocuments(audit.id),
+      ariaLabel: "Baixar documentos"
+    },
+    {
+      icon: <Edit className="h-4 w-4" />,
+      tooltip: "Editar auditoria",
+      action: () => onEdit(audit.id),
+      ariaLabel: "Editar"
+    },
+    {
+      icon: <CheckCircle className="h-4 w-4 text-green-500" />,
+      tooltip: "Aprovar auditoria",
+      action: () => onApprove(audit.id),
+      ariaLabel: "Aprovar"
+    },
+    {
+      icon: <Trash2 className="h-4 w-4 text-red-500" />,
+      tooltip: "Excluir auditoria",
+      action: () => onDelete(audit.id),
+      ariaLabel: "Excluir"
+    }
+  ];
+
   return (
     <div className="flex space-x-2">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0"
-        onClick={() => onViewDetails(audit.id)}
-        title="Ver detalhes"
-      >
-        <FileSearch className="h-4 w-4" />
-        <span className="sr-only">Ver detalhes</span>
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0"
-        onClick={() => onDownloadDocuments(audit.id)}
-        title="Baixar documentos"
-      >
-        <Download className="h-4 w-4" />
-        <span className="sr-only">Baixar documentos</span>
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0"
-        onClick={() => onEdit(audit.id)}
-        title="Editar auditoria"
-      >
-        <Edit className="h-4 w-4" />
-        <span className="sr-only">Editar</span>
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0"
-        onClick={() => onApprove(audit.id)}
-        title="Aprovar auditoria"
-      >
-        <CheckCircle className="h-4 w-4 text-green-500" />
-        <span className="sr-only">Aprovar</span>
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0"
-        onClick={() => onDelete(audit.id)}
-        title="Excluir auditoria"
-      >
-        <Trash2 className="h-4 w-4 text-red-500" />
-        <span className="sr-only">Excluir</span>
-      </Button>
+      <TooltipProvider>
+        {actionButtons.map((button, index) => (
+          <Tooltip key={index}>
+            <TooltipTrigger asChild>
+              <motion.div 
+                whileHover={{ scale: 1.2 }} 
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 hover:bg-primary/10 transition-colors duration-300"
+                  onClick={button.action}
+                >
+                  <motion.span
+                    initial={{ rotate: 0 }}
+                    whileHover={{ rotate: [0, -10, 10, 0] }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {button.icon}
+                  </motion.span>
+                  <span className="sr-only">{button.ariaLabel}</span>
+                </Button>
+              </motion.div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{button.tooltip}</p>
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </TooltipProvider>
     </div>
   );
 };
