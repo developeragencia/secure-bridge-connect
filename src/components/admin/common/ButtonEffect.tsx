@@ -1,23 +1,30 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ButtonEffectProps extends React.ComponentPropsWithoutRef<typeof Button> {
   icon?: React.ReactNode;
   label: string;
   shimmer?: boolean;
+  tooltip?: string;
 }
 
 const ButtonEffect: React.FC<ButtonEffectProps> = ({ 
   icon, 
   label, 
   shimmer = true,
+  tooltip,
   className,
   ...props 
 }) => {
-  return (
+  const buttonContent = (
     <motion.div
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
@@ -49,6 +56,23 @@ const ButtonEffect: React.FC<ButtonEffectProps> = ({
       </Button>
     </motion.div>
   );
+
+  if (tooltip) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {buttonContent}
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{tooltip}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+
+  return buttonContent;
 };
 
 export default ButtonEffect;
