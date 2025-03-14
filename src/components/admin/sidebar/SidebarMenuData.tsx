@@ -1,8 +1,8 @@
-
 import { 
   Home, Users, Settings, FileText, Shield, Bell, CreditCard, 
   HelpCircle, User, DatabaseIcon, FileCheck, ChevronDown, 
-  FileSearch, ListChecks, BarChart, File, Paintbrush, Newspaper
+  FileSearch, ListChecks, BarChart, File, Paintbrush, Newspaper,
+  BookOpen
 } from 'lucide-react';
 import { SidebarSection } from '@/types/admin-sidebar';
 
@@ -236,11 +236,15 @@ export const adminMenuItems: MenuItem[] = [
     icon: <HelpCircle className="h-4 w-4" />,
     path: '/admin/support',
   },
+  {
+    id: 'system_documentation',
+    label: 'Documentação do Sistema',
+    icon: <BookOpen className="h-4 w-4" />,
+    path: '/admin/documentation',
+  },
 ];
 
-// Add the getMenuSections function that's being imported by other components
 export const getMenuSections = (): SidebarSection[] => {
-  // Convert the flat structure to the expected sidebar sections format
   return [
     {
       id: 'main',
@@ -323,6 +327,11 @@ export const getMenuSections = (): SidebarSection[] => {
           id: 'site',
           label: 'Editor do Site',
           icon: <Paintbrush className="h-4 w-4" />,
+        },
+        {
+          id: 'system_documentation',
+          label: 'Documentação',
+          icon: <BookOpen className="h-4 w-4" />,
         },
         {
           id: 'settings',
