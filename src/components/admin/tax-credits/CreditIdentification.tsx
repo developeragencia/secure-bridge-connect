@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Lightbulb, Search, ChevronDown, ArrowRight, FileCheck, Clock, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,9 +7,65 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import TabTitleSection from '../header/TabTitleSection';
+import { useClientStore } from '@/hooks/useClientStore';
+import NewCreditAnalysisModal, { AnalysisFormData } from './components/NewCreditAnalysisModal';
 
 const CreditIdentification: React.FC = () => {
+  const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { activeClient } = useClientStore();
+  const { toast } = useToast();
+
+  const handleNewAnalysis = () => {
+    if (!activeClient) {
+      toast({
+        title: "Cliente não selecionado",
+        description: "Selecione um cliente antes de iniciar uma análise.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsAnalysisModalOpen(true);
+  };
+
+  const handleAnalysisSubmit = (data: AnalysisFormData) => {
+    setIsAnalysisModalOpen(false);
+    startAnalysis(data);
+  };
+
+  const startAnalysis = (data: AnalysisFormData) => {
+    setIsAnalyzing(true);
+    setAnalysisProgress(0);
+    
+    toast({
+      title: "Análise iniciada",
+      description: `Analisando dados do cliente "${activeClient?.name}" no período de ${data.startDate?.toLocaleDateString('pt-BR')} a ${data.endDate?.toLocaleDateString('pt-BR')}.`,
+    });
+    
+    // Simulate progress
+    const interval = setInterval(() => {
+      setAnalysisProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setIsAnalyzing(false);
+            toast({
+              title: "Análise concluída",
+              description: "Foram identificadas novas oportunidades de crédito tributário.",
+            });
+          }, 500);
+          return 100;
+        }
+        return prev + Math.floor(Math.random() * 5) + 1;
+      });
+    }, 800);
+  };
+
   return (
     <div className="space-y-6">
       <TabTitleSection 
@@ -46,6 +102,55 @@ const CreditIdentification: React.FC = () => {
         />
       </div>
 
+      {/* Analysis progress card (shows when analysis is running) */}
+      {isAnalyzing && (
+        <Card className="border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20">
+          <CardHeader>
+            <CardTitle>Análise em Andamento</CardTitle>
+            <CardDescription>
+              {analysisProgress < 100 
+                ? "Analisando pagamentos e identificando possíveis créditos tributários..." 
+                : "Análise concluída. Processando resultados..."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Progresso</span>
+                <span>{analysisProgress}%</span>
+              </div>
+              <Progress value={analysisProgress} className="h-2" />
+              
+              <div className="pt-4 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Pagamentos analisados</span>
+                  <span>{Math.floor((analysisProgress / 100) * 843)} / 843</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Fornecedores processados</span>
+                  <span>{Math.floor((analysisProgress / 100) * 142)} / 142</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Possíveis créditos identificados</span>
+                  <span>{Math.floor((analysisProgress / 100) * 18)}</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+          {analysisProgress < 100 && (
+            <CardFooter>
+              <Button 
+                variant="outline" 
+                className="w-full" 
+                onClick={() => setIsAnalyzing(false)}
+              >
+                Cancelar Análise
+              </Button>
+            </CardFooter>
+          )}
+        </Card>
+      )}
+
       {/* Search and filters */}
       <div className="flex flex-col space-y-4 md:flex-row md:items-center md:space-y-0 md:space-x-4">
         <div className="relative flex-1 md:max-w-sm">
@@ -54,6 +159,8 @@ const CreditIdentification: React.FC = () => {
             type="search"
             placeholder="Buscar oportunidades por cliente ou tributo..."
             className="w-full bg-background pl-8"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <Button variant="outline" className="flex items-center justify-between">
@@ -68,7 +175,7 @@ const CreditIdentification: React.FC = () => {
           <span>Status</span>
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
-        <Button>Nova Análise</Button>
+        <Button onClick={handleNewAnalysis}>Nova Análise</Button>
       </div>
 
       {/* Main content tabs */}
@@ -191,6 +298,13 @@ const CreditIdentification: React.FC = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Modal for creating a new analysis */}
+      <NewCreditAnalysisModal 
+        isOpen={isAnalysisModalOpen}
+        onClose={() => setIsAnalysisModalOpen(false)}
+        onSubmit={handleAnalysisSubmit}
+      />
     </div>
   );
 };

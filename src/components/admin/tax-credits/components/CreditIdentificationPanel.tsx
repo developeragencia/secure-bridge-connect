@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useClientStore } from '@/hooks/useClientStore';
+import NewCreditAnalysisModal, { AnalysisFormData } from './NewCreditAnalysisModal';
 
 const MOCK_CREDITS = [
   {
@@ -99,6 +100,7 @@ const CreditIdentificationPanel = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
+  const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [advancedSettings, setAdvancedSettings] = useState({
     monthsToAnalyze: 60,
     includeCorrectionSelic: true,
@@ -125,21 +127,34 @@ const CreditIdentificationPanel = () => {
       return;
     }
     
+    setIsAnalysisModalOpen(true);
+  };
+
+  const handleAnalysisSubmit = (data: AnalysisFormData) => {
+    setIsAnalysisModalOpen(false);
+    
     setIsAnalyzing(true);
     setAnalysisProgress(0);
+    
+    toast({
+      title: "Análise iniciada",
+      description: `Analisando dados do cliente "${activeClient?.name}" no período selecionado.`,
+    });
     
     const interval = setInterval(() => {
       setAnalysisProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
-          setIsAnalyzing(false);
-          toast({
-            title: "Análise concluída",
-            description: "Foram identificados 5 possíveis créditos tributários.",
-          });
+          setTimeout(() => {
+            setIsAnalyzing(false);
+            toast({
+              title: "Análise concluída",
+              description: "Foram identificados 5 possíveis créditos tributários.",
+            });
+          }, 500);
           return 100;
         }
-        return prev + 10;
+        return prev + Math.floor(Math.random() * 10) + 1;
       });
     }, 800);
   };
@@ -677,6 +692,12 @@ const CreditIdentificationPanel = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <NewCreditAnalysisModal 
+        isOpen={isAnalysisModalOpen}
+        onClose={() => setIsAnalysisModalOpen(false)}
+        onSubmit={handleAnalysisSubmit}
+      />
     </div>
   );
 };
