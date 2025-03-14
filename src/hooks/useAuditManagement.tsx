@@ -159,7 +159,43 @@ export const useAuditManagement = () => {
     return matchesSearch && matchesStatus && matchesType;
   });
 
+  // Create wrapper functions to handle auditId instead of full objects
+  const viewDetails = (auditId: string) => {
+    const audit = audits.find(a => a.id === auditId);
+    if (audit) handleViewDetails(audit);
+  };
+
+  const downloadDocuments = (auditId: string) => {
+    const audit = audits.find(a => a.id === auditId);
+    if (audit) handleDownloadDocuments(audit);
+  };
+
+  const editAudit = (auditId: string) => {
+    const audit = audits.find(a => a.id === auditId);
+    if (audit) handleEditAudit(audit);
+  };
+
+  const deleteAudit = (auditId: string) => {
+    const audit = audits.find(a => a.id === auditId);
+    if (audit) handleDeleteAudit(audit);
+  };
+
+  const approveAudit = (auditId: string) => {
+    const audit = audits.find(a => a.id === auditId);
+    if (audit) handleApproveAudit(audit);
+  };
+
+  const addNewAudit = (auditData: Audit) => {
+    handleSaveAudit(auditData);
+  };
+
+  const filterAudits = (query: string) => {
+    setSearchQuery(query);
+    return filteredAudits;
+  };
+
   return {
+    // Original properties
     searchQuery,
     setSearchQuery,
     statusFilter,
@@ -182,18 +218,16 @@ export const useAuditManagement = () => {
     handleEditAudit,
     handleDeleteAudit,
     handleApproveAudit,
-    // Add these properties to make it compatible with the old hook
+    
+    // Compatibility properties
     audits,
     auditSummary: summary,
-    viewDetails: handleViewDetails,
-    downloadDocuments: handleDownloadDocuments,
-    editAudit: handleEditAudit,
-    deleteAudit: handleDeleteAudit,
-    approveAudit: handleApproveAudit,
-    addNewAudit: handleSaveAudit,
-    filterAudits: (query: string) => {
-      setSearchQuery(query);
-      return filteredAudits;
-    }
+    viewDetails,
+    downloadDocuments,
+    editAudit,
+    deleteAudit,
+    approveAudit,
+    addNewAudit,
+    filterAudits
   };
 };
