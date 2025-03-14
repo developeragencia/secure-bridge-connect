@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 const mockAudits: Audit[] = [
   {
     id: 'audit-1',
-    clientId: 'client-1',
     clientName: 'Empresa ABC Ltda',
     documentNumber: '12.345.678/0001-99',
     auditType: 'Fiscal',
@@ -16,13 +15,11 @@ const mockAudits: Audit[] = [
     status: 'EM_ANDAMENTO',
     assignedTo: 'João Silva',
     documentsCount: 24,
-    findings: 3,
-    createdAt: '2023-03-10T08:30:00Z',
-    updatedAt: '2023-03-15T14:20:00Z',
+    date: '2023-03-10',
+    priority: 'Alta',
   },
   {
     id: 'audit-2',
-    clientId: 'client-2',
     clientName: 'Indústrias XYZ S/A',
     documentNumber: '98.765.432/0001-10',
     auditType: 'Contábil',
@@ -31,13 +28,11 @@ const mockAudits: Audit[] = [
     status: 'PENDENTE',
     assignedTo: 'Maria Oliveira',
     documentsCount: 18,
-    findings: 0,
-    createdAt: '2023-03-25T11:15:00Z',
-    updatedAt: '2023-04-01T09:00:00Z',
+    date: '2023-03-25',
+    priority: 'Média',
   },
   {
     id: 'audit-3',
-    clientId: 'client-3',
     clientName: 'Comércio FastShop Ltda',
     documentNumber: '45.678.901/0001-23',
     auditType: 'Financeira',
@@ -46,13 +41,11 @@ const mockAudits: Audit[] = [
     status: 'CONCLUIDA',
     assignedTo: 'Carlos Pereira',
     documentsCount: 30,
-    findings: 5,
-    createdAt: '2023-04-10T16:45:00Z',
-    updatedAt: '2023-04-15T17:30:00Z',
+    date: '2023-04-10',
+    priority: 'Baixa',
   },
   {
     id: 'audit-4',
-    clientId: 'client-4',
     clientName: 'Serviços GHI S/A',
     documentNumber: '56.789.012/0001-34',
     auditType: 'Trabalhista',
@@ -61,9 +54,8 @@ const mockAudits: Audit[] = [
     status: 'CANCELADA',
     assignedTo: 'Ana Souza',
     documentsCount: 12,
-    findings: 0,
-    createdAt: '2023-04-28T10:00:00Z',
-    updatedAt: '2023-05-01T11:00:00Z',
+    date: '2023-04-28',
+    priority: 'Alta',
   }
 ];
 
@@ -72,13 +64,11 @@ const mockSummary: AuditSummary = {
   pendingAudits: 12,
   inProgressAudits: 8,
   completedAudits: 10,
-  canceledAudits: 5,
   // Add properties used in components
   total: 35,
   emAndamento: 8,
-  pendente: 12,
-  concluida: 10,
-  cancelada: 5
+  pendentes: 12,
+  concluidas: 10
 };
 
 export const useAuditManagement = () => {
@@ -191,6 +181,19 @@ export const useAuditManagement = () => {
     handleDownloadDocuments,
     handleEditAudit,
     handleDeleteAudit,
-    handleApproveAudit
+    handleApproveAudit,
+    // Add these properties to make it compatible with the old hook
+    audits,
+    auditSummary: summary,
+    viewDetails: handleViewDetails,
+    downloadDocuments: handleDownloadDocuments,
+    editAudit: handleEditAudit,
+    deleteAudit: handleDeleteAudit,
+    approveAudit: handleApproveAudit,
+    addNewAudit: handleSaveAudit,
+    filterAudits: (query: string) => {
+      setSearchQuery(query);
+      return filteredAudits;
+    }
   };
 };

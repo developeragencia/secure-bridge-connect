@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import AuditManagementContent from './components/AuditManagementContent';
 import { 
@@ -22,51 +21,68 @@ import { Plus, Filter, Download, CheckCircle2, AlertTriangle, Clock } from "luci
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import AuditActionButtons from "./components/AuditActionButtons";
+import { Audit } from "@/types/audit";
 
 // Sample audit data
 const sampleAudits = [
   {
     id: "audit-001",
-    client: "Empresa ABC Ltda",
-    type: "Fiscal",
+    clientName: "Empresa ABC Ltda",
+    auditType: "Fiscal",
     date: "12/06/2023",
     status: "Em Andamento",
     priority: "Alta",
-    assignedTo: "Carlos Silva"
+    assignedTo: "Carlos Silva",
+    documentNumber: "12.345.678/0001-90",
+    startDate: "2023-06-01",
+    deadline: "2023-07-01",
+    documentsCount: 5
   },
   {
     id: "audit-002",
-    client: "XYZ Comércio S.A.",
-    type: "Tributária",
+    clientName: "XYZ Comércio S.A.",
+    auditType: "Tributária",
     date: "15/06/2023",
     status: "Concluída",
     priority: "Média",
-    assignedTo: "Ana Oliveira"
+    assignedTo: "Ana Oliveira",
+    documentNumber: "23.456.789/0001-12",
+    startDate: "2023-05-15",
+    deadline: "2023-06-15",
+    documentsCount: 8
   },
   {
     id: "audit-003",
-    client: "Tech Solutions Inc.",
-    type: "Contábil",
+    clientName: "Tech Solutions Inc.",
+    auditType: "Contábil",
     date: "10/06/2023",
     status: "Pendente",
     priority: "Baixa",
-    assignedTo: "João Santos"
+    assignedTo: "João Santos",
+    documentNumber: "34.567.890/0001-23",
+    startDate: "2023-06-05",
+    deadline: "2023-07-05",
+    documentsCount: 3
   },
   {
     id: "audit-004",
-    client: "Indústria Nacional Ltda",
-    type: "Fiscal",
+    clientName: "Indústria Nacional Ltda",
+    auditType: "Fiscal",
     date: "05/06/2023",
     status: "Em Andamento",
     priority: "Alta",
-    assignedTo: "Mariana Costa"
+    assignedTo: "Mariana Costa",
+    documentNumber: "45.678.901/0001-34",
+    startDate: "2023-05-20",
+    deadline: "2023-06-20",
+    documentsCount: 10
   }
 ];
 
 const AuditManagement = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
-  const [audits, setAudits] = useState(sampleAudits);
+  const [audits, setAudits] = useState<Audit[]>(sampleAudits);
 
   // Handler functions for action buttons
   const handleViewDetails = (auditId: string) => {
@@ -259,23 +275,15 @@ const AuditManagement = () => {
                   {audits.map((audit) => (
                     <TableRow key={audit.id}>
                       <TableCell className="font-medium">{audit.id}</TableCell>
-                      <TableCell>{audit.client}</TableCell>
-                      <TableCell>{audit.type}</TableCell>
+                      <TableCell>{audit.clientName}</TableCell>
+                      <TableCell>{audit.auditType}</TableCell>
                       <TableCell>{audit.date}</TableCell>
                       <TableCell>{getStatusBadge(audit.status)}</TableCell>
-                      <TableCell>{getPriorityBadge(audit.priority)}</TableCell>
+                      <TableCell>{getPriorityBadge(audit.priority || '')}</TableCell>
                       <TableCell>{audit.assignedTo}</TableCell>
                       <TableCell>
                         <AuditActionButtons 
-                          audit={{
-                            id: audit.id,
-                            clientName: audit.client,
-                            auditType: audit.type,
-                            status: audit.status,
-                            priority: audit.priority,
-                            assignedTo: audit.assignedTo,
-                            date: audit.date
-                          }}
+                          audit={audit}
                           onViewDetails={handleViewDetails}
                           onDownloadDocuments={handleDownloadDocuments}
                           onEdit={handleEdit}
@@ -318,22 +326,14 @@ const AuditManagement = () => {
                     .map((audit) => (
                       <TableRow key={audit.id}>
                         <TableCell className="font-medium">{audit.id}</TableCell>
-                        <TableCell>{audit.client}</TableCell>
-                        <TableCell>{audit.type}</TableCell>
+                        <TableCell>{audit.clientName}</TableCell>
+                        <TableCell>{audit.auditType}</TableCell>
                         <TableCell>{audit.date}</TableCell>
-                        <TableCell>{getPriorityBadge(audit.priority)}</TableCell>
+                        <TableCell>{getPriorityBadge(audit.priority || '')}</TableCell>
                         <TableCell>{audit.assignedTo}</TableCell>
                         <TableCell>
                           <AuditActionButtons 
-                            audit={{
-                              id: audit.id,
-                              clientName: audit.client,
-                              auditType: audit.type,
-                              status: audit.status,
-                              priority: audit.priority,
-                              assignedTo: audit.assignedTo,
-                              date: audit.date
-                            }}
+                            audit={audit}
                             onViewDetails={handleViewDetails}
                             onDownloadDocuments={handleDownloadDocuments}
                             onEdit={handleEdit}
@@ -375,21 +375,13 @@ const AuditManagement = () => {
                     .map((audit) => (
                       <TableRow key={audit.id}>
                         <TableCell className="font-medium">{audit.id}</TableCell>
-                        <TableCell>{audit.client}</TableCell>
-                        <TableCell>{audit.type}</TableCell>
+                        <TableCell>{audit.clientName}</TableCell>
+                        <TableCell>{audit.auditType}</TableCell>
                         <TableCell>{audit.date}</TableCell>
                         <TableCell>{audit.assignedTo}</TableCell>
                         <TableCell>
                           <AuditActionButtons 
-                            audit={{
-                              id: audit.id,
-                              clientName: audit.client,
-                              auditType: audit.type,
-                              status: audit.status,
-                              priority: audit.priority,
-                              assignedTo: audit.assignedTo,
-                              date: audit.date
-                            }}
+                            audit={audit}
                             onViewDetails={handleViewDetails}
                             onDownloadDocuments={handleDownloadDocuments}
                             onEdit={handleEdit}
