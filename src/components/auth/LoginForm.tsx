@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -113,7 +114,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="pl-10 border-primary/20 focus-visible:ring-primary"
+            className="pl-10"
           />
         </div>
       </div>
@@ -127,7 +128,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="pl-10 border-primary/20 focus-visible:ring-primary"
+            className="pl-10"
           />
         </div>
       </div>
@@ -137,7 +138,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           id="remember-me" 
           checked={rememberMe} 
           onCheckedChange={setRememberMe}
-          className="data-[state=checked]:bg-primary"
         />
         <Label 
           htmlFor="remember-me" 
@@ -160,7 +160,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       
       <Button 
         type="submit" 
-        className="w-full transition-all hover:shadow-lg hover:shadow-primary/20"
+        className="w-full"
         disabled={loading}
       >
         {loading ? (
