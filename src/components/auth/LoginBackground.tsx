@@ -11,12 +11,12 @@ const LoginBackground: React.FC = () => {
       {/* Animated background shapes */}
       <div className="absolute pointer-events-none">
         <motion.div
-          className="absolute w-48 sm:w-64 h-48 sm:h-64 rounded-full bg-primary/10 -top-20 -right-20"
+          className="absolute w-64 sm:w-72 h-64 sm:h-72 rounded-full bg-primary/10 -top-20 -right-20 blur-xl"
           animate={{ scale: [1, 1.2, 1], rotate: [0, 45, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute w-56 sm:w-72 h-56 sm:h-72 rounded-full bg-secondary/10 -bottom-20 -left-20"
+          className="absolute w-72 sm:w-80 h-72 sm:h-80 rounded-full bg-secondary/10 -bottom-20 -left-20 blur-xl"
           animate={{ scale: [1, 1.3, 1], rotate: [0, -45, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         />

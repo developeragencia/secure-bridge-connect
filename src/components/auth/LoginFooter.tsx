@@ -16,7 +16,7 @@ const LoginFooter: React.FC = () => {
       <Button 
         variant="outline" 
         size="sm" 
-        className="w-full text-xs sm:text-sm hover:bg-primary/10 hover:text-primary border-primary/20 transition-all hover:shadow-sm hover:shadow-primary/10"
+        className="w-full text-xs sm:text-sm hover:bg-primary/10 hover:text-primary border-primary/20 transition-all hover:shadow-sm"
         asChild
       >
         <Link to="/">
@@ -26,7 +26,7 @@ const LoginFooter: React.FC = () => {
       </Button>
       <p className="text-[10px] sm:text-xs text-muted-foreground">
         Sistema Administrativo © {new Date().getFullYear()} Claudio Figueiredo | 
-        Desenvolvido por <a href="https://alexdesenvolvedor.com.br" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+        <a href="https://alexdesenvolvedor.com.br" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
           Alex Developer
         </a>
       </p>

@@ -99,7 +99,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   return (
     <motion.form 
       onSubmit={handleLogin} 
-      className="space-y-3 sm:space-y-4"
+      className="space-y-4 sm:space-y-5"
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, delay: 0.4 }}
@@ -114,7 +114,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="pl-10"
+            className="pl-10 border-primary/20 focus-visible:ring-primary/30"
           />
         </div>
       </div>
@@ -128,7 +128,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="pl-10"
+            className="pl-10 border-primary/20 focus-visible:ring-primary/30"
           />
         </div>
       </div>
@@ -138,6 +138,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           id="remember-me" 
           checked={rememberMe} 
           onCheckedChange={setRememberMe}
+          className="data-[state=checked]:bg-primary/80"
         />
         <Label 
           htmlFor="remember-me" 
@@ -149,7 +150,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       
       {error && (
         <motion.div 
-          className="text-xs sm:text-sm text-destructive bg-destructive/10 p-2 sm:p-3 rounded"
+          className="text-xs sm:text-sm text-destructive bg-destructive/10 p-2 sm:p-3 rounded-md"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -160,7 +161,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       
       <Button 
         type="submit" 
-        className="w-full"
+        className="w-full transition-all duration-300 hover:shadow-md hover:shadow-primary/20 bg-gradient-to-r from-primary to-primary/90"
         disabled={loading}
       >
         {loading ? (

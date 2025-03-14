@@ -34,7 +34,7 @@ const Login = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="relative w-full max-w-md z-10"
       >
-        <Card className="shadow-xl border-primary/10 overflow-hidden bg-white/90 backdrop-blur-md dark:bg-background/80">
+        <Card className="shadow-xl border-primary/10 overflow-hidden bg-white/95 backdrop-blur-md dark:bg-background/80 transition-all duration-300 hover:shadow-primary/5">
           <CardHeader className="space-y-1 text-center">
             <LoginHeader />
           </CardHeader>
