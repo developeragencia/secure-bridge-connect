@@ -1,3 +1,4 @@
+
 import React from 'react';
 import AdminDashboard from './AdminDashboard';
 import AdminUsers from './AdminUsers';
@@ -14,6 +15,7 @@ import NotificationsContent from './notifications/NotificationsContent';
 import BillingContent from './billing/BillingContent';
 import SupportContent from './support/SupportContent';
 import AdminTabHeader from './AdminTabHeader';
+import AdminProfileSettings from './profile/AdminProfileSettings';
 
 // Tax Credits Components
 import TaxCreditManagement from './tax-credits/TaxCreditManagement';
@@ -139,7 +141,9 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         return <AdminReports />;
       
       case 'settings':
-        return <AdminSettings />;
+        return <AdminSettings user={user} />;
+      case 'admin_profile':
+        return <AdminProfileSettings />;
       case 'security':
         return <ExtraTabContent activeTab="security" />;
       case 'billing':

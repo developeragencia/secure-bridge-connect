@@ -1,98 +1,238 @@
 
-import React from 'react';
-import {
-  Users, BarChart3, FileText, Settings, 
-  Globe, ShieldAlert, CreditCard, HelpCircle,
-  Building, UserCircle, Receipt, FileBarChart2, Landmark,
-  PercentCircle, FileSpreadsheet, FileStack, ClipboardList,
-  Calculator, FileCheck, Database, Bell, Activity,
-  FileLineChart, Layout, ReceiptText, Key, Clock, Shield, ClipboardListIcon, RefreshCw, Lightbulb
+import { 
+  Home, Users, Settings, FileText, Shield, Bell, CreditCard, 
+  HelpCircle, User, DatabaseIcon, FileCheck, ChevronDown, 
+  FileSearch, ListChecks, BarChart, File, Paintbrush, Newspaper
 } from 'lucide-react';
-import { SidebarSection } from '@/types/admin-sidebar';
 
-export const getMenuSections = (): SidebarSection[] => {
-  return [
-    {
-      id: 'main',
-      title: 'Principal',
-      items: [
-        { id: 'dashboard', label: 'Painel Principal', icon: <BarChart3 className="h-4 w-4" /> },
-        { id: 'users', label: 'Usuários', icon: <Users className="h-4 w-4" /> },
-        { id: 'profile', label: 'Meu Perfil', icon: <UserCircle className="h-4 w-4" /> },
-        { id: 'notifications', label: 'Notificações', icon: <Bell className="h-4 w-4" /> }
-      ]
-    },
-    {
-      id: 'clients',
-      title: 'Clientes',
-      items: [
-        { id: 'clients', label: 'Gestão de Clientes', icon: <Building className="h-4 w-4" /> }
-      ]
-    },
-    {
-      id: 'tax_credits',
-      title: 'Créditos Tributários',
-      items: [
-        { id: 'tax_credits', label: 'Gestão de Créditos', icon: <Receipt className="h-4 w-4" /> },
-        { id: 'recovery', label: 'Recuperação', icon: <Landmark className="h-4 w-4" /> },
-        { id: 'credit_identification', label: 'Identificação Automática', icon: <FileCheck className="h-4 w-4" /> },
-        { id: 'data_processing', label: 'Processamento de Dados', icon: <Database className="h-4 w-4" /> },
-        { id: 'audits', label: 'Auditorias', icon: <FileBarChart2 className="h-4 w-4" /> },
-        { id: 'calculations', label: 'Cálculos IRRF', icon: <PercentCircle className="h-4 w-4" /> },
-        { id: 'tax_calculator', label: 'Calculadora de Crédito', icon: <Calculator className="h-4 w-4" /> },
-        { id: 'imports', label: 'Importação de Dados', icon: <FileSpreadsheet className="h-4 w-4" /> },
-        { id: 'fiscal_reports', label: 'Relatórios Fiscais', icon: <FileStack className="h-4 w-4" /> },
-        { id: 'proposals', label: 'Propostas Comerciais', icon: <ClipboardList className="h-4 w-4" /> }
-      ]
-    },
-    {
-      id: 'operational',
-      title: 'Operacional',
-      items: [
-        { id: 'operational_dashboard', label: 'Dashboard Operacional', icon: <Activity className="h-4 w-4" /> },
-        { id: 'operational_imports', label: 'Importação de Dados', icon: <Database className="h-4 w-4" /> },
-        { id: 'operational_recovery', label: 'Recuperação', icon: <RefreshCw className="h-4 w-4" /> },
-        { id: 'operational_credit_identification', label: 'Identificação de Créditos', icon: <Lightbulb className="h-4 w-4" /> },
-        { id: 'operational_receipts', label: 'Recibos de Retenção', icon: <ReceiptText className="h-4 w-4" /> },
-        { id: 'operational_audits', label: 'Auditorias', icon: <FileCheck className="h-4 w-4" /> }
-      ]
-    },
-    {
-      id: 'tax_reports',
-      title: 'Relatórios e Dossiês Tributários',
-      items: [
-        { id: 'detailed_reports', label: 'Relatórios Detalhados', icon: <FileText className="h-4 w-4" /> },
-        { id: 'interactive_dashboard', label: 'Dashboard Interativo', icon: <Layout className="h-4 w-4" /> },
-        { id: 'retention_receipts', label: 'Comprovantes de Retenção', icon: <ReceiptText className="h-4 w-4" /> }
-      ]
-    },
-    {
-      id: 'security',
-      title: 'Segurança e Auditoria',
-      items: [
-        { id: 'two_factor_auth', label: 'Autenticação 2FA', icon: <Key className="h-4 w-4" /> },
-        { id: 'session_expiration', label: 'Expiração de Sessão', icon: <Clock className="h-4 w-4" /> },
-        { id: 'access_protection', label: 'Proteção de Acessos', icon: <Shield className="h-4 w-4" /> },
-        { id: 'audit_trails', label: 'Trilhas de Auditoria', icon: <ClipboardListIcon className="h-4 w-4" /> }
-      ]
-    },
-    {
-      id: 'content',
-      title: 'Conteúdo',
-      items: [
-        { id: 'site', label: 'Editor do Site', icon: <Globe className="h-4 w-4" /> },
-        { id: 'content_reports', label: 'Relatórios', icon: <FileText className="h-4 w-4" /> }
-      ]
-    },
-    {
-      id: 'system',
-      title: 'Sistema',
-      items: [
-        { id: 'settings', label: 'Configurações', icon: <Settings className="h-4 w-4" /> },
-        { id: 'security', label: 'Segurança', icon: <ShieldAlert className="h-4 w-4" /> },
-        { id: 'billing', label: 'Faturamento', icon: <CreditCard className="h-4 w-4" /> },
-        { id: 'support', label: 'Suporte', icon: <HelpCircle className="h-4 w-4" /> }
-      ]
-    }
-  ];
+export type MenuItem = {
+  id: string;
+  label: string;
+  icon: JSX.Element;
+  path?: string;
+  submenu?: MenuItem[];
+  isExpanded?: boolean;
 };
+
+export const adminMenuItems: MenuItem[] = [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    icon: <Home className="h-4 w-4" />,
+    path: '/admin',
+  },
+  {
+    id: 'users',
+    label: 'Usuários',
+    icon: <Users className="h-4 w-4" />,
+    path: '/admin/users',
+  },
+  {
+    id: 'tax_credits',
+    label: 'Créditos Tributários',
+    icon: <DatabaseIcon className="h-4 w-4" />,
+    submenu: [
+      {
+        id: 'clients',
+        label: 'Clientes',
+        icon: <Users className="h-4 w-4" />,
+        path: '/admin/clients',
+      },
+      {
+        id: 'recovery',
+        label: 'Recuperação',
+        icon: <FileCheck className="h-4 w-4" />,
+        path: '/admin/recovery',
+      },
+      {
+        id: 'credit_identification',
+        label: 'Identificação de Créditos',
+        icon: <FileSearch className="h-4 w-4" />,
+        path: '/admin/credit-identification',
+      },
+      {
+        id: 'data_processing',
+        label: 'Processamento de Dados',
+        icon: <ListChecks className="h-4 w-4" />,
+        path: '/admin/data-processing',
+      },
+      {
+        id: 'audits',
+        label: 'Auditorias',
+        icon: <Shield className="h-4 w-4" />,
+        path: '/admin/audits',
+      },
+      {
+        id: 'calculations',
+        label: 'Cálculos IRRF',
+        icon: <BarChart className="h-4 w-4" />,
+        path: '/admin/calculations',
+      },
+      {
+        id: 'tax_calculator',
+        label: 'Calculadora Fiscal',
+        icon: <FileCheck className="h-4 w-4" />,
+        path: '/admin/tax-calculator',
+      },
+      {
+        id: 'imports',
+        label: 'Importações',
+        icon: <File className="h-4 w-4" />,
+        path: '/admin/imports',
+      },
+      {
+        id: 'fiscal_reports',
+        label: 'Relatórios Fiscais',
+        icon: <FileText className="h-4 w-4" />,
+        path: '/admin/fiscal-reports',
+      },
+      {
+        id: 'proposals',
+        label: 'Propostas Comerciais',
+        icon: <FileText className="h-4 w-4" />,
+        path: '/admin/proposals',
+      },
+    ]
+  },
+  {
+    id: 'reports',
+    label: 'Relatórios',
+    icon: <FileText className="h-4 w-4" />,
+    submenu: [
+      {
+        id: 'detailed_reports',
+        label: 'Relatórios Detalhados',
+        icon: <FileText className="h-4 w-4" />,
+        path: '/admin/detailed-reports',
+      },
+      {
+        id: 'interactive_dashboard',
+        label: 'Dashboard Interativo',
+        icon: <BarChart className="h-4 w-4" />,
+        path: '/admin/interactive-dashboard',
+      },
+      {
+        id: 'retention_receipts',
+        label: 'Comprovantes de Retenção',
+        icon: <FileCheck className="h-4 w-4" />,
+        path: '/admin/retention-receipts',
+      },
+    ]
+  },
+  {
+    id: 'operational',
+    label: 'Operacional',
+    icon: <DatabaseIcon className="h-4 w-4" />,
+    submenu: [
+      {
+        id: 'operational_imports',
+        label: 'Importações',
+        icon: <File className="h-4 w-4" />,
+        path: '/admin/operational-imports',
+      },
+      {
+        id: 'operational_recovery',
+        label: 'Recuperação',
+        icon: <FileCheck className="h-4 w-4" />,
+        path: '/admin/operational-recovery',
+      },
+      {
+        id: 'operational_credit_identification',
+        label: 'Identificação de Créditos',
+        icon: <FileSearch className="h-4 w-4" />,
+        path: '/admin/operational-credit-identification',
+      },
+      {
+        id: 'operational_dashboard',
+        label: 'Dashboard',
+        icon: <BarChart className="h-4 w-4" />,
+        path: '/admin/operational-dashboard',
+      },
+      {
+        id: 'operational_receipts',
+        label: 'Comprovantes',
+        icon: <FileCheck className="h-4 w-4" />,
+        path: '/admin/operational-receipts',
+      },
+      {
+        id: 'operational_audits',
+        label: 'Auditorias',
+        icon: <Shield className="h-4 w-4" />,
+        path: '/admin/operational-audits',
+      },
+    ]
+  },
+  {
+    id: 'security',
+    label: 'Segurança',
+    icon: <Shield className="h-4 w-4" />,
+    submenu: [
+      {
+        id: 'two_factor_auth',
+        label: 'Autenticação de Dois Fatores',
+        icon: <Shield className="h-4 w-4" />,
+        path: '/admin/two-factor-auth',
+      },
+      {
+        id: 'session_expiration',
+        label: 'Expiração de Sessão',
+        icon: <Shield className="h-4 w-4" />,
+        path: '/admin/session-expiration',
+      },
+      {
+        id: 'access_protection',
+        label: 'Proteção de Acesso',
+        icon: <Shield className="h-4 w-4" />,
+        path: '/admin/access-protection',
+      },
+      {
+        id: 'audit_trails',
+        label: 'Trilhas de Auditoria',
+        icon: <FileText className="h-4 w-4" />,
+        path: '/admin/audit-trails',
+      },
+    ]
+  },
+  {
+    id: 'site',
+    label: 'Editor do Site',
+    icon: <Paintbrush className="h-4 w-4" />,
+    path: '/admin/site',
+  },
+  {
+    id: 'content_reports',
+    label: 'Relatórios de Conteúdo',
+    icon: <Newspaper className="h-4 w-4" />,
+    path: '/admin/content-reports',
+  },
+  {
+    id: 'admin_profile',
+    label: 'Meu Perfil',
+    icon: <User className="h-4 w-4" />,
+    path: '/admin/profile',
+  },
+  {
+    id: 'settings',
+    label: 'Configurações',
+    icon: <Settings className="h-4 w-4" />,
+    path: '/admin/settings',
+  },
+  {
+    id: 'notifications',
+    label: 'Notificações',
+    icon: <Bell className="h-4 w-4" />,
+    path: '/admin/notifications',
+  },
+  {
+    id: 'billing',
+    label: 'Faturamento',
+    icon: <CreditCard className="h-4 w-4" />,
+    path: '/admin/billing',
+  },
+  {
+    id: 'support',
+    label: 'Suporte',
+    icon: <HelpCircle className="h-4 w-4" />,
+    path: '/admin/support',
+  },
+];
