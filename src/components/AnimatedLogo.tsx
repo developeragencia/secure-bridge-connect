@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { DollarSign, TrendingUp, BarChart4, Wallet, BadgePercent } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
@@ -20,8 +20,13 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
   hovering = false,
 }) => {
   const [activeIcon, setActiveIcon] = useState(0);
-  const [animationState, setAnimationState] = useState('normal'); // 'normal', 'fly', 'return', 'float'
+  const [animationState, setAnimationState] = useState('normal');
   const [visible, setVisible] = useState(true);
+  
+  // Use a ref for stable reference across renders
+  const previousHovering = useRef(hovering);
+  
+  // Use a stable reference for the scroll animation
   const { ref, classes } = useAnimationOnScroll<HTMLDivElement>({
     transitionType: 'fade-in',
     threshold: 0.1,
@@ -35,6 +40,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
     <BadgePercent key={4} className="text-primary" />,
   ];
 
+  // Icon rotation effect with proper dependency array
   useEffect(() => {
     if (animationDisabled) return;
     
@@ -45,25 +51,31 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
     return () => clearInterval(interval);
   }, [animationDisabled, icons.length]);
 
+  // Handle hovering state changes with proper comparison to prevent infinite loops
   useEffect(() => {
-    if (hovering) {
-      setAnimationState('fly');
-      const timeout = setTimeout(() => {
-        setAnimationState('return');
-        setTimeout(() => {
-          setAnimationState('normal');
-        }, 1000);
-      }, 2000);
-      return () => clearTimeout(timeout);
+    // Only run effect if hovering state actually changed
+    if (hovering !== previousHovering.current) {
+      previousHovering.current = hovering;
+      
+      if (hovering) {
+        setAnimationState('fly');
+        const timeout = setTimeout(() => {
+          setAnimationState('return');
+          setTimeout(() => {
+            setAnimationState('normal');
+          }, 1000);
+        }, 2000);
+        return () => clearTimeout(timeout);
+      }
     }
   }, [hovering]);
 
-  // New effect to handle appear/disappear animation
+  // Visibility animation with reduced frequency to improve performance
   useEffect(() => {
     const intervalId = setInterval(() => {
       setVisible(false);
       setTimeout(() => setVisible(true), 500);
-    }, 10000); // Change appearance every 10 seconds
+    }, 30000); // Changed from 10s to 30s to reduce CPU usage
     
     return () => clearInterval(intervalId);
   }, []);
@@ -150,4 +162,4 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
   );
 };
 
-export default AnimatedLogo;
+export default React.memo(AnimatedLogo);

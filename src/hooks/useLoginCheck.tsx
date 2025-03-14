@@ -15,22 +15,18 @@ const useLoginCheck = () => {
     
     const checkSession = async () => {
       try {
-        // Check localStorage first for remembered session
+        // Check localStorage first for remembered session - most efficient path
         const rememberedAuth = localStorage.getItem('adminAuthRemembered');
-        const sessionAuth = localStorage.getItem('adminAuth');
-        
         if (rememberedAuth) {
           try {
             const authData = JSON.parse(rememberedAuth);
             // If saved session is less than 30 days old, use it
             if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
-              // Delay navigation to ensure smooth transition
               setTimeout(() => {
                 navigate('/admin');
-              }, 300);
+              }, 200); // Faster transition
               return;
             } else {
-              // Clear expired remembered login
               localStorage.removeItem('adminAuthRemembered');
             }
           } catch (e) {
@@ -39,18 +35,17 @@ const useLoginCheck = () => {
           }
         }
         
-        // Check regular session
+        // Next check regular session
+        const sessionAuth = localStorage.getItem('adminAuth');
         if (sessionAuth) {
           try {
             const authData = JSON.parse(sessionAuth);
             if (authData && (Date.now() - authData.timestamp) < 24 * 60 * 60 * 1000) {
-              // Delay navigation to ensure smooth transition
               setTimeout(() => {
                 navigate('/admin');
-              }, 300);
+              }, 200); // Faster transition
               return;
             } else {
-              // Clear expired session
               localStorage.removeItem('adminAuth');
             }
           } catch (e) {
@@ -59,7 +54,7 @@ const useLoginCheck = () => {
           }
         }
         
-        // Check Supabase session as fallback
+        // Only check Supabase as last resort - most expensive operation
         const { data, error } = await supabase.auth.getSession();
         if (error) {
           console.error("Error checking Supabase session:", error);
@@ -67,10 +62,9 @@ const useLoginCheck = () => {
         }
         
         if (data.session) {
-          // Delay navigation to ensure smooth transition
           setTimeout(() => {
             navigate('/admin');
-          }, 300);
+          }, 200); // Faster transition
         } else {
           setInitializing(false);
         }
@@ -88,7 +82,7 @@ const useLoginCheck = () => {
         if (event === 'SIGNED_IN' && session) {
           setTimeout(() => {
             navigate('/admin');
-          }, 300);
+          }, 200); // Faster transition
         }
       }
     );

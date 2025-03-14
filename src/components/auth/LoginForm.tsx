@@ -54,7 +54,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         
         setTimeout(() => {
           onSuccess();
-        }, 800);
+        }, 500); // Reduced timeout for faster navigation
         return;
       }
       
@@ -82,7 +82,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       
       setTimeout(() => {
         onSuccess();
-      }, 800);
+      }, 500); // Reduced timeout for faster navigation
     } catch (error: any) {
       console.error("Login error:", error);
       setError(error.message || "Erro ao fazer login. Verifique suas credenciais.");
@@ -115,6 +115,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             onChange={(e) => setEmail(e.target.value)}
             required
             className="pl-10 border-primary/20 focus-visible:ring-primary/30"
+            aria-label="Email"
           />
         </div>
       </div>
@@ -129,6 +130,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             onChange={(e) => setPassword(e.target.value)}
             required
             className="pl-10 border-primary/20 focus-visible:ring-primary/30"
+            aria-label="Senha"
           />
         </div>
       </div>
@@ -139,6 +141,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           checked={rememberMe} 
           onCheckedChange={setRememberMe}
           className="data-[state=checked]:bg-primary/80"
+          aria-label="Manter conectado"
         />
         <Label 
           htmlFor="remember-me" 
@@ -177,4 +180,4 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   );
 };
 
-export default LoginForm;
+export default React.memo(LoginForm);

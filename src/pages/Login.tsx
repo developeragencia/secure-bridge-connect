@@ -15,8 +15,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLoginSuccess = () => {
-    // Using navigate instead of a direct window.location change
-    // to maintain React Router's navigation stack
+    // Using navigate instead of window.location for better performance
     navigate('/admin', { replace: true });
   };
 
@@ -31,7 +30,7 @@ const Login = () => {
       <motion.div 
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
         className="relative w-full max-w-md z-10"
       >
         <Card className="shadow-xl border-primary/10 overflow-hidden bg-white/95 backdrop-blur-md dark:bg-background/80 transition-all duration-300 hover:shadow-primary/5">

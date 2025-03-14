@@ -8,7 +8,7 @@ const LoginLoadingState: React.FC = () => {
   const [loadingTime, setLoadingTime] = useState(0);
   const navigate = useNavigate();
   
-  // If loading takes too long (more than 5 seconds), provide a way to continue
+  // If loading takes too long, provide a way to continue
   useEffect(() => {
     const interval = setInterval(() => {
       setLoadingTime(prev => prev + 1);
@@ -17,7 +17,6 @@ const LoginLoadingState: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
   
-  // If loading takes too long, show a message and provide a way to continue
   const handleRedirect = () => {
     navigate('/login', { replace: true });
   };
@@ -34,7 +33,7 @@ const LoginLoadingState: React.FC = () => {
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </motion.div>
       
-      {loadingTime > 5 && (
+      {loadingTime > 3 && ( // Reduced from 5 to 3 seconds for faster feedback
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -53,4 +52,4 @@ const LoginLoadingState: React.FC = () => {
   );
 };
 
-export default LoginLoadingState;
+export default React.memo(LoginLoadingState);
