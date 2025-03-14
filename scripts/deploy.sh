@@ -1,7 +1,7 @@
 
 #!/bin/bash
 
-# Script para deploy na Hosting
+# Script para deploy na Hostinger
 
 # 1. Construir o projeto
 echo "Construindo o projeto..."
@@ -14,5 +14,5 @@ zip -r ../deploy.zip *
 cd ..
 
 echo "Arquivo deploy.zip criado com sucesso!"
-echo "Agora você pode fazer o upload deste arquivo para o seu servidor de hospedagem."
+echo "Agora você pode fazer o upload deste arquivo para o seu servidor de hospedagem na Hostinger."
 echo "Lembre-se de extrair o conteúdo do arquivo zip na pasta raiz do seu domínio no servidor."
