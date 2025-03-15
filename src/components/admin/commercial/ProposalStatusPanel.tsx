@@ -9,15 +9,7 @@ import {
   FileCheck, 
   UserCheck 
 } from 'lucide-react';
-
-// Define correct ProposalStatus type (removing the enum definition as it's likely defined elsewhere)
-type ProposalStatus = 
-  | "REQUESTED" 
-  | "ANALYZING" 
-  | "APPROVED" 
-  | "REJECTED" 
-  | "COMPLETED" 
-  | "CONVERTED";
+import { ProposalStatus } from '@/types/proposal';
 
 interface StatusCardProps {
   title: string;
@@ -61,18 +53,18 @@ const ProposalStatusPanel: React.FC<ProposalStatusPanelProps> = ({
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
       <StatusCard
         title="Solicitadas"
-        count={proposalCounts.REQUESTED}
+        count={proposalCounts.REQUEST}
         icon={<UserCheck className="h-5 w-5 text-blue-600" />}
         color="border-l-4 border-l-blue-500"
-        onClick={() => onFilterByStatus('REQUESTED')}
+        onClick={() => onFilterByStatus('REQUEST')}
       />
       
       <StatusCard
         title="Em Análise"
-        count={proposalCounts.ANALYZING}
+        count={proposalCounts.ANALYSIS}
         icon={<Clock className="h-5 w-5 text-amber-600" />}
         color="border-l-4 border-l-amber-500"
-        onClick={() => onFilterByStatus('ANALYZING')}
+        onClick={() => onFilterByStatus('ANALYSIS')}
       />
       
       <StatusCard
@@ -92,19 +84,19 @@ const ProposalStatusPanel: React.FC<ProposalStatusPanelProps> = ({
       />
       
       <StatusCard
-        title="Concluídas"
-        count={proposalCounts.COMPLETED}
-        icon={<FileCheck className="h-5 w-5 text-indigo-600" />}
-        color="border-l-4 border-l-indigo-500"
-        onClick={() => onFilterByStatus('COMPLETED')}
+        title="Convertidas"
+        count={proposalCounts.CONVERTED}
+        icon={<FileCheck className="h-5 w-5 text-violet-600" />}
+        color="border-l-4 border-l-violet-500"
+        onClick={() => onFilterByStatus('CONVERTED')}
       />
       
       <StatusCard
-        title="Convertidas"
-        count={proposalCounts.CONVERTED}
-        icon={<AlertTriangle className="h-5 w-5 text-violet-600" />}
-        color="border-l-4 border-l-violet-500"
-        onClick={() => onFilterByStatus('CONVERTED')}
+        title="Todas"
+        count={Object.values(proposalCounts).reduce((acc, curr) => acc + curr, 0)}
+        icon={<AlertTriangle className="h-5 w-5 text-indigo-600" />}
+        color="border-l-4 border-l-indigo-500"
+        onClick={() => onFilterByStatus(null)}
       />
     </div>
   );

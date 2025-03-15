@@ -2,6 +2,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { AnalysisFormData } from '../NewCreditAnalysisModal';
 import { ClientWithPermissions } from '@/types/clientStore';
+import { toast } from 'sonner';
 
 // Mock data that was previously in the component
 const MOCK_CREDITS = [
@@ -106,7 +107,7 @@ interface UseCreditIdentificationProps {
   setIsAnalysisModalOpen: (open: boolean) => void;
   setShowExportOptions: (show: boolean) => void;
   selectedPeriod: string;
-  toast: any; // Using 'any' here because we're passing the toast function from sonner
+  toast: typeof toast; 
 }
 
 export const useCreditIdentification = ({
@@ -169,22 +170,22 @@ export const useCreditIdentification = ({
       description: `Analisando dados do cliente "${activeClient?.name}" no período selecionado.`,
     });
     
+    let progress = 0;
     const interval = setInterval(() => {
-      setAnalysisProgress((prev) => {
-        const newValue = prev + Math.floor(Math.random() * 10) + 1;
-        if (newValue >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setIsAnalyzing(false);
-            toast({
-              title: "Análise concluída",
-              description: "Foram identificados 5 possíveis créditos tributários.",
-            });
-          }, 500);
-          return 100;
-        }
-        return newValue;
-      });
+      progress = progress + Math.floor(Math.random() * 10) + 1;
+      if (progress >= 100) {
+        clearInterval(interval);
+        setAnalysisProgress(100);
+        setTimeout(() => {
+          setIsAnalyzing(false);
+          toast({
+            title: "Análise concluída",
+            description: "Foram identificados 5 possíveis créditos tributários.",
+          });
+        }, 500);
+      } else {
+        setAnalysisProgress(progress);
+      }
     }, 800);
   }, [activeClient, setIsAnalysisModalOpen, setIsAnalyzing, setAnalysisProgress, toast]);
 
@@ -206,22 +207,22 @@ export const useCreditIdentification = ({
       description: `Analisando pagamentos dos últimos ${selectedPeriod} meses para ${activeClient?.name}.`,
     });
     
+    let progress = 0;
     const interval = setInterval(() => {
-      setAnalysisProgress((prev) => {
-        const newValue = prev + Math.floor(Math.random() * 10) + 1;
-        if (newValue >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setIsAnalyzing(false);
-            toast({
-              title: "Análise automática concluída",
-              description: `Foram identificados 5 créditos tributários com base nas regras do Manual de Retenções IRPJ.`,
-            });
-          }, 500);
-          return 100;
-        }
-        return newValue;
-      });
+      progress = progress + Math.floor(Math.random() * 10) + 1;
+      if (progress >= 100) {
+        clearInterval(interval);
+        setAnalysisProgress(100);
+        setTimeout(() => {
+          setIsAnalyzing(false);
+          toast({
+            title: "Análise automática concluída",
+            description: `Foram identificados 5 créditos tributários com base nas regras do Manual de Retenções IRPJ.`,
+          });
+        }, 500);
+      } else {
+        setAnalysisProgress(progress);
+      }
     }, 600);
   }, [activeClient, selectedPeriod, setIsAnalyzing, setAnalysisProgress, toast]);
 

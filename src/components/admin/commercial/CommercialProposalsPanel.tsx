@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useActiveClient } from '@/hooks/useActiveClient';
 import { toast } from 'sonner';
@@ -26,7 +27,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Filter, FileText, MoreVertical, Clock, Activity, CheckCircle, XCircle, FileCheck } from 'lucide-react';
 import { ProposalStatus as ProposalStatusType } from '@/types/proposal';
-import ProposalStatus from './ProposalStatus';
+import ProposalStatusComponent from './ProposalStatus';
 import ProposalForm from './ProposalForm';
 import ProposalTimeline from './ProposalTimeline';
 import ProposalStatusPanel from './ProposalStatusPanel';
@@ -41,7 +42,7 @@ const mockProposals = [
     description: 'Description A',
     service: 'Service A',
     value: 1000,
-    status: 'REQUESTED',
+    status: 'REQUEST' as ProposalStatusType,
     createdBy: '1',
     createdByName: 'User A',
     createdAt: '2024-01-01',
@@ -57,7 +58,7 @@ const mockProposals = [
     description: 'Description B',
     service: 'Service B',
     value: 2000,
-    status: 'ANALYZING',
+    status: 'ANALYSIS' as ProposalStatusType,
     createdBy: '2',
     createdByName: 'User B',
     createdAt: '2024-01-02',
@@ -73,7 +74,7 @@ const mockProposals = [
     description: 'Description C',
     service: 'Service C',
     value: 3000,
-    status: 'APPROVED',
+    status: 'APPROVED' as ProposalStatusType,
     createdBy: '3',
     createdByName: 'User C',
     createdAt: '2024-01-03',
@@ -89,7 +90,7 @@ const mockProposals = [
     description: 'Description D',
     service: 'Service D',
     value: 4000,
-    status: 'REJECTED',
+    status: 'REJECTED' as ProposalStatusType,
     createdBy: '4',
     createdByName: 'User D',
     createdAt: '2024-01-04',
@@ -105,7 +106,7 @@ const mockProposals = [
     description: 'Description E',
     service: 'Service E',
     value: 5000,
-    status: 'COMPLETED',
+    status: 'REJECTED' as ProposalStatusType, // Changed from 'COMPLETED'
     createdBy: '5',
     createdByName: 'User E',
     createdAt: '2024-01-05',
@@ -121,7 +122,7 @@ const mockProposals = [
     description: 'Description F',
     service: 'Service F',
     value: 6000,
-    status: 'CONVERTED',
+    status: 'CONVERTED' as ProposalStatusType,
     createdBy: '6',
     createdByName: 'User F',
     createdAt: '2024-01-06',
@@ -165,11 +166,10 @@ const CommercialProposalsPanel = () => {
   };
 
   const proposalCounts = {
-    REQUESTED: getProposalCountByStatus('REQUESTED'),
-    ANALYZING: getProposalCountByStatus('ANALYSIS'),
+    REQUEST: getProposalCountByStatus('REQUEST'),
+    ANALYSIS: getProposalCountByStatus('ANALYSIS'),
     APPROVED: getProposalCountByStatus('APPROVED'),
     REJECTED: getProposalCountByStatus('REJECTED'),
-    COMPLETED: getProposalCountByStatus('COMPLETED'),
     CONVERTED: getProposalCountByStatus('CONVERTED')
   };
 
@@ -206,7 +206,7 @@ const CommercialProposalsPanel = () => {
               <DropdownMenuItem onClick={() => setActiveTab('all')}>
                 Todas as Propostas
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setActiveTab('REQUESTED')}>
+              <DropdownMenuItem onClick={() => setActiveTab('REQUEST')}>
                 Solicitações
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setActiveTab('ANALYSIS')}>
@@ -236,7 +236,7 @@ const CommercialProposalsPanel = () => {
           <TabsTrigger value="all">
             Todas
           </TabsTrigger>
-          <TabsTrigger value="REQUESTED" className="flex items-center">
+          <TabsTrigger value="REQUEST" className="flex items-center">
             <Clock className="h-3.5 w-3.5 mr-1.5" />
             Solicitações
           </TabsTrigger>
@@ -281,7 +281,7 @@ const CommercialProposalsPanel = () => {
                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposal.value)}
                       </td>
                       <td className="p-3 text-sm">
-                        <ProposalStatus status={proposal.status} />
+                        <ProposalStatusComponent status={proposal.status} />
                       </td>
                       <td className="p-3 text-sm">
                         {new Date(proposal.createdAt).toLocaleDateString('pt-BR')}
@@ -405,7 +405,7 @@ const CommercialProposalsPanel = () => {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold mb-1">Status</h3>
-                  <ProposalStatus status={selectedProposal.status} />
+                  <ProposalStatusComponent status={selectedProposal.status} />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold mb-1">Descrição</h3>
