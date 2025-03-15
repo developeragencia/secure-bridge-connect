@@ -73,7 +73,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     }
   };
   
-  // Efeito de brilho que percorre o card - Fixed with proper types
+  // Efeito de brilho que percorre o card
   const shimmerVariants = {
     initial: { x: '-100%', opacity: 0 },
     animate: { 
@@ -88,7 +88,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     }
   };
 
-  // Efeito de pulsação para destacar novos itens - Fixed with proper types
+  // Efeito de pulsação para destacar novos itens
   const pulseVariants = {
     initial: { scale: 1, opacity: 0.7 },
     animate: { 
@@ -210,9 +210,9 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
             </div>
           )}
           
-          {/* Icon container with hover interaction */}
+          {/* Icon container with enhanced visibility and hover interaction */}
           <motion.div 
-            className="h-14 w-14 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center mb-4 overflow-hidden shadow-inner"
+            className="h-14 w-14 rounded-lg bg-background/80 backdrop-blur-sm flex items-center justify-center mb-4 shadow-sm border border-muted/50 group-hover:border-primary/20 group-hover:bg-white/90 transition-all duration-300"
             whileHover={{ y: -5, transition: { duration: 0.3 } }}
           >
             <motion.div
@@ -220,6 +220,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
               whileHover={{ scale: 1.2, rotate: [0, 5, -5, 0] }}
               transition={{ duration: 0.5 }}
               className="text-muted-foreground group-hover:text-primary transition-colors duration-300"
+              style={{ fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               {item.icon}
             </motion.div>
