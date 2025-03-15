@@ -15,6 +15,7 @@ import SessionExpirationPanel from '../components/admin/security/SessionExpirati
 import AccessProtectionContent from '../components/admin/security/AccessProtectionContent';
 import AuditTrailsPanel from '../components/admin/security/AuditTrailsPanel';
 import TaxCompensationReportsPanel from '../components/admin/tax-reports/TaxCompensationReportsPanel';
+import AdvancedTaxCreditCalculator from '../components/admin/tax-credits/AdvancedTaxCreditCalculator';
 
 // Lazy-loaded components
 const AdminUsers = lazy(() => import('../components/admin/AdminUsers'));
@@ -43,6 +44,7 @@ const AdminRoutes = () => {
     if (path.includes('/admin/access_protection')) return 'access_protection';
     if (path.includes('/admin/audit_trails')) return 'audit_trails';
     if (path.includes('/admin/tax_compensation_reports')) return 'tax_compensation_reports';
+    if (path.includes('/admin/tax_calculator')) return 'tax_calculator';
     // Default to dashboard
     return 'dashboard';
   };
@@ -84,6 +86,7 @@ const AdminRoutes = () => {
         <Route path="access_protection" element={<AccessProtectionContent />} />
         <Route path="audit_trails" element={<AuditTrailsPanel />} />
         <Route path="tax_compensation_reports" element={<TaxCompensationReportsPanel />} />
+        <Route path="tax_calculator" element={<AdvancedTaxCreditCalculator />} />
       </Route>
     </Routes>
   );

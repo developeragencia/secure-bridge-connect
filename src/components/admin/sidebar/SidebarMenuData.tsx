@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Home,
@@ -35,7 +36,11 @@ import {
   ShieldAlert,
   FileBarChart,
   Scale,
-  Currency
+  Currency,
+  Calculator as CalculatorIcon,
+  Percent,
+  BadgeDollarSign,
+  DollarSign
 } from 'lucide-react';
 
 export const getMenuSections = () => [
@@ -75,9 +80,15 @@ export const getMenuSections = () => [
         icon: <CreditCard className="h-4 w-4" />,
       },
       {
+        id: 'tax_calculator',
+        label: 'Calculadora Avançada',
+        icon: <CalculatorIcon className="h-4 w-4" />,
+        highlight: true,
+      },
+      {
         id: 'calculations',
         label: 'Cálculos IRRF',
-        icon: <Calculator className="h-4 w-4" />,
+        icon: <Percent className="h-4 w-4" />,
       },
       {
         id: 'irrf_recovery',
