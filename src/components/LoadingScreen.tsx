@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedLogo from './AnimatedLogo';
 
@@ -12,6 +12,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   message = "Carregando...", 
   variant = 'default' 
 }) => {
+  // Use useCallback to memoize the redirect handler
+  const handleRedirect = useCallback(() => {
+    window.location.href = '/login';
+  }, []);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
       <motion.div
@@ -58,7 +63,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
               animate={{ opacity: 1 }}
               transition={{ delay: 1.5, duration: 0.5 }}
               className="mt-4 text-sm text-primary/80 text-center cursor-pointer hover:underline"
-              onClick={() => window.location.href = '/login'}
+              onClick={handleRedirect}
             >
               Clique aqui se a página não carregar
             </motion.p>

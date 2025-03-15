@@ -1,10 +1,10 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import LoadingScreen from './LoadingScreen';
 
 const IndexLoading: React.FC = () => {
-  // Pass the variant prop to avoid re-renders
+  // Return a stable loading screen that doesn't change between re-renders
   return <LoadingScreen message="Carregando página inicial..." variant="default" />;
 };
 
-export default React.memo(IndexLoading);
+export default memo(IndexLoading);

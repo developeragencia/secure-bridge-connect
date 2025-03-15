@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { DollarSign, TrendingUp, BarChart4, Wallet, BadgePercent } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
@@ -27,6 +27,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
   
   // Use a ref for stable reference across renders
   const previousHovering = useRef(hovering);
+  const iconIntervalRef = useRef<number | null>(null);
   
   // Use a stable reference for the scroll animation
   const { ref, classes } = useAnimationOnScroll<HTMLDivElement>({
@@ -42,18 +43,27 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
     <BadgePercent key={4} className="text-primary" />,
   ];
 
-  // Icon rotation effect with proper dependency array
+  // Icon rotation effect with proper cleanup
   useEffect(() => {
     if (animationDisabled) return;
     
-    const interval = setInterval(() => {
-      setActiveIcon((prev) => (prev + 1) % icons.length);
+    // Use window.setTimeout instead of setTimeout to properly type the return value
+    const interval = window.setTimeout(() => {
+      // Use functional state update to prevent stale closures
+      setActiveIcon(prev => (prev + 1) % icons.length);
     }, loading ? 1000 : 2000); // Faster rotation when loading
     
-    return () => clearInterval(interval);
-  }, [animationDisabled, icons.length, loading]);
+    // Store the interval ID in a ref
+    iconIntervalRef.current = interval;
+    
+    return () => {
+      if (iconIntervalRef.current !== null) {
+        window.clearTimeout(iconIntervalRef.current);
+      }
+    };
+  }, [animationDisabled, icons.length, loading, activeIcon]); // Include activeIcon in deps
 
-  // Handle hovering state changes with proper comparison to prevent infinite loops
+  // Handle hovering state changes with proper comparison
   useEffect(() => {
     // Only run effect if hovering state actually changed
     if (hovering !== previousHovering.current) {
@@ -61,37 +71,50 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
       
       if (hovering) {
         setAnimationState('fly');
-        const timeout = setTimeout(() => {
+        const timeout = window.setTimeout(() => {
           setAnimationState('return');
-          setTimeout(() => {
+          window.setTimeout(() => {
             setAnimationState('normal');
           }, 1000);
         }, 2000);
-        return () => clearTimeout(timeout);
+        return () => window.clearTimeout(timeout);
       }
     }
   }, [hovering]);
 
-  // Visibility animation with reduced frequency to improve performance
+  // Memoized handler functions to prevent recreation on each render
+  const handleMouseEnter = useCallback(() => {
+    if (!hovering && !loading) {
+      setAnimationState('float');
+    }
+  }, [hovering, loading]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!hovering && !loading) {
+      setAnimationState('normal');
+    }
+  }, [hovering, loading]);
+
+  // Simplified visibility animation that won't cause re-renders cascade
   useEffect(() => {
-    // Don't do visibility animation when loading
+    // Don't run any visibility animations when loading to avoid re-render issues
     if (loading) return;
     
-    // Skip the initial animation to prevent load issues
-    const timeoutId = setTimeout(() => {
-      // Run once after a long delay instead of repeatedly
-      const animate = () => {
-        setVisible(false);
-        setTimeout(() => setVisible(true), 500);
-      };
+    // Run this effect only once on mount
+    const longTimeout = window.setTimeout(() => {
+      // Set visible to false after a minute (one-time animation)
+      setVisible(false);
       
-      // Run animation once after 60 seconds, not repeatedly
-      const timerId = setTimeout(animate, 60000);
-      return () => clearTimeout(timerId);
-    }, 5000);
+      // Set it back to true after a brief delay
+      const visibilityTimeout = window.setTimeout(() => {
+        setVisible(true);
+      }, 500);
+      
+      return () => window.clearTimeout(visibilityTimeout);
+    }, 60000); // Run once after a minute
     
-    return () => clearTimeout(timeoutId);
-  }, []); // Empty dependency array to run only once on mount
+    return () => window.clearTimeout(longTimeout);
+  }, []); // Empty dependency array means this runs once on mount
 
   const sizeClasses = {
     sm: 'h-8',
@@ -136,8 +159,8 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
           getAnimationClass(),
           visible || loading ? "opacity-100 transition-opacity duration-500" : "opacity-0 transition-opacity duration-500"
         )}
-        onMouseEnter={() => !hovering && !loading && setAnimationState('float')}
-        onMouseLeave={() => !hovering && !loading && setAnimationState('normal')}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <div className="absolute inset-0 bg-primary/5 rounded-full animate-pulse"></div>
         <div className={cn("relative z-10", iconSize[size])}>
@@ -177,4 +200,5 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
   );
 };
 
+// Use React.memo to prevent unnecessary re-renders
 export default React.memo(AnimatedLogo);
