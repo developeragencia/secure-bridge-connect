@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import FileUploadModal from './FileUploadModal';
 import { useFileUpload } from './imports/useFileUpload';
 import ImportsHeader from './imports/ImportsHeader';
@@ -9,7 +9,7 @@ import HistoryTabContent from './imports/HistoryTabContent';
 import SettingsTabContent from './imports/SettingsTabContent';
 import UploadTabContent from './imports/UploadTabContent';
 import { Button } from "@/components/ui/button";
-import { FileUp, Settings } from "lucide-react";
+import { FileUp, History, Settings } from "lucide-react";
 
 const OperationalImportsPanel = () => {
   const [activeTab, setActiveTab] = useState("files");
@@ -47,6 +47,14 @@ const OperationalImportsPanel = () => {
             Upload de Arquivos
           </Button>
           <Button
+            variant={activeTab === "history" ? "default" : "outline"}
+            className="flex items-center gap-2"
+            onClick={() => setActiveTab("history")}
+          >
+            <History className="h-4 w-4" />
+            Histórico
+          </Button>
+          <Button
             variant={activeTab === "settings" ? "default" : "outline"}
             className="flex items-center gap-2"
             onClick={() => setActiveTab("settings")}
@@ -58,15 +66,28 @@ const OperationalImportsPanel = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="files">Arquivos</TabsTrigger>
           <TabsTrigger value="upload">Upload</TabsTrigger>
+          <TabsTrigger value="history">Histórico</TabsTrigger>
           <TabsTrigger value="settings">Configurações</TabsTrigger>
         </TabsList>
         
-        <FilesTabContent onFormatClick={handleFormatClick} />
-        <UploadTabContent />
-        <SettingsTabContent />
+        <TabsContent value="files">
+          <FilesTabContent onFormatClick={handleFormatClick} />
+        </TabsContent>
+        
+        <TabsContent value="upload">
+          <UploadTabContent />
+        </TabsContent>
+        
+        <TabsContent value="history">
+          <HistoryTabContent />
+        </TabsContent>
+        
+        <TabsContent value="settings">
+          <SettingsTabContent />
+        </TabsContent>
       </Tabs>
 
       {isModalOpen && (
