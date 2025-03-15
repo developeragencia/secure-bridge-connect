@@ -73,7 +73,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     }
   };
   
-  // Efeito de brilho que percorre o card
+  // Efeito de brilho que percorre o card - Fixed repeatType
   const shimmerVariants = {
     initial: { x: '-100%', opacity: 0.1 },
     animate: { 
@@ -81,14 +81,14 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
       opacity: 0.5,
       transition: { 
         repeat: Infinity, 
-        repeatType: "mirror", 
+        repeatType: "mirror" as const, 
         duration: 2,
         ease: "easeInOut"
       }
     }
   };
 
-  // Efeito de pulsação para destacar novos itens
+  // Efeito de pulsação para destacar novos itens - Fixed repeatType
   const pulseVariants = {
     initial: { scale: 1, opacity: 0.7 },
     animate: { 
@@ -96,7 +96,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
       opacity: [0.7, 1, 0.7],
       transition: { 
         repeat: Infinity,
-        repeatType: "loop",
+        repeatType: "loop" as const,
         duration: 2,
         ease: "easeInOut"
       }
