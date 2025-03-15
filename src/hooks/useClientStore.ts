@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Client } from '@/types/client';
@@ -220,7 +219,7 @@ export const useActiveClient = () => {
     activeClient: store.activeClient,
     setActiveClient: store.setActiveClient,
     clearActiveClient: store.clearActiveClient,
-    recentClients: store.recentClients,
+    recentClients: store.recentClients, // Added recentClients property to fix the error
     hasViewAccess: store.activeClient?.userRoles?.canViewOperations || false,
     hasEditAccess: store.activeClient?.userRoles?.canEditOperations || false,
     hasApprovalAccess: store.activeClient?.userRoles?.canApproveOperations || false,
