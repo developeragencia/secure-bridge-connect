@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -195,9 +194,9 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
             </div>
           )}
           
-          {/* New item indicator with conditional pulse */}
+          {/* New item indicator with conditional pulse - repositioned to center top */}
           {item.new && (
-            <div className="absolute top-3 left-3">
+            <div className="absolute top-3 left-1/2 -translate-x-1/2">
               <motion.div
                 variants={pulseVariants}
                 initial="initial"
