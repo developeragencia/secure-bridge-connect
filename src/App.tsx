@@ -7,24 +7,11 @@ import { Toaster as SonnerToaster } from 'sonner';
 // Loading component
 import IndexLoading from '@/components/IndexLoading';
 import AdminLoading from '@/components/admin/AdminLoading';
+import LoadingScreen from '@/components/LoadingScreen';
 
 // Lazy loaded pages with proper loading components
 const Index = lazy(() => import('@/pages/Index'));
-const Admin = lazy(() => {
-  // Add a small timeout to ensure the loading screen shows
-  return new Promise(resolve => {
-    const startTime = Date.now();
-    import('@/pages/Admin').then(module => {
-      const elapsed = Date.now() - startTime;
-      // If loading was too fast, add small delay for better UX
-      if (elapsed < 300) {
-        setTimeout(() => resolve(module), 300 - elapsed);
-      } else {
-        resolve(module);
-      }
-    });
-  });
-});
+const Admin = lazy(() => import('@/pages/Admin'));
 const Login = lazy(() => import('@/pages/Login'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 const ClientDetailPage = lazy(() => import('@/pages/admin/ClientDetailPage'));
