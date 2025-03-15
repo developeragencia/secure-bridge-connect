@@ -1,211 +1,224 @@
 
 import React from 'react';
 import {
-  BarChart3, Users, UserCircle, Bell, Building, Receipt, Landmark, FileCheck, Database,
-  FileBarChart2, PercentCircle, Calculator, FileSpreadsheet, FileStack, ClipboardList,
-  FileText, Layout, ReceiptText, Key, Clock, Shield, ClipboardListIcon, Globe, Settings,
-  ShieldAlert, CreditCard, HelpCircle, RefreshCw, Lightbulb, Activity
+  User,
+  Users,
+  Settings,
+  LayoutDashboard,
+  FileText,
+  PieChart,
+  Shield,
+  Paintbrush,
+  CreditCard,
+  Calculator,
+  BriefcaseBusiness,
+  Building,
+  BarChart3,
+  Receipt,
+  ServerCog,
+  FileDigit,
+  FileClock,
+  ChartPie,
+  FileSpreadsheet,
+  FolderCheck,
+  Search,
+  MessageSquareText,
+  HelpCircle,
+  CreditCard as BillingIcon,
+  Bell,
+  BookOpen,
+  UserCircle,
+  KeyRound,
+  ShieldCheck,
+  Clock,
+  FileBarChart,
+  PanelTop
 } from 'lucide-react';
-import { LucideIcon } from 'lucide-react';
 
-interface TabConfig {
-  title: string;
-  description: string;
-  icon: LucideIcon;
-}
-
-export const tabConfigurations: Record<string, TabConfig> = {
-  // Main section
+export const tabConfigurations = {
   dashboard: {
-    title: 'Painel Principal',
-    description: 'Visão geral do sistema de recuperação de créditos tributários',
-    icon: BarChart3
+    icon: LayoutDashboard,
+    title: 'Dashboard',
+    description: 'Visão geral das principais métricas do sistema'
   },
   users: {
-    title: 'Gestão de Usuários',
-    description: 'Gerenciamento de usuários e permissões do sistema',
-    icon: Users
+    icon: Users,
+    title: 'Usuários',
+    description: 'Gerencie os usuários e suas permissões no sistema'
+  },
+  settings: {
+    icon: Settings,
+    title: 'Configurações',
+    description: 'Configurações gerais do sistema'
   },
   profile: {
-    title: 'Meu Perfil',
-    description: 'Configurações e preferências da sua conta',
-    icon: UserCircle
+    icon: User,
+    title: 'Perfil',
+    description: 'Gerenciamento de perfis de usuário'
   },
-  notifications: {
-    title: 'Notificações',
-    description: 'Central de notificações e alertas do sistema',
-    icon: Bell
-  },
-
-  // Clients section
   clients: {
-    title: 'Gestão de Clientes',
-    description: 'Gerenciamento de cadastros e informações de clientes',
-    icon: Building
+    icon: Building,
+    title: 'Clientes',
+    description: 'Gerenciamento de clientes'
   },
-
-  // Tax Credits section
   tax_credits: {
-    title: 'Gestão de Créditos',
-    description: 'Gerenciamento de créditos tributários',
-    icon: Receipt
+    icon: CreditCard,
+    title: 'Créditos Tributários',
+    description: 'Gerenciamento de créditos tributários'
   },
   recovery: {
-    title: 'Gestão de Recuperação',
-    description: 'Acompanhe processos de recuperação de créditos',
-    icon: RefreshCw
+    icon: BriefcaseBusiness,
+    title: 'Recuperação',
+    description: 'Gestão de processos de recuperação de créditos'
   },
   credit_identification: {
+    icon: Search,
     title: 'Identificação de Créditos',
-    description: 'Identificação automática de oportunidades de créditos',
-    icon: Lightbulb
+    description: 'Identificação automática de créditos tributários'
   },
   data_processing: {
+    icon: ServerCog,
     title: 'Processamento de Dados',
-    description: 'Processamento de documentos fiscais e cálculos',
-    icon: Database
+    description: 'Processamento e análise de dados fiscais'
   },
   audits: {
-    title: 'Gestão de Auditorias',
-    description: 'Gerenciamento de auditorias tributárias',
-    icon: FileCheck
+    icon: Shield,
+    title: 'Auditorias',
+    description: 'Gestão de auditorias fiscais'
   },
   calculations: {
+    icon: Calculator,
     title: 'Cálculos IRRF',
-    description: 'Ferramentas para cálculos de IRRF e planejamento tributário',
-    icon: PercentCircle
+    description: 'Simulações e cálculos de IRRF'
+  },
+  irrf_recovery: {
+    icon: BriefcaseBusiness,
+    title: 'Recuperação IRRF/PJ',
+    description: 'Gestão de recuperação de IRRF para empresas'
   },
   tax_calculator: {
-    title: 'Calculadora de Crédito',
-    description: 'Calculadora para simulação de créditos tributários',
-    icon: Calculator
+    icon: Calculator,
+    title: 'Calculadora de Créditos',
+    description: 'Cálculo de créditos tributários'
   },
   imports: {
-    title: 'Importação de Dados',
-    description: 'Importação de dados de sistemas externos',
-    icon: Database
+    icon: FileSpreadsheet,
+    title: 'Importações',
+    description: 'Importação de dados fiscais'
   },
   fiscal_reports: {
+    icon: FileText,
     title: 'Relatórios Fiscais',
-    description: 'Geração de relatórios fiscais e tributários',
-    icon: FileStack
+    description: 'Geração e visualização de relatórios fiscais'
   },
   proposals: {
-    title: 'Propostas Comerciais',
-    description: 'Gestão de propostas e contratos',
-    icon: ClipboardList
+    icon: FileDigit,
+    title: 'Propostas',
+    description: 'Gestão de propostas comerciais'
   },
-
-  // Tax Reports section
-  detailed_reports: {
-    title: 'Relatórios Detalhados',
-    description: 'Relatórios completos de operações tributárias',
-    icon: FileText
-  },
-  interactive_dashboard: {
-    title: 'Dashboard Interativo',
-    description: 'Visualizações e análises interativas de dados',
-    icon: Activity
-  },
-  retention_receipts: {
-    title: 'Comprovantes de Retenção',
-    description: 'Gestão de comprovantes de retenção de tributos',
-    icon: ReceiptText
-  },
-
-  // Security section
-  two_factor_auth: {
-    title: 'Autenticação 2FA',
-    description: 'Configurações de autenticação de dois fatores',
-    icon: Key
-  },
-  session_expiration: {
-    title: 'Expiração de Sessão',
-    description: 'Configurações de tempo de expiração de sessões',
-    icon: Clock
-  },
-  access_protection: {
-    title: 'Proteção de Acessos',
-    description: 'Políticas de segurança para proteção de acessos',
-    icon: Shield
-  },
-  audit_trails: {
-    title: 'Trilhas de Auditoria',
-    description: 'Registros de acesso e atividades no sistema',
-    icon: ClipboardListIcon
-  },
-
-  // Content section
   site: {
+    icon: Paintbrush,
     title: 'Editor do Site',
-    description: 'Gerenciamento de conteúdo do site público',
-    icon: Globe
+    description: 'Personalize a aparência e o conteúdo do seu site'
   },
   content_reports: {
+    icon: PanelTop,
     title: 'Relatórios de Conteúdo',
-    description: 'Análises de desempenho do conteúdo',
-    icon: FileBarChart2
+    description: 'Análise de conteúdo e engajamento do site'
   },
-
-  // System section
-  settings: {
-    title: 'Configurações',
-    description: 'Preferências e configurações do sistema',
-    icon: Settings
+  detailed_reports: {
+    icon: FileText,
+    title: 'Relatórios Detalhados',
+    description: 'Relatórios detalhados sobre os créditos'
   },
-  security: {
-    title: 'Segurança',
-    description: 'Configurações de segurança do sistema',
-    icon: ShieldAlert
+  interactive_dashboard: {
+    icon: ChartPie,
+    title: 'Dashboard Interativo',
+    description: 'Painel interativo com métricas e análises'
   },
-  billing: {
-    title: 'Faturamento',
-    description: 'Gerenciamento de cobranças e pagamentos',
-    icon: CreditCard
+  retention_receipts: {
+    icon: Receipt,
+    title: 'Comprovantes de Retenção',
+    description: 'Gestão de comprovantes de retenção fiscal'
   },
-  support: {
-    title: 'Suporte',
-    description: 'Central de ajuda e suporte técnico',
-    icon: HelpCircle
-  },
-  
-  // Operational submenu items
   operational_imports: {
-    title: 'Importação de Dados Operacionais',
-    description: 'Importe dados operacionais de sistemas externos',
-    icon: Database
+    icon: FileSpreadsheet,
+    title: 'Importação de Dados',
+    description: 'Importação de dados operacionais'
   },
   operational_recovery: {
+    icon: BriefcaseBusiness,
     title: 'Recuperação Operacional',
-    description: 'Acompanhamento de processos de recuperação operacional',
-    icon: RefreshCw
+    description: 'Processos de recuperação operacional'
   },
   operational_credit_identification: {
-    title: 'Identificação Operacional de Créditos',
-    description: 'Identificação operacional de oportunidades de créditos',
-    icon: Lightbulb
+    icon: Search,
+    title: 'Identificação de Créditos Operacionais',
+    description: 'Identificação de créditos operacionais'
   },
   operational_dashboard: {
+    icon: BarChart3,
     title: 'Dashboard Operacional',
-    description: 'Visualizações e análises operacionais de dados',
-    icon: Activity
+    description: 'Visão geral das operações'
   },
   operational_receipts: {
-    title: 'Gestão de Recibos Operacionais',
-    description: 'Gestão operacional de comprovantes e recibos',
-    icon: ReceiptText
+    icon: Receipt,
+    title: 'Comprovantes Operacionais',
+    description: 'Gestão de comprovantes operacionais'
   },
   operational_audits: {
+    icon: FolderCheck,
     title: 'Auditorias Operacionais',
-    description: 'Gestão de auditorias operacionais',
-    icon: FileCheck
+    description: 'Gestão de auditorias operacionais'
+  },
+  two_factor_auth: {
+    icon: ShieldCheck,
+    title: 'Autenticação em Dois Fatores',
+    description: 'Configure a autenticação de dois fatores para adicionar uma camada extra de segurança'
+  },
+  session_expiration: {
+    icon: Clock,
+    title: 'Expiração de Sessão',
+    description: 'Configure o tempo de expiração de sessão e gerencie sessões ativas'
+  },
+  access_protection: {
+    icon: KeyRound,
+    title: 'Proteção de Acesso',
+    description: 'Configure proteções contra tentativas de acesso indevido e alertas de segurança'
+  },
+  audit_trails: {
+    icon: FileClock,
+    title: 'Trilhas de Auditoria',
+    description: 'Monitore as atividades e ações realizadas no sistema'
+  },
+  admin_profile: {
+    icon: UserCircle,
+    title: 'Meu Perfil',
+    description: 'Gerencie suas informações pessoais e preferências'
+  },
+  billing: {
+    icon: BillingIcon,
+    title: 'Faturamento',
+    description: 'Gerencie informações de pagamento e faturamento'
+  },
+  support: {
+    icon: MessageSquareText,
+    title: 'Suporte',
+    description: 'Entre em contato com nossa equipe de suporte'
+  },
+  system_documentation: {
+    icon: BookOpen,
+    title: 'Documentação',
+    description: 'Acesse a documentação completa do sistema'
+  },
+  notifications: {
+    icon: Bell,
+    title: 'Notificações',
+    description: 'Gerencie suas notificações do sistema'
+  },
+  tax_compensation_reports: {
+    icon: FileBarChart,
+    title: 'Compensação Tributária',
+    description: 'Simulação e relatórios para compensação fiscal com correção pela SELIC'
   }
-};
-
-export const getTabConfig = (tabId: string): TabConfig => {
-  return tabConfigurations[tabId] || {
-    title: 'Módulo',
-    description: 'Funcionalidade do sistema',
-    icon: Settings
-  };
 };

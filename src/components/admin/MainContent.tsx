@@ -37,6 +37,7 @@ import ClientDetailView from './tax-credits/components/client/ClientDetailView';
 import DetailedReportsPanel from './tax-reports/DetailedReportsPanel';
 import InteractiveDashboardPanel from './tax-reports/InteractiveDashboardPanel';
 import RetentionReceiptsPanel from './tax-reports/RetentionReceiptsPanel';
+import TaxCompensationReportsPanel from './tax-reports/TaxCompensationReportsPanel';
 
 // Operational Components
 import OperationalImportsPanel from './operational/OperationalImportsPanel';
@@ -123,6 +124,8 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         return <InteractiveDashboardPanel />;
       case 'retention_receipts':
         return <RetentionReceiptsPanel />;
+      case 'tax_compensation_reports':
+        return <TaxCompensationReportsPanel />;
       
       case 'operational_imports':
         return <OperationalImportsPanel />;

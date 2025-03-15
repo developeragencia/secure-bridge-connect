@@ -32,7 +32,11 @@ import {
   KeyRound,
   ShieldCheck,
   Clock,
-  PanelTop
+  PanelTop,
+  ShieldAlert,
+  FileBarChart,
+  GavelSquare,
+  Currencies
 } from 'lucide-react';
 
 export const getMenuSections = () => [
@@ -90,6 +94,11 @@ export const getMenuSections = () => [
         id: 'detailed_reports',
         label: 'Relatórios Detalhados',
         icon: <FileText className="h-4 w-4" />,
+      },
+      {
+        id: 'tax_compensation_reports',
+        label: 'Compensação Tributária',
+        icon: <FileBarChart className="h-4 w-4" />,
       },
       {
         id: 'interactive_dashboard',

@@ -10,6 +10,11 @@ import DataFilterPanel from '../components/admin/imports/DataFilterPanel';
 import SelicCorrectionPanel from '../components/admin/tax-credits/calculations/SelicCorrectionPanel';
 import SelicIntegrationPanel from '../components/admin/tax-credits/calculations/selic-correction/SelicIntegrationPanel';
 import CommercialProposalsPanel from '../components/admin/commercial/CommercialProposalsPanel';
+import TwoFactorAuthPanel from '../components/admin/security/TwoFactorAuthPanel';
+import SessionExpirationPanel from '../components/admin/security/SessionExpirationPanel';
+import AccessProtectionContent from '../components/admin/security/AccessProtectionContent';
+import AuditTrailsPanel from '../components/admin/security/AuditTrailsPanel';
+import TaxCompensationReportsPanel from '../components/admin/tax-reports/TaxCompensationReportsPanel';
 
 // Lazy-loaded components
 const AdminUsers = lazy(() => import('../components/admin/AdminUsers'));
@@ -33,6 +38,11 @@ const AdminRoutes = () => {
     if (path.includes('/admin/calculations/selic')) return 'selic';
     if (path.includes('/admin/calculations/selic-integration')) return 'selic_integration';
     if (path.includes('/admin/commercial/proposals')) return 'commercial_proposals';
+    if (path.includes('/admin/two_factor_auth')) return 'two_factor_auth';
+    if (path.includes('/admin/session_expiration')) return 'session_expiration';
+    if (path.includes('/admin/access_protection')) return 'access_protection';
+    if (path.includes('/admin/audit_trails')) return 'audit_trails';
+    if (path.includes('/admin/tax_compensation_reports')) return 'tax_compensation_reports';
     // Default to dashboard
     return 'dashboard';
   };
@@ -69,6 +79,11 @@ const AdminRoutes = () => {
         <Route path="calculations/selic" element={<SelicCorrectionPanel />} />
         <Route path="calculations/selic-integration" element={<SelicIntegrationPanel />} />
         <Route path="commercial/proposals" element={<CommercialProposalsPanel />} />
+        <Route path="two_factor_auth" element={<TwoFactorAuthPanel />} />
+        <Route path="session_expiration" element={<SessionExpirationPanel />} />
+        <Route path="access_protection" element={<AccessProtectionContent />} />
+        <Route path="audit_trails" element={<AuditTrailsPanel />} />
+        <Route path="tax_compensation_reports" element={<TaxCompensationReportsPanel />} />
       </Route>
     </Routes>
   );
