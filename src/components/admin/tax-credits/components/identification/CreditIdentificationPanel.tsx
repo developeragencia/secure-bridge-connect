@@ -10,7 +10,7 @@ import AnalysisProgressCard from '../analysis/AnalysisProgressCard';
 import CreditStats from '../stats/CreditStats';
 import CreditSearch from '../search/CreditSearch';
 import CreditTabs from '../tabs/CreditTabs';
-import NewCreditAnalysisModal, { AnalysisFormData } from '../NewCreditAnalysisModal';
+import NewCreditAnalysisModal from '../NewCreditAnalysisModal';
 import IdentificationDialogs from './IdentificationDialogs';
 import { useCreditIdentification } from './useCreditIdentification';
 

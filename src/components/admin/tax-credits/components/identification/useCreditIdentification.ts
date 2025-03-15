@@ -1,8 +1,7 @@
-
 import { useState, useCallback, useMemo } from 'react';
 import { AnalysisFormData } from '../NewCreditAnalysisModal';
 import { ClientWithPermissions } from '@/types/clientStore';
-import { toast } from 'sonner';
+import { toast as sonnerToast } from 'sonner';
 
 // Mock data that was previously in the component
 const MOCK_CREDITS = [
@@ -107,7 +106,7 @@ interface UseCreditIdentificationProps {
   setIsAnalysisModalOpen: (open: boolean) => void;
   setShowExportOptions: (show: boolean) => void;
   selectedPeriod: string;
-  toast: typeof toast; 
+  toast: typeof sonnerToast; 
 }
 
 export const useCreditIdentification = ({
@@ -148,8 +147,7 @@ export const useCreditIdentification = ({
   // Handler functions
   const handleStartAnalysis = useCallback(() => {
     if (!activeClient) {
-      toast({
-        title: "Cliente não selecionado",
+      toast("Cliente não selecionado", {
         description: "Selecione um cliente ativo para iniciar a análise.",
         variant: "destructive"
       });
@@ -165,8 +163,7 @@ export const useCreditIdentification = ({
     setIsAnalyzing(true);
     setAnalysisProgress(0);
     
-    toast({
-      title: "Análise iniciada",
+    toast("Análise iniciada", {
       description: `Analisando dados do cliente "${activeClient?.name}" no período selecionado.`,
     });
     
@@ -178,8 +175,7 @@ export const useCreditIdentification = ({
         setAnalysisProgress(100);
         setTimeout(() => {
           setIsAnalyzing(false);
-          toast({
-            title: "Análise concluída",
+          toast("Análise concluída", {
             description: "Foram identificados 5 possíveis créditos tributários.",
           });
         }, 500);
@@ -191,8 +187,7 @@ export const useCreditIdentification = ({
 
   const handleQuickAnalysis = useCallback(() => {
     if (!activeClient) {
-      toast({
-        title: "Cliente não selecionado",
+      toast("Cliente não selecionado", {
         description: "Selecione um cliente ativo para iniciar a análise.",
         variant: "destructive"
       });
@@ -202,8 +197,7 @@ export const useCreditIdentification = ({
     setIsAnalyzing(true);
     setAnalysisProgress(0);
     
-    toast({
-      title: "Análise automática iniciada",
+    toast("Análise automática iniciada", {
       description: `Analisando pagamentos dos últimos ${selectedPeriod} meses para ${activeClient?.name}.`,
     });
     
@@ -215,8 +209,7 @@ export const useCreditIdentification = ({
         setAnalysisProgress(100);
         setTimeout(() => {
           setIsAnalyzing(false);
-          toast({
-            title: "Análise automática concluída",
+          toast("Análise automática concluída", {
             description: `Foram identificados 5 créditos tributários com base nas regras do Manual de Retenções IRPJ.`,
           });
         }, 500);
@@ -227,32 +220,28 @@ export const useCreditIdentification = ({
   }, [activeClient, selectedPeriod, setIsAnalyzing, setAnalysisProgress, toast]);
 
   const handleExportCredits = useCallback(() => {
-    toast({
-      title: `Exportando dados em formato ${exportFormat.toUpperCase()}`,
-      description: "O download dos dados será iniciado em breve.",
+    toast("Exportando dados", {
+      description: `O download dos dados será iniciado em breve em formato ${exportFormat.toUpperCase()}.`,
     });
     setShowExportOptions(false);
   }, [setShowExportOptions, toast, exportFormat]);
 
   const handleApproveCredit = useCallback((creditId: string) => {
-    toast({
-      title: "Crédito aprovado",
+    toast("Crédito aprovado", {
       description: `O crédito ${creditId} foi aprovado e será incluído nos relatórios.`,
       variant: "default"
     });
   }, [toast]);
 
   const handleRejectCredit = useCallback((creditId: string) => {
-    toast({
-      title: "Crédito rejeitado",
+    toast("Crédito rejeitado", {
       description: `O crédito ${creditId} foi rejeitado e não será considerado para recuperação.`,
       variant: "destructive"
     });
   }, [toast]);
 
   const handleSaveSettings = useCallback(() => {
-    toast({
-      title: "Configurações salvas",
+    toast("Configurações salvas", {
       description: "As configurações de identificação de créditos foram atualizadas.",
     });
   }, [toast]);
