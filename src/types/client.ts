@@ -1,37 +1,26 @@
 
+export type ClientStatus = 'ACTIVE' | 'INACTIVE' | 'PROSPECT' | 'ARCHIVED';
+export type ClientType = 'public' | 'private';
+
 export interface Client {
   id: string;
   name: string;
-  documentNumber: string;
-  email: string;
-  phone: string;
-  address?: string;
-  contactPerson?: string;
-  industry?: string;
-  createdAt: string;
-  updatedAt: string;
-  status: "ACTIVE" | "INACTIVE" | "PROSPECT";
-  // These properties are used in different parts of the application
   cnpj: string;
-  segment: string;
-  city: string;
-  state: string;
+  documentNumber?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
   contactName: string;
-  contactEmail: string;
-  contactPhone: string;
-  type: 'private' | 'public';
-  zipCode?: string;
-}
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  status: 'active' | 'inactive';
-  lastLogin?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  segment?: string;
+  industry?: string;
+  type: ClientType;
+  status: ClientStatus;
   createdAt: string;
-  clientId?: string;
+  updatedAt?: string;
+  representativeId?: string;
+  representativeName?: string;
 }
-
-export type UserRole = 'admin' | 'staff' | 'client' | 'representative' | 'office' | 'sales';

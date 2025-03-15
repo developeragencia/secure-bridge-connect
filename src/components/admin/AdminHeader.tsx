@@ -1,18 +1,24 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import AnimatedLogo from '@/components/AnimatedLogo';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import {
-  Menu, UserCircle, Sun, Moon,
-  PanelLeftClose, PanelLeftOpen, User,
-  ChevronDown, Search, LogOut, X, Building2
+import { 
+  Sun, Moon, Menu, Search, Bell, Settings, 
+  LogOut, User, Calendar, X, ChevronRight, AlertTriangle 
 } from 'lucide-react';
-import ActiveClientSelector from './ActiveClientSelector';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import ActiveClientIndicator from './ActiveClientIndicator';
-import { useClientStore } from '@/hooks/useClientStore';
-import NotificationBell from '@/components/NotificationBell';
 
 interface AdminHeaderProps {
   toggleSidebar: () => void;
@@ -28,7 +34,7 @@ interface AdminHeaderProps {
   setActiveTab: (tab: string) => void;
 }
 
-const AdminHeader = ({
+const AdminHeader: React.FC<AdminHeaderProps> = ({
   toggleSidebar,
   toggleMobileMenu,
   toggleDarkMode,
@@ -39,138 +45,195 @@ const AdminHeader = ({
   searchQuery,
   setSearchQuery,
   user,
-  setActiveTab
-}: AdminHeaderProps) => {
-  const { activeClient } = useClientStore();
+  setActiveTab,
+}) => {
+  const navigate = useNavigate();
+  const [showSearch, setShowSearch] = React.useState(false);
+  
+  const handleSearchToggle = () => {
+    setShowSearch(!showSearch);
+    if (!showSearch) {
+      setTimeout(() => {
+        document.getElementById('global-search')?.focus();
+      }, 100);
+    }
+  };
+  
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setShowSearch(false);
+  };
+  
+  const handleProfileClick = () => {
+    setActiveTab('admin_profile');
+    navigate('/admin/admin_profile');
+  };
+  
+  const handleNotificationsClick = () => {
+    setActiveTab('notifications');
+    navigate('/admin/notifications');
+  };
+  
+  const handleSettingsClick = () => {
+    setActiveTab('settings');
+    navigate('/admin/settings');
+  };
   
   return (
-    <motion.header 
-      className="bg-card/95 backdrop-blur-sm border-b border-border/40 shadow-sm z-20 sticky top-0"
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="flex items-center justify-between p-2 sm:p-3 mx-auto w-full max-w-[1400px]">
-        <div className="flex items-center gap-2 sm:gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleSidebar} 
-            className="rounded-full h-8 w-8 sm:h-9 sm:w-9 hover:bg-primary/10 md:flex hidden"
+    <header className="h-14 border-b border-border/40 flex items-center px-4 sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex items-center justify-between w-full">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            className="lg:flex hidden"
+            aria-label="Toggle sidebar"
           >
-            {sidebarOpen ? 
-              <PanelLeftClose className="h-4 w-4 sm:h-5 sm:w-5 text-primary" /> : 
-              <PanelLeftOpen className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-            }
+            <Menu className="h-5 w-5" />
           </Button>
           
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleMobileMenu}
-            className="rounded-full h-8 w-8 sm:h-9 sm:w-9 hover:bg-primary/10 md:hidden flex"
+            className="lg:hidden flex"
+            aria-label="Open menu"
           >
-            <Menu className="h-5 w-5 text-primary" />
+            <Menu className="h-5 w-5" />
           </Button>
           
-          <div className="flex items-center space-x-2">
-            <div className="bg-primary/10 p-1.5 sm:p-2 rounded-md">
-              <AnimatedLogo size="sm" showText={false} />
-            </div>
-            <div>
-              <h1 className="text-base sm:text-lg font-semibold leading-none bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">PAINEL ADMINISTRATIVO</h1>
-              <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">Sistemas Claudio Figueiredo</p>
-            </div>
-          </div>
-          
-          {/* Add ActiveClientSelector */}
-          <div className="hidden md:block ml-2">
-            {!activeClient ? <ActiveClientSelector /> : <ActiveClientIndicator />}
-          </div>
+          <AnimatePresence mode="wait">
+            {!showSearch && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.15 }}
+                className="flex items-center gap-3"
+              >
+                <h1 className="text-xl font-semibold hidden sm:flex sm:items-center">
+                  Sistemas <span className="text-primary ml-1"> Claudio Figueiredo</span>
+                </h1>
+                <h1 className="text-lg font-semibold flex sm:hidden">
+                  SCF
+                </h1>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         
-        <div className="flex items-center gap-1 sm:gap-2">
-          <div className="relative max-w-xs hidden md:block">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Buscar..."
-              className="rounded-full bg-secondary/70 pl-9 pr-4 py-2 text-sm w-40 focus:w-60 transition-all focus:outline-none focus:ring-1 focus:ring-primary/40"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleDarkMode} 
-            className="rounded-full h-8 w-8 sm:h-9 sm:w-9 hover:bg-primary/10"
-          >
-            {darkMode ? 
-              <Sun className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" /> : 
-              <Moon className="h-4 w-4 sm:h-5 sm:w-5" />
-            }
-          </Button>
-          
-          <div className="relative">
-            <NotificationBell />
-          </div>
-          
-          <div className="relative group">
-            <Button 
-              variant="ghost" 
-              className="h-8 sm:h-9 flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs rounded-full px-2 sm:px-3 hover:bg-primary/10"
-              onClick={() => setActiveTab('profile')}
+        <AnimatePresence mode="wait">
+          {showSearch ? (
+            <motion.div
+              initial={{ opacity: 0, width: "0%" }}
+              animate={{ opacity: 1, width: "100%" }}
+              exit={{ opacity: 0, width: "0%" }}
+              transition={{ duration: 0.15 }}
+              className="absolute left-0 right-0 px-4 flex items-center"
             >
-              <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-primary/20 flex items-center justify-center text-primary ring-2 ring-background">
-                <User className="h-3 w-3 sm:h-4 sm:w-4" />
+              <div className="relative w-full max-w-xl mx-auto">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="global-search"
+                  placeholder="Buscar no sistema..."
+                  className="w-full pl-9 pr-9"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1.5 h-7 w-7"
+                  onClick={handleClearSearch}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-              <span className="hidden sm:inline-block max-w-[120px] truncate font-medium">
-                {user?.email?.split('@')[0] || 'admin'}
-              </span>
-              <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 opacity-70" />
-            </Button>
-            <div className="absolute right-0 mt-2 w-56 p-2 bg-card rounded-lg shadow-lg border border-border hidden group-hover:block z-20 animate-fade-in">
-              <div className="px-4 py-2 rounded-md hover:bg-secondary transition-colors">
-                <p className="text-sm font-medium">{user?.email || 'admin@sistemasclaudio.com'}</p>
-                <p className="text-xs text-muted-foreground">Administrador</p>
-              </div>
-              <div className="border-t border-border my-1"></div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleLogout} 
-                className="w-full justify-start text-destructive hover:bg-destructive/10 rounded-md"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Sair
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Add active client bar for mobile view */}
-      {activeClient && (
-        <div className="md:hidden bg-primary/5 border-t border-primary/10 px-3 py-1 flex items-center justify-between">
-          <div className="flex items-center">
-            <Building2 className="h-3.5 w-3.5 text-primary mr-1.5" />
-            <span className="text-xs font-medium text-primary truncate max-w-[200px]">
-              {activeClient.name}
-            </span>
-          </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+        
+        <div className="flex items-center gap-1 sm:gap-2">
+          <ActiveClientIndicator />
+          
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => useClientStore.getState().clearActiveClient()}
-            className="h-6 w-6 text-muted-foreground"
+            onClick={handleSearchToggle}
+            className={cn(
+              "relative",
+              showSearch && "text-primary"
+            )}
+            aria-label="Search"
           >
-            <X className="h-3.5 w-3.5" />
+            <Search className="h-5 w-5" />
           </Button>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleDarkMode}
+            aria-label="Toggle theme"
+          >
+            {darkMode ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNotificationsClick}
+            className="relative"
+            aria-label="Notifications"
+          >
+            <Bell className="h-5 w-5" />
+            {hasNotifications && (
+              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive" />
+            )}
+          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full relative" aria-label="User menu">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="/avatar-placeholder.png" alt={user?.name || "User"} />
+                  <AvatarFallback>
+                    {(user?.name?.charAt(0) || "U")}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-background" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{user?.name || "Usuário"}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.email || "usuario@exemplo.com"}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleProfileClick}>
+                <User className="mr-2 h-4 w-4" />
+                <span>Perfil</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSettingsClick}>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Configurações</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Sair</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-      )}
-    </motion.header>
+      </div>
+    </header>
   );
 };
 

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useClientStore } from '@/hooks/useClientStore';
+import { useActiveClient } from '@/hooks/useActiveClient';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Building, X } from 'lucide-react';
@@ -9,13 +9,23 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
-import { Client } from '@/types/client';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const ActiveClientIndicator = () => {
-  const { activeClient, recentClients, setActiveClient, clearActiveClient } = useClientStore();
+  const { activeClient, recentClients, setActiveClient, clearActiveClient } = useActiveClient();
   
   if (!activeClient) return null;
+  
+  const handleClearActiveClient = () => {
+    clearActiveClient();
+    toast.info('Cliente ativo removido');
+  };
+  
+  const handleChangeActiveClient = (client) => {
+    setActiveClient(client);
+    toast.success(`Cliente alterado para: ${client.name}`);
+  };
   
   return (
     <div className="flex items-center">
@@ -41,7 +51,7 @@ const ActiveClientIndicator = () => {
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={clearActiveClient}
+                onClick={handleClearActiveClient}
                 className="h-6 w-6 text-muted-foreground"
               >
                 <X className="h-3.5 w-3.5" />
@@ -62,19 +72,19 @@ const ActiveClientIndicator = () => {
               <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
                 <div className="flex items-center gap-1.5">
                   <span className="text-muted-foreground">Segmento:</span>
-                  <span>{activeClient.segment}</span>
+                  <span>{activeClient.segment || 'N/A'}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-muted-foreground">Tipo:</span>
-                  <span className="capitalize">{activeClient.type}</span>
+                  <span className="capitalize">{activeClient.type === 'public' ? 'Público' : 'Privado'}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-muted-foreground">Cidade:</span>
-                  <span>{activeClient.city}</span>
+                  <span>{activeClient.city || 'N/A'}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-muted-foreground">Estado:</span>
-                  <span>{activeClient.state}</span>
+                  <span>{activeClient.state || 'N/A'}</span>
                 </div>
               </div>
             </div>
@@ -91,7 +101,7 @@ const ActiveClientIndicator = () => {
                         key={client.id}
                         variant="ghost"
                         size="sm"
-                        onClick={() => setActiveClient(client)}
+                        onClick={() => handleChangeActiveClient(client)}
                         className="w-full justify-start text-xs h-auto py-1"
                       >
                         <Building className="h-3 w-3 mr-1.5" />
