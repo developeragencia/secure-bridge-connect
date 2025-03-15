@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { AlertCircle, Building, Calendar, FileText, Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Building, User, Calendar, FileText, Info, Shield } from 'lucide-react';
 import { useActiveClient } from '@/hooks/useActiveClient';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -10,9 +11,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/button';
 
 const ActiveClientHeader = () => {
-  const { activeClient } = useActiveClient();
+  const { activeClient, clearActiveClient } = useActiveClient();
+  const navigate = useNavigate();
 
   if (!activeClient) return null;
 
@@ -57,48 +60,49 @@ const ActiveClientHeader = () => {
           </div>
         </div>
         
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent">
-                  <Calendar className="h-3.5 w-3.5" />
-                  <span>Cliente desde: {new Date(activeClient.createdAt).toLocaleDateString('pt-BR')}</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Data de início do cliente</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent">
+                    <Calendar className="h-3.5 w-3.5" />
+                    <span>Cliente desde: {new Date(activeClient.createdAt).toLocaleDateString('pt-BR')}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Data de início do cliente</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent">
+                    <FileText className="h-3.5 w-3.5" />
+                    <span>Segmento: {activeClient.segment || 'Não informado'}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Segmento do cliente</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent">
-                  <FileText className="h-3.5 w-3.5" />
-                  <span>Segmento: {activeClient.segment || 'Não informado'}</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Segmento do cliente</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-accent">
-                  <Info className="h-3.5 w-3.5" />
-                  <span>Tipo: {activeClient.type === 'public' ? 'Público' : 'Privado'}</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Tipo de entidade</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="ml-2"
+            onClick={() => {
+              clearActiveClient();
+              navigate('/admin/clients');
+            }}
+          >
+            <User className="h-3.5 w-3.5 mr-1" />
+            <span>Alterar</span>
+          </Button>
         </div>
       </div>
     </div>

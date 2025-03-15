@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle, Shield } from 'lucide-react';
 import { Client } from '@/types/client';
 import { useActiveClient } from '@/hooks/useActiveClient';

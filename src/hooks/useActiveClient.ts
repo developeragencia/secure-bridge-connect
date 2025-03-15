@@ -1,6 +1,7 @@
 
 import { useClientStore } from './useClientStore';
-import { ClientWithPermissions } from '@/types/clientStore';
+import { toast } from 'sonner';
+import { Client } from '@/types/client';
 
 export const useActiveClient = () => {
   const store = useClientStore();
@@ -8,8 +9,16 @@ export const useActiveClient = () => {
   return {
     activeClient: store.activeClient,
     clients: store.clients,
-    setActiveClient: store.setActiveClient,
-    clearActiveClient: store.clearActiveClient,
+    setActiveClient: (client: Client) => {
+      store.setActiveClient(client);
+      toast.success(`Cliente ativo: ${client.name}`, {
+        description: `CNPJ: ${client.cnpj}`,
+      });
+    },
+    clearActiveClient: () => {
+      store.clearActiveClient();
+      toast.info('Cliente ativo removido');
+    },
     recentClients: store.recentClients,
     hasViewAccess: store.activeClient?.userRoles?.canViewOperations || false,
     hasEditAccess: store.activeClient?.userRoles?.canEditOperations || false,

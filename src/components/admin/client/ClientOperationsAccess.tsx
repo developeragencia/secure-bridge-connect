@@ -2,7 +2,6 @@
 import React from 'react';
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import { Check, X } from "lucide-react";
 import { Client } from '@/types/client';
 

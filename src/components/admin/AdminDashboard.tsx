@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { BookOpen, HardDrive } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 import DashboardHeader from './dashboard/DashboardHeader';
 import DashboardSection from './dashboard/DashboardSection';
