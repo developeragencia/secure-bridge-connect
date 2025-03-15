@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -100,8 +99,7 @@ const DataProcessingQueue: React.FC = () => {
     );
     
     toast("Tarefa cancelada", {
-      description: `A tarefa ${taskId} foi cancelada com sucesso.`,
-      variant: "default"
+      description: `A tarefa ${taskId} foi cancelada com sucesso.`
     });
   };
   
@@ -115,8 +113,7 @@ const DataProcessingQueue: React.FC = () => {
     );
     
     toast("Tarefa reiniciada", {
-      description: `A tarefa ${taskId} foi colocada novamente na fila.`,
-      variant: "default"
+      description: `A tarefa ${taskId} foi colocada novamente na fila.`
     });
   };
   
@@ -130,8 +127,7 @@ const DataProcessingQueue: React.FC = () => {
     );
     
     toast("Rollback iniciado", {
-      description: `O rollback da tarefa ${taskId} foi iniciado.`,
-      variant: "destructive"
+      description: `O rollback da tarefa ${taskId} foi iniciado.`
     });
   };
   

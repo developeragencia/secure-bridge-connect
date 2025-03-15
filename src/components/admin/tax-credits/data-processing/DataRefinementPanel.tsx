@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,8 +21,7 @@ const DataRefinementPanel: React.FC = () => {
   const handleSubmitRefinement = () => {
     if (!dataSource) {
       toast("Fonte de dados requerida", {
-        description: "Selecione uma fonte de dados para refinamento.",
-        variant: "destructive"
+        description: "Selecione uma fonte de dados para refinamento."
       });
       return;
     }
@@ -34,7 +32,7 @@ const DataRefinementPanel: React.FC = () => {
     setTimeout(() => {
       setIsProcessing(false);
       toast("Refinamento iniciado", {
-        description: "O processo de refinamento de dados foi adicionado à fila de processamento.",
+        description: "O processo de refinamento de dados foi adicionado à fila de processamento."
       });
     }, 2000);
   };
@@ -42,8 +40,7 @@ const DataRefinementPanel: React.FC = () => {
   const handleSubmitClassification = () => {
     if (!refinementRules) {
       toast("Regras requeridas", {
-        description: "Selecione regras de classificação tributária.",
-        variant: "destructive"
+        description: "Selecione regras de classificação tributária."
       });
       return;
     }
@@ -54,7 +51,7 @@ const DataRefinementPanel: React.FC = () => {
     setTimeout(() => {
       setIsProcessing(false);
       toast("Classificação iniciada", {
-        description: "O processo de classificação de dados foi adicionado à fila de processamento.",
+        description: "O processo de classificação de dados foi adicionado à fila de processamento."
       });
     }, 2000);
   };

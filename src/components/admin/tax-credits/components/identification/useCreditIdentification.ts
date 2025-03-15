@@ -148,8 +148,7 @@ export const useCreditIdentification = ({
   const handleStartAnalysis = useCallback(() => {
     if (!activeClient) {
       toast("Cliente não selecionado", {
-        description: "Selecione um cliente ativo para iniciar a análise.",
-        variant: "destructive"
+        description: "Selecione um cliente ativo para iniciar a análise."
       });
       return;
     }
@@ -164,9 +163,10 @@ export const useCreditIdentification = ({
     setAnalysisProgress(0);
     
     toast("Análise iniciada", {
-      description: `Analisando dados do cliente "${activeClient?.name}" no período selecionado.`,
+      description: `Analisando dados do cliente "${activeClient?.name}" no período selecionado.`
     });
     
+    // Use a variable to track progress
     let progress = 0;
     const interval = setInterval(() => {
       progress = progress + Math.floor(Math.random() * 10) + 1;
@@ -176,7 +176,7 @@ export const useCreditIdentification = ({
         setTimeout(() => {
           setIsAnalyzing(false);
           toast("Análise concluída", {
-            description: "Foram identificados 5 possíveis créditos tributários.",
+            description: "Foram identificados 5 possíveis créditos tributários."
           });
         }, 500);
       } else {
@@ -188,8 +188,7 @@ export const useCreditIdentification = ({
   const handleQuickAnalysis = useCallback(() => {
     if (!activeClient) {
       toast("Cliente não selecionado", {
-        description: "Selecione um cliente ativo para iniciar a análise.",
-        variant: "destructive"
+        description: "Selecione um cliente ativo para iniciar a análise."
       });
       return;
     }
@@ -198,9 +197,10 @@ export const useCreditIdentification = ({
     setAnalysisProgress(0);
     
     toast("Análise automática iniciada", {
-      description: `Analisando pagamentos dos últimos ${selectedPeriod} meses para ${activeClient?.name}.`,
+      description: `Analisando pagamentos dos últimos ${selectedPeriod} meses para ${activeClient?.name}.`
     });
     
+    // Use a variable to track progress
     let progress = 0;
     const interval = setInterval(() => {
       progress = progress + Math.floor(Math.random() * 10) + 1;
@@ -210,7 +210,7 @@ export const useCreditIdentification = ({
         setTimeout(() => {
           setIsAnalyzing(false);
           toast("Análise automática concluída", {
-            description: `Foram identificados 5 créditos tributários com base nas regras do Manual de Retenções IRPJ.`,
+            description: `Foram identificados 5 créditos tributários com base nas regras do Manual de Retenções IRPJ.`
           });
         }, 500);
       } else {
@@ -221,28 +221,26 @@ export const useCreditIdentification = ({
 
   const handleExportCredits = useCallback(() => {
     toast("Exportando dados", {
-      description: `O download dos dados será iniciado em breve em formato ${exportFormat.toUpperCase()}.`,
+      description: `O download dos dados será iniciado em breve em formato ${exportFormat.toUpperCase()}.`
     });
     setShowExportOptions(false);
   }, [setShowExportOptions, toast, exportFormat]);
 
   const handleApproveCredit = useCallback((creditId: string) => {
     toast("Crédito aprovado", {
-      description: `O crédito ${creditId} foi aprovado e será incluído nos relatórios.`,
-      variant: "default"
+      description: `O crédito ${creditId} foi aprovado e será incluído nos relatórios.`
     });
   }, [toast]);
 
   const handleRejectCredit = useCallback((creditId: string) => {
     toast("Crédito rejeitado", {
-      description: `O crédito ${creditId} foi rejeitado e não será considerado para recuperação.`,
-      variant: "destructive"
+      description: `O crédito ${creditId} foi rejeitado e não será considerado para recuperação.`
     });
   }, [toast]);
 
   const handleSaveSettings = useCallback(() => {
     toast("Configurações salvas", {
-      description: "As configurações de identificação de créditos foram atualizadas.",
+      description: "As configurações de identificação de créditos foram atualizadas."
     });
   }, [toast]);
 
