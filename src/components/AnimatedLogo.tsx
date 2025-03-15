@@ -9,13 +9,15 @@ export interface AnimatedLogoProps {
   color?: string;
   showText?: boolean;
   className?: string;
+  hovering?: boolean; // Add the missing hovering prop
 }
 
 const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
   size = 'md',
   color,
   showText = true,
-  className
+  className,
+  hovering = false // Set a default value
 }) => {
   const sizeMap = {
     sm: {
@@ -45,7 +47,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
   return (
     <div className={`flex items-center space-x-2 ${className || ''}`}>
       <LogoContainer containerSize={container}>
-        <IconRotator className={iconClass} color={color} />
+        <IconRotator className={iconClass} color={color} rotating={hovering} />
       </LogoContainer>
       
       {showText && <LogoText className={textClass} color={color} />}
