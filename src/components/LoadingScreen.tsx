@@ -26,7 +26,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         className="flex flex-col items-center"
       >
         <div className="mb-6">
-          <AnimatedLogo size="lg" loading={true} />
+          <AnimatedLogo size="lg" hovering={true} />
         </div>
         
         <motion.div 

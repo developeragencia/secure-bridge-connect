@@ -1,37 +1,35 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { DollarSign, TrendingUp, BarChart4, Wallet, BadgePercent } from 'lucide-react';
 
 interface IconRotatorProps {
-  icons: React.ReactNode[];
-  animationDisabled?: boolean;
-  loading?: boolean;
-  size: 'sm' | 'md' | 'lg';
+  className?: string;
+  color?: string;
 }
 
 const IconRotator: React.FC<IconRotatorProps> = ({
-  icons,
-  animationDisabled = false,
-  loading = false,
-  size,
+  className,
+  color,
 }) => {
   const [activeIcon, setActiveIcon] = useState(0);
   const iconIntervalRef = useRef<number | null>(null);
   
-  const iconSize = {
-    sm: 'h-6 w-6',
-    md: 'h-8 w-8',
-    lg: 'h-10 w-10',
-  };
+  // Default icons with color prop applied
+  const icons = [
+    <DollarSign key={0} className={color || "text-primary"} />,
+    <TrendingUp key={1} className={color || "text-primary"} />,
+    <BarChart4 key={2} className={color || "text-primary"} />,
+    <Wallet key={3} className={color || "text-primary"} />,
+    <BadgePercent key={4} className={color || "text-primary"} />,
+  ];
 
   // Icon rotation effect with proper cleanup
   useEffect(() => {
-    if (animationDisabled) return;
-    
     // Use window.setTimeout instead of setTimeout to properly type the return value
     const interval = window.setTimeout(() => {
       setActiveIcon(prev => (prev + 1) % icons.length);
-    }, loading ? 1000 : 2000); // Faster rotation when loading
+    }, 2000);
     
     // Store the interval ID in a ref
     iconIntervalRef.current = interval;
@@ -41,10 +39,10 @@ const IconRotator: React.FC<IconRotatorProps> = ({
         window.clearTimeout(iconIntervalRef.current);
       }
     };
-  }, [animationDisabled, icons.length, loading, activeIcon]); // Include activeIcon in deps
+  }, [activeIcon]); // Include activeIcon in deps
 
   return (
-    <div className={cn("relative z-10", iconSize[size])}>
+    <div className={cn("relative z-10", className)}>
       {icons.map((icon, index) => (
         <div
           key={index}

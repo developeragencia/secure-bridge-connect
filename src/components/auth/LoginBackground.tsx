@@ -28,7 +28,7 @@ const LoginBackground: React.FC = () => {
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
         >
-          <AnimatedLogo showText={true} />
+          <AnimatedLogo />
         </motion.div>
       </div>
     </>

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import AnimatedLogo from '@/components/AnimatedLogo';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -138,7 +137,7 @@ const Maintenance = () => {
             variants={itemVariants}
           >
             <div className="mb-2 scale-150 transform-gpu">
-              <AnimatedLogo size="lg" animationDisabled={false} />
+              <AnimatedLogo size="lg" hovering={true} />
             </div>
           </motion.div>
           
