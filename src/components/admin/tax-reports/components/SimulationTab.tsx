@@ -169,13 +169,13 @@ const SimulationTab: React.FC<SimulationTabProps> = ({
                     <td className="p-3">{simulation.type}</td>
                     <td className="p-3">
                       <div className="flex gap-2">
-                        <Button variant="ghost" size="sm">
-                          <File className="h-4 w-4" />
-                          <span className="sr-only">PDF</span>
+                        <Button variant="outline" size="sm">
+                          <File className="mr-2 h-4 w-4" />
+                          PDF
                         </Button>
-                        <Button variant="ghost" size="sm">
-                          <FileSpreadsheet className="h-4 w-4" />
-                          <span className="sr-only">Excel</span>
+                        <Button variant="outline" size="sm">
+                          <FileSpreadsheet className="mr-2 h-4 w-4" />
+                          Excel
                         </Button>
                       </div>
                     </td>

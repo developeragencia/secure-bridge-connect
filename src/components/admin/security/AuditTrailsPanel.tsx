@@ -1,116 +1,140 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { formatDate } from '@/components/admin/tax-credits/calculations/audit-trail/utils';
-import { AuditTrail } from '@/components/admin/tax-credits/calculations/audit-trail/types';
-import { mockAuditLogs } from '@/components/admin/tax-credits/calculations/audit-trail/mock-data';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { Download, FileSearch, RefreshCw, Search } from 'lucide-react';
-import { toast } from 'sonner';
-import AuditDetailDialog from '@/components/admin/tax-credits/calculations/audit-trail/components/AuditDetailDialog';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search, Download, Filter, RefreshCw, Calendar, FileText } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { useToast } from "@/components/ui/use-toast";
 
-const AuditTrailsPanel: React.FC = () => {
-  const [auditLogs, setAuditLogs] = useState<AuditTrail[]>(mockAuditLogs);
+const AuditTrailsPanel = () => {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
-  const [actionFilter, setActionFilter] = useState('');
-  const [timeRangeFilter, setTimeRangeFilter] = useState('all');
-  const [selectedAudit, setSelectedAudit] = useState<AuditTrail | null>(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [actionType, setActionType] = useState('all');
+  const [userFilter, setUserFilter] = useState('all');
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [startDateOpen, setStartDateOpen] = useState(false);
+  const [endDateOpen, setEndDateOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Filter logs based on search and filters
-  const filteredLogs = auditLogs.filter(log => {
-    // Search filter
-    const matchesSearch = 
-      log.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.resourceName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.details.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    // Action filter
-    const matchesAction = actionFilter ? log.action === actionFilter : true;
-    
-    // Time range filter
-    let matchesTimeRange = true;
-    const now = new Date();
-    const logDate = new Date(log.date);
-    
-    if (timeRangeFilter === 'today') {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      matchesTimeRange = logDate >= today;
-    } else if (timeRangeFilter === 'week') {
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      matchesTimeRange = logDate >= weekAgo;
-    } else if (timeRangeFilter === 'month') {
-      const monthAgo = new Date();
-      monthAgo.setMonth(monthAgo.getMonth() - 1);
-      matchesTimeRange = logDate >= monthAgo;
+  // Sample audit logs data
+  const auditLogs = [
+    {
+      id: '1',
+      timestamp: '15/03/2023 14:32:45',
+      user: 'admin@sistemasclaudio.com',
+      action: 'login',
+      details: 'Login bem-sucedido',
+      ipAddress: '192.168.1.1'
+    },
+    {
+      id: '2',
+      timestamp: '15/03/2023 15:45:12',
+      user: 'admin@sistemasclaudio.com',
+      action: 'update',
+      details: 'Atualização de cliente ID: CL-001',
+      ipAddress: '192.168.1.1'
+    },
+    {
+      id: '3',
+      timestamp: '15/03/2023 16:23:08',
+      user: 'maria@sistemasclaudio.com',
+      action: 'create',
+      details: 'Criação de novo relatório fiscal',
+      ipAddress: '192.168.1.5'
+    },
+    {
+      id: '4',
+      timestamp: '16/03/2023 09:12:33',
+      user: 'joao@sistemasclaudio.com',
+      action: 'delete',
+      details: 'Exclusão de documento ID: DOC-123',
+      ipAddress: '192.168.1.10'
+    },
+    {
+      id: '5',
+      timestamp: '16/03/2023 11:05:22',
+      user: 'admin@sistemasclaudio.com',
+      action: 'export',
+      details: 'Exportação de relatório em PDF',
+      ipAddress: '192.168.1.1'
     }
+  ];
+
+  const filteredLogs = auditLogs.filter(log => {
+    const matchesSearch = log.user.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          log.details.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          log.ipAddress.includes(searchQuery);
+                          
+    const matchesAction = actionType === 'all' || log.action === actionType;
+    const matchesUser = userFilter === 'all' || log.user === userFilter;
     
-    return matchesSearch && matchesAction && matchesTimeRange;
+    // Date filtering would be implemented here
+    
+    return matchesSearch && matchesAction && matchesUser;
   });
 
   const handleRefresh = () => {
     setIsLoading(true);
     
-    // Simulate loading
+    // Simulate data refresh
     setTimeout(() => {
-      setAuditLogs(mockAuditLogs);
       setIsLoading(false);
-      toast.success('Registros de auditoria atualizados');
-    }, 1000);
+      toast({
+        title: "Logs atualizados",
+        description: "Os logs de auditoria foram atualizados com sucesso.",
+      });
+    }, 1500);
   };
 
   const handleExport = () => {
-    toast.success('Exportando registros de auditoria para CSV');
+    toast({
+      title: "Exportando logs",
+      description: "Os logs de auditoria estão sendo exportados para CSV.",
+    });
   };
 
-  const handleViewDetails = (audit: AuditTrail) => {
-    setSelectedAudit(audit);
-    setIsDetailOpen(true);
-  };
-
-  const getActionColor = (action: string) => {
-    switch (action) {
-      case 'create':
-        return 'bg-green-500/20 text-green-700';
-      case 'update':
-        return 'bg-blue-500/20 text-blue-700';
-      case 'delete':
-        return 'bg-red-500/20 text-red-700';
-      case 'status_change':
-        return 'bg-amber-500/20 text-amber-700';
-      case 'calculation':
-        return 'bg-purple-500/20 text-purple-700';
-      case 'export':
-        return 'bg-indigo-500/20 text-indigo-700';
-      case 'import':
-        return 'bg-cyan-500/20 text-cyan-700';
-      default:
-        return 'bg-gray-500/20 text-gray-700';
-    }
+  const handleClearFilters = () => {
+    setSearchQuery('');
+    setActionType('all');
+    setUserFilter('all');
+    setStartDate(undefined);
+    setEndDate(undefined);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Trilhas de Auditoria</h2>
-          <p className="text-muted-foreground">Monitore as atividades e ações realizadas no sistema</p>
+          <h2 className="text-2xl font-bold tracking-tight">Trilhas de Auditoria</h2>
+          <p className="text-muted-foreground">
+            Monitoramento completo de todas as ações realizadas no sistema
+          </p>
         </div>
         
-        <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <Button variant="outline" onClick={handleRefresh} disabled={isLoading}>
-            <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isLoading}>
+            {isLoading ? (
+              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="mr-2 h-4 w-4" />
+            )}
             Atualizar
           </Button>
-          <Button variant="default" onClick={handleExport}>
+          
+          <Button variant="outline" size="sm" onClick={handleExport}>
             <Download className="mr-2 h-4 w-4" />
             Exportar
+          </Button>
+          
+          <Button size="sm" onClick={handleClearFilters}>
+            <Filter className="mr-2 h-4 w-4" />
+            Limpar Filtros
           </Button>
         </div>
       </div>
@@ -118,161 +142,127 @@ const AuditTrailsPanel: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle>Filtros</CardTitle>
-          <CardDescription>Filtre os registros de auditoria por diferentes critérios</CardDescription>
+          <CardDescription>Refine os logs de auditoria com filtros específicos</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="search">Pesquisar</Label>
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="search"
-                  placeholder="Usuário, recurso ou descrição..."
-                  className="pl-9"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Buscar logs..."
+                className="pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="action-filter">Tipo de Ação</Label>
-              <Select value={actionFilter} onValueChange={setActionFilter}>
-                <SelectTrigger id="action-filter">
-                  <SelectValue placeholder="Todas as ações" />
+            <div>
+              <Select value={actionType} onValueChange={setActionType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Tipo de Ação" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas as ações</SelectItem>
+                  <SelectItem value="all">Todas as Ações</SelectItem>
+                  <SelectItem value="login">Login</SelectItem>
                   <SelectItem value="create">Criação</SelectItem>
                   <SelectItem value="update">Atualização</SelectItem>
                   <SelectItem value="delete">Exclusão</SelectItem>
-                  <SelectItem value="status_change">Mudança de Status</SelectItem>
-                  <SelectItem value="calculation">Cálculo</SelectItem>
                   <SelectItem value="export">Exportação</SelectItem>
-                  <SelectItem value="import">Importação</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="time-filter">Período</Label>
-              <Select value={timeRangeFilter} onValueChange={setTimeRangeFilter}>
-                <SelectTrigger id="time-filter">
-                  <SelectValue placeholder="Todo o período" />
+
+            <div>
+              <Select value={userFilter} onValueChange={setUserFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Usuário" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todo o período</SelectItem>
-                  <SelectItem value="today">Hoje</SelectItem>
-                  <SelectItem value="week">Última semana</SelectItem>
-                  <SelectItem value="month">Último mês</SelectItem>
+                  <SelectItem value="all">Todos os Usuários</SelectItem>
+                  <SelectItem value="admin@sistemasclaudio.com">Admin</SelectItem>
+                  <SelectItem value="maria@sistemasclaudio.com">Maria</SelectItem>
+                  <SelectItem value="joao@sistemasclaudio.com">João</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="flex gap-2">
+              <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start text-left">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    {startDate ? format(startDate, "dd/MM/yyyy", { locale: ptBR }) : "Data inicial"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <CalendarComponent
+                    mode="single"
+                    selected={startDate}
+                    onSelect={(date) => {
+                      setStartDate(date);
+                      setStartDateOpen(false);
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Registros de Auditoria</CardTitle>
-          <CardDescription>
-            Total de {filteredLogs.length} registros encontrados
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="border rounded-md overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b bg-muted/50">
-                    <th className="px-4 py-3 text-left font-medium">Data/Hora</th>
-                    <th className="px-4 py-3 text-left font-medium">Usuário</th>
-                    <th className="px-4 py-3 text-left font-medium">Ação</th>
-                    <th className="px-4 py-3 text-left font-medium">Recurso</th>
-                    <th className="px-4 py-3 text-left font-medium">Detalhes</th>
-                    <th className="px-4 py-3 text-center font-medium">Ver</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {isLoading ? (
-                    Array.from({ length: 5 }).map((_, index) => (
-                      <tr key={`skeleton-${index}`} className="border-b">
-                        <td colSpan={6} className="px-4 py-3">
-                          <div className="h-6 bg-muted animate-pulse rounded"></div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : filteredLogs.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="px-4 py-3 text-center text-muted-foreground">
-                        Nenhum registro de auditoria encontrado
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-muted/50">
+                  <th className="p-3 text-left font-medium">Data/Hora</th>
+                  <th className="p-3 text-left font-medium">Usuário</th>
+                  <th className="p-3 text-left font-medium">Ação</th>
+                  <th className="p-3 text-left font-medium">Detalhes</th>
+                  <th className="p-3 text-left font-medium">IP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredLogs.length > 0 ? (
+                  filteredLogs.map((log) => (
+                    <tr key={log.id} className="border-t hover:bg-muted/50">
+                      <td className="p-3">{log.timestamp}</td>
+                      <td className="p-3">{log.user}</td>
+                      <td className="p-3">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          log.action === 'login' ? 'bg-blue-100 text-blue-800' :
+                          log.action === 'create' ? 'bg-green-100 text-green-800' :
+                          log.action === 'update' ? 'bg-yellow-100 text-yellow-800' :
+                          log.action === 'delete' ? 'bg-red-100 text-red-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {log.action === 'login' ? 'Login' :
+                           log.action === 'create' ? 'Criação' :
+                           log.action === 'update' ? 'Atualização' :
+                           log.action === 'delete' ? 'Exclusão' :
+                           log.action === 'export' ? 'Exportação' : log.action}
+                        </span>
                       </td>
+                      <td className="p-3">{log.details}</td>
+                      <td className="p-3">{log.ipAddress}</td>
                     </tr>
-                  ) : (
-                    filteredLogs.map((log) => (
-                      <tr key={log.id} className="border-b hover:bg-muted/50">
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          {formatDate(log.date)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex flex-col">
-                            <span>{log.userName}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {log.userRole}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${getActionColor(log.action)}`}>
-                            {log.action === 'create' && 'Criação'}
-                            {log.action === 'update' && 'Atualização'}
-                            {log.action === 'delete' && 'Exclusão'}
-                            {log.action === 'status_change' && 'Status'}
-                            {log.action === 'calculation' && 'Cálculo'}
-                            {log.action === 'export' && 'Exportação'}
-                            {log.action === 'import' && 'Importação'}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex flex-col">
-                            <span>{log.resourceName}</span>
-                            <span className="text-xs text-muted-foreground truncate max-w-[150px]">
-                              ID: {log.resourceId}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="truncate max-w-[200px]" title={log.details}>
-                            {log.details}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-8 w-8 p-0"
-                            onClick={() => handleViewDetails(log)}
-                          >
-                            <FileSearch className="h-4 w-4" />
-                            <span className="sr-only">Ver detalhes</span>
-                          </Button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                      <FileText className="mx-auto h-8 w-8 mb-2" />
+                      <p>Nenhum log encontrado com os filtros atuais.</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </CardContent>
       </Card>
-
-      <AuditDetailDialog 
-        open={isDetailOpen}
-        onClose={() => setIsDetailOpen(false)}
-        audit={selectedAudit}
-      />
     </div>
   );
 };
