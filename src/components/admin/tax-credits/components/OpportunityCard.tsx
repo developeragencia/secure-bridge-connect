@@ -4,8 +4,11 @@ import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface OpportunityCardProps {
+  id?: string;
   title: string;
   client: string;
   value: string;
@@ -15,6 +18,7 @@ interface OpportunityCardProps {
 }
 
 const OpportunityCard: React.FC<OpportunityCardProps> = ({
+  id = `OP-${Math.floor(Math.random() * 1000)}`,
   title,
   client,
   value,
@@ -22,6 +26,9 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
   date,
   status,
 }) => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'disponível':
@@ -35,6 +42,17 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const handleViewDetails = () => {
+    // If navigating to a details page:
+    // navigate(`/admin/credit-opportunities/${id}`);
+    
+    // For now, show a toast notification:
+    toast({
+      title: "Detalhes da Oportunidade",
+      description: `Visualizando detalhes de ${title} para ${client}`,
+    });
   };
 
   return (
@@ -67,7 +85,11 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
         </div>
       </CardContent>
       <CardFooter className="bg-muted/20 border-t pt-3">
-        <Button variant="ghost" className="w-full justify-between">
+        <Button 
+          variant="ghost" 
+          className="w-full justify-between"
+          onClick={handleViewDetails}
+        >
           <span>Ver detalhes</span>
           <ArrowRight className="h-4 w-4" />
         </Button>

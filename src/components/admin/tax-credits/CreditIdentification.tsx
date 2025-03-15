@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import {
   Download, Filter, RefreshCw
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import OpportunitiesTabContent from './components/OpportunitiesTabContent';
 
 const CreditIdentification = () => {
   const { toast } = useToast();
@@ -20,7 +20,6 @@ const CreditIdentification = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  // Mock credit opportunity data
   const creditOpportunities = [
     { 
       id: 'CRED-001', 
@@ -75,7 +74,6 @@ const CreditIdentification = () => {
     opportunity.type.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Calculate summary statistics
   const totalIdentified = creditOpportunities
     .filter(item => item.status === 'identified' || item.status === 'confirmed')
     .reduce((sum, item) => sum + item.potentialValue, 0);
@@ -88,7 +86,6 @@ const CreditIdentification = () => {
     setIsAnalyzing(true);
     setProgress(0);
     
-    // Simulate progress updates
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
@@ -105,6 +102,44 @@ const CreditIdentification = () => {
         return prev + 10;
       });
     }, 500);
+  };
+
+  const handleViewDetails = (creditId: string) => {
+    const credit = creditOpportunities.find(c => c.id === creditId);
+    if (credit) {
+      toast({
+        title: "Detalhes do crédito",
+        description: `Visualizando detalhes do crédito ${creditId} - ${credit.client}`,
+      });
+    }
+  };
+
+  const handleDownload = (creditId: string) => {
+    toast({
+      title: "Download iniciado",
+      description: `Os dados do crédito ${creditId} estão sendo preparados para download.`,
+    });
+  };
+
+  const handleFilterClick = () => {
+    toast({
+      title: "Filtros",
+      description: "Abrindo painel de filtros avançados.",
+    });
+  };
+
+  const handleSortClick = () => {
+    toast({
+      title: "Ordenação",
+      description: "Abrindo opções de ordenação de resultados.",
+    });
+  };
+
+  const handleConfirmCredit = (creditId: string) => {
+    toast({
+      title: "Crédito confirmado",
+      description: `O crédito ${creditId} foi confirmado e está pronto para recuperação.`,
+    });
   };
 
   const formatCurrency = (value: number) => {
@@ -149,11 +184,24 @@ const CreditIdentification = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2"
+            onClick={() => {
+              toast({
+                title: "Importar dados",
+                description: "Iniciando processo de importação de dados fiscais.",
+              });
+            }}
+          >
             <FileUp className="h-4 w-4" />
             Importar Dados
           </Button>
-          <Button className="flex items-center gap-2" onClick={handleStartAnalysis} disabled={isAnalyzing}>
+          <Button 
+            className="flex items-center gap-2" 
+            onClick={handleStartAnalysis} 
+            disabled={isAnalyzing}
+          >
             {isAnalyzing ? (
               <>
                 <RefreshCw className="h-4 w-4 animate-spin" />
@@ -241,11 +289,19 @@ const CreditIdentification = () => {
               />
             </div>
             <div className="flex gap-2 w-full sm:w-auto">
-              <Button variant="outline" className="flex-1 sm:flex-initial">
+              <Button 
+                variant="outline" 
+                className="flex-1 sm:flex-initial"
+                onClick={handleFilterClick}
+              >
                 <Filter className="mr-2 h-4 w-4" />
                 Filtrar
               </Button>
-              <Button variant="outline" className="flex-1 sm:flex-initial">
+              <Button 
+                variant="outline" 
+                className="flex-1 sm:flex-initial"
+                onClick={handleSortClick}
+              >
                 <ArrowUpDown className="mr-2 h-4 w-4" />
                 Ordenar
               </Button>
@@ -255,10 +311,11 @@ const CreditIdentification = () => {
       </Card>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="credits">Todos Créditos</TabsTrigger>
           <TabsTrigger value="identified">Identificados</TabsTrigger>
           <TabsTrigger value="confirmed">Confirmados</TabsTrigger>
+          <TabsTrigger value="opportunities">Oportunidades</TabsTrigger>
         </TabsList>
         
         <TabsContent value="credits" className="space-y-4 pt-4">
@@ -388,6 +445,10 @@ const CreditIdentification = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+        
+        <TabsContent value="opportunities" className="space-y-4 pt-4">
+          <OpportunitiesTabContent />
         </TabsContent>
       </Tabs>
     </div>
