@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useClientStore } from '@/hooks/useClientStore';
 import { useActiveClient } from '@/hooks/useActiveClient';
 
@@ -37,7 +37,6 @@ const CreditIdentificationPanel = () => {
   
   const { activeClient } = useClientStore();
   const { activeClient: client, hasViewAccess, hasEditAccess } = useActiveClient();
-  const { toast } = useToast();
   
   const { 
     MOCK_CREDITS,
@@ -51,7 +50,9 @@ const CreditIdentificationPanel = () => {
     handleSaveSettings,
     totalIdentifiedCredits,
     approvedCredits,
-    totalApprovedValue
+    totalApprovedValue,
+    exportFormat: hookExportFormat,
+    setExportFormat: hookSetExportFormat
   } = useCreditIdentification({
     searchQuery,
     activeClient,
@@ -124,8 +125,8 @@ const CreditIdentificationPanel = () => {
         handleQuickAnalysis={handleQuickAnalysis}
         showExportOptions={showExportOptions}
         setShowExportOptions={setShowExportOptions}
-        exportFormat={exportFormat}
-        setExportFormat={setExportFormat}
+        exportFormat={hookExportFormat}
+        setExportFormat={hookSetExportFormat}
         handleExportCredits={handleExportCredits}
         selectedPeriod={selectedPeriod}
       />

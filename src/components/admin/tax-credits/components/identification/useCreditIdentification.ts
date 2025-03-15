@@ -1,6 +1,5 @@
 
 import { useState, useCallback, useMemo } from 'react';
-import { useToast } from '@/components/ui/use-toast';
 import { AnalysisFormData } from '../NewCreditAnalysisModal';
 import { ClientWithPermissions } from '@/types/clientStore';
 
@@ -107,7 +106,7 @@ interface UseCreditIdentificationProps {
   setIsAnalysisModalOpen: (open: boolean) => void;
   setShowExportOptions: (show: boolean) => void;
   selectedPeriod: string;
-  toast: ReturnType<typeof useToast>;
+  toast: any; // Using 'any' here because we're passing the toast function from sonner
 }
 
 export const useCreditIdentification = ({
@@ -171,7 +170,7 @@ export const useCreditIdentification = ({
     });
     
     const interval = setInterval(() => {
-      setAnalysisProgress((prev: number) => {
+      setAnalysisProgress((prev) => {
         const newValue = prev + Math.floor(Math.random() * 10) + 1;
         if (newValue >= 100) {
           clearInterval(interval);
@@ -208,7 +207,7 @@ export const useCreditIdentification = ({
     });
     
     const interval = setInterval(() => {
-      setAnalysisProgress((prev: number) => {
+      setAnalysisProgress((prev) => {
         const newValue = prev + Math.floor(Math.random() * 10) + 1;
         if (newValue >= 100) {
           clearInterval(interval);

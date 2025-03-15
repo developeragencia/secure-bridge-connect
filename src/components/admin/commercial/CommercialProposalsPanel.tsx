@@ -25,13 +25,109 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Filter, FileText, MoreVertical, Clock, Activity, CheckCircle, XCircle, FileCheck } from 'lucide-react';
-import { ProposalStatus } from '@/types/proposal';
+import { ProposalStatus as ProposalStatusType } from '@/types/proposal';
 import ProposalStatus from './ProposalStatus';
 import ProposalForm from './ProposalForm';
 import ProposalTimeline from './ProposalTimeline';
+import ProposalStatusPanel from './ProposalStatusPanel';
 
 const mockProposals = [
-  // ... keep existing mock data
+  {
+    id: '1',
+    clientId: '1',
+    clientName: 'Client A',
+    cnpj: '11.111.111/0001-11',
+    title: 'Proposal A',
+    description: 'Description A',
+    service: 'Service A',
+    value: 1000,
+    status: 'REQUESTED',
+    createdBy: '1',
+    createdByName: 'User A',
+    createdAt: '2024-01-01',
+    updatedAt: '2024-01-01',
+    timeline: []
+  },
+  {
+    id: '2',
+    clientId: '2',
+    clientName: 'Client B',
+    cnpj: '22.222.222/0001-22',
+    title: 'Proposal B',
+    description: 'Description B',
+    service: 'Service B',
+    value: 2000,
+    status: 'ANALYZING',
+    createdBy: '2',
+    createdByName: 'User B',
+    createdAt: '2024-01-02',
+    updatedAt: '2024-01-02',
+    timeline: []
+  },
+  {
+    id: '3',
+    clientId: '3',
+    clientName: 'Client C',
+    cnpj: '33.333.333/0001-33',
+    title: 'Proposal C',
+    description: 'Description C',
+    service: 'Service C',
+    value: 3000,
+    status: 'APPROVED',
+    createdBy: '3',
+    createdByName: 'User C',
+    createdAt: '2024-01-03',
+    updatedAt: '2024-01-03',
+    timeline: []
+  },
+  {
+    id: '4',
+    clientId: '4',
+    clientName: 'Client D',
+    cnpj: '44.444.444/0001-44',
+    title: 'Proposal D',
+    description: 'Description D',
+    service: 'Service D',
+    value: 4000,
+    status: 'REJECTED',
+    createdBy: '4',
+    createdByName: 'User D',
+    createdAt: '2024-01-04',
+    updatedAt: '2024-01-04',
+    timeline: []
+  },
+  {
+    id: '5',
+    clientId: '5',
+    clientName: 'Client E',
+    cnpj: '55.555.555/0001-55',
+    title: 'Proposal E',
+    description: 'Description E',
+    service: 'Service E',
+    value: 5000,
+    status: 'COMPLETED',
+    createdBy: '5',
+    createdByName: 'User E',
+    createdAt: '2024-01-05',
+    updatedAt: '2024-01-05',
+    timeline: []
+  },
+  {
+    id: '6',
+    clientId: '6',
+    clientName: 'Client F',
+    cnpj: '66.666.666/0001-66',
+    title: 'Proposal F',
+    description: 'Description F',
+    service: 'Service F',
+    value: 6000,
+    status: 'CONVERTED',
+    createdBy: '6',
+    createdByName: 'User F',
+    createdAt: '2024-01-06',
+    updatedAt: '2024-01-06',
+    timeline: []
+  }
 ];
 
 const CommercialProposalsPanel = () => {
@@ -53,7 +149,7 @@ const CommercialProposalsPanel = () => {
     setProposalDetailOpen(true);
   };
 
-  const handleChangeStatus = (proposalId: string, newStatus: ProposalStatus) => {
+  const handleChangeStatus = (proposalId: string, newStatus: ProposalStatusType) => {
     toast.success(`Status da proposta atualizado para ${newStatus}`, {
       description: 'A proposta foi atualizada com sucesso.',
     });
@@ -64,8 +160,21 @@ const CommercialProposalsPanel = () => {
     return proposal.status === activeTab;
   });
 
-  const getProposalCountByStatus = (status: ProposalStatus) => {
+  const getProposalCountByStatus = (status: ProposalStatusType) => {
     return mockProposals.filter(p => p.status === status).length;
+  };
+
+  const proposalCounts = {
+    REQUESTED: getProposalCountByStatus('REQUESTED'),
+    ANALYZING: getProposalCountByStatus('ANALYSIS'),
+    APPROVED: getProposalCountByStatus('APPROVED'),
+    REJECTED: getProposalCountByStatus('REJECTED'),
+    COMPLETED: getProposalCountByStatus('COMPLETED'),
+    CONVERTED: getProposalCountByStatus('CONVERTED')
+  };
+
+  const onFilterByStatus = (status: ProposalStatusType | null) => {
+    setActiveTab(status || 'all');
   };
 
   return (
@@ -97,7 +206,7 @@ const CommercialProposalsPanel = () => {
               <DropdownMenuItem onClick={() => setActiveTab('all')}>
                 Todas as Propostas
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setActiveTab('REQUEST')}>
+              <DropdownMenuItem onClick={() => setActiveTab('REQUESTED')}>
                 Solicitações
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setActiveTab('ANALYSIS')}>
@@ -117,60 +226,17 @@ const CommercialProposalsPanel = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Solicitações</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{getProposalCountByStatus('REQUEST')}</div>
-            <p className="text-xs text-muted-foreground mt-1">Propostas aguardando análise</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Em Análise</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{getProposalCountByStatus('ANALYSIS')}</div>
-            <p className="text-xs text-muted-foreground mt-1">Propostas em análise técnica</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Aprovadas</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{getProposalCountByStatus('APPROVED')}</div>
-            <p className="text-xs text-muted-foreground mt-1">Propostas aprovadas</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Rejeitadas</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{getProposalCountByStatus('REJECTED')}</div>
-            <p className="text-xs text-muted-foreground mt-1">Propostas rejeitadas</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Convertidas</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{getProposalCountByStatus('CONVERTED')}</div>
-            <p className="text-xs text-muted-foreground mt-1">Propostas convertidas em contratos</p>
-          </CardContent>
-        </Card>
-      </div>
+      <ProposalStatusPanel 
+        proposalCounts={proposalCounts}
+        onFilterByStatus={onFilterByStatus}
+      />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="all">
             Todas
           </TabsTrigger>
-          <TabsTrigger value="REQUEST" className="flex items-center">
+          <TabsTrigger value="REQUESTED" className="flex items-center">
             <Clock className="h-3.5 w-3.5 mr-1.5" />
             Solicitações
           </TabsTrigger>
