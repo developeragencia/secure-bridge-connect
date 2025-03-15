@@ -8,7 +8,7 @@ import AuditTable from './AuditTable';
 import AuditForm from './AuditForm';
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
 import useAuditManagement from '@/hooks/useAuditManagement';
-import { Audit } from '@/types/audit';
+import { Audit, AuditSummary } from '@/types/audit';
 
 const AuditManagementContent: React.FC = () => {
   const {
@@ -41,6 +41,18 @@ const AuditManagementContent: React.FC = () => {
     transitionType: 'fade-in',
   });
 
+  // Create a complete summary object that satisfies the AuditSummary type
+  const completeSummary: AuditSummary = {
+    ...summary,
+    totalAudits: summary.total,
+    pendingAudits: summary.pending,
+    completedAudits: summary.approved,
+    inProgressAudits: summary.inProgress,
+    emAndamento: summary.inProgress,
+    pendentes: summary.pending,
+    concluidas: summary.approved
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -53,7 +65,7 @@ const AuditManagementContent: React.FC = () => {
       {/* Status Cards */}
       {summary && (
         <AuditStatusCards 
-          summary={summary} 
+          summary={completeSummary} 
           className={cardClasses}
         />
       )}

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import AuditManagementContent from './components/AuditManagementContent';
 import { 
@@ -24,7 +25,7 @@ import AuditActionButtons from "./components/AuditActionButtons";
 import { Audit } from "@/types/audit";
 
 // Sample audit data
-const sampleAudits = [
+const sampleAudits: Audit[] = [
   {
     id: "audit-001",
     clientName: "Empresa ABC Ltda",
@@ -36,7 +37,12 @@ const sampleAudits = [
     documentNumber: "12.345.678/0001-90",
     startDate: "2023-06-01",
     deadline: "2023-07-01",
-    documentsCount: 5
+    documentsCount: 5,
+    createdAt: "2023-06-01T10:00:00Z",
+    updatedAt: "2023-06-05T14:30:00Z",
+    title: "Auditoria Fiscal 2023",
+    client: "empresa-abc",
+    type: "fiscal"
   },
   {
     id: "audit-002",
@@ -49,7 +55,12 @@ const sampleAudits = [
     documentNumber: "23.456.789/0001-12",
     startDate: "2023-05-15",
     deadline: "2023-06-15",
-    documentsCount: 8
+    documentsCount: 8,
+    createdAt: "2023-05-15T10:00:00Z",
+    updatedAt: "2023-06-15T14:30:00Z",
+    title: "Auditoria Tributária XYZ",
+    client: "xyz-comercio",
+    type: "tributaria"
   },
   {
     id: "audit-003",
@@ -62,7 +73,12 @@ const sampleAudits = [
     documentNumber: "34.567.890/0001-23",
     startDate: "2023-06-05",
     deadline: "2023-07-05",
-    documentsCount: 3
+    documentsCount: 3,
+    createdAt: "2023-06-05T10:00:00Z",
+    updatedAt: "2023-06-05T14:30:00Z",
+    title: "Auditoria Contábil Tech",
+    client: "tech-solutions",
+    type: "contabil"
   },
   {
     id: "audit-004",
@@ -75,7 +91,12 @@ const sampleAudits = [
     documentNumber: "45.678.901/0001-34",
     startDate: "2023-05-20",
     deadline: "2023-06-20",
-    documentsCount: 10
+    documentsCount: 10,
+    createdAt: "2023-05-20T10:00:00Z",
+    updatedAt: "2023-06-01T14:30:00Z",
+    title: "Auditoria Fiscal Indústria",
+    client: "industria-nacional",
+    type: "fiscal"
   }
 ];
 
@@ -164,7 +185,10 @@ const AuditManagement = () => {
             Gerencie auditorias, acompanhe status e delegue tarefas para sua equipe.
           </p>
         </div>
-        <Button onClick={handleNewAudit}>
+        <Button onClick={() => toast({
+          title: "Nova auditoria",
+          description: "Criando nova auditoria",
+        })}>
           <Plus className="mr-2 h-4 w-4" />
           Nova Auditoria
         </Button>

@@ -13,38 +13,38 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   variant = 'default' 
 }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.3 }}
         className="flex flex-col items-center"
       >
         <div className="mb-6">
-          <AnimatedLogo size="lg" />
+          <AnimatedLogo size="lg" loading={true} />
         </div>
         
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
           className="mt-4"
         >
           <div className="relative mb-2">
-            <div className="w-12 h-1 bg-primary/20 rounded-full mx-auto overflow-hidden">
+            <div className="w-20 h-1.5 bg-primary/20 rounded-full mx-auto overflow-hidden">
               <motion.div 
                 className="h-full bg-primary rounded-full"
                 initial={{ x: "-100%" }}
                 animate={{ x: "100%" }}
                 transition={{ 
                   repeat: Infinity, 
-                  duration: 1.5, 
+                  duration: 1.2, 
                   ease: "linear"
                 }}
               />
             </div>
           </div>
-          <p className="text-base text-muted-foreground text-center">{message}</p>
+          <p className="text-base text-muted-foreground text-center font-medium">{message}</p>
           
           {variant === 'admin' && (
             <p className="mt-1 text-sm text-muted-foreground/70 text-center">

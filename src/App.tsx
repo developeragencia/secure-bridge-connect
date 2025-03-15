@@ -5,11 +5,26 @@ import { Toaster } from '@/components/ui/toaster';
 import { Toaster as SonnerToaster } from 'sonner';
 
 // Loading component
+import IndexLoading from '@/components/IndexLoading';
 import AdminLoading from '@/components/admin/AdminLoading';
 
-// Lazy loaded pages
+// Lazy loaded pages with proper loading components
 const Index = lazy(() => import('@/pages/Index'));
-const Admin = lazy(() => import('@/pages/Admin'));
+const Admin = lazy(() => {
+  // Add a small timeout to ensure the loading screen shows
+  return new Promise(resolve => {
+    const startTime = Date.now();
+    import('@/pages/Admin').then(module => {
+      const elapsed = Date.now() - startTime;
+      // If loading was too fast, add small delay for better UX
+      if (elapsed < 300) {
+        setTimeout(() => resolve(module), 300 - elapsed);
+      } else {
+        resolve(module);
+      }
+    });
+  });
+});
 const Login = lazy(() => import('@/pages/Login'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 const ClientDetailPage = lazy(() => import('@/pages/admin/ClientDetailPage'));
@@ -23,25 +38,55 @@ function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="theme">
       <Router>
-        <Suspense fallback={<AdminLoading />}>
-          <Routes>
-            {/* Home route shows the Index component */}
-            <Route path="/" element={<Index />} />
-            
-            {/* Admin Panel Routes */}
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/:tab" element={<Admin />} />
-            <Route path="/admin/client/:clientId" element={<ClientDetailPage />} />
-            <Route path="/admin/auditorias" element={<AuditoriaPage />} />
-            <Route path="/admin/documentation" element={<DocumentationPage />} />
-            
-            {/* Auth Routes */}
-            <Route path="/login" element={<Login />} />
-            
-            {/* 404 Route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
+        <Routes>
+          {/* Home route shows the Index component */}
+          <Route path="/" element={
+            <Suspense fallback={<IndexLoading />}>
+              <Index />
+            </Suspense>
+          } />
+          
+          {/* Admin Panel Routes */}
+          <Route path="/admin" element={
+            <Suspense fallback={<AdminLoading />}>
+              <Admin />
+            </Suspense>
+          } />
+          <Route path="/admin/:tab" element={
+            <Suspense fallback={<AdminLoading />}>
+              <Admin />
+            </Suspense>
+          } />
+          <Route path="/admin/client/:clientId" element={
+            <Suspense fallback={<AdminLoading />}>
+              <ClientDetailPage />
+            </Suspense>
+          } />
+          <Route path="/admin/auditorias" element={
+            <Suspense fallback={<AdminLoading />}>
+              <AuditoriaPage />
+            </Suspense>
+          } />
+          <Route path="/admin/documentation" element={
+            <Suspense fallback={<AdminLoading />}>
+              <DocumentationPage />
+            </Suspense>
+          } />
+          
+          {/* Auth Routes */}
+          <Route path="/login" element={
+            <Suspense fallback={<IndexLoading />}>
+              <Login />
+            </Suspense>
+          } />
+          
+          {/* 404 Route */}
+          <Route path="*" element={
+            <Suspense fallback={<IndexLoading />}>
+              <NotFound />
+            </Suspense>
+          } />
+        </Routes>
       </Router>
       
       {/* Toast notifications */}

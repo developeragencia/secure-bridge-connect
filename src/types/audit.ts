@@ -1,10 +1,10 @@
 
 export interface Audit {
   id: string;
-  title: string;
-  client: string;
+  title?: string;
+  client?: string;
   clientName: string;
-  type: string;
+  type?: string;
   auditType: string;
   status: string;
   createdAt: string;

@@ -74,12 +74,20 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
 
   // Visibility animation with reduced frequency to improve performance
   useEffect(() => {
-    if (loading) return; // Don't do visibility animation when loading
+    // Don't do visibility animation when loading
+    if (loading) return;
     
-    const intervalId = setInterval(() => {
+    // Use an immediate ref to avoid stale closures
+    const visibleRef = useRef(visible);
+    visibleRef.current = visible;
+    
+    const animate = () => {
       setVisible(false);
       setTimeout(() => setVisible(true), 500);
-    }, 30000); // Changed from 10s to 30s to reduce CPU usage
+    };
+    
+    // Increase interval time to reduce CPU usage
+    const intervalId = setInterval(animate, 60000); // Changed from 30s to 60s
     
     return () => clearInterval(intervalId);
   }, [loading]);
