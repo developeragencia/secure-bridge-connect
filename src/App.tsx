@@ -17,6 +17,7 @@ const NotFound = lazy(() => import('@/pages/NotFound'));
 const ClientDetailPage = lazy(() => import('@/pages/admin/ClientDetailPage'));
 const AuditoriaPage = lazy(() => import('@/pages/admin/AuditoriaPage'));
 const DocumentationPage = lazy(() => import('@/pages/admin/DocumentationPage'));
+const OpportunitiesPage = lazy(() => import('@/pages/admin/OpportunitiesPage'));
 
 // Layout providers
 import { ThemeProvider } from '@/components/ThemeProvider';
@@ -52,6 +53,11 @@ function App() {
           <Route path="/admin/auditorias" element={
             <Suspense fallback={<AdminLoading />}>
               <AuditoriaPage />
+            </Suspense>
+          } />
+          <Route path="/admin/opportunities" element={
+            <Suspense fallback={<AdminLoading />}>
+              <OpportunitiesPage />
             </Suspense>
           } />
           <Route path="/admin/documentation" element={

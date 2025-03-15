@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 interface OpportunityCardProps {
   id?: string;
@@ -15,6 +15,7 @@ interface OpportunityCardProps {
   confidence: number;
   date: string;
   status: 'Disponível' | 'Em análise' | 'Aprovado' | 'Negado';
+  onClick?: () => void;
 }
 
 const OpportunityCard: React.FC<OpportunityCardProps> = ({
@@ -25,9 +26,9 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
   confidence,
   date,
   status,
+  onClick
 }) => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -44,57 +45,68 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
     }
   };
 
-  const handleViewDetails = () => {
-    // If navigating to a details page:
-    // navigate(`/admin/credit-opportunities/${id}`);
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.stopPropagation();
     
-    // For now, show a toast notification:
-    toast({
-      title: "Detalhes da Oportunidade",
-      description: `Visualizando detalhes de ${title} para ${client}`,
-    });
+    if (onClick) {
+      onClick();
+    } else {
+      // Default fallback if no onClick handler is provided
+      toast({
+        title: "Detalhes da Oportunidade",
+        description: `Visualizando detalhes de ${title} para ${client}`,
+      });
+    }
   };
 
   return (
-    <Card className="overflow-hidden transition hover:shadow-md hover:border-primary/60">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <Badge variant="outline" className={getStatusColor(status)}>
-            {status}
-          </Badge>
-          <div className="text-sm font-medium">
-            Confiança: 
-            <span className={confidence >= 90 ? 'text-green-600' : confidence >= 80 ? 'text-amber-600' : 'text-gray-600'}>
-              {' '}{confidence}%
-            </span>
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.2 }}
+    >
+      <Card 
+        className="overflow-hidden transition hover:shadow-md hover:border-primary/60 cursor-pointer h-full flex flex-col"
+        onClick={onClick || handleViewDetails}
+      >
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-start">
+            <Badge variant="outline" className={getStatusColor(status)}>
+              {status}
+            </Badge>
+            <div className="text-sm font-medium">
+              Confiança: 
+              <span className={confidence >= 90 ? 'text-green-600' : confidence >= 80 ? 'text-amber-600' : 'text-gray-600'}>
+                {' '}{confidence}%
+              </span>
+            </div>
           </div>
-        </div>
-        <CardTitle className="text-base mt-2">{title}</CardTitle>
-        <CardDescription>{client}</CardDescription>
-      </CardHeader>
-      <CardContent className="pb-2">
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <p className="text-sm text-muted-foreground">Valor potencial</p>
-            <p className="text-lg font-bold">{value}</p>
+          <CardTitle className="text-base mt-2">{title}</CardTitle>
+          <CardDescription>{client}</CardDescription>
+        </CardHeader>
+        <CardContent className="pb-2 flex-grow">
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <p className="text-sm text-muted-foreground">Valor potencial</p>
+              <p className="text-lg font-bold">{value}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Identificado em</p>
+              <p className="text-sm">{date}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Identificado em</p>
-            <p className="text-sm">{date}</p>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="bg-muted/20 border-t pt-3">
-        <Button 
-          variant="ghost" 
-          className="w-full justify-between"
-          onClick={handleViewDetails}
-        >
-          <span>Ver detalhes</span>
-          <ArrowRight className="h-4 w-4" />
-        </Button>
-      </CardFooter>
-    </Card>
+        </CardContent>
+        <CardFooter className="bg-muted/20 border-t pt-3 mt-auto">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-between"
+            onClick={handleViewDetails}
+          >
+            <span>Ver detalhes</span>
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </CardFooter>
+      </Card>
+    </motion.div>
   );
 };
 

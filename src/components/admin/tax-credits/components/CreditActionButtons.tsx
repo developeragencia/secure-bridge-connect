@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Eye, Download, CheckCircle, XCircle } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import ActionButtons from '@/components/admin/common/ActionButtons';
 
 interface CreditActionButtonsProps {
   creditId: string;
@@ -23,73 +22,42 @@ const CreditActionButtons: React.FC<CreditActionButtonsProps> = ({
 }) => {
   const { toast } = useToast();
   
-  const handleApprove = () => {
+  const handleApprove = (id: string) => {
     if (onApprove) {
-      onApprove(creditId);
+      onApprove(id);
     } else {
       toast({
         title: "Crédito aprovado",
-        description: `O crédito ${creditId} foi aprovado com sucesso.`,
+        description: `O crédito ${id} foi aprovado com sucesso.`,
       });
     }
   };
   
-  const handleReject = () => {
+  const handleReject = (id: string) => {
     if (onReject) {
-      onReject(creditId);
+      onReject(id);
     } else {
       toast({
         title: "Crédito rejeitado",
-        description: `O crédito ${creditId} foi rejeitado.`,
+        description: `O crédito ${id} foi rejeitado.`,
         variant: "destructive",
       });
     }
   };
 
   return (
-    <div className="flex gap-1">
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="h-8 w-8"
-        onClick={() => onViewDetails(creditId)}
-      >
-        <Eye className="h-4 w-4" />
-      </Button>
-      
-      {onDownload && (
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="h-8 w-8"
-          onClick={() => onDownload(creditId)}
-        >
-          <Download className="h-4 w-4" />
-        </Button>
-      )}
-      
-      {showApproveReject && (
-        <>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
-            onClick={handleApprove}
-          >
-            <CheckCircle className="h-4 w-4" />
-          </Button>
-          
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-            onClick={handleReject}
-          >
-            <XCircle className="h-4 w-4" />
-          </Button>
-        </>
-      )}
-    </div>
+    <ActionButtons
+      id={creditId}
+      entityType="credit"
+      showView={true}
+      showDownload={!!onDownload}
+      showApprove={showApproveReject}
+      showReject={showApproveReject}
+      onView={onViewDetails}
+      onDownload={onDownload}
+      onApprove={handleApprove}
+      onReject={handleReject}
+    />
   );
 };
 

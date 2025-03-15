@@ -1,11 +1,15 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import OpportunityCard from './OpportunityCard';
 import OpportunityDetailsModal from './OpportunityDetailsModal';
+import { useToast } from '@/components/ui/use-toast';
 
 const OpportunitiesTabContent: React.FC = () => {
   const [selectedOpportunity, setSelectedOpportunity] = useState<any | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Sample data for opportunities
   const opportunities = [
@@ -74,11 +78,24 @@ const OpportunitiesTabContent: React.FC = () => {
     setIsDetailsModalOpen(false);
   };
 
+  const handleStartRecovery = (opportunityId: string) => {
+    const opportunity = opportunities.find(op => op.id === opportunityId);
+    if (!opportunity) return;
+    
+    toast({
+      title: "Iniciando recuperação",
+      description: `Processo de recuperação para ${opportunity.title} iniciado com sucesso.`,
+    });
+    
+    // Navigate to tax credits page or recovery page
+    navigate('/admin/tax_credits');
+  };
+
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {opportunities.map((opportunity) => (
-          <div key={opportunity.id} onClick={() => handleCardClick(opportunity)}>
+          <div key={opportunity.id}>
             <OpportunityCard
               id={opportunity.id}
               title={opportunity.title}
@@ -87,6 +104,7 @@ const OpportunitiesTabContent: React.FC = () => {
               confidence={opportunity.confidence}
               date={opportunity.date}
               status={opportunity.status as any}
+              onClick={() => handleCardClick(opportunity)}
             />
           </div>
         ))}
