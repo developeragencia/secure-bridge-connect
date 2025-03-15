@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import ClientConfigDialog from './components/ClientConfigDialog';
 import ExportOptionsMenu from '@/components/admin/tax-reports/components/ExportOptionsMenu';
+import ClientDetailDialog from './components/ClientDetailDialog';
 
 const ClientsManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +28,7 @@ const ClientsManagement: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   
   const { allClients, addClient, updateClient, removeClient, setActiveClient } = useClientStore();
   
@@ -44,7 +45,6 @@ const ClientsManagement: React.FC = () => {
   const handleRefresh = () => {
     setIsLoading(true);
     
-    // Simulate loading
     setTimeout(() => {
       setIsLoading(false);
       toast.success('Dados atualizados com sucesso');
@@ -52,6 +52,7 @@ const ClientsManagement: React.FC = () => {
   };
 
   const handleCreateClient = () => {
+    console.log("Creating new client...");
     setSelectedClient(null);
     setIsEditMode(false);
     setIsFormOpen(true);
@@ -61,9 +62,7 @@ const ClientsManagement: React.FC = () => {
     const client = allClients.find(c => c.id === clientId);
     if (client) {
       setSelectedClient(client);
-      toast.info('Visualizando detalhes', {
-        description: `Detalhes do cliente ${client.name}`,
-      });
+      setIsDetailOpen(true);
     }
   };
   
@@ -155,6 +154,7 @@ const ClientsManagement: React.FC = () => {
             variant="default" 
             className="w-full sm:w-auto"
             onClick={handleCreateClient}
+            type="button"
           >
             <PlusCircle className="mr-2 h-4 w-4" />
             Novo Cliente
@@ -162,7 +162,7 @@ const ClientsManagement: React.FC = () => {
           <ExportOptionsMenu onExport={handleExportData} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
+              <Button variant="outline" size="icon" type="button">
                 <Settings className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -184,6 +184,7 @@ const ClientsManagement: React.FC = () => {
             size="icon"
             onClick={handleRefresh}
             disabled={isLoading}
+            type="button"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
           </Button>
@@ -220,6 +221,29 @@ const ClientsManagement: React.FC = () => {
         open={isConfigOpen}
         onClose={() => setIsConfigOpen(false)}
       />
+
+      {selectedClient && (
+        <ClientDetailDialog
+          client={selectedClient}
+          open={isDetailOpen}
+          onClose={() => setIsDetailOpen(false)}
+          onEdit={() => {
+            setIsDetailOpen(false);
+            setIsEditMode(true);
+            setIsFormOpen(true);
+          }}
+          onDelete={() => {
+            setIsDetailOpen(false);
+            removeClient(selectedClient.id);
+            toast.success('Cliente removido com sucesso');
+          }}
+          onSetActive={() => {
+            setIsDetailOpen(false);
+            setActiveClient(selectedClient);
+            toast.success(`${selectedClient.name} definido como cliente ativo`);
+          }}
+        />
+      )}
     </div>
   );
 };

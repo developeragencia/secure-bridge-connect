@@ -9,6 +9,7 @@ interface ClientHeaderProps {
   onCreateClient: () => void;
   onExportData: () => void;
   onImportData: () => void;
+  onOpenConfig?: () => void; // Added this optional prop
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
@@ -17,6 +18,7 @@ const ClientHeader: React.FC<ClientHeaderProps> = ({
   onCreateClient,
   onExportData,
   onImportData,
+  onOpenConfig,
   searchQuery,
   setSearchQuery
 }) => {
@@ -30,7 +32,7 @@ const ClientHeader: React.FC<ClientHeaderProps> = ({
           </CardDescription>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
-          <Button onClick={onCreateClient}>
+          <Button onClick={onCreateClient} type="button">
             <PlusCircle className="mr-2 h-4 w-4" />
             Novo Cliente
           </Button>
@@ -41,7 +43,7 @@ const ClientHeader: React.FC<ClientHeaderProps> = ({
             <Button variant="outline" size="icon" onClick={onImportData}>
               <FileUp className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" onClick={onOpenConfig}>
               <Settings className="h-4 w-4" />
             </Button>
           </div>
