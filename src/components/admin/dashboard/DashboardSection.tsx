@@ -57,7 +57,7 @@ const DashboardSection: React.FC<DashboardSectionProps> = ({
       >
         <h2 className="text-xl font-semibold mb-2 flex items-center">
           <motion.span 
-            className="mr-2 p-2 rounded-lg bg-primary/10 text-primary"
+            className="mr-2 p-2 rounded-lg bg-muted/80 text-muted-foreground group-hover:text-primary transition-colors duration-300"
             whileHover={{ 
               scale: 1.1, 
               rotate: [0, -5, 5, 0],
@@ -66,7 +66,7 @@ const DashboardSection: React.FC<DashboardSectionProps> = ({
           >
             {icon}
           </motion.span>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/70">
             {title}
           </span>
         </h2>

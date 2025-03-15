@@ -73,9 +73,9 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     }
   };
   
-  // Efeito de brilho que percorre o card - Fixed repeatType
+  // Efeito de brilho que percorre o card - Fixed with proper types
   const shimmerVariants = {
-    initial: { x: '-100%', opacity: 0.1 },
+    initial: { x: '-100%', opacity: 0 },
     animate: { 
       x: '200%', 
       opacity: 0.5,
@@ -88,7 +88,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     }
   };
 
-  // Efeito de pulsação para destacar novos itens - Fixed repeatType
+  // Efeito de pulsação para destacar novos itens - Fixed with proper types
   const pulseVariants = {
     initial: { scale: 1, opacity: 0.7 },
     animate: { 
@@ -103,23 +103,42 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     }
   };
 
-  // Estilos e cores melhorados para os módulos
-  const getCardStyles = (color: string) => {
-    // Mapeamento de cores para gradientes mais harmoniosos
-    const colorMap: Record<string, string> = {
-      'bg-blue-600/10': 'bg-gradient-to-br from-blue-500/20 to-blue-700/20 hover:from-blue-500/30 hover:to-blue-700/30',
-      'bg-purple-600/10': 'bg-gradient-to-br from-purple-500/20 to-purple-700/20 hover:from-purple-500/30 hover:to-purple-700/30',
-      'bg-green-600/10': 'bg-gradient-to-br from-green-500/20 to-green-700/20 hover:from-green-500/30 hover:to-green-700/30',
-      'bg-yellow-600/10': 'bg-gradient-to-br from-yellow-500/20 to-yellow-700/20 hover:from-yellow-500/30 hover:to-yellow-700/30',
-      'bg-red-600/10': 'bg-gradient-to-br from-red-500/20 to-red-700/20 hover:from-red-500/30 hover:to-red-700/30',
-      'bg-pink-600/10': 'bg-gradient-to-br from-pink-500/20 to-pink-700/20 hover:from-pink-500/30 hover:to-pink-700/30',
-      'bg-indigo-600/10': 'bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 hover:from-indigo-500/30 hover:to-indigo-700/30',
-      'bg-teal-600/10': 'bg-gradient-to-br from-teal-500/20 to-teal-700/20 hover:from-teal-500/30 hover:to-teal-700/30',
-      'bg-orange-600/10': 'bg-gradient-to-br from-orange-500/20 to-orange-700/20 hover:from-orange-500/30 hover:to-orange-700/30',
-      'bg-cyan-600/10': 'bg-gradient-to-br from-cyan-500/20 to-cyan-700/20 hover:from-cyan-500/30 hover:to-cyan-700/30',
+  // Base styles for cards (neutral, without hover effects)
+  const getBaseCardStyles = (color: string) => {
+    // Map of base card styles (neutral, without gradients)
+    const baseColorMap: Record<string, string> = {
+      'bg-blue-600/10': 'bg-muted/40 border-blue-500/20',
+      'bg-purple-600/10': 'bg-muted/40 border-purple-500/20',
+      'bg-green-600/10': 'bg-muted/40 border-green-500/20',
+      'bg-yellow-600/10': 'bg-muted/40 border-yellow-500/20',
+      'bg-red-600/10': 'bg-muted/40 border-red-500/20',
+      'bg-pink-600/10': 'bg-muted/40 border-pink-500/20',
+      'bg-indigo-600/10': 'bg-muted/40 border-indigo-500/20',
+      'bg-teal-600/10': 'bg-muted/40 border-teal-500/20',
+      'bg-orange-600/10': 'bg-muted/40 border-orange-500/20',
+      'bg-cyan-600/10': 'bg-muted/40 border-cyan-500/20',
     };
     
-    return colorMap[color] || color;
+    return baseColorMap[color] || 'bg-muted/40 border-primary/20';
+  };
+  
+  // Hover gradient styles that only appear on hover/active
+  const getHoverGradientStyles = (color: string) => {
+    // Map of hover gradient styles
+    const hoverColorMap: Record<string, string> = {
+      'bg-blue-600/10': 'group-hover:bg-gradient-to-br group-hover:from-blue-500/30 group-hover:to-blue-700/30 group-active:from-blue-500/40 group-active:to-blue-700/40',
+      'bg-purple-600/10': 'group-hover:bg-gradient-to-br group-hover:from-purple-500/30 group-hover:to-purple-700/30 group-active:from-purple-500/40 group-active:to-purple-700/40',
+      'bg-green-600/10': 'group-hover:bg-gradient-to-br group-hover:from-green-500/30 group-hover:to-green-700/30 group-active:from-green-500/40 group-active:to-green-700/40',
+      'bg-yellow-600/10': 'group-hover:bg-gradient-to-br group-hover:from-yellow-500/30 group-hover:to-yellow-700/30 group-active:from-yellow-500/40 group-active:to-yellow-700/40',
+      'bg-red-600/10': 'group-hover:bg-gradient-to-br group-hover:from-red-500/30 group-hover:to-red-700/30 group-active:from-red-500/40 group-active:to-red-700/40',
+      'bg-pink-600/10': 'group-hover:bg-gradient-to-br group-hover:from-pink-500/30 group-hover:to-pink-700/30 group-active:from-pink-500/40 group-active:to-pink-700/40',
+      'bg-indigo-600/10': 'group-hover:bg-gradient-to-br group-hover:from-indigo-500/30 group-hover:to-indigo-700/30 group-active:from-indigo-500/40 group-active:to-indigo-700/40',
+      'bg-teal-600/10': 'group-hover:bg-gradient-to-br group-hover:from-teal-500/30 group-hover:to-teal-700/30 group-active:from-teal-500/40 group-active:to-teal-700/40',
+      'bg-orange-600/10': 'group-hover:bg-gradient-to-br group-hover:from-orange-500/30 group-hover:to-orange-700/30 group-active:from-orange-500/40 group-active:to-orange-700/40',
+      'bg-cyan-600/10': 'group-hover:bg-gradient-to-br group-hover:from-cyan-500/30 group-hover:to-cyan-700/30 group-active:from-cyan-500/40 group-active:to-cyan-700/40',
+    };
+    
+    return hoverColorMap[color] || 'group-hover:bg-gradient-to-br group-hover:from-primary/20 group-hover:to-primary/30 group-active:from-primary/30 group-active:to-primary/40';
   };
 
   return (
@@ -135,27 +154,31 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
           key={item.id}
           className={cn(
             "relative overflow-hidden rounded-xl p-6 cursor-pointer",
-            "border border-white/10 backdrop-blur-sm group transition-all duration-500",
-            "hover:shadow-xl hover:shadow-primary/5",
-            getCardStyles(item.color),
+            "border backdrop-blur-sm group transition-all duration-300",
+            "hover:shadow-lg hover:shadow-primary/10",
+            getBaseCardStyles(item.color),
           )}
           variants={itemVariants}
           whileHover="hover"
           onClick={(e) => handleMenuClick(item, e)}
           layoutId={`menu-card-${item.id}`}
         >
-          {/* Gradiente de fundo melhorado */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/5 opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
+          {/* Background overlay that only appears on hover */}
+          <div className={cn(
+            "absolute inset-0 opacity-0 transition-opacity duration-300",
+            "group-hover:opacity-100",
+            getHoverGradientStyles(item.color)
+          )} />
           
-          {/* Efeito de shimmer que percorre o card */}
+          {/* Shimmer effect only on hover */}
           <motion.div 
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100"
             variants={shimmerVariants}
             initial="initial"
             animate="animate"
           />
           
-          {/* Efeito de highlight para itens destacados */}
+          {/* Highlight indicator with conditional animation */}
           {item.highlight && (
             <div className="absolute top-3 right-3">
               <motion.div
@@ -172,7 +195,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
             </div>
           )}
           
-          {/* Efeito para itens novos */}
+          {/* New item indicator with conditional pulse */}
           {item.new && (
             <div className="absolute top-3 left-3">
               <motion.div
@@ -187,35 +210,35 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
             </div>
           )}
           
-          {/* Container do ícone com efeito de flutuação melhorado */}
+          {/* Icon container with hover interaction */}
           <motion.div 
-            className="h-14 w-14 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center mb-4 overflow-hidden shadow-inner"
-            whileHover={{ y: -5, transition: { duration: 0.3, yoyo: Infinity } }}
+            className="h-14 w-14 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center mb-4 overflow-hidden shadow-inner"
+            whileHover={{ y: -5, transition: { duration: 0.3 } }}
           >
             <motion.div
               initial={{ scale: 1 }}
               whileHover={{ scale: 1.2, rotate: [0, 5, -5, 0] }}
               transition={{ duration: 0.5 }}
-              className="text-primary"
+              className="text-muted-foreground group-hover:text-primary transition-colors duration-300"
             >
               {item.icon}
             </motion.div>
           </motion.div>
 
-          {/* Título com transição de cores */}
-          <h3 className="text-lg font-medium mb-2 transition-all duration-300 group-hover:text-primary">
+          {/* Title with color transition on hover */}
+          <h3 className="text-lg font-medium mb-2 transition-all duration-300 text-foreground/90 group-hover:text-primary">
             {item.title}
           </h3>
           
-          {/* Descrição com efeito fade-in no hover */}
-          <p className="text-sm opacity-80 mb-4 transition-all duration-300 group-hover:opacity-100">
+          {/* Description with transition effects */}
+          <p className="text-sm text-muted-foreground/70 mb-4 transition-all duration-300 group-hover:text-foreground/80">
             {item.description}
           </p>
           
-          {/* Botão de ação com efeito hover melhorado */}
+          {/* Action button with hover effect */}
           <div className="flex items-center mt-auto text-sm font-medium">
             <motion.span 
-              className="transition-all duration-300 text-foreground/70 group-hover:text-primary"
+              className="transition-all duration-300 text-muted-foreground group-hover:text-primary"
               initial={{ x: 0 }}
               whileHover={{ x: 3 }}
             >
@@ -226,7 +249,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
                 initial={{ x: 0, rotate: 0 }}
                 whileHover={{ x: 5, rotate: 15 }}
                 transition={{ duration: 0.2 }}
-                className="text-foreground/70 group-hover:text-primary"
+                className="text-muted-foreground group-hover:text-primary transition-colors duration-300"
               >
                 <ExternalLink className="ml-2 h-4 w-4" />
               </motion.div>
@@ -235,16 +258,16 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
                 initial={{ x: 0 }}
                 whileHover={{ x: 5 }}
                 transition={{ duration: 0.2 }}
-                className="text-foreground/70 group-hover:text-primary"
+                className="text-muted-foreground group-hover:text-primary transition-colors duration-300"
               >
                 <ArrowRight className="ml-2 h-4 w-4" />
               </motion.div>
             )}
           </div>
 
-          {/* Efeito de click com animação de ondas */}
+          {/* Click effect with animated circle */}
           <motion.div 
-            className="absolute inset-0 flex items-center justify-center bg-black/0 pointer-events-none"
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
             whileTap={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
           >
             <motion.div 
@@ -259,9 +282,9 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
             </motion.div>
           </motion.div>
 
-          {/* Decoração de canto com animação melhorada */}
+          {/* Corner decoration with subtle animation */}
           <motion.div 
-            className="absolute -bottom-10 -right-10 w-20 h-20 rounded-full bg-gradient-to-br from-primary/10 to-transparent" 
+            className="absolute -bottom-10 -right-10 w-20 h-20 rounded-full bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/10 group-hover:to-transparent transition-all duration-500" 
             initial={{ rotate: 0, scale: 1 }}
             animate={{ rotate: 360, scale: [1, 1.2, 1] }}
             transition={{ 
