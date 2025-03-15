@@ -1,246 +1,287 @@
 
-import { useState } from 'react';
-import { Audit, AuditSummary } from '@/types/audit';
-import { useToast } from '@/components/ui/use-toast';
+import { useState, useEffect } from 'react';
+import { Audit, AuditSummary } from '../types/audit';
+import { toast } from 'sonner';
 
-export const useAuditManagement = () => {
-  const { toast } = useToast();
+// Estado inicial para resumo de auditoria
+const initialSummary: AuditSummary = {
+  total: 0,
+  pending: 0,
+  approved: 0,
+  rejected: 0,
+  inProgress: 0
+};
+
+// Dados de exemplo para auditoria
+const mockAudits: Audit[] = [
+  {
+    id: '1',
+    title: 'Auditoria Fiscal - IRRF 2022',
+    client: 'Empresa ABC Ltda',
+    type: 'IRRF',
+    status: 'pending',
+    createdAt: new Date(2022, 5, 15).toISOString(),
+    updatedAt: new Date(2022, 5, 15).toISOString(),
+    dueDate: new Date(2022, 8, 15).toISOString(),
+    assignedTo: 'Carlos Oliveira',
+    priority: 'high',
+    description: 'Auditoria de retenções de IRRF do ano fiscal 2022'
+  },
+  {
+    id: '2',
+    title: 'Revisão de Créditos - PIS/COFINS',
+    client: 'Indústrias XYZ S.A.',
+    type: 'PIS/COFINS',
+    status: 'approved',
+    createdAt: new Date(2022, 4, 10).toISOString(),
+    updatedAt: new Date(2022, 6, 20).toISOString(),
+    dueDate: new Date(2022, 7, 10).toISOString(),
+    assignedTo: 'Ana Silva',
+    priority: 'medium',
+    description: 'Revisão dos créditos de PIS/COFINS do primeiro trimestre'
+  },
+  {
+    id: '3',
+    title: 'Análise de Compensações Tributárias',
+    client: 'Comércio Rápido Ltda',
+    type: 'Compensação',
+    status: 'in_progress',
+    createdAt: new Date(2022, 3, 5).toISOString(),
+    updatedAt: new Date(2022, 3, 25).toISOString(),
+    dueDate: new Date(2022, 6, 5).toISOString(),
+    assignedTo: 'Roberto Gomes',
+    priority: 'low',
+    description: 'Análise das compensações tributárias realizadas no último ano'
+  },
+  {
+    id: '4',
+    title: 'Auditoria de INSS',
+    client: 'Serviços Técnicos ME',
+    type: 'INSS',
+    status: 'rejected',
+    createdAt: new Date(2022, 2, 8).toISOString(),
+    updatedAt: new Date(2022, 2, 28).toISOString(),
+    dueDate: new Date(2022, 5, 8).toISOString(),
+    assignedTo: 'Carlos Oliveira',
+    priority: 'high',
+    description: 'Auditoria das contribuições de INSS sobre folha de pagamento'
+  },
+  {
+    id: '5',
+    title: 'Revisão de Obrigações Acessórias',
+    client: 'Consultoria Financeira S.A.',
+    type: 'Obrigações',
+    status: 'pending',
+    createdAt: new Date(2022, 1, 20).toISOString(),
+    updatedAt: new Date(2022, 1, 20).toISOString(),
+    dueDate: new Date(2022, 4, 20).toISOString(),
+    assignedTo: 'Mariana Costa',
+    priority: 'medium',
+    description: 'Revisão do cumprimento das obrigações acessórias do exercício anterior'
+  }
+];
+
+const useAuditManagement = () => {
+  // Estado para dados de auditoria
+  const [audits, setAudits] = useState<Audit[]>(mockAudits);
+  const [auditSummary, setAuditSummary] = useState<AuditSummary>(initialSummary);
   const [isLoading, setIsLoading] = useState(false);
-  const [audits, setAudits] = useState<Audit[]>([
-    {
-      id: '1',
-      clientName: 'Empresa ABC Ltda',
-      documentNumber: '12.345.678/0001-90',
-      auditType: 'IRPJ',
-      status: 'PENDENTE',
-      date: '2023-08-15',
-      startDate: '2023-08-15',
-      deadline: '2023-09-15',
-      assignedTo: 'João Silva',
-      priority: 'Alta',
-      documentsCount: 5,
-      notes: 'Auditoria regular anual'
-    },
-    {
-      id: '2',
-      clientName: 'Tech Solutions S.A.',
-      documentNumber: '23.456.789/0001-23',
-      auditType: 'CSLL',
-      status: 'EM_ANDAMENTO',
-      date: '2023-07-20',
-      startDate: '2023-07-20',
-      deadline: '2023-08-20',
-      assignedTo: 'Maria Oliveira',
-      priority: 'Média',
-      documentsCount: 8,
-      notes: 'Verificação de despesas operacionais'
-    },
-    {
-      id: '3',
-      clientName: 'Distribuidora XYZ',
-      documentNumber: '34.567.890/0001-45',
-      auditType: 'PIS/COFINS',
-      status: 'CONCLUIDA',
-      date: '2023-06-10',
-      startDate: '2023-06-10',
-      deadline: '2023-07-10',
-      completionDate: '2023-07-08',
-      assignedTo: 'Carlos Santos',
-      priority: 'Baixa',
-      documentsCount: 12,
-      notes: 'Créditos de exportação'
-    },
-    {
-      id: '4',
-      clientName: 'Indústrias Reunidas',
-      documentNumber: '45.678.901/0001-67',
-      auditType: 'IPI',
-      status: 'PENDENTE',
-      date: '2023-09-01',
-      startDate: '2023-09-01',
-      deadline: '2023-10-01',
-      assignedTo: 'Paulo Mendes',
-      priority: 'Alta',
-      documentsCount: 3,
-      notes: 'Auditoria de créditos acumulados'
-    },
-    {
-      id: '5',
-      clientName: 'Consultoria Financeira',
-      documentNumber: '56.789.012/0001-89',
-      auditType: 'IRRF',
-      status: 'CANCELADA',
-      date: '2023-05-15',
-      startDate: '2023-05-15',
-      deadline: '2023-06-15',
-      assignedTo: 'Ana Pereira',
-      priority: 'Média',
-      documentsCount: 6,
-      notes: 'Cancelada a pedido do cliente'
-    }
-  ]);
-
-  const [auditSummary, setAuditSummary] = useState<AuditSummary>({
-    totalAudits: 5,
-    pendingAudits: 2,
-    inProgressAudits: 1,
-    completedAudits: 1,
-    total: 5,
-    pendentes: 2,
-    emAndamento: 1,
-    concluidas: 1
+  
+  // Estados para filtragem
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  
+  // Estados para manipulação de formulário e modal
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [currentAudit, setCurrentAudit] = useState<Audit | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  
+  // Função para filtrar auditorias com base nos filtros aplicados
+  const filteredAudits = audits.filter((audit) => {
+    // Filtrar por pesquisa
+    const matchesSearch = audit.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         audit.client.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Filtrar por status
+    const matchesStatus = statusFilter === 'all' || audit.status === statusFilter;
+    
+    // Filtrar por tipo
+    const matchesType = typeFilter === 'all' || audit.type === typeFilter;
+    
+    // Retornar apenas auditorias que atendem a todos os critérios
+    return matchesSearch && matchesStatus && matchesType;
   });
 
+  // Calcular resumo das auditorias
+  const calculateSummary = () => {
+    const summary = audits.reduce((acc, audit) => {
+      acc.total += 1;
+      
+      switch (audit.status) {
+        case 'pending':
+          acc.pending += 1;
+          break;
+        case 'approved':
+          acc.approved += 1;
+          break;
+        case 'rejected':
+          acc.rejected += 1;
+          break;
+        case 'in_progress':
+          acc.inProgress += 1;
+          break;
+      }
+      
+      return acc;
+    }, {
+      total: 0,
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+      inProgress: 0
+    });
+    
+    setAuditSummary(summary);
+  };
+
+  // Atualizar resumo quando auditorias mudarem
+  useEffect(() => {
+    calculateSummary();
+  }, [audits]);
+
+  // Simular carregamento de dados
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Handler para atualizar auditorias
+  const handleRefresh = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      // Simula o recarregamento dos dados
+      setIsLoading(false);
+      toast.success('Dados atualizados com sucesso!');
+    }, 1000);
+  };
+
+  // Handler para visualizar detalhes de uma auditoria
   const viewDetails = (auditId: string) => {
-    toast({
-      title: "Detalhes da Auditoria",
-      description: `Visualizando detalhes da auditoria ID: ${auditId}`,
-    });
+    console.log(`Exibindo detalhes da auditoria ${auditId}`);
+    // Implementação real: navegação para página de detalhes ou abertura de modal
   };
 
+  // Handler para visualizar detalhes de uma auditoria
+  const onViewDetails = (auditId: string) => {
+    viewDetails(auditId);
+  };
+
+  // Handler para baixar documentos
   const downloadDocuments = (auditId: string) => {
-    toast({
-      title: "Download de Documentos",
-      description: `Iniciando download dos documentos da auditoria ID: ${auditId}`,
-    });
+    console.log(`Baixando documentos da auditoria ${auditId}`);
+    toast.success('Documentos preparados para download.');
+    // Implementação real: lógica para download de documentos
   };
 
+  // Handler para baixar documentos
+  const onDownloadDocuments = (auditId: string) => {
+    downloadDocuments(auditId);
+  };
+
+  // Handler para editar auditoria
   const editAudit = (auditId: string) => {
-    toast({
-      title: "Editar Auditoria",
-      description: `Editando auditoria ID: ${auditId}`,
-    });
-  };
-
-  const deleteAudit = (auditId: string) => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setAudits(audits.filter(audit => audit.id !== auditId));
-      
-      // Update summary
-      const updatedSummary = { ...auditSummary };
-      updatedSummary.totalAudits -= 1;
-      updatedSummary.total -= 1;
-      
-      const deletedAudit = audits.find(audit => audit.id === auditId);
-      if (deletedAudit) {
-        if (deletedAudit.status === 'PENDENTE') {
-          updatedSummary.pendingAudits -= 1;
-          updatedSummary.pendentes -= 1;
-        } else if (deletedAudit.status === 'EM_ANDAMENTO') {
-          updatedSummary.inProgressAudits -= 1;
-          updatedSummary.emAndamento -= 1;
-        } else if (deletedAudit.status === 'CONCLUIDA') {
-          updatedSummary.completedAudits -= 1;
-          updatedSummary.concluidas -= 1;
-        }
-      }
-      
-      setAuditSummary(updatedSummary);
-      setIsLoading(false);
-      
-      toast({
-        title: "Auditoria Excluída",
-        description: `A auditoria ID: ${auditId} foi excluída com sucesso`,
-      });
-    }, 1000);
-  };
-
-  const approveAudit = (auditId: string) => {
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      const updatedAudits = audits.map(audit => {
-        if (audit.id === auditId) {
-          return {
-            ...audit,
-            status: 'CONCLUIDA',
-            completionDate: new Date().toISOString().split('T')[0]
-          };
-        }
-        return audit;
-      });
-      
-      setAudits(updatedAudits);
-      
-      // Update summary
-      const updatedSummary = { ...auditSummary };
-      const updatedAudit = updatedAudits.find(audit => audit.id === auditId);
-      
-      if (updatedAudit) {
-        if (updatedAudit.status === 'CONCLUIDA') {
-          const oldAudit = audits.find(audit => audit.id === auditId);
-          if (oldAudit?.status === 'PENDENTE') {
-            updatedSummary.pendingAudits -= 1;
-            updatedSummary.pendentes -= 1;
-          } else if (oldAudit?.status === 'EM_ANDAMENTO') {
-            updatedSummary.inProgressAudits -= 1;
-            updatedSummary.emAndamento -= 1;
-          }
-          updatedSummary.completedAudits += 1;
-          updatedSummary.concluidas += 1;
-        }
-      }
-      
-      setAuditSummary(updatedSummary);
-      setIsLoading(false);
-      
-      toast({
-        title: "Auditoria Aprovada",
-        description: `A auditoria ID: ${auditId} foi aprovada com sucesso`,
-        variant: "success",
-      });
-    }, 1000);
-  };
-
-  const addNewAudit = (newAudit: Audit) => {
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      // Add new audit to list
-      setAudits([newAudit, ...audits]);
-      
-      // Update summary
-      const updatedSummary = { ...auditSummary };
-      updatedSummary.totalAudits += 1;
-      updatedSummary.total += 1;
-      
-      if (newAudit.status === 'PENDENTE') {
-        updatedSummary.pendingAudits += 1;
-        updatedSummary.pendentes += 1;
-      } else if (newAudit.status === 'EM_ANDAMENTO') {
-        updatedSummary.inProgressAudits += 1;
-        updatedSummary.emAndamento += 1;
-      } else if (newAudit.status === 'CONCLUIDA') {
-        updatedSummary.completedAudits += 1;
-        updatedSummary.concluidas += 1;
-      }
-      
-      setAuditSummary(updatedSummary);
-      setIsLoading(false);
-      
-      toast({
-        title: "Auditoria Criada",
-        description: `Nova auditoria criada com sucesso para ${newAudit.clientName}`,
-        variant: "success",
-      });
-    }, 1000);
-  };
-
-  const filterAudits = (searchTerm: string) => {
-    if (!searchTerm) {
-      return audits;
+    const audit = audits.find(a => a.id === auditId);
+    if (audit) {
+      setCurrentAudit(audit);
+      setIsEditMode(true);
+      setIsFormOpen(true);
     }
-    
-    searchTerm = searchTerm.toLowerCase();
-    return audits.filter(audit => 
-      audit.clientName.toLowerCase().includes(searchTerm) ||
-      audit.documentNumber.toLowerCase().includes(searchTerm) ||
-      audit.auditType.toLowerCase().includes(searchTerm)
+  };
+
+  // Handler para editar auditoria
+  const onEdit = (auditId: string) => {
+    editAudit(auditId);
+  };
+
+  // Handler para excluir auditoria
+  const deleteAudit = (auditId: string) => {
+    setAudits(prevAudits => prevAudits.filter(audit => audit.id !== auditId));
+    toast.success('Auditoria excluída com sucesso!');
+  };
+
+  // Handler para excluir auditoria
+  const onDelete = (auditId: string) => {
+    deleteAudit(auditId);
+  };
+
+  // Handler para aprovar auditoria
+  const approveAudit = (auditId: string) => {
+    setAudits(prevAudits => 
+      prevAudits.map(audit => 
+        audit.id === auditId 
+          ? { ...audit, status: 'approved', updatedAt: new Date().toISOString() } 
+          : audit
+      )
     );
+    toast.success('Auditoria aprovada com sucesso!');
+  };
+
+  // Handler para aprovar auditoria
+  const onApprove = (auditId: string) => {
+    approveAudit(auditId);
+  };
+
+  // Handler para adicionar nova auditoria
+  const addNewAudit = (newAudit: Audit) => {
+    setAudits(prevAudits => [...prevAudits, newAudit]);
+    toast.success('Nova auditoria adicionada com sucesso!');
+  };
+
+  // Handler para criar nova auditoria
+  const handleCreateAudit = () => {
+    setCurrentAudit(null);
+    setIsEditMode(false);
+    setIsFormOpen(true);
+  };
+
+  // Handler para salvar auditoria (novo ou edição)
+  const handleSaveAudit = (auditData: Audit) => {
+    if (isEditMode && currentAudit) {
+      // Atualização de auditoria existente
+      setAudits(prevAudits => 
+        prevAudits.map(audit => 
+          audit.id === currentAudit.id 
+            ? { ...auditData, updatedAt: new Date().toISOString() } 
+            : audit
+        )
+      );
+      toast.success('Auditoria atualizada com sucesso!');
+    } else {
+      // Criação de nova auditoria
+      const newAudit: Audit = {
+        ...auditData,
+        id: `${Date.now()}`, // Gerar ID único baseado em timestamp
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      addNewAudit(newAudit);
+    }
+    setIsFormOpen(false);
+  };
+
+  // Calcular resumo para exibição
+  const summary = {
+    total: auditSummary.total,
+    pending: auditSummary.pending,
+    approved: auditSummary.approved,
+    rejected: auditSummary.rejected,
+    inProgress: auditSummary.inProgress
   };
 
   return {
@@ -253,6 +294,29 @@ export const useAuditManagement = () => {
     deleteAudit,
     approveAudit,
     addNewAudit,
-    filterAudits
+    filterAudits: calculateSummary,
+    searchQuery,
+    setSearchQuery,
+    statusFilter,
+    setStatusFilter,
+    typeFilter,
+    setTypeFilter,
+    filteredAudits,
+    summary,
+    isListening,
+    isFormOpen,
+    setIsFormOpen,
+    currentAudit,
+    isEditMode,
+    handleRefresh,
+    handleCreateAudit,
+    handleSaveAudit,
+    onViewDetails,
+    onDownloadDocuments,
+    onEdit,
+    onDelete,
+    onApprove
   };
 };
+
+export default useAuditManagement;
