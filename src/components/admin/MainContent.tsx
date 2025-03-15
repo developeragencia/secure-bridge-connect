@@ -23,7 +23,7 @@ import ClientManagement from './tax-credits/ClientManagement';
 import RecoveryManagement from './tax-credits/RecoveryManagement';
 import DataImports from './tax-credits/DataImports';
 import DataProcessing from './tax-credits/DataProcessing';
-import AuditManagement from './tax-credits/AuditManagement';
+import { AuditManagement } from './tax-credits/components/audit';
 import IRRFCalculations from './tax-credits/IRRFCalculations';
 import IRRFRecovery from './tax-credits/IRRFRecovery';
 import TaxCreditCalculator from './tax-credits/TaxCreditCalculator';
