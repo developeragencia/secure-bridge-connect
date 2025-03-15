@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -211,18 +212,13 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
           
           {/* Icon container with enhanced visibility and hover interaction */}
           <motion.div 
-            className="h-14 w-14 rounded-lg bg-background/80 backdrop-blur-sm flex items-center justify-center mb-4 shadow-sm border border-muted/50 group-hover:border-primary/20 group-hover:bg-white/90 transition-all duration-300"
+            className="h-14 w-14 rounded-lg bg-white/90 backdrop-blur-sm flex items-center justify-center mb-4 shadow-sm border border-muted/50 group-hover:border-primary/20 transition-all duration-300"
             whileHover={{ y: -5, transition: { duration: 0.3 } }}
           >
-            <motion.div
-              initial={{ scale: 1 }}
-              whileHover={{ scale: 1.2, rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 0.5 }}
-              className="text-muted-foreground group-hover:text-primary transition-colors duration-300"
-              style={{ fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >
+            {/* Fix: Using a div wrapper instead of motion.div for the icon to ensure it's rendered properly */}
+            <div className="text-primary transition-colors duration-300 flex items-center justify-center">
               {item.icon}
-            </motion.div>
+            </div>
           </motion.div>
 
           {/* Title with color transition on hover */}
