@@ -1,115 +1,109 @@
 
 import React from 'react';
-import { 
-  Database, RefreshCw, FileCheck, Lightbulb, 
-  Receipt, Activity, FileSpreadsheet, FileText,
-  PieChart, BarChart2, LineChart, FolderCheck,
-  FileSearch, ArrowUpDown, Repeat, DownloadCloud,
-  CreditCard, PenTool, Mail
+import {
+  FileSpreadsheet,
+  BarChart3,
+  FolderCheck,
+  FileClock,
+  FileSearch,
+  Database,
+  BarChart4,
+  ClipboardCheck,
+  FileBarChart2,
+  Layers,
+  ArrowUpDown
 } from 'lucide-react';
 import { MenuItem } from './MenuGrid';
 
-export const getOperationalMenuItems = (): MenuItem[] => {
-  return [
-    {
-      id: 'operational_imports',
-      title: 'Importação de Dados',
-      description: 'Importe dados de sistemas externos',
-      icon: <Database className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-sky-500 to-blue-600 text-white',
-      route: 'operational_imports',
-      highlight: true
-    },
-    {
-      id: 'operational_recovery',
-      title: 'Gestão de Recuperação',
-      description: 'Acompanhe processos de recuperação de créditos',
-      icon: <RefreshCw className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-teal-500 to-green-600 text-white',
-      route: 'operational_recovery'
-    },
-    {
-      id: 'operational_audits',
-      title: 'Gestão de Auditorias',
-      description: 'Gerencie auditorias e verificações',
-      icon: <FileCheck className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-amber-500 to-yellow-600 text-white',
-      route: 'operational_audits'
-    },
-    {
-      id: 'operational_credit_identification',
-      title: 'Identificação de Créditos',
-      description: 'Identifique novos créditos tributários',
-      icon: <Lightbulb className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-orange-500 to-red-600 text-white',
-      route: 'operational_credit_identification',
-      highlight: true
-    },
-    {
-      id: 'operational_receipts',
-      title: 'Recibos de Retenção',
-      description: 'Gerencie recibos de retenção tributária',
-      icon: <Receipt className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white',
-      route: 'operational_receipts'
-    },
-    {
-      id: 'operational_dashboard',
-      title: 'Dashboard Interativo',
-      description: 'Visualize dados em tempo real',
-      icon: <Activity className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-fuchsia-500 to-pink-600 text-white',
-      route: 'operational_dashboard',
-      highlight: true
-    },
-    {
-      id: 'data_export',
-      title: 'Exportação de Dados',
-      description: 'Exporte dados em diferentes formatos',
-      icon: <DownloadCloud className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white',
-      route: 'operational_exports'
-    },
-    {
-      id: 'data_validation',
-      title: 'Validação de Dados',
-      description: 'Valide e corrija inconsistências nos dados',
-      icon: <FileCheck className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-green-500 to-emerald-600 text-white',
-      route: 'operational_validation'
-    },
-    {
-      id: 'report_generation',
-      title: 'Geração de Relatórios',
-      description: 'Crie relatórios personalizados',
-      icon: <FileText className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white',
-      route: 'operational_reports'
-    },
-    {
-      id: 'data_visualization',
-      title: 'Visualização de Dados',
-      description: 'Visualize dados em gráficos interativos',
-      icon: <PieChart className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-rose-500 to-red-600 text-white',
-      route: 'operational_visualization'
-    },
-    {
-      id: 'supplier_classification',
-      title: 'Classificação de Fornecedores',
-      description: 'Classifique fornecedores conforme as regras de retenção',
-      icon: <ArrowUpDown className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-purple-500 to-indigo-600 text-white',
-      route: 'operational_suppliers'
-    },
-    {
-      id: 'payment_analysis',
-      title: 'Análise de Pagamentos',
-      description: 'Analise pagamentos realizados nos últimos 60 meses',
-      icon: <CreditCard className="h-6 w-6 text-white" />,
-      color: 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white',
-      route: 'operational_payments',
-      highlight: true
-    }
-  ];
-};
+export const getOperationalMenuItems = (): MenuItem[] => [
+  {
+    id: 'operational_imports',
+    title: 'Importação de Dados',
+    description: 'Importe facilmente dados de sistemas externos através de planilhas ou APIs.',
+    icon: <FileSpreadsheet className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-teal-500 to-teal-700',
+    route: 'operational_imports',
+  },
+  {
+    id: 'operational_dashboard',
+    title: 'Dashboard Operacional',
+    description: 'Acompanhe métricas operacionais importantes e estatísticas de processamento.',
+    icon: <BarChart3 className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-cyan-500 to-cyan-700',
+    route: 'operational_dashboard',
+  },
+  {
+    id: 'operational_audits',
+    title: 'Auditorias Operacionais',
+    description: 'Verifique a qualidade dos dados e processos com auditorias detalhadas.',
+    icon: <FolderCheck className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-sky-500 to-sky-700',
+    route: 'operational_audits',
+  },
+  {
+    id: 'operational_receipts',
+    title: 'Comprovantes Operacionais',
+    description: 'Gerencie documentos fiscais e comprovantes relacionados às operações.',
+    icon: <FileClock className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-blue-500 to-blue-700',
+    route: 'operational_receipts',
+  },
+  {
+    id: 'imports_filter',
+    title: 'Filtro de Importações',
+    description: 'Configure filtros avançados para os dados importados.',
+    icon: <FileSearch className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-indigo-500 to-indigo-700',
+    route: 'imports/filter',
+    new: true
+  },
+  {
+    id: 'data_visualization',
+    title: 'Visualização de Dados',
+    description: 'Visualize seus dados em diferentes formatos de gráficos e tabelas dinâmicas.',
+    icon: <BarChart4 className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-violet-500 to-violet-700',
+    route: 'data_visualization',
+  },
+  {
+    id: 'operational_monitoring',
+    title: 'Monitoramento',
+    description: 'Acompanhe o status de todas as operações em tempo real.',
+    icon: <Database className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-purple-500 to-purple-700',
+    route: 'operational_monitoring',
+  },
+  {
+    id: 'compliance_checks',
+    title: 'Verificações de Compliance',
+    description: 'Garanta que todas as operações estejam em conformidade com a legislação.',
+    icon: <ClipboardCheck className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-fuchsia-500 to-fuchsia-700',
+    route: 'compliance_checks',
+  },
+  {
+    id: 'operational_reports',
+    title: 'Relatórios Operacionais',
+    description: 'Gere relatórios detalhados sobre as operações e processamentos.',
+    icon: <FileBarChart2 className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-pink-500 to-pink-700',
+    route: 'operational_reports',
+  },
+  {
+    id: 'data_processing',
+    title: 'Processamento de Dados',
+    description: 'Configure e acompanhe o processamento automático de dados.',
+    icon: <Layers className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-rose-500 to-rose-700',
+    route: 'data_processing',
+  },
+  {
+    id: 'data_reconciliation',
+    title: 'Reconciliação de Dados',
+    description: 'Compare e reconcilie dados de diferentes fontes para garantir consistência.',
+    icon: <ArrowUpDown className="h-6 w-6 text-white" />,
+    color: 'bg-gradient-to-br from-orange-500 to-orange-700',
+    route: 'data_reconciliation',
+    highlight: true
+  },
+];

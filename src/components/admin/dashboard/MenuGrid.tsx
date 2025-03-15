@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, ExternalLink, Sparkles, MousePointerClick } from 'lucide-react';
+import { ArrowRight, ExternalLink, Sparkles, MousePointerClick, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Definição do tipo para os itens de menu
@@ -15,6 +15,7 @@ export interface MenuItem {
   route: string;
   isExternal?: boolean;
   highlight?: boolean;
+  new?: boolean;
 }
 
 interface MenuGridProps {
@@ -51,7 +52,8 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.1,
+        delayChildren: 0.2
       }
     }
   };
@@ -65,9 +67,39 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
       transition: { type: 'spring', stiffness: 100 }
     },
     hover: {
-      scale: 1.05,
-      boxShadow: '0 10px 30px -15px rgba(0, 0, 0, 0.3)',
+      scale: 1.03,
+      boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.2)',
       transition: { duration: 0.3, ease: 'easeOut' }
+    }
+  };
+  
+  // Efeito de brilho que percorre o card
+  const shimmerVariants = {
+    initial: { x: '-100%', opacity: 0.1 },
+    animate: { 
+      x: '200%', 
+      opacity: 0.5,
+      transition: { 
+        repeat: Infinity, 
+        repeatType: "mirror", 
+        duration: 2,
+        ease: "easeInOut"
+      }
+    }
+  };
+
+  // Efeito de pulsação para destacar novos itens
+  const pulseVariants = {
+    initial: { scale: 1, opacity: 0.7 },
+    animate: { 
+      scale: [1, 1.1, 1],
+      opacity: [0.7, 1, 0.7],
+      transition: { 
+        repeat: Infinity,
+        repeatType: "loop",
+        duration: 2,
+        ease: "easeInOut"
+      }
     }
   };
 
@@ -77,14 +109,15 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
+      viewport={{ once: true }}
     >
       {items.map((item, index) => (
         <motion.div
           key={item.id}
           className={cn(
             "relative overflow-hidden rounded-xl p-6 cursor-pointer",
-            "border border-white/10 group transition-all duration-300",
-            "hover:shadow-xl hover:shadow-[var(--accent)]",
+            "border border-white/10 backdrop-blur-sm group transition-all duration-500",
+            "hover:shadow-xl",
             item.color
           )}
           variants={itemVariants}
@@ -93,58 +126,85 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
           layoutId={`menu-card-${item.id}`}
         >
           {/* Gradiente de fundo com transição melhorada */}
-          <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-white via-white/20 to-transparent gradient-shift" />
+          <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-white via-white/20 to-transparent" />
           
-          {/* Rastro luminoso que aparece no hover */}
+          {/* Efeito de shimmer que percorre o card */}
           <motion.div 
-            className="absolute inset-0 opacity-0 bg-white/5 group-hover:opacity-20 transition-opacity duration-700"
-            initial={{ x: '-100%' }}
-            whileHover={{ x: '200%' }}
-            transition={{ duration: 1.5, ease: 'easeInOut' }}
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            variants={shimmerVariants}
+            initial="initial"
+            animate="animate"
           />
           
-          {/* Efeito de highlight */}
+          {/* Efeito de highlight para itens destacados */}
           {item.highlight && (
             <div className="absolute top-3 right-3">
               <motion.div
-                initial={{ opacity: 0.5, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ rotate: 0 }}
+                animate={{ rotate: 360 }}
                 transition={{ 
                   repeat: Infinity, 
-                  repeatType: "reverse", 
-                  duration: 1.5 
+                  duration: 6,
+                  ease: "linear"
                 }}
               >
-                <Sparkles className="h-5 w-5 text-white/80" />
+                <Sparkles className="h-5 w-5 text-yellow-300 filter drop-shadow-md" />
               </motion.div>
             </div>
           )}
           
-          {/* Ícone do card com animação */}
+          {/* Efeito para itens novos */}
+          {item.new && (
+            <div className="absolute top-3 left-3">
+              <motion.div
+                variants={pulseVariants}
+                initial="initial"
+                animate="animate"
+                className="flex items-center px-2 py-1 bg-green-500/80 rounded-full text-xs font-semibold text-white"
+              >
+                <Star className="h-3 w-3 mr-1" />
+                Novo
+              </motion.div>
+            </div>
+          )}
+          
+          {/* Container do ícone com efeito de flutuação */}
           <motion.div 
             className="h-14 w-14 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center mb-4 overflow-hidden"
-            initial={{ rotate: 0 }}
-            whileHover={{ rotate: [0, -5, 5, -5, 0], transition: { duration: 0.5 } }}
+            whileHover={{ y: -5, transition: { duration: 0.3, yoyo: Infinity } }}
           >
             <motion.div
               initial={{ scale: 1 }}
-              whileHover={{ scale: 1.2 }}
-              transition={{ duration: 0.3 }}
+              whileHover={{ scale: 1.2, rotate: [0, 5, -5, 0] }}
+              transition={{ duration: 0.5 }}
             >
               {item.icon}
             </motion.div>
           </motion.div>
 
-          <h3 className="text-lg font-medium mb-2 group-hover:text-white transition-colors duration-300">{item.title}</h3>
-          <p className="text-sm opacity-80 mb-4 group-hover:opacity-100 transition-opacity duration-300">{item.description}</p>
+          {/* Título com transição de cores */}
+          <h3 className="text-lg font-medium mb-2 transition-colors duration-300 group-hover:text-white">
+            {item.title}
+          </h3>
           
-          {/* Ação de navegação com efeito hover */}
+          {/* Descrição com efeito fade-in no hover */}
+          <p className="text-sm opacity-80 mb-4 transition-all duration-300 group-hover:opacity-100 group-hover:text-white/90">
+            {item.description}
+          </p>
+          
+          {/* Botão de ação com efeito hover melhorado */}
           <div className="flex items-center mt-auto text-sm font-medium">
-            <span className="group-hover:text-white transition-colors duration-300">Acessar</span>
+            <motion.span 
+              className="transition-colors duration-300 group-hover:text-white"
+              initial={{ x: 0 }}
+              whileHover={{ x: 3 }}
+            >
+              Acessar
+            </motion.span>
             {item.isExternal ? (
               <motion.div
-                initial={{ x: 0 }}
-                whileHover={{ x: 5 }}
+                initial={{ x: 0, rotate: 0 }}
+                whileHover={{ x: 5, rotate: 15 }}
                 transition={{ duration: 0.2 }}
               >
                 <ExternalLink className="ml-2 h-4 w-4" />
@@ -160,26 +220,32 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
             )}
           </div>
 
-          {/* Efeito de click */}
+          {/* Efeito de click com animação de ondas */}
           <motion.div 
             className="absolute inset-0 flex items-center justify-center bg-black/0 pointer-events-none"
             whileTap={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
           >
             <motion.div 
               initial={{ scale: 0, opacity: 0 }}
-              whileTap={{ scale: 1.5, opacity: 0.3 }}
-              transition={{ duration: 0.5 }}
+              whileTap={{ 
+                scale: [0, 1.5],
+                opacity: [0, 0.3, 0],
+                transition: { duration: 0.7 }
+              }}
             >
               <MousePointerClick className="h-8 w-8 text-white" />
             </motion.div>
           </motion.div>
 
-          {/* Decoração de canto com animação */}
+          {/* Decoração de canto com animação melhorada */}
           <motion.div 
-            className="absolute bottom-0 right-0 w-20 h-20 transform translate-x-10 translate-y-10 bg-white/5 rounded-full" 
-            initial={{ rotate: 0 }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -bottom-10 -right-10 w-20 h-20 rounded-full bg-white/5" 
+            initial={{ rotate: 0, scale: 1 }}
+            animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+            transition={{ 
+              rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+              scale: { duration: 8, repeat: Infinity, ease: "easeInOut" }
+            }}
           />
         </motion.div>
       ))}
