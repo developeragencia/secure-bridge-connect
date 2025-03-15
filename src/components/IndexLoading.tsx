@@ -7,4 +7,4 @@ const IndexLoading: React.FC = () => {
   return <LoadingScreen message="Carregando página inicial..." variant="default" />;
 };
 
-export default IndexLoading;
+export default React.memo(IndexLoading);

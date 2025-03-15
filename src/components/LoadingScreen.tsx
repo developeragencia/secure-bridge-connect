@@ -69,4 +69,4 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   );
 };
 
-export default LoadingScreen;
+export default React.memo(LoadingScreen);
