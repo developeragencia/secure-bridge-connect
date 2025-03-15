@@ -1,241 +1,170 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Clock, RefreshCw, LogOut, ShieldCheck } from 'lucide-react';
+import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, LogOut, RefreshCw, TimerReset } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useToast } from '@/components/ui/use-toast';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const SessionExpirationPanel: React.FC = () => {
-  const { toast } = useToast();
-  const [autoLogoutEnabled, setAutoLogoutEnabled] = useState(true);
-  const [inactivityTimeout, setInactivityTimeout] = useState(30);
-  const [maxSessionDuration, setMaxSessionDuration] = useState(8);
-  const [remoteLogoutStrategy, setRemoteLogoutStrategy] = useState('instant');
-  const [isConfigSaving, setIsConfigSaving] = useState(false);
+  const [expirationTime, setExpirationTime] = useState('30');
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleSaveConfig = () => {
-    setIsConfigSaving(true);
+  const handleSaveSettings = () => {
+    setIsProcessing(true);
     
-    // Simulate saving configuration
+    // Simulate processing
     setTimeout(() => {
-      setIsConfigSaving(false);
-      toast({
-        title: "Configurações salvas",
-        description: "As configurações de expiração de sessão foram atualizadas.",
+      setIsProcessing(false);
+      toast("Configurações salvas", {
+        description: `Tempo de expiração de sessão definido para ${expirationTime} minutos.`
       });
-    }, 1500);
+    }, 1000);
   };
 
-  const handleTestLogout = () => {
-    toast({
-      title: "Teste de logout",
-      description: "Uma sessão do seu teste será encerrada em 5 segundos.",
-    });
+  const handleEndAllSessions = () => {
+    setIsProcessing(true);
     
+    // Simulate processing
     setTimeout(() => {
-      toast({
-        title: "Sessão de teste encerrada",
-        description: "O teste de logout remoto foi concluído com sucesso.",
+      setIsProcessing(false);
+      toast("Sessões encerradas", {
+        description: "Todas as sessões ativas foram encerradas com sucesso."
       });
-    }, 5000);
-  };
-
-  const handleForceLogoutAll = () => {
-    toast({
-      title: "Todas as sessões encerradas",
-      description: "Todos os usuários terão que fazer login novamente.",
-    });
+    }, 1000);
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold">Expiração de Sessão</h2>
-          <p className="text-muted-foreground">Configure o comportamento e tempo de expiração das sessões</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Label htmlFor="auto-logout" className="font-medium">
-            {autoLogoutEnabled ? 'Ativado' : 'Desativado'}
-          </Label>
-          <Switch 
-            id="auto-logout" 
-            checked={autoLogoutEnabled} 
-            onCheckedChange={setAutoLogoutEnabled} 
-          />
-        </div>
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Expiração de Sessão</h2>
+        <p className="text-muted-foreground">
+          Configure o tempo de expiração de sessão e gerencie sessões ativas.
+        </p>
       </div>
 
-      <Alert>
-        <Clock className="h-4 w-4" />
-        <AlertTitle>Configuração de Sessão Ativa</AlertTitle>
-        <AlertDescription>
-          {autoLogoutEnabled ? 
-            "As sessões irão expirar automaticamente após o período de inatividade configurado." :
-            "As sessões não expirarão automaticamente. Isto pode representar um risco de segurança."}
-        </AlertDescription>
-      </Alert>
-
-      {autoLogoutEnabled && (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Timeout por Inatividade</CardTitle>
-            <CardDescription>Encerra a sessão após um período de inatividade</CardDescription>
+            <CardTitle>Tempo de Expiração</CardTitle>
+            <CardDescription>
+              Configure quanto tempo uma sessão pode ficar inativa antes de expirar
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="inactivity-timeout">Tempo de inatividade (minutos)</Label>
-                  <span className="text-sm font-medium">{inactivityTimeout} min</span>
+              <RadioGroup 
+                value={expirationTime} 
+                onValueChange={setExpirationTime}
+                className="space-y-3"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="15" id="r1" />
+                  <Label htmlFor="r1" className="font-normal">15 minutos (recomendado)</Label>
                 </div>
-                <Slider 
-                  id="inactivity-timeout"
-                  min={5}
-                  max={60}
-                  step={5}
-                  value={[inactivityTimeout]}
-                  onValueChange={(value) => setInactivityTimeout(value[0])}
-                />
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>5 min</span>
-                  <span>60 min</span>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="30" id="r2" />
+                  <Label htmlFor="r2" className="font-normal">30 minutos</Label>
                 </div>
-              </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="60" id="r3" />
+                  <Label htmlFor="r3" className="font-normal">1 hora</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="240" id="r4" />
+                  <Label htmlFor="r4" className="font-normal">4 horas</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="480" id="r5" />
+                  <Label htmlFor="r5" className="font-normal">8 horas</Label>
+                </div>
+              </RadioGroup>
+              
+              <Button onClick={handleSaveSettings} disabled={isProcessing} className="w-full">
+                {isProcessing ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Processando...
+                  </>
+                ) : (
+                  <>
+                    <Clock className="mr-2 h-4 w-4" />
+                    Salvar Configurações
+                  </>
+                )}
+              </Button>
             </div>
           </CardContent>
         </Card>
-      )}
-
-      {autoLogoutEnabled && (
+        
         <Card>
           <CardHeader>
-            <CardTitle>Tempo Máximo de Sessão</CardTitle>
-            <CardDescription>Define por quanto tempo uma sessão pode permanecer ativa</CardDescription>
+            <CardTitle>Gerenciamento de Sessões</CardTitle>
+            <CardDescription>
+              Visualize e gerencie as sessões ativas em sua conta
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="max-session">Duração máxima (horas)</Label>
-                  <span className="text-sm font-medium">{maxSessionDuration} horas</span>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between border p-3 rounded-md">
+                  <div>
+                    <h4 className="font-medium">Windows 11 • Chrome</h4>
+                    <p className="text-xs text-muted-foreground">
+                      São Paulo, Brasil • Há 2 minutos
+                    </p>
+                  </div>
+                  <ShieldCheck className="h-4 w-4 text-green-500" />
                 </div>
-                <Slider 
-                  id="max-session"
-                  min={1}
-                  max={24}
-                  step={1}
-                  value={[maxSessionDuration]}
-                  onValueChange={(value) => setMaxSessionDuration(value[0])}
-                />
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>1 hora</span>
-                  <span>24 horas</span>
+                
+                <div className="flex items-center justify-between border p-3 rounded-md">
+                  <div>
+                    <h4 className="font-medium">macOS • Safari</h4>
+                    <p className="text-xs text-muted-foreground">
+                      Rio de Janeiro, Brasil • Há 3 dias
+                    </p>
+                  </div>
+                  <Button variant="ghost" size="sm" className="h-8 px-2">
+                    <LogOut className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                
+                <div className="flex items-center justify-between border p-3 rounded-md">
+                  <div>
+                    <h4 className="font-medium">iOS 16 • Mobile App</h4>
+                    <p className="text-xs text-muted-foreground">
+                      Brasília, Brasil • Há 1 semana
+                    </p>
+                  </div>
+                  <Button variant="ghost" size="sm" className="h-8 px-2">
+                    <LogOut className="h-3.5 w-3.5" />
+                  </Button>
                 </div>
               </div>
+              
+              <Button 
+                variant="outline" 
+                onClick={handleEndAllSessions} 
+                disabled={isProcessing}
+                className="w-full"
+              >
+                {isProcessing ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Processando...
+                  </>
+                ) : (
+                  <>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Encerrar Todas as Outras Sessões
+                  </>
+                )}
+              </Button>
             </div>
           </CardContent>
         </Card>
-      )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Logout Remoto</CardTitle>
-          <CardDescription>Configure como os administradores podem encerrar sessões remotamente</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="logout-strategy">Estratégia de Logout</Label>
-                <Select value={remoteLogoutStrategy} onValueChange={setRemoteLogoutStrategy}>
-                  <SelectTrigger id="logout-strategy">
-                    <SelectValue placeholder="Selecione uma estratégia" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="instant">Imediato</SelectItem>
-                    <SelectItem value="next-request">Na próxima requisição</SelectItem>
-                    <SelectItem value="graceful">Com período de carência (5 min)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-              <Button variant="outline" onClick={handleTestLogout}>
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Testar Logout Remoto
-              </Button>
-              <Button variant="destructive" onClick={handleForceLogoutAll}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Forçar Logout de Todos
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Agendamento de Expiração</CardTitle>
-          <CardDescription>Configure horários específicos para expiração automática das sessões</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Switch id="weekend-logout" />
-                <Label htmlFor="weekend-logout">
-                  Logout automático nos finais de semana
-                </Label>
-              </div>
-              <Select defaultValue="19">
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Selecione o horário" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="17">17:00</SelectItem>
-                  <SelectItem value="18">18:00</SelectItem>
-                  <SelectItem value="19">19:00</SelectItem>
-                  <SelectItem value="20">20:00</SelectItem>
-                  <SelectItem value="21">21:00</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Switch id="daily-logout" defaultChecked />
-                <Label htmlFor="daily-logout">
-                  Logout diário no horário
-                </Label>
-              </div>
-              <Select defaultValue="22">
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Selecione o horário" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="22">22:00</SelectItem>
-                  <SelectItem value="23">23:00</SelectItem>
-                  <SelectItem value="0">00:00</SelectItem>
-                  <SelectItem value="1">01:00</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline">Redefinir Padrões</Button>
-          <Button onClick={handleSaveConfig} disabled={isConfigSaving}>
-            {isConfigSaving ? "Salvando..." : "Salvar Configurações"}
-          </Button>
-        </CardFooter>
-      </Card>
+      </div>
     </div>
   );
 };

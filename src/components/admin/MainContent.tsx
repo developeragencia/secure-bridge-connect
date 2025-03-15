@@ -1,3 +1,4 @@
+
 import React from 'react';
 import AdminDashboard from './AdminDashboard';
 import AdminUsers from './AdminUsers';
@@ -155,7 +156,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'admin_profile':
         return <AdminProfileSettings />;
       case 'security':
-        return <ExtraTabContent activeTab="security" />;
+        return <TwoFactorAuthPanel />;
       case 'billing':
         return <BillingContent />;
       case 'support':

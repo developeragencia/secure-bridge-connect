@@ -1,378 +1,381 @@
 
 import React, { useState } from 'react';
-import { Receipt, Download, Plus, Search, Filter, Calendar, Printer, Send, ArrowRight, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import TabTitleSection from '../header/TabTitleSection';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { 
+  FileText,
+  Download,
+  Printer,
+  Search,
+  Filter,
+  RefreshCw,
+  Mail,
+  Plus,
+  User,
+  Calendar,
+  ChevronsUpDown,
+  X,
+  CheckCircle2,
+  AlertCircle
+} from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { toast } from 'sonner';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+
+interface Receipt {
+  id: string;
+  supplier: string;
+  description: string;
+  date: string;
+  amount: string;
+  status: 'pending' | 'sent' | 'error';
+  taxType: string;
+}
 
 const RetentionReceiptsPanel: React.FC = () => {
-  const [year, setYear] = useState('2023');
-  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [receipts, setReceipts] = useState<Receipt[]>([
+    {
+      id: "REC001",
+      supplier: "Empresa ABC Ltda",
+      description: "Retenção IRRF - Serviços de TI",
+      date: "2023-06-15",
+      amount: "R$ 2.450,00",
+      status: "sent",
+      taxType: "IRRF"
+    },
+    {
+      id: "REC002",
+      supplier: "XYZ Consultoria",
+      description: "Retenção PIS/COFINS/CSLL",
+      date: "2023-05-28",
+      amount: "R$ 1.876,30",
+      status: "sent",
+      taxType: "PIS/COFINS/CSLL"
+    },
+    {
+      id: "REC003",
+      supplier: "Contabilidade Silva & Cia",
+      description: "Retenção IRRF - Serviços Contábeis",
+      date: "2023-06-02",
+      amount: "R$ 975,45",
+      status: "pending",
+      taxType: "IRRF"
+    },
+    {
+      id: "REC004",
+      supplier: "Tech Solutions S.A.",
+      description: "Retenção ISS",
+      date: "2023-06-10",
+      amount: "R$ 3.245,80",
+      status: "error",
+      taxType: "ISS"
+    }
+  ]);
+
+  const filteredReceipts = receipts.filter(receipt => {
+    const matchesSearch = 
+      receipt.supplier.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      receipt.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      receipt.id.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    if (statusFilter === 'all') {
+      return matchesSearch;
+    } else {
+      return matchesSearch && receipt.status === statusFilter;
+    }
+  });
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    
+    // Simulate refresh
+    setTimeout(() => {
+      setIsRefreshing(false);
+      toast("Dados atualizados", {
+        description: "Lista de comprovantes atualizada com sucesso."
+      });
+    }, 1500);
+  };
+
+  const handleCreateReceipt = () => {
+    setShowCreateDialog(false);
+    
+    const newReceipt: Receipt = {
+      id: `REC00${receipts.length + 1}`,
+      supplier: "Novo Fornecedor",
+      description: "Retenção IRRF - Serviços Gerais",
+      date: new Date().toISOString().split('T')[0],
+      amount: "R$ 1.500,00",
+      status: "pending",
+      taxType: "IRRF"
+    };
+    
+    setReceipts([newReceipt, ...receipts]);
+    
+    toast("Comprovante criado", {
+      description: "Novo comprovante de retenção criado com sucesso."
+    });
+  };
+
+  const handleSendReceipt = (id: string) => {
+    const updatedReceipts = receipts.map(receipt => {
+      if (receipt.id === id) {
+        return { ...receipt, status: 'sent' as const };
+      }
+      return receipt;
+    });
+    
+    setReceipts(updatedReceipts);
+    
+    toast("Comprovante enviado", {
+      description: `Comprovante ${id} enviado com sucesso para o fornecedor.`
+    });
+  };
+
+  const handleDeleteReceipt = (id: string) => {
+    const updatedReceipts = receipts.filter(receipt => receipt.id !== id);
+    setReceipts(updatedReceipts);
+    
+    toast("Comprovante excluído", {
+      description: `Comprovante ${id} foi excluído com sucesso.`
+    });
+  };
+
+  const handleDownloadReceipt = (id: string) => {
+    toast("Download iniciado", {
+      description: `Baixando comprovante ${id}.`
+    });
+  };
+
+  const handlePrintReceipt = (id: string) => {
+    toast("Imprimindo comprovante", {
+      description: `Preparando impressão do comprovante ${id}.`
+    });
+  };
+
+  const getStatusBadge = (status: 'pending' | 'sent' | 'error') => {
+    switch (status) {
+      case 'pending':
+        return <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">Pendente</Badge>;
+      case 'sent':
+        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Enviado</Badge>;
+      case 'error':
+        return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Erro</Badge>;
+      default:
+        return <Badge variant="outline">Desconhecido</Badge>;
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <TabTitleSection 
-        Icon={Receipt} 
-        title="Recibos de Retenção" 
-        description="Gerencie recibos de retenção tributária, emissão, envio e histórico de documentos."
-      />
-
-      {/* Summary cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <SummaryCard
-          title="Total de Recibos"
-          value="152"
-          icon={<Receipt className="h-5 w-5 text-primary" />}
-          description="42 emitidos este mês"
-        />
-        <SummaryCard
-          title="Valor Total Retido"
-          value="R$ 876.543,21"
-          icon={<CheckCircle2 className="h-5 w-5 text-emerald-500" />}
-          description="R$ 245.678,90 este mês"
-        />
-        <SummaryCard
-          title="Pendentes de Envio"
-          value="18"
-          icon={<Clock className="h-5 w-5 text-amber-500" />}
-          description="Aguardando processamento"
-        />
-        <SummaryCard
-          title="Com Problemas"
-          value="5"
-          icon={<AlertCircle className="h-5 w-5 text-red-500" />}
-          description="Requerem atenção imediata"
-        />
-      </div>
-
-      {/* Filters and search */}
-      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-        <div className="flex flex-1 items-center gap-2 flex-wrap">
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Buscar recibos por cliente ou número..."
-              className="w-full bg-background pl-8 md:w-[320px]"
-            />
-          </div>
-          <Select value={year} onValueChange={setYear}>
-            <SelectTrigger className="w-[100px]">
-              <SelectValue placeholder="Ano" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="2023">2023</SelectItem>
-              <SelectItem value="2022">2022</SelectItem>
-              <SelectItem value="2021">2021</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="outline" size="icon">
-            <Filter className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="icon">
-            <Calendar className="h-4 w-4" />
-          </Button>
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Comprovantes de Retenção</h2>
+          <p className="text-muted-foreground">
+            Gerencie e emita comprovantes de retenção para fornecedores e órgãos públicos
+          </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm">
-            <Download className="mr-2 h-4 w-4" />
-            Exportar
-          </Button>
-          <Button size="sm">
+        
+        <div className="flex flex-wrap items-center gap-2">
+          <Button onClick={() => setShowCreateDialog(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Novo Recibo
+            Novo Comprovante
+          </Button>
+          
+          <Button variant="outline" onClick={() => handleRefresh()}>
+            <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Atualizar
           </Button>
         </div>
       </div>
-
-      {/* Main content tabs */}
-      <Tabs defaultValue="recent" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="recent">Recentes</TabsTrigger>
-          <TabsTrigger value="pending">Pendentes</TabsTrigger>
-          <TabsTrigger value="sent">Enviados</TabsTrigger>
-          <TabsTrigger value="all">Todos</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="recent" className="space-y-4">
-          <Card>
-            <CardHeader className="px-6 py-4">
-              <CardTitle>Recibos Recentes</CardTitle>
-              <CardDescription>
-                Recibos de retenção emitidos nos últimos 30 dias
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="border-t">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b bg-muted/50 text-sm text-muted-foreground">
-                      <th className="h-10 px-4 text-left font-medium">Número</th>
-                      <th className="h-10 px-4 text-left font-medium">Cliente</th>
-                      <th className="h-10 px-4 text-left font-medium">Data</th>
-                      <th className="h-10 px-4 text-left font-medium">Tributo</th>
-                      <th className="h-10 px-4 text-left font-medium">Valor</th>
-                      <th className="h-10 px-4 text-left font-medium">Status</th>
-                      <th className="h-10 px-4 text-left font-medium">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <ReceiptRow
-                      number="RET-2023-001"
-                      client="Empresa ABC Ltda"
-                      date="15/07/2023"
-                      taxType="IRRF"
-                      value="R$ 12.345,67"
-                      status="Enviado"
-                    />
-                    <ReceiptRow
-                      number="RET-2023-002"
-                      client="XYZ Indústria S.A."
-                      date="10/07/2023"
-                      taxType="PIS/COFINS"
-                      value="R$ 23.456,78"
-                      status="Pendente"
-                    />
-                    <ReceiptRow
-                      number="RET-2023-003"
-                      client="Tech Solutions Ltda"
-                      date="05/07/2023"
-                      taxType="CSLL"
-                      value="R$ 8.765,43"
-                      status="Enviado"
-                    />
-                    <ReceiptRow
-                      number="RET-2023-004"
-                      client="Comércio Geral Ltda"
-                      date="01/07/2023"
-                      taxType="IRRF"
-                      value="R$ 6.543,21"
-                      status="Erro"
-                    />
-                    <ReceiptRow
-                      number="RET-2023-005"
-                      client="Distribuidora Norte Ltda"
-                      date="28/06/2023"
-                      taxType="PIS/COFINS"
-                      value="R$ 15.678,90"
-                      status="Enviado"
-                    />
-                  </tbody>
-                </table>
+      
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="relative w-full">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Input
+                placeholder="Buscar comprovante..."
+                className="pl-9 w-full"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[180px]">
+                <Filter className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="sent">Enviados</SelectItem>
+                <SelectItem value="pending">Pendentes</SelectItem>
+                <SelectItem value="error">Com erro</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Fornecedor</TableHead>
+                <TableHead>Descrição</TableHead>
+                <TableHead>Data</TableHead>
+                <TableHead>Valor</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredReceipts.length > 0 ? (
+                filteredReceipts.map((receipt) => (
+                  <TableRow key={receipt.id}>
+                    <TableCell className="font-medium">{receipt.id}</TableCell>
+                    <TableCell>{receipt.supplier}</TableCell>
+                    <TableCell>{receipt.description}</TableCell>
+                    <TableCell>{new Date(receipt.date).toLocaleDateString('pt-BR')}</TableCell>
+                    <TableCell>{receipt.amount}</TableCell>
+                    <TableCell>{getStatusBadge(receipt.status)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        {receipt.status === 'pending' && (
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => handleSendReceipt(receipt.id)}
+                          >
+                            <Mail className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8"
+                          onClick={() => handleDownloadReceipt(receipt.id)}
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8"
+                          onClick={() => handlePrintReceipt(receipt.id)}
+                        >
+                          <Printer className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => handleDeleteReceipt(receipt.id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-6 text-muted-foreground">
+                    Nenhum comprovante encontrado.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+      
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle>Criar Novo Comprovante de Retenção</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="supplier">Fornecedor</Label>
+              <Select defaultValue="supplier1">
+                <SelectTrigger id="supplier">
+                  <User className="mr-2 h-4 w-4 text-muted-foreground" />
+                  <SelectValue placeholder="Selecione o fornecedor" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="supplier1">Empresa ABC Ltda</SelectItem>
+                  <SelectItem value="supplier2">XYZ Consultoria</SelectItem>
+                  <SelectItem value="supplier3">Tech Solutions S.A.</SelectItem>
+                  <SelectItem value="supplier4">Contabilidade Silva & Cia</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="tax-type">Tipo de Retenção</Label>
+              <Select defaultValue="irrf">
+                <SelectTrigger id="tax-type">
+                  <SelectValue placeholder="Selecione o tipo de retenção" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="irrf">IRRF - Imposto de Renda Retido na Fonte</SelectItem>
+                  <SelectItem value="pcc">PIS/COFINS/CSLL</SelectItem>
+                  <SelectItem value="iss">ISS - Imposto Sobre Serviços</SelectItem>
+                  <SelectItem value="inss">INSS - Contribuição Previdenciária</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="amount">Valor da Retenção</Label>
+              <Input id="amount" placeholder="R$ 0,00" type="text" />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="date">Data de Competência</Label>
+              <div className="flex">
+                <Input id="date" type="date" defaultValue={new Date().toISOString().split('T')[0]} />
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="pending" className="space-y-4">
-          <ReceiptGrid status="Pendente" />
-        </TabsContent>
-
-        <TabsContent value="sent" className="space-y-4">
-          <ReceiptGrid status="Enviado" />
-        </TabsContent>
-
-        <TabsContent value="all" className="space-y-4">
-          <ReceiptGrid status="Todos" />
-        </TabsContent>
-      </Tabs>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="description">Descrição</Label>
+              <Input id="description" placeholder="Descrição do serviço ou retenção" />
+            </div>
+            
+            <div className="flex items-center space-x-2 pt-2">
+              <Checkbox id="send-email" defaultChecked />
+              <label
+                htmlFor="send-email"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Enviar comprovante por e-mail ao fornecedor
+              </label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleCreateReceipt}>
+              <CheckCircle2 className="mr-2 h-4 w-4" />
+              Criar Comprovante
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
-  );
-};
-
-// Helper component for summary cards
-interface SummaryCardProps {
-  title: string;
-  value: string;
-  icon: React.ReactNode;
-  description: string;
-}
-
-const SummaryCard: React.FC<SummaryCardProps> = ({ 
-  title, 
-  value, 
-  icon, 
-  description 
-}) => {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">
-          {description}
-        </p>
-      </CardContent>
-    </Card>
-  );
-};
-
-// Helper component for receipt table rows
-interface ReceiptRowProps {
-  number: string;
-  client: string;
-  date: string;
-  taxType: string;
-  value: string;
-  status: 'Enviado' | 'Pendente' | 'Erro';
-}
-
-const ReceiptRow: React.FC<ReceiptRowProps> = ({
-  number,
-  client,
-  date,
-  taxType,
-  value,
-  status,
-}) => {
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'enviado':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'pendente':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'erro':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  return (
-    <tr className="border-b transition-colors hover:bg-muted/50">
-      <td className="p-4 align-middle text-sm">{number}</td>
-      <td className="p-4 align-middle font-medium">{client}</td>
-      <td className="p-4 align-middle text-sm">{date}</td>
-      <td className="p-4 align-middle text-sm">{taxType}</td>
-      <td className="p-4 align-middle text-sm font-medium">{value}</td>
-      <td className="p-4 align-middle">
-        <Badge variant="outline" className={`${getStatusColor(status)}`}>
-          {status}
-        </Badge>
-      </td>
-      <td className="p-4 align-middle">
-        <div className="flex space-x-1">
-          <Button variant="ghost" size="icon" className="h-7 w-7">
-            <Download className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7">
-            <Printer className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7">
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-      </td>
-    </tr>
-  );
-};
-
-// Helper component for receipt grid
-interface ReceiptGridProps {
-  status: 'Pendente' | 'Enviado' | 'Erro' | 'Todos';
-}
-
-const ReceiptGrid: React.FC<ReceiptGridProps> = ({ status }) => {
-  // This would typically fetch the receipts with the given status
-  // For now, just show a placeholder message
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{status === 'Todos' ? 'Todos os Recibos' : `Recibos ${status}s`}</CardTitle>
-        <CardDescription>{getStatusDescription(status)}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* For demonstration, let's show some receipt cards */}
-        {Array.from({ length: 6 }).map((_, index) => (
-          <ReceiptCard key={index} status={status === 'Todos' ? getRandomStatus() : status} />
-        ))}
-      </CardContent>
-    </Card>
-  );
-};
-
-// Helper function to get a random status for the "Todos" tab demonstration
-const getRandomStatus = (): 'Pendente' | 'Enviado' | 'Erro' => {
-  const statuses: Array<'Pendente' | 'Enviado' | 'Erro'> = ['Pendente', 'Enviado', 'Erro'];
-  return statuses[Math.floor(Math.random() * statuses.length)];
-};
-
-// Helper function to get a description based on the status
-const getStatusDescription = (status: string): string => {
-  switch (status) {
-    case 'Pendente':
-      return 'Recibos que ainda não foram enviados aos clientes';
-    case 'Enviado':
-      return 'Recibos já enviados com sucesso aos clientes';
-    case 'Erro':
-      return 'Recibos que apresentaram erros durante o processamento';
-    case 'Todos':
-      return 'Visualização completa de todos os recibos';
-    default:
-      return '';
-  }
-};
-
-// Helper component for receipt cards in the grid view
-const ReceiptCard: React.FC<{ status: 'Pendente' | 'Enviado' | 'Erro' }> = ({ status }) => {
-  // Generate some random mock data for the card
-  const client = ['Empresa ABC', 'XYZ Indústria', 'Tech Solutions', 'Comércio Geral'][Math.floor(Math.random() * 4)];
-  const value = `R$ ${(Math.random() * 20000 + 5000).toFixed(2)}`;
-  const date = `${Math.floor(Math.random() * 28) + 1}/07/2023`;
-  const taxType = ['IRRF', 'PIS/COFINS', 'CSLL', 'INSS'][Math.floor(Math.random() * 4)];
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'enviado':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'pendente':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'erro':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  return (
-    <Card className="overflow-hidden transition hover:shadow-md hover:border-primary/60">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <Badge variant="outline" className={getStatusColor(status)}>
-            {status}
-          </Badge>
-          <div className="text-sm font-medium">
-            {date}
-          </div>
-        </div>
-        <CardTitle className="text-base mt-2">{`RET-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`}</CardTitle>
-        <CardDescription>{client}</CardDescription>
-      </CardHeader>
-      <CardContent className="pb-2">
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <p className="text-sm text-muted-foreground">Valor retido</p>
-            <p className="text-lg font-bold">{value}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Tributo</p>
-            <p className="text-sm">{taxType}</p>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="bg-muted/20 border-t pt-3">
-        <Button variant="ghost" className="w-full justify-between">
-          <span>Ver detalhes</span>
-          <ArrowRight className="h-4 w-4" />
-        </Button>
-      </CardFooter>
-    </Card>
   );
 };
 

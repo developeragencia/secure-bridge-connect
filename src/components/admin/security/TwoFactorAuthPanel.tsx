@@ -1,284 +1,214 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { QrCode, Smartphone, KeySquare, ShieldCheck, ShieldAlert, Shield } from 'lucide-react';
+import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useToast } from '@/components/ui/use-toast';
-import { Copy, Info, Key, QrCode, Shield, Smartphone } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 const TwoFactorAuthPanel: React.FC = () => {
-  const { toast } = useToast();
-  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
-  const [setupStep, setSetupStep] = useState(1);
+  const [isActive, setIsActive] = useState(false);
+  const [setupStep, setSetupStep] = useState(0);
   const [verificationCode, setVerificationCode] = useState('');
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [recoveryCodesCopied, setRecoveryCodesCopied] = useState(false);
-  
-  const mockRecoveryCodes = [
-    'A1B2C3D4E5F6',
-    'G7H8I9J0K1L2',
-    'M3N4O5P6Q7R8',
-    'S9T0U1V2W3X4',
-    'Y5Z6A7B8C9D0'
-  ];
+  const [activeMethod, setActiveMethod] = useState('app');
 
   const handleToggle2FA = () => {
-    if (!is2FAEnabled) {
-      // When enabling 2FA
-      setSetupStep(1);
-    } else {
-      // When disabling 2FA
-      toast({
-        title: "Autenticação de dois fatores desativada",
-        description: "A autenticação de dois fatores foi desativada com sucesso.",
+    if (isActive) {
+      toast("2FA desativado", {
+        description: "A autenticação de dois fatores foi desativada com sucesso."
       });
+      setIsActive(false);
+      setSetupStep(0);
+    } else {
+      setSetupStep(1);
     }
-    setIs2FAEnabled(!is2FAEnabled);
-  };
-
-  const handleGenerateQR = () => {
-    setSetupStep(2);
-    toast({
-      title: "QR Code gerado",
-      description: "Escaneie o QR Code com seu aplicativo autenticador.",
-    });
   };
 
   const handleVerifyCode = () => {
-    if (verificationCode.length !== 6) {
-      toast({
-        title: "Código inválido",
-        description: "O código deve ter 6 dígitos.",
-        variant: "destructive"
+    if (verificationCode.length < 6) {
+      toast("Código inválido", {
+        description: "Por favor, insira um código de verificação válido."
       });
       return;
     }
-    
-    setIsVerifying(true);
-    
+
     // Simulate verification
     setTimeout(() => {
-      setIsVerifying(false);
-      setSetupStep(3);
-      toast({
-        title: "Código verificado com sucesso",
-        description: "A autenticação de dois fatores foi configurada.",
+      setIsActive(true);
+      setSetupStep(0);
+      toast("2FA ativado", {
+        description: "A autenticação de dois fatores foi ativada com sucesso."
       });
-    }, 1500);
-  };
-
-  const handleCopyRecoveryCodes = () => {
-    navigator.clipboard.writeText(mockRecoveryCodes.join('\n'));
-    setRecoveryCodesCopied(true);
-    toast({
-      title: "Códigos de recuperação copiados",
-      description: "Guarde-os em um local seguro.",
-    });
-  };
-
-  const handleFinishSetup = () => {
-    toast({
-      title: "Configuração concluída",
-      description: "A autenticação de dois fatores está ativada em sua conta.",
-    });
+    }, 1000);
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold">Autenticação de Dois Fatores</h2>
-          <p className="text-muted-foreground">Configure uma camada extra de segurança para sua conta</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Label htmlFor="enable-2fa" className="font-medium">
-            {is2FAEnabled ? 'Ativada' : 'Desativada'}
-          </Label>
-          <Switch 
-            id="enable-2fa" 
-            checked={is2FAEnabled} 
-            onCheckedChange={handleToggle2FA} 
-          />
-        </div>
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Autenticação de Dois Fatores (2FA)</h2>
+        <p className="text-muted-foreground">
+          Configure a autenticação de dois fatores para adicionar uma camada extra de segurança.
+        </p>
       </div>
 
-      <Alert>
-        <Info className="h-4 w-4" />
-        <AlertTitle>Proteção adicional</AlertTitle>
-        <AlertDescription>
-          A autenticação de dois fatores adiciona uma camada extra de segurança à sua conta, exigindo 
-          um código exclusivo do seu aplicativo autenticador além da sua senha.
-        </AlertDescription>
-      </Alert>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Status da Autenticação de Dois Fatores</CardTitle>
+              <CardDescription>Gerencie as configurações de 2FA da sua conta</CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              {isActive ? (
+                <>
+                  <ShieldCheck className="h-5 w-5 text-green-500" />
+                  <span className="text-sm font-medium text-green-600">Ativo</span>
+                </>
+              ) : (
+                <>
+                  <ShieldAlert className="h-5 w-5 text-amber-500" />
+                  <span className="text-sm font-medium text-amber-600">Inativo</span>
+                </>
+              )}
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {setupStep === 0 ? (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                {isActive 
+                  ? "A autenticação de dois fatores está ativada. Isso significa que você precisará fornecer um código adicional ao fazer login."
+                  : "A autenticação de dois fatores adiciona uma camada extra de segurança à sua conta, exigindo mais do que apenas uma senha para fazer login."}
+              </p>
+              <Button onClick={handleToggle2FA}>
+                {isActive ? (
+                  <>
+                    <Shield className="mr-2 h-4 w-4" />
+                    Desativar 2FA
+                  </>
+                ) : (
+                  <>
+                    <Shield className="mr-2 h-4 w-4" />
+                    Configurar 2FA
+                  </>
+                )}
+              </Button>
+            </div>
+          ) : setupStep === 1 ? (
+            <div className="space-y-6">
+              <Tabs defaultValue={activeMethod} onValueChange={setActiveMethod}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="app">Aplicativo</TabsTrigger>
+                  <TabsTrigger value="sms">SMS</TabsTrigger>
+                </TabsList>
+                <TabsContent value="app" className="space-y-4">
+                  <div className="flex flex-col items-center justify-center space-y-4 p-4">
+                    <QrCode className="h-48 w-48 text-primary" />
+                    <p className="text-sm text-muted-foreground text-center">
+                      Escaneie o código QR acima com o seu aplicativo de autenticação (Google Authenticator, Microsoft Authenticator, etc).
+                    </p>
+                    <div className="text-center">
+                      <p className="text-sm font-medium">Código de backup:</p>
+                      <p className="font-mono bg-muted p-2 rounded text-center">ABCD-EFGH-IJKL-MNOP</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="verification-code">Código de verificação</Label>
+                    <Input
+                      id="verification-code"
+                      placeholder="000000"
+                      value={verificationCode}
+                      onChange={(e) => setVerificationCode(e.target.value)}
+                      maxLength={6}
+                    />
+                  </div>
+                  <div className="flex justify-between">
+                    <Button variant="outline" onClick={() => setSetupStep(0)}>Cancelar</Button>
+                    <Button onClick={handleVerifyCode}>Verificar e Ativar</Button>
+                  </div>
+                </TabsContent>
+                <TabsContent value="sms" className="space-y-4">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-center py-6">
+                      <Smartphone className="h-24 w-24 text-primary" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone-number">Número de telefone</Label>
+                      <Input id="phone-number" placeholder="+55 (00) 00000-0000" />
+                    </div>
+                    <Button className="w-full" onClick={() => setSetupStep(2)}>
+                      Enviar código SMS
+                    </Button>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="sms-code">Código SMS</Label>
+                <Input
+                  id="sms-code"
+                  placeholder="000000"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  maxLength={6}
+                />
+              </div>
+              <div className="flex justify-between">
+                <Button variant="outline" onClick={() => setSetupStep(1)}>Voltar</Button>
+                <Button onClick={handleVerifyCode}>Verificar e Ativar</Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-      {is2FAEnabled && (
+      {isActive && (
         <Card>
           <CardHeader>
-            <CardTitle>Configuração de Autenticação de Dois Fatores</CardTitle>
-            <CardDescription>Siga os passos abaixo para configurar a autenticação de dois fatores em sua conta</CardDescription>
+            <CardTitle>Métodos de Autenticação</CardTitle>
+            <CardDescription>Gerencie suas opções de autenticação</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${
-                  setupStep >= 1 ? 'bg-primary border-primary text-primary-foreground' : 'border-muted-foreground text-muted-foreground'
-                }`}>
-                  1
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border p-4 rounded-md">
+                <div className="flex items-center">
+                  <Smartphone className="h-5 w-5 mr-3 text-primary" />
+                  <div>
+                    <h4 className="font-medium">Aplicativo Autenticador</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Google Authenticator, Microsoft Authenticator, etc.
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-medium leading-none">Baixe um aplicativo autenticador</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Recomendamos o Google Authenticator, Microsoft Authenticator ou Authy.
-                  </p>
-                  {setupStep === 1 && (
-                    <Button className="mt-2" onClick={handleGenerateQR}>
-                      <Smartphone className="mr-2 h-4 w-4" />
-                      Tenho um aplicativo instalado
-                    </Button>
-                  )}
-                </div>
+                <Badge variant="outline" className="bg-primary/10 text-primary">Ativo</Badge>
               </div>
-
-              <div className="flex items-start gap-4">
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${
-                  setupStep >= 2 ? 'bg-primary border-primary text-primary-foreground' : 'border-muted-foreground text-muted-foreground'
-                }`}>
-                  2
+              
+              <div className="flex items-center justify-between border p-4 rounded-md">
+                <div className="flex items-center">
+                  <KeySquare className="h-5 w-5 mr-3 text-muted-foreground" />
+                  <div>
+                    <h4 className="font-medium">Chaves de Segurança</h4>
+                    <p className="text-sm text-muted-foreground">
+                      YubiKey, Google Titan Key, etc.
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-medium leading-none">Escaneie o QR code</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Abra seu aplicativo autenticador e escaneie o QR code abaixo.
-                  </p>
-                  
-                  {setupStep >= 2 && (
-                    <div className="mt-4 p-4 border rounded-md flex flex-col items-center">
-                      <div className="bg-muted p-8 rounded-md mb-4">
-                        <QrCode className="h-32 w-32" />
-                      </div>
-                      
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Ou insira este código manualmente no aplicativo:
-                      </p>
-                      <div className="flex items-center gap-2 font-mono">
-                        <code className="bg-muted p-2 rounded">ABCD EFGH IJKL MNOP</code>
-                        <Button variant="ghost" size="icon" onClick={() => {
-                          navigator.clipboard.writeText('ABCD EFGH IJKL MNOP');
-                          toast({
-                            title: "Código copiado",
-                            description: "O código foi copiado para a área de transferência.",
-                          });
-                        }}>
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      
-                      <div className="mt-4 w-full">
-                        <Label htmlFor="verification-code">Digite o código do aplicativo</Label>
-                        <div className="flex gap-2 mt-1">
-                          <Input 
-                            id="verification-code" 
-                            placeholder="123456" 
-                            maxLength={6}
-                            value={verificationCode}
-                            onChange={(e) => setVerificationCode(e.target.value)}
-                          />
-                          <Button onClick={handleVerifyCode} disabled={isVerifying}>
-                            {isVerifying ? 'Verificando...' : 'Verificar'}
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${
-                  setupStep >= 3 ? 'bg-primary border-primary text-primary-foreground' : 'border-muted-foreground text-muted-foreground'
-                }`}>
-                  3
-                </div>
-                <div className="space-y-1">
-                  <h4 className="text-sm font-medium leading-none">Salve os códigos de recuperação</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Guarde estes códigos em um local seguro para recuperar o acesso à sua conta caso perca seu dispositivo.
-                  </p>
-                  
-                  {setupStep >= 3 && (
-                    <div className="mt-4 p-4 border rounded-md">
-                      <div className="grid grid-cols-2 gap-2 mb-4">
-                        {mockRecoveryCodes.map((code, index) => (
-                          <code key={index} className="bg-muted p-2 rounded font-mono text-xs">
-                            {code}
-                          </code>
-                        ))}
-                      </div>
-                      
-                      <div className="flex justify-between">
-                        <Button 
-                          variant="outline" 
-                          onClick={handleCopyRecoveryCodes}
-                        >
-                          <Copy className="mr-2 h-4 w-4" />
-                          {recoveryCodesCopied ? 'Códigos Copiados' : 'Copiar Códigos'}
-                        </Button>
-                        
-                        <Button onClick={handleFinishSetup}>
-                          <Shield className="mr-2 h-4 w-4" />
-                          Concluir Configuração
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <Button variant="outline" size="sm">Configurar</Button>
               </div>
             </div>
           </CardContent>
         </Card>
       )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Suas sessões ativas</CardTitle>
-          <CardDescription>Dispositivos e locais onde sua conta está conectada</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {[
-              { device: 'MacBook Pro', location: 'São Paulo, Brasil', lastActive: 'Agora', browser: 'Chrome' },
-              { device: 'iPhone 13', location: 'São Paulo, Brasil', lastActive: '1 hora atrás', browser: 'Safari' },
-              { device: 'Windows PC', location: 'Rio de Janeiro, Brasil', lastActive: '2 dias atrás', browser: 'Firefox' }
-            ].map((session, index) => (
-              <div key={index} className="flex justify-between items-center border-b pb-4">
-                <div>
-                  <h4 className="font-medium">{session.device}</h4>
-                  <p className="text-sm text-muted-foreground">{session.browser} • {session.location}</p>
-                  <p className="text-xs text-muted-foreground">Ativo: {session.lastActive}</p>
-                </div>
-                {index === 0 ? (
-                  <div className="text-sm text-green-600 font-medium">
-                    Sessão atual
-                  </div>
-                ) : (
-                  <Button variant="outline" size="sm">
-                    Encerrar
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button variant="destructive" size="sm">
-            Encerrar Todas as Outras Sessões
-          </Button>
-        </CardFooter>
-      </Card>
     </div>
   );
 };

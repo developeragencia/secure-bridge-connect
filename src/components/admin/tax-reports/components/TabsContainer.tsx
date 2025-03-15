@@ -1,41 +1,40 @@
 
 import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TabsContainerProps {
   activeTab: string;
   setActiveTab: (value: string) => void;
   fiscalContent: React.ReactNode;
+  auditContent?: React.ReactNode;
+  retentionContent?: React.ReactNode;
 }
 
-const TabsContainer: React.FC<TabsContainerProps> = ({ activeTab, setActiveTab, fiscalContent }) => {
+const TabsContainer: React.FC<TabsContainerProps> = ({
+  activeTab,
+  setActiveTab,
+  fiscalContent,
+  auditContent = <div className="py-10 text-center text-muted-foreground">Conteúdo de auditoria em desenvolvimento</div>,
+  retentionContent = <div className="py-10 text-center text-muted-foreground">Conteúdo de comprovantes em desenvolvimento</div>
+}) => {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid grid-cols-3 w-full max-w-md">
-        <TabsTrigger value="fiscal">Fiscal</TabsTrigger>
-        <TabsTrigger value="tributario">Tributário</TabsTrigger>
-        <TabsTrigger value="contabil">Contábil</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-3">
+        <TabsTrigger value="fiscal">Relatórios Fiscais</TabsTrigger>
+        <TabsTrigger value="audit">Auditorias</TabsTrigger>
+        <TabsTrigger value="retention">Comprovantes</TabsTrigger>
       </TabsList>
       
-      <TabsContent value="fiscal" className="mt-4 space-y-4">
+      <TabsContent value="fiscal" className="space-y-4 pt-4">
         {fiscalContent}
       </TabsContent>
       
-      <TabsContent value="tributario" className="mt-4">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">Selecione os parâmetros para gerar relatórios tributários.</p>
-          </CardContent>
-        </Card>
+      <TabsContent value="audit" className="space-y-4 pt-4">
+        {auditContent}
       </TabsContent>
       
-      <TabsContent value="contabil" className="mt-4">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">Selecione os parâmetros para gerar relatórios contábeis.</p>
-          </CardContent>
-        </Card>
+      <TabsContent value="retention" className="space-y-4 pt-4">
+        {retentionContent}
       </TabsContent>
     </Tabs>
   );
