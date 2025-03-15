@@ -2,6 +2,7 @@
 import React from 'react';
 import ReportsHeader from './components/ReportsHeader';
 import TabsContainer from './components/TabsContainer';
+import { TabsContent } from "@/components/ui/tabs";
 import ReportConfigForm from './components/ReportConfigForm';
 import RecentReportsList from './components/RecentReportsList';
 import FilterSidebar from './components/FilterSidebar';
@@ -31,9 +32,14 @@ const DetailedReportsPanel: React.FC = () => {
     setFilterSidebarOpen(true);
   };
 
+  const handleRefresh = () => {
+    // Implement refresh functionality here
+    console.log("Refreshing data...");
+  };
+
   // Fiscal tab content
   const fiscalContent = (
-    <>
+    <TabsContent value="fiscal" className="space-y-4 pt-4">
       <ReportConfigForm
         reportPeriod={reportPeriod}
         setReportPeriod={setReportPeriod}
@@ -54,7 +60,7 @@ const DetailedReportsPanel: React.FC = () => {
       </div>
       
       <RecentReportsList />
-    </>
+    </TabsContent>
   );
 
   return (
@@ -62,12 +68,13 @@ const DetailedReportsPanel: React.FC = () => {
       <ReportsHeader 
         onExport={handleExportReport}
         onFilter={handleFilterClick}
+        onGenerateReport={handleGenerateReport}
+        onRefresh={handleRefresh}
       />
-      <TabsContainer 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        fiscalContent={fiscalContent}
-      />
+      
+      <TabsContainer activeTab={activeTab} setActiveTab={setActiveTab}>
+        {fiscalContent}
+      </TabsContainer>
       
       <FilterSidebar 
         isVisible={filterSidebarOpen}
