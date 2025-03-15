@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
 import AdminUserProfile from '@/components/admin/AdminUserProfile';
 import { useToast } from '@/components/ui/use-toast';
-import { UserRole } from '@/types/client';
+import { UserRole } from '@/types/user'; // Changed from @/types/client to @/types/user
 
 const UserProfile = () => {
   const navigate = useNavigate();

@@ -4,7 +4,12 @@ export type UserRole =
   | 'staff_permanent' 
   | 'staff_outsourced' 
   | 'client' 
-  | 'commercial_rep';
+  | 'commercial_rep'
+  | 'admin'
+  | 'staff'
+  | 'representative'
+  | 'office'
+  | 'sales';
 
 export interface UserPermissions {
   viewAllClients: boolean;
@@ -24,7 +29,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
-  permissions: UserPermissions;
+  permissions?: UserPermissions;
   avatar?: string;
   clientId?: string;
   assignedClientIds?: string[];

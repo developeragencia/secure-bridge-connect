@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { User } from '@/types/client';
+import { User } from '@/types/user'; // Changed from @/types/client to @/types/user
 import { 
   User as UserIcon, 
   Mail, 

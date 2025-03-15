@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { User, UserRole } from '@/types/client';
+import { User, UserRole } from '@/types/user'; // Changed from @/types/client to @/types/user
 import UserProfileHeader from './user-profiles/UserProfileHeader';
 import ProfilePermissions from './user-profiles/ProfilePermissions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

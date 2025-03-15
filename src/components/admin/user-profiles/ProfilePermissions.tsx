@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { UserRole } from '@/types/client';
+import { UserRole } from '@/types/user'; // Changed from @/types/client to @/types/user
 import { cn } from '@/lib/utils';
 import { CheckCircle, XCircle } from 'lucide-react';
 

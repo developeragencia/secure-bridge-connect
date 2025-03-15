@@ -12,6 +12,7 @@ export interface Client {
   address?: string;
   city?: string;
   state?: string;
+  zipCode?: string; // Added zipCode property
   contactName: string;
   contactEmail?: string;
   contactPhone?: string;
