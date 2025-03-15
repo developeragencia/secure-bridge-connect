@@ -1,5 +1,5 @@
 
-import React, { useCallback } from 'react';
+import React, { useCallback, memo } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedLogo from './AnimatedLogo';
 
@@ -74,4 +74,5 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
   );
 };
 
-export default React.memo(LoadingScreen);
+// Use memo to prevent unnecessary re-renders
+export default memo(LoadingScreen);

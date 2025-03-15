@@ -19,10 +19,13 @@ const Index: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  if (isLoading) {
+    return <IndexLoading />;
+  }
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       <Suspense fallback={<IndexLoading />}>
-        {/* Only render the main content when no longer loading */}
         <NavBar />
         <Hero />
         <div className="py-3 sm:py-4 text-center text-xs sm:text-sm text-muted-foreground">
