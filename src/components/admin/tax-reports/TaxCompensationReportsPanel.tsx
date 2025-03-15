@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,15 +15,15 @@ import {
   Calculator,
   Download,
   FileSpreadsheet,
-  FilePdf,
   FileText,
   BarChart,
   Calendar as CalendarIcon,
-  GavelSquare,
+  Scale,
   CheckSquare,
   RefreshCw,
   FileBarChart,
-  Filter
+  Filter,
+  File
 } from 'lucide-react';
 import TabsContainer from './components/TabsContainer';
 import ReportsHeader from './components/ReportsHeader';
@@ -80,10 +79,7 @@ const TaxCompensationReportsPanel: React.FC = () => {
   };
 
   const formatCurrency = (value: string) => {
-    // Remove all non-digit characters
     const numericValue = value.replace(/\D/g, '');
-    
-    // Convert to a number and format with decimal places
     const number = parseInt(numericValue, 10) / 100;
     return number.toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
@@ -285,7 +281,7 @@ const TaxCompensationReportsPanel: React.FC = () => {
                     <td className="p-3">
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>
-                          <FilePdf className="mr-2 h-4 w-4" />
+                          <File className="mr-2 h-4 w-4" />
                           PDF
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => handleExport('excel')}>
@@ -302,7 +298,7 @@ const TaxCompensationReportsPanel: React.FC = () => {
                     <td className="p-3">
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>
-                          <FilePdf className="mr-2 h-4 w-4" />
+                          <File className="mr-2 h-4 w-4" />
                           PDF
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => handleExport('excel')}>
@@ -364,7 +360,7 @@ const TaxCompensationReportsPanel: React.FC = () => {
                     <td className="p-3">
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>
-                          <FilePdf className="mr-2 h-4 w-4" />
+                          <File className="mr-2 h-4 w-4" />
                           PDF
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => handleExport('excel')}>
@@ -381,7 +377,7 @@ const TaxCompensationReportsPanel: React.FC = () => {
                     <td className="p-3">
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>
-                          <FilePdf className="mr-2 h-4 w-4" />
+                          <File className="mr-2 h-4 w-4" />
                           PDF
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => handleExport('excel')}>
@@ -403,7 +399,7 @@ const TaxCompensationReportsPanel: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <GavelSquare className="mr-2 h-4 w-4" />
+                  <Scale className="mr-2 h-4 w-4" />
                   Gerar Novo Relatório Judicial
                 </>
               )}

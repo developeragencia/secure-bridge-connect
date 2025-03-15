@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Home,
@@ -35,8 +34,8 @@ import {
   PanelTop,
   ShieldAlert,
   FileBarChart,
-  GavelSquare,
-  Currencies
+  Scale,
+  Currency
 } from 'lucide-react';
 
 export const getMenuSections = () => [
