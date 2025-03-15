@@ -10,6 +10,7 @@ interface AnimatedLogoProps {
   size?: 'sm' | 'md' | 'lg';
   animationDisabled?: boolean;
   hovering?: boolean;
+  loading?: boolean;
 }
 
 const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
@@ -18,6 +19,7 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
   size = 'md',
   animationDisabled = false,
   hovering = false,
+  loading = false,
 }) => {
   const [activeIcon, setActiveIcon] = useState(0);
   const [animationState, setAnimationState] = useState('normal');
@@ -46,10 +48,10 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
     
     const interval = setInterval(() => {
       setActiveIcon((prev) => (prev + 1) % icons.length);
-    }, 2000);
+    }, loading ? 1000 : 2000); // Faster rotation when loading
     
     return () => clearInterval(interval);
-  }, [animationDisabled, icons.length]);
+  }, [animationDisabled, icons.length, loading]);
 
   // Handle hovering state changes with proper comparison to prevent infinite loops
   useEffect(() => {
@@ -72,13 +74,15 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
 
   // Visibility animation with reduced frequency to improve performance
   useEffect(() => {
+    if (loading) return; // Don't do visibility animation when loading
+    
     const intervalId = setInterval(() => {
       setVisible(false);
       setTimeout(() => setVisible(true), 500);
     }, 30000); // Changed from 10s to 30s to reduce CPU usage
     
     return () => clearInterval(intervalId);
-  }, []);
+  }, [loading]);
 
   const sizeClasses = {
     sm: 'h-8',
@@ -93,6 +97,8 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
   };
 
   const getAnimationClass = () => {
+    if (loading) return 'animate-pulse';
+    
     switch (animationState) {
       case 'fly':
         return 'animate-fly-to-dashboard';
@@ -119,10 +125,10 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
         className={cn(
           "relative flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-full p-2 shadow-lg border border-primary/20",
           getAnimationClass(),
-          visible ? "opacity-100 transition-opacity duration-500" : "opacity-0 transition-opacity duration-500"
+          visible || loading ? "opacity-100 transition-opacity duration-500" : "opacity-0 transition-opacity duration-500"
         )}
-        onMouseEnter={() => !hovering && setAnimationState('float')}
-        onMouseLeave={() => !hovering && setAnimationState('normal')}
+        onMouseEnter={() => !hovering && !loading && setAnimationState('float')}
+        onMouseLeave={() => !hovering && !loading && setAnimationState('normal')}
       >
         <div className="absolute inset-0 bg-primary/5 rounded-full animate-pulse"></div>
         <div className={cn("relative z-10", iconSize[size])}>
