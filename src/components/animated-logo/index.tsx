@@ -1,71 +1,61 @@
 
-import React, { useRef } from 'react';
-import { DollarSign, TrendingUp, BarChart4, Wallet, BadgePercent } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import LogoContainer from './LogoContainer';
+import IconRotator from './IconRotator';
 import LogoText from './LogoText';
 
 interface AnimatedLogoProps {
-  className?: string;
-  showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
-  animationDisabled?: boolean;
   hovering?: boolean;
-  loading?: boolean;
+  className?: string;
+  textColor?: string;
+  iconColor?: string;
 }
 
 const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
-  className,
-  showText = true,
   size = 'md',
-  animationDisabled = false,
   hovering = false,
-  loading = false,
+  className,
+  textColor,
+  iconColor,
 }) => {
-  // Static icons array - defined once for all instances
-  const icons = [
-    <DollarSign key={0} className="text-primary" />,
-    <TrendingUp key={1} className="text-primary" />,
-    <BarChart4 key={2} className="text-primary" />,
-    <Wallet key={3} className="text-primary" />,
-    <BadgePercent key={4} className="text-primary" />,
-  ];
-
-  // Use a stable reference for the scroll animation
-  const { ref, classes } = useAnimationOnScroll<HTMLDivElement>({
-    transitionType: 'fade-in',
-    threshold: 0.1,
-  });
-
-  const sizeClasses = {
-    sm: 'h-8',
-    md: 'h-12',
-    lg: 'h-16',
+  // Fixed state initialization
+  const [isAnimating, setIsAnimating] = useState(hovering);
+  
+  // Fix the infinite update loop by adding proper dependency array
+  // and ensuring we don't set state unnecessarily
+  useEffect(() => {
+    if (hovering !== isAnimating) {
+      setIsAnimating(hovering);
+    }
+  }, [hovering, isAnimating]); // Add proper dependency array
+  
+  // Determine size values
+  const logoSizes = {
+    sm: { container: 'h-8', text: 'text-lg', icon: 'w-6 h-6' },
+    md: { container: 'h-10', text: 'text-xl', icon: 'w-8 h-8' },
+    lg: { container: 'h-14', text: 'text-2xl', icon: 'w-10 h-10' },
   };
+  
+  const { container, text, icon } = logoSizes[size];
 
   return (
-    <div
-      ref={ref}
-      className={cn(
-        classes,
-        "flex items-center gap-3",
-        sizeClasses[size],
-        className
-      )}
-    >
-      <LogoContainer 
-        icons={icons}
-        size={size}
-        animationDisabled={animationDisabled}
-        hovering={hovering}
-        loading={loading}
-      />
-      
-      {showText && <LogoText size={size} />}
-    </div>
+    <LogoContainer className={className} containerSize={container}>
+      <div className="flex items-center gap-2">
+        <motion.div
+          initial={{ rotate: 0 }}
+          animate={{ rotate: isAnimating ? 360 : 0 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+          className="relative"
+        >
+          <IconRotator className={icon} color={iconColor} />
+        </motion.div>
+        
+        <LogoText className={text} color={textColor} />
+      </div>
+    </LogoContainer>
   );
 };
 
-// Use React.memo to prevent unnecessary re-renders
 export default React.memo(AnimatedLogo);
