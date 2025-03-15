@@ -215,7 +215,7 @@ const TaxCompensationReportsPanel: React.FC = () => {
                   <td className="p-3">
                     <div className="flex gap-2">
                       <Button variant="ghost" size="sm">
-                        <FilePdf className="h-4 w-4" />
+                        <File className="h-4 w-4" />
                         <span className="sr-only">PDF</span>
                       </Button>
                       <Button variant="ghost" size="sm">
@@ -234,7 +234,7 @@ const TaxCompensationReportsPanel: React.FC = () => {
                   <td className="p-3">
                     <div className="flex gap-2">
                       <Button variant="ghost" size="sm">
-                        <FilePdf className="h-4 w-4" />
+                        <File className="h-4 w-4" />
                         <span className="sr-only">PDF</span>
                       </Button>
                       <Button variant="ghost" size="sm">
