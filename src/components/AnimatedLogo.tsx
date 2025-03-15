@@ -77,20 +77,17 @@ const AnimatedLogo: React.FC<AnimatedLogoProps> = ({
     // Don't do visibility animation when loading
     if (loading) return;
     
-    // Use an immediate ref to avoid stale closures
-    const visibleRef = useRef(visible);
-    visibleRef.current = visible;
-    
+    // Only run this effect on mount
     const animate = () => {
       setVisible(false);
       setTimeout(() => setVisible(true), 500);
     };
     
-    // Increase interval time to reduce CPU usage
-    const intervalId = setInterval(animate, 60000); // Changed from 30s to 60s
+    // Increase interval time to reduce CPU usage and only run the animation once
+    const intervalId = setInterval(animate, 60000); // Once per minute
     
     return () => clearInterval(intervalId);
-  }, [loading]);
+  }, [loading]); // Add loading as a dependency
 
   const sizeClasses = {
     sm: 'h-8',
