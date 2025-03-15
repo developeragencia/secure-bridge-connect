@@ -1,23 +1,69 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Edit, Trash2 } from 'lucide-react';
+import { FileText, Edit, Trash2, User, MoreHorizontal, UserCheck } from 'lucide-react';
 import { Client } from '@/types/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import ClientDetailDialog from './ClientDetailDialog';
 
 interface ClientsTableProps {
   clients: Client[];
   isLoading: boolean;
   onViewDetails: (clientId: string) => void;
+  onEditClient: (clientId: string) => void;
+  onDeleteClient: (clientId: string) => void;
+  onSetActiveClient: (clientId: string) => void;
 }
 
 const ClientsTable: React.FC<ClientsTableProps> = ({ 
   clients, 
   isLoading, 
-  onViewDetails 
+  onViewDetails,
+  onEditClient,
+  onDeleteClient,
+  onSetActiveClient
 }) => {
+  const [detailsClient, setDetailsClient] = useState<Client | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleViewDetails = (client: Client) => {
+    setDetailsClient(client);
+    setIsDetailsOpen(true);
+  };
+  
+  const confirmDelete = (id: string) => {
+    setClientToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+  
+  const handleDeleteConfirmed = () => {
+    if (clientToDelete) {
+      onDeleteClient(clientToDelete);
+      setClientToDelete(null);
+      setIsDeleteDialogOpen(false);
+    }
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
@@ -67,7 +113,7 @@ const ClientsTable: React.FC<ClientsTableProps> = ({
                       variant="ghost"
                       size="sm"
                       className="h-8 w-8 p-0"
-                      onClick={() => onViewDetails(client.id)}
+                      onClick={() => handleViewDetails(client)}
                       title="Ver detalhes"
                     >
                       <FileText className="h-4 w-4" />
@@ -77,20 +123,34 @@ const ClientsTable: React.FC<ClientsTableProps> = ({
                       variant="ghost"
                       size="sm"
                       className="h-8 w-8 p-0"
+                      onClick={() => onEditClient(client.id)}
                       title="Editar cliente"
                     >
                       <Edit className="h-4 w-4" />
                       <span className="sr-only">Editar</span>
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                      title="Excluir cliente"
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                      <span className="sr-only">Excluir</span>
-                    </Button>
+                    
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                          title="Mais ações"
+                        >
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Mais ações</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => onSetActiveClient(client.id)}>
+                          <UserCheck className="mr-2 h-4 w-4" /> Definir como ativo
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => confirmDelete(client.id)}>
+                          <Trash2 className="mr-2 h-4 w-4 text-red-500" /> Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </td>
               </tr>
@@ -98,6 +158,45 @@ const ClientsTable: React.FC<ClientsTableProps> = ({
           )}
         </tbody>
       </table>
+      
+      {/* Client Details Dialog */}
+      {detailsClient && (
+        <ClientDetailDialog
+          client={detailsClient}
+          open={isDetailsOpen}
+          onClose={() => setIsDetailsOpen(false)}
+          onEdit={() => {
+            setIsDetailsOpen(false);
+            onEditClient(detailsClient.id);
+          }}
+          onDelete={() => {
+            setIsDetailsOpen(false);
+            confirmDelete(detailsClient.id);
+          }}
+          onSetActive={() => {
+            setIsDetailsOpen(false);
+            onSetActiveClient(detailsClient.id);
+          }}
+        />
+      )}
+      
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir cliente</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirmed} className="bg-red-500 hover:bg-red-600">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

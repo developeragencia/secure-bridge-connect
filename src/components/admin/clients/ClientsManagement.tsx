@@ -2,86 +2,36 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, RefreshCw } from 'lucide-react';
+import { PlusCircle, RefreshCw, Settings, FileDown, FileUp } from 'lucide-react';
 import { toast } from 'sonner';
 import ClientsTable from './components/ClientsTable';
 import ClientsFilters from './components/ClientsFilters';
 import ClientForm from './components/ClientForm';
+import { useClientStore } from '@/hooks/useClientStore';
+import { Client } from '@/types/client';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import ClientConfigDialog from './components/ClientConfigDialog';
+import ExportOptionsMenu from '@/components/admin/tax-reports/components/ExportOptionsMenu';
 
 const ClientsManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
   
-  // Mock data for clients - updated to match Client interface
-  const mockClients = [
-    {
-      id: 'client-1',
-      name: 'Empresa ABC Ltda',
-      documentNumber: '12.345.678/0001-99',
-      cnpj: '12.345.678/0001-99',
-      email: 'contato@empresaabc.com.br',
-      phone: '(11) 3456-7890',
-      address: 'Av. Paulista, 1000',
-      city: 'São Paulo',
-      state: 'SP',
-      contactPerson: 'João Silva',
-      contactName: 'João Silva',
-      contactEmail: 'joao@empresaabc.com.br',
-      contactPhone: '(11) 98765-4321',
-      industry: 'Tecnologia',
-      segment: 'Tecnologia',
-      type: 'private' as const,
-      createdAt: '2023-01-15T10:00:00Z',
-      updatedAt: '2023-06-20T14:30:00Z',
-      status: 'ACTIVE' as const
-    },
-    {
-      id: 'client-2',
-      name: 'Indústrias XYZ S/A',
-      documentNumber: '98.765.432/0001-10',
-      cnpj: '98.765.432/0001-10',
-      email: 'contato@industriasxyz.com.br',
-      phone: '(11) 2345-6789',
-      address: 'Rua Augusta, 500',
-      city: 'São Paulo',
-      state: 'SP',
-      contactPerson: 'Maria Oliveira',
-      contactName: 'Maria Oliveira',
-      contactEmail: 'maria@industriasxyz.com.br',
-      contactPhone: '(11) 97654-3210',
-      industry: 'Manufatura',
-      segment: 'Manufatura',
-      type: 'private' as const,
-      createdAt: '2022-09-10T09:00:00Z',
-      updatedAt: '2023-05-12T11:20:00Z',
-      status: 'ACTIVE' as const
-    },
-    {
-      id: 'client-3',
-      name: 'Comércio FastShop Ltda',
-      documentNumber: '45.678.901/0001-23',
-      cnpj: '45.678.901/0001-23',
-      email: 'contato@fastshop.com.br',
-      phone: '(11) 4567-8901',
-      address: 'Alameda Santos, 200',
-      city: 'São Paulo',
-      state: 'SP',
-      contactPerson: 'Carlos Pereira',
-      contactName: 'Carlos Pereira',
-      contactEmail: 'carlos@fastshop.com.br',
-      contactPhone: '(11) 96543-2109',
-      industry: 'Varejo',
-      segment: 'Varejo',
-      type: 'private' as const,
-      createdAt: '2022-11-05T14:00:00Z',
-      updatedAt: '2023-04-18T16:40:00Z',
-      status: 'INACTIVE' as const
-    }
-  ];
-
-  const filteredClients = mockClients.filter(client => {
+  const { allClients, addClient, updateClient, removeClient, setActiveClient } = useClientStore();
+  
+  const filteredClients = allClients.filter(client => {
     const matchesSearch = 
       client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       client.documentNumber.includes(searchQuery);
@@ -102,18 +52,93 @@ const ClientsManagement: React.FC = () => {
   };
 
   const handleCreateClient = () => {
+    setSelectedClient(null);
+    setIsEditMode(false);
     setIsFormOpen(true);
   };
 
   const handleViewClientDetails = (clientId: string) => {
-    toast.info('Visualizando detalhes', {
-      description: `Detalhes do cliente #${clientId}`,
-    });
+    const client = allClients.find(c => c.id === clientId);
+    if (client) {
+      setSelectedClient(client);
+      toast.info('Visualizando detalhes', {
+        description: `Detalhes do cliente ${client.name}`,
+      });
+    }
+  };
+  
+  const handleEditClient = (clientId: string) => {
+    const client = allClients.find(c => c.id === clientId);
+    if (client) {
+      setSelectedClient(client);
+      setIsEditMode(true);
+      setIsFormOpen(true);
+    }
+  };
+  
+  const handleDeleteClient = (clientId: string) => {
+    const client = allClients.find(c => c.id === clientId);
+    if (client) {
+      removeClient(client.id);
+      toast.success('Cliente removido com sucesso', {
+        description: `O cliente ${client.name} foi excluído.`
+      });
+    }
+  };
+  
+  const handleSetActiveClient = (clientId: string) => {
+    const client = allClients.find(c => c.id === clientId);
+    if (client) {
+      setActiveClient(client);
+    }
   };
 
-  const handleSaveClient = (clientData: any) => {
-    toast.success('Cliente salvo com sucesso');
+  const handleSaveClient = (clientData: Partial<Client>) => {
+    if (isEditMode && selectedClient) {
+      updateClient(selectedClient.id, clientData);
+      toast.success('Cliente atualizado com sucesso');
+    } else {
+      const newClient: Client = {
+        id: Date.now().toString(),
+        name: clientData.name || '',
+        documentNumber: clientData.documentNumber || '',
+        cnpj: clientData.documentNumber || '',
+        email: clientData.email || '',
+        phone: clientData.phone || '',
+        address: clientData.address || '',
+        city: clientData.city || '',
+        state: clientData.state || '',
+        contactName: clientData.contactName || '',
+        contactEmail: clientData.contactEmail || '',
+        contactPhone: clientData.contactPhone || '',
+        segment: clientData.segment || '',
+        type: clientData.type || 'private',
+        status: clientData.status || 'ACTIVE',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      
+      addClient(newClient);
+      toast.success('Cliente adicionado com sucesso');
+    }
+    
     setIsFormOpen(false);
+  };
+  
+  const handleOpenConfig = () => {
+    setIsConfigOpen(true);
+  };
+  
+  const handleExportData = (format: string) => {
+    toast.success('Exportando dados', {
+      description: `Os dados estão sendo exportados no formato ${format.toUpperCase()}`
+    });
+  };
+  
+  const handleImportData = () => {
+    toast.info('Importar dados', {
+      description: 'Selecione um arquivo para importar clientes'
+    });
   };
 
   return (
@@ -134,13 +159,33 @@ const ClientsManagement: React.FC = () => {
             <PlusCircle className="mr-2 h-4 w-4" />
             Novo Cliente
           </Button>
+          <ExportOptionsMenu onExport={handleExportData} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Opções</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleImportData}>
+                <FileUp className="mr-2 h-4 w-4" />
+                Importar Clientes
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleOpenConfig}>
+                <Settings className="mr-2 h-4 w-4" />
+                Configurações
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button 
             variant="outline" 
-            className="w-full sm:w-auto"
+            size="icon"
             onClick={handleRefresh}
+            disabled={isLoading}
           >
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Atualizar
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
           </Button>
         </div>
       </div>
@@ -156,7 +201,10 @@ const ClientsManagement: React.FC = () => {
         <ClientsTable 
           clients={filteredClients} 
           isLoading={isLoading} 
-          onViewDetails={handleViewClientDetails} 
+          onViewDetails={handleViewClientDetails}
+          onEditClient={handleEditClient}
+          onDeleteClient={handleDeleteClient}
+          onSetActiveClient={handleSetActiveClient}
         />
       </Card>
 
@@ -164,6 +212,13 @@ const ClientsManagement: React.FC = () => {
         open={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSave={handleSaveClient}
+        initialData={selectedClient}
+        isEdit={isEditMode}
+      />
+      
+      <ClientConfigDialog
+        open={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
       />
     </div>
   );

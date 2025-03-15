@@ -29,6 +29,7 @@ const CreditActionButtons: React.FC<CreditActionButtonsProps> = ({
       toast({
         title: "Crédito aprovado",
         description: `O crédito ${id} foi aprovado com sucesso.`,
+        variant: "default",
       });
     }
   };
@@ -52,6 +53,7 @@ const CreditActionButtons: React.FC<CreditActionButtonsProps> = ({
       toast({
         title: "Download iniciado",
         description: `Fazendo download dos detalhes do crédito ${id}.`,
+        variant: "default",
       });
     }
   };
