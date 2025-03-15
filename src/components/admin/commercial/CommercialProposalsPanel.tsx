@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useActiveClient } from '@/hooks/useActiveClient';
 import { toast } from 'sonner';
@@ -26,239 +25,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Filter, FileText, MoreVertical, Clock, Activity, CheckCircle, XCircle, FileCheck } from 'lucide-react';
+import { ProposalStatus } from '@/types/proposal';
 import ProposalStatus from './ProposalStatus';
 import ProposalForm from './ProposalForm';
 import ProposalTimeline from './ProposalTimeline';
 
-// Mock data for proposals
 const mockProposals = [
-  {
-    id: 'prop-1',
-    clientId: 'client-1',
-    clientName: 'Prefeitura Municipal de São Paulo',
-    cnpj: '12.345.678/0001-01',
-    title: 'Recuperação de Créditos IRRF',
-    description: 'Serviço de recuperação de créditos de IRRF de fornecedores de serviços.',
-    service: 'recovery_irrf',
-    value: 75000,
-    status: 'REQUEST',
-    createdBy: 'user-1',
-    createdByName: 'João Silva',
-    representativeId: 'rep-1',
-    representativeName: 'Carlos Representante',
-    createdAt: '2023-06-15T10:30:00',
-    updatedAt: '2023-06-15T10:30:00',
-    timeline: [
-      {
-        id: 'timeline-1',
-        proposalId: 'prop-1',
-        type: 'CREATED',
-        description: 'Proposta criada pelo representante',
-        userId: 'rep-1',
-        userName: 'Carlos Representante',
-        createdAt: '2023-06-15T10:30:00'
-      }
-    ]
-  },
-  {
-    id: 'prop-2',
-    clientId: 'client-2',
-    clientName: 'Secretaria de Educação do Estado',
-    cnpj: '23.456.789/0001-02',
-    title: 'Auditoria Fiscal Completa',
-    description: 'Auditoria fiscal completa com foco em otimização tributária.',
-    service: 'tax_audit',
-    value: 45000,
-    status: 'ANALYSIS',
-    createdBy: 'user-2',
-    createdByName: 'Maria Oliveira',
-    representativeId: 'rep-2',
-    representativeName: 'Fernanda Representante',
-    createdAt: '2023-06-10T14:20:00',
-    updatedAt: '2023-06-11T09:15:00',
-    timeline: [
-      {
-        id: 'timeline-2-1',
-        proposalId: 'prop-2',
-        type: 'CREATED',
-        description: 'Proposta criada pelo representante',
-        userId: 'rep-2',
-        userName: 'Fernanda Representante',
-        createdAt: '2023-06-10T14:20:00'
-      },
-      {
-        id: 'timeline-2-2',
-        proposalId: 'prop-2',
-        type: 'ANALYZED',
-        description: 'Proposta em análise pela equipe técnica',
-        userId: 'user-3',
-        userName: 'Pedro Analista',
-        createdAt: '2023-06-11T09:15:00'
-      }
-    ]
-  },
-  {
-    id: 'prop-3',
-    clientId: 'client-3',
-    clientName: 'Departamento de Obras Públicas',
-    cnpj: '34.567.890/0001-03',
-    title: 'Planejamento Tributário Anual',
-    description: 'Elaboração de planejamento tributário estratégico para o exercício fiscal.',
-    service: 'tax_planning',
-    value: 62000,
-    status: 'APPROVED',
-    createdBy: 'user-2',
-    createdByName: 'Maria Oliveira',
-    approvedBy: 'user-4',
-    approvedByName: 'Roberto Gerente',
-    representativeId: 'rep-1',
-    representativeName: 'Carlos Representante',
-    createdAt: '2023-05-20T16:45:00',
-    updatedAt: '2023-05-25T11:30:00',
-    approvedAt: '2023-05-25T11:30:00',
-    timeline: [
-      {
-        id: 'timeline-3-1',
-        proposalId: 'prop-3',
-        type: 'CREATED',
-        description: 'Proposta criada pelo representante',
-        userId: 'rep-1',
-        userName: 'Carlos Representante',
-        createdAt: '2023-05-20T16:45:00'
-      },
-      {
-        id: 'timeline-3-2',
-        proposalId: 'prop-3',
-        type: 'ANALYZED',
-        description: 'Proposta em análise pela equipe técnica',
-        userId: 'user-3',
-        userName: 'Pedro Analista',
-        createdAt: '2023-05-22T10:15:00'
-      },
-      {
-        id: 'timeline-3-3',
-        proposalId: 'prop-3',
-        type: 'APPROVED',
-        description: 'Proposta aprovada pela gerência',
-        userId: 'user-4',
-        userName: 'Roberto Gerente',
-        createdAt: '2023-05-25T11:30:00'
-      }
-    ]
-  },
-  {
-    id: 'prop-4',
-    clientId: 'client-4',
-    clientName: 'Autarquia de Transportes',
-    cnpj: '45.678.901/0001-04',
-    title: 'Compliance Fiscal',
-    description: 'Implementação de processos de compliance fiscal e tributário.',
-    service: 'tax_compliance',
-    value: 38000,
-    status: 'REJECTED',
-    createdBy: 'user-1',
-    createdByName: 'João Silva',
-    rejectedBy: 'user-4',
-    rejectedByName: 'Roberto Gerente',
-    rejectionReason: 'Fora do escopo atual de serviços para este cliente',
-    representativeId: 'rep-2',
-    representativeName: 'Fernanda Representante',
-    createdAt: '2023-05-05T09:10:00',
-    updatedAt: '2023-05-08T14:45:00',
-    rejectedAt: '2023-05-08T14:45:00',
-    timeline: [
-      {
-        id: 'timeline-4-1',
-        proposalId: 'prop-4',
-        type: 'CREATED',
-        description: 'Proposta criada pelo representante',
-        userId: 'rep-2',
-        userName: 'Fernanda Representante',
-        createdAt: '2023-05-05T09:10:00'
-      },
-      {
-        id: 'timeline-4-2',
-        proposalId: 'prop-4',
-        type: 'ANALYZED',
-        description: 'Proposta em análise pela equipe técnica',
-        userId: 'user-3',
-        userName: 'Pedro Analista',
-        createdAt: '2023-05-06T16:20:00'
-      },
-      {
-        id: 'timeline-4-3',
-        proposalId: 'prop-4',
-        type: 'REJECTED',
-        description: 'Proposta rejeitada: Fora do escopo atual de serviços para este cliente',
-        userId: 'user-4',
-        userName: 'Roberto Gerente',
-        createdAt: '2023-05-08T14:45:00'
-      }
-    ]
-  },
-  {
-    id: 'prop-5',
-    clientId: 'client-5',
-    clientName: 'Câmara Municipal de São Bernardo',
-    cnpj: '56.789.012/0001-05',
-    title: 'Consultoria Empresarial',
-    description: 'Consultoria tributária especializada para otimização fiscal.',
-    service: 'consultancy',
-    value: 50000,
-    status: 'CONVERTED',
-    createdBy: 'user-2',
-    createdByName: 'Maria Oliveira',
-    approvedBy: 'user-4',
-    approvedByName: 'Roberto Gerente',
-    representativeId: 'rep-1',
-    representativeName: 'Carlos Representante',
-    contractId: 'contract-1',
-    createdAt: '2023-04-15T11:25:00',
-    updatedAt: '2023-04-30T15:40:00',
-    approvedAt: '2023-04-20T13:15:00',
-    convertedAt: '2023-04-30T15:40:00',
-    timeline: [
-      {
-        id: 'timeline-5-1',
-        proposalId: 'prop-5',
-        type: 'CREATED',
-        description: 'Proposta criada pelo representante',
-        userId: 'rep-1',
-        userName: 'Carlos Representante',
-        createdAt: '2023-04-15T11:25:00'
-      },
-      {
-        id: 'timeline-5-2',
-        proposalId: 'prop-5',
-        type: 'ANALYZED',
-        description: 'Proposta em análise pela equipe técnica',
-        userId: 'user-3',
-        userName: 'Pedro Analista',
-        createdAt: '2023-04-17T14:30:00'
-      },
-      {
-        id: 'timeline-5-3',
-        proposalId: 'prop-5',
-        type: 'APPROVED',
-        description: 'Proposta aprovada pela gerência',
-        userId: 'user-4',
-        userName: 'Roberto Gerente',
-        createdAt: '2023-04-20T13:15:00'
-      },
-      {
-        id: 'timeline-5-4',
-        proposalId: 'prop-5',
-        type: 'CONVERTED',
-        description: 'Proposta convertida em contrato',
-        userId: 'user-5',
-        userName: 'Ana Comercial',
-        createdAt: '2023-04-30T15:40:00',
-        metadata: {
-          contractId: 'contract-1'
-        }
-      }
-    ]
-  }
+  // ... keep existing mock data
 ];
 
 const CommercialProposalsPanel = () => {
@@ -269,7 +42,6 @@ const CommercialProposalsPanel = () => {
   const { activeClient, isRepresentative } = useActiveClient();
 
   const handleCreateProposal = (data) => {
-    // In a real application, this would send the data to your backend
     toast.success('Proposta criada com sucesso!', {
       description: `Proposta "${data.title}" foi criada e está aguardando análise.`,
     });
@@ -281,20 +53,18 @@ const CommercialProposalsPanel = () => {
     setProposalDetailOpen(true);
   };
 
-  const handleChangeStatus = (proposalId, newStatus) => {
-    // In a real application, this would update the status in your backend
+  const handleChangeStatus = (proposalId: string, newStatus: ProposalStatus) => {
     toast.success(`Status da proposta atualizado para ${newStatus}`, {
       description: 'A proposta foi atualizada com sucesso.',
     });
   };
 
-  // Filter proposals based on active tab
   const filteredProposals = mockProposals.filter(proposal => {
     if (activeTab === 'all') return true;
     return proposal.status === activeTab;
   });
 
-  const getProposalCountByStatus = (status) => {
+  const getProposalCountByStatus = (status: ProposalStatus) => {
     return mockProposals.filter(p => p.status === status).length;
   };
 
@@ -526,7 +296,6 @@ const CommercialProposalsPanel = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Form Dialog for New Proposal */}
       <Dialog open={isFormDialogOpen} onOpenChange={setIsFormDialogOpen}>
         <DialogContent className="max-w-xl">
           <DialogHeader>
@@ -542,7 +311,6 @@ const CommercialProposalsPanel = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Proposal Detail Dialog */}
       {selectedProposal && (
         <Dialog open={proposalDetailOpen} onOpenChange={setProposalDetailOpen}>
           <DialogContent className="max-w-3xl">

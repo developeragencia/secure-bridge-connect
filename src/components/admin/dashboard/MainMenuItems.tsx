@@ -5,7 +5,7 @@ import {
   PieChart, Shield, Paintbrush, LineChart, BookOpen, Building,
   FileType, Mail, BriefcaseBusiness, Dices, Landmark, Receipt,
   ServerCog, FileDigit, FileClock, ChartPie, FileSpreadsheet,
-  FolderCheck
+  FolderCheck, Search
 } from 'lucide-react';
 import { MenuItem } from './MenuGrid';
 
@@ -66,7 +66,7 @@ export const getMainMenuItems = (): MenuItem[] => {
       id: 'credit_identification',
       title: 'Identificação de Créditos',
       description: 'Identificação automática de créditos tributários',
-      icon: <FileSearch className="h-6 w-6 text-white" />,
+      icon: <Search className="h-6 w-6 text-white" />,
       color: 'bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 text-white',
       route: 'credit_identification',
       highlight: true

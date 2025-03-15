@@ -10,6 +10,7 @@ export interface ClientWithPermissions extends Client {
     isAdmin: boolean;
     isRepresentative: boolean;
   }
+  tags?: string[]; // Add tags property
 }
 
 export interface ClientStore {

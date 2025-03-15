@@ -2,7 +2,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { AnalysisFormData } from '../NewCreditAnalysisModal';
-import { ClientWithPermissions } from '@/types/client';
+import { ClientWithPermissions } from '@/types/clientStore';
 
 // Mock data that was previously in the component
 const MOCK_CREDITS = [
@@ -121,6 +121,8 @@ export const useCreditIdentification = ({
   toast
 }: UseCreditIdentificationProps) => {
   
+  const [exportFormat, setExportFormat] = useState('excel');
+
   // Filter credits based on search query
   const filteredCredits = useMemo(() => {
     return MOCK_CREDITS.filter(credit => 
@@ -169,8 +171,9 @@ export const useCreditIdentification = ({
     });
     
     const interval = setInterval(() => {
-      setAnalysisProgress(prev => {
-        if (prev >= 100) {
+      setAnalysisProgress((prev) => {
+        const newValue = prev + Math.floor(Math.random() * 10) + 1;
+        if (newValue >= 100) {
           clearInterval(interval);
           setTimeout(() => {
             setIsAnalyzing(false);
@@ -181,7 +184,7 @@ export const useCreditIdentification = ({
           }, 500);
           return 100;
         }
-        return prev + Math.floor(Math.random() * 10) + 1;
+        return newValue;
       });
     }, 800);
   }, [activeClient, setIsAnalysisModalOpen, setIsAnalyzing, setAnalysisProgress, toast]);
@@ -205,8 +208,9 @@ export const useCreditIdentification = ({
     });
     
     const interval = setInterval(() => {
-      setAnalysisProgress(prev => {
-        if (prev >= 100) {
+      setAnalysisProgress((prev) => {
+        const newValue = prev + Math.floor(Math.random() * 10) + 1;
+        if (newValue >= 100) {
           clearInterval(interval);
           setTimeout(() => {
             setIsAnalyzing(false);
@@ -217,7 +221,7 @@ export const useCreditIdentification = ({
           }, 500);
           return 100;
         }
-        return prev + Math.floor(Math.random() * 10) + 1;
+        return newValue;
       });
     }, 600);
   }, [activeClient, selectedPeriod, setIsAnalyzing, setAnalysisProgress, toast]);
@@ -228,7 +232,7 @@ export const useCreditIdentification = ({
       description: "O download dos dados será iniciado em breve.",
     });
     setShowExportOptions(false);
-  }, [setShowExportOptions, toast]);
+  }, [setShowExportOptions, toast, exportFormat]);
 
   const handleApproveCredit = useCallback((creditId: string) => {
     toast({
@@ -265,6 +269,8 @@ export const useCreditIdentification = ({
     handleSaveSettings,
     totalIdentifiedCredits,
     approvedCredits,
-    totalApprovedValue
+    totalApprovedValue,
+    exportFormat,
+    setExportFormat
   };
 };
