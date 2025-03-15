@@ -9,7 +9,14 @@ const initialSummary: AuditSummary = {
   pending: 0,
   approved: 0,
   rejected: 0,
-  inProgress: 0
+  inProgress: 0,
+  totalAudits: 0,
+  pendingAudits: 0,
+  completedAudits: 0,
+  inProgressAudits: 0,
+  emAndamento: 0,
+  pendentes: 0,
+  concluidas: 0
 };
 
 // Dados de exemplo para auditoria
@@ -18,7 +25,9 @@ const mockAudits: Audit[] = [
     id: '1',
     title: 'Auditoria Fiscal - IRRF 2022',
     client: 'Empresa ABC Ltda',
+    clientName: 'Empresa ABC Ltda',
     type: 'IRRF',
+    auditType: 'IRRF',
     status: 'pending',
     createdAt: new Date(2022, 5, 15).toISOString(),
     updatedAt: new Date(2022, 5, 15).toISOString(),
@@ -31,7 +40,9 @@ const mockAudits: Audit[] = [
     id: '2',
     title: 'Revisão de Créditos - PIS/COFINS',
     client: 'Indústrias XYZ S.A.',
+    clientName: 'Indústrias XYZ S.A.',
     type: 'PIS/COFINS',
+    auditType: 'PIS/COFINS',
     status: 'approved',
     createdAt: new Date(2022, 4, 10).toISOString(),
     updatedAt: new Date(2022, 6, 20).toISOString(),
@@ -44,7 +55,9 @@ const mockAudits: Audit[] = [
     id: '3',
     title: 'Análise de Compensações Tributárias',
     client: 'Comércio Rápido Ltda',
+    clientName: 'Comércio Rápido Ltda',
     type: 'Compensação',
+    auditType: 'Compensação',
     status: 'in_progress',
     createdAt: new Date(2022, 3, 5).toISOString(),
     updatedAt: new Date(2022, 3, 25).toISOString(),
@@ -57,7 +70,9 @@ const mockAudits: Audit[] = [
     id: '4',
     title: 'Auditoria de INSS',
     client: 'Serviços Técnicos ME',
+    clientName: 'Serviços Técnicos ME',
     type: 'INSS',
+    auditType: 'INSS',
     status: 'rejected',
     createdAt: new Date(2022, 2, 8).toISOString(),
     updatedAt: new Date(2022, 2, 28).toISOString(),
@@ -70,7 +85,9 @@ const mockAudits: Audit[] = [
     id: '5',
     title: 'Revisão de Obrigações Acessórias',
     client: 'Consultoria Financeira S.A.',
+    clientName: 'Consultoria Financeira S.A.',
     type: 'Obrigações',
+    auditType: 'Obrigações',
     status: 'pending',
     createdAt: new Date(2022, 1, 20).toISOString(),
     updatedAt: new Date(2022, 1, 20).toISOString(),
@@ -118,19 +135,26 @@ const useAuditManagement = () => {
   const calculateSummary = () => {
     const summary = audits.reduce((acc, audit) => {
       acc.total += 1;
+      acc.totalAudits += 1;
       
       switch (audit.status) {
         case 'pending':
           acc.pending += 1;
+          acc.pendingAudits += 1;
+          acc.pendentes += 1;
           break;
         case 'approved':
           acc.approved += 1;
+          acc.completedAudits += 1;
+          acc.concluidas += 1;
           break;
         case 'rejected':
           acc.rejected += 1;
           break;
         case 'in_progress':
           acc.inProgress += 1;
+          acc.inProgressAudits += 1;
+          acc.emAndamento += 1;
           break;
       }
       
@@ -140,8 +164,15 @@ const useAuditManagement = () => {
       pending: 0,
       approved: 0,
       rejected: 0,
-      inProgress: 0
-    });
+      inProgress: 0,
+      totalAudits: 0,
+      pendingAudits: 0,
+      completedAudits: 0,
+      inProgressAudits: 0,
+      emAndamento: 0,
+      pendentes: 0,
+      concluidas: 0
+    } as AuditSummary);
     
     setAuditSummary(summary);
   };
@@ -319,4 +350,6 @@ const useAuditManagement = () => {
   };
 };
 
+// Export default and named export for compatibility
 export default useAuditManagement;
+export { useAuditManagement };

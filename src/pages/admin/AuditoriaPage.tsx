@@ -2,7 +2,7 @@
 import React from 'react';
 import AuditManagementContent from '@/components/admin/tax-credits/components/AuditManagementContent';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { useAuditManagement } from '@/hooks/useAuditManagement';
+import useAuditManagement from '@/hooks/useAuditManagement';
 import NewAuditForm from '@/components/admin/audit/NewAuditForm';
 import { motion } from 'framer-motion';
 

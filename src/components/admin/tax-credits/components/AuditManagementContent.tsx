@@ -7,7 +7,7 @@ import AuditFilters from './AuditFilters';
 import AuditTable from './AuditTable';
 import AuditForm from './AuditForm';
 import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
-import { useAuditManagement } from '@/hooks/useAuditManagement';
+import useAuditManagement from '@/hooks/useAuditManagement';
 import { Audit } from '@/types/audit';
 
 const AuditManagementContent: React.FC = () => {
