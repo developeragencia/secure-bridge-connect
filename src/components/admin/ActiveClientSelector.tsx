@@ -1,8 +1,6 @@
-
-import React, { useState, useEffect } from 'react';
-import { Building, X, ChevronDown, Search } from 'lucide-react';
+import React, { useState } from 'react';
+import { Building, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useActiveClient } from '@/hooks/useActiveClient';
 import { Client } from '@/types/client';
 import {
@@ -11,8 +9,8 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
+import ClientSelectorContent from './client-selector/PopoverContent';
 
 // Mock clients data - replace with API call in production
 const mockClients: Client[] = [
@@ -161,59 +159,13 @@ const ActiveClientSelector = () => {
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[300px] p-0" align="start">
-          <div className="p-3 border-b">
-            <h4 className="font-medium text-sm mb-1.5">Selecionar Cliente Ativo</h4>
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por nome ou CNPJ..."
-                className="pl-8"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="max-h-[300px] overflow-y-auto">
-            {filteredClients.length > 0 ? (
-              filteredClients.map((client) => (
-                <div
-                  key={client.id}
-                  className={cn(
-                    "flex items-center gap-2 px-3 py-2 hover:bg-accent cursor-pointer",
-                    activeClient?.id === client.id && "bg-accent"
-                  )}
-                  onClick={() => handleSelectClient(client)}
-                >
-                  <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Building className="h-3.5 w-3.5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{client.name}</p>
-                    <p className="text-xs text-muted-foreground">{client.cnpj}</p>
-                  </div>
-                  <Badge
-                    variant="secondary"
-                    className={cn(
-                      "text-xs",
-                      client.status === 'ACTIVE' && "bg-green-500/20 text-green-700 dark:text-green-300",
-                      client.status === 'INACTIVE' && "bg-amber-500/20 text-amber-700 dark:text-amber-300",
-                      client.status === 'PROSPECT' && "bg-blue-500/20 text-blue-700 dark:text-blue-300"
-                    )}
-                  >
-                    {client.status === 'ACTIVE' && 'Ativo'}
-                    {client.status === 'INACTIVE' && 'Inativo'}
-                    {client.status === 'PROSPECT' && 'Prospect'}
-                  </Badge>
-                </div>
-              ))
-            ) : (
-              <div className="py-3 px-4 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Nenhum cliente encontrado
-                </p>
-              </div>
-            )}
-          </div>
+          <ClientSelectorContent
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            filteredClients={filteredClients}
+            activeClient={activeClient}
+            onSelectClient={handleSelectClient}
+          />
         </PopoverContent>
       </Popover>
 
