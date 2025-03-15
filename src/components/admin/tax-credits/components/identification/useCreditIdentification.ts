@@ -171,7 +171,7 @@ export const useCreditIdentification = ({
     });
     
     const interval = setInterval(() => {
-      setAnalysisProgress((prev) => {
+      setAnalysisProgress((prev: number) => {
         const newValue = prev + Math.floor(Math.random() * 10) + 1;
         if (newValue >= 100) {
           clearInterval(interval);
@@ -208,7 +208,7 @@ export const useCreditIdentification = ({
     });
     
     const interval = setInterval(() => {
-      setAnalysisProgress((prev) => {
+      setAnalysisProgress((prev: number) => {
         const newValue = prev + Math.floor(Math.random() * 10) + 1;
         if (newValue >= 100) {
           clearInterval(interval);
