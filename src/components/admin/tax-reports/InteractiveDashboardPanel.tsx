@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Activity, BarChart4, Calendar, ChevronDown, Download, FileBarChart2, Filter, LineChart, PieChart, RefreshCw, Settings2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, LineChart as RechartsLineChart, Line } from 'recharts';
 import TabTitleSection from '../header/TabTitleSection';
+import { useToast } from '@/components/ui/use-toast';
+import DashboardConfigModal from './components/DashboardConfigModal';
+import ExportOptionsMenu from './components/ExportOptionsMenu';
 
 // Mock data for charts
 const monthlyData = [
@@ -44,6 +46,41 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 const InteractiveDashboardPanel: React.FC = () => {
   const [period, setPeriod] = useState('year');
   const [year, setYear] = useState('2023');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleRefreshData = () => {
+    setIsLoading(true);
+    
+    // Simulate data refresh
+    setTimeout(() => {
+      setIsLoading(false);
+      toast({
+        title: "Dados atualizados",
+        description: "Seu dashboard foi atualizado com os dados mais recentes.",
+      });
+    }, 1500);
+  };
+
+  const handleExport = (format: string) => {
+    toast({
+      title: "Exportando dashboard",
+      description: `Exportando no formato ${format.toUpperCase()}.`,
+    });
+  };
+
+  const handleConfigOpen = () => {
+    setIsConfigModalOpen(true);
+  };
+  
+  const handleConfigSave = (config: any) => {
+    toast({
+      title: "Configurações salvas",
+      description: "As configurações do dashboard foram atualizadas.",
+    });
+    setIsConfigModalOpen(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -86,15 +123,32 @@ const InteractiveDashboardPanel: React.FC = () => {
         </div>
 
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="gap-1">
-            <RefreshCw className="h-4 w-4" />
-            <span>Atualizar</span>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-1" 
+            onClick={handleRefreshData}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                <span>Atualizando...</span>
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4" />
+                <span>Atualizar</span>
+              </>
+            )}
           </Button>
-          <Button variant="outline" size="sm" className="gap-1">
-            <Download className="h-4 w-4" />
-            <span>Exportar</span>
-          </Button>
-          <Button variant="outline" size="sm" className="gap-1">
+          <ExportOptionsMenu onExport={handleExport} />
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-1"
+            onClick={handleConfigOpen}
+          >
             <Settings2 className="h-4 w-4" />
             <span>Configurar</span>
           </Button>
@@ -306,6 +360,13 @@ const InteractiveDashboardPanel: React.FC = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Configuration Modal */}
+      <DashboardConfigModal 
+        isOpen={isConfigModalOpen} 
+        onClose={() => setIsConfigModalOpen(false)}
+        onSave={handleConfigSave}
+      />
     </div>
   );
 };

@@ -1,176 +1,93 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Plus, Filter, Search, RefreshCw, BarChart4, Download } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import React from 'react';
+import { Activity, Filter, PlusCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
-import { Badge } from '@/components/ui/badge';
-
 import OpportunitiesTabContent from '@/components/admin/tax-credits/components/OpportunitiesTabContent';
-import ButtonEffect from '@/components/admin/common/ButtonEffect';
+import TabTitleSection from '@/components/admin/header/TabTitleSection';
 
-const OpportunitiesPage = () => {
+const OpportunitiesPage: React.FC = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
-  
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+
   const handleRefresh = () => {
-    toast({
-      title: "Atualizado",
-      description: "Lista de oportunidades atualizada com sucesso.",
-    });
+    setIsRefreshing(true);
+    
+    // Simulate refresh operation
+    setTimeout(() => {
+      setIsRefreshing(false);
+      toast({
+        title: "Dados atualizados",
+        description: "Lista de oportunidades atualizada com sucesso.",
+      });
+    }, 1500);
   };
-  
-  const handleNewOpportunity = () => {
+
+  const handleCreateOpportunity = () => {
     toast({
       title: "Nova oportunidade",
-      description: "Criando nova oportunidade de crédito",
+      description: "Formulário para criar nova oportunidade de crédito.",
     });
   };
-  
-  const handleExportData = () => {
+
+  const handleFilterOpportunities = () => {
     toast({
-      title: "Exportar dados",
-      description: "Iniciando exportação dos dados",
+      title: "Filtrar oportunidades",
+      description: "Opções de filtro para oportunidades de crédito.",
     });
   };
-  
-  const handleGenerateReport = () => {
-    toast({
-      title: "Relatório",
-      description: "Gerando relatório das oportunidades",
-    });
-  };
-  
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <TabTitleSection 
+        Icon={Activity} 
+        title="Oportunidades de Crédito" 
+        description="Identificação e gerenciamento de oportunidades de recuperação de créditos tributários."
+      />
+      
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Oportunidades de Crédito</h2>
-          <p className="text-muted-foreground">
-            Gerencie as oportunidades de crédito identificadas para seus clientes.
-          </p>
+          <h2 className="text-xl font-semibold">Oportunidades Identificadas</h2>
+          <p className="text-sm text-muted-foreground">Gerencie oportunidades de crédito detectadas para seus clientes</p>
         </div>
-        
-        <div className="flex items-center gap-2">
-          <ButtonEffect
+        <div className="flex flex-wrap gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
             onClick={handleRefresh}
-            icon={<RefreshCw className="h-4 w-4" />}
-            variant="outline"
-            tooltip="Atualizar lista"
-          />
-          <ButtonEffect
-            onClick={handleNewOpportunity}
-            icon={<Plus className="h-4 w-4 mr-2" />}
-            label="Nova Oportunidade"
-            tooltip="Criar nova oportunidade"
-          />
-        </div>
-      </div>
-      
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Total de Oportunidades</CardTitle>
-            <CardDescription>Todas as oportunidades identificadas</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <span className="text-3xl font-bold">24</span>
-              <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                +3 esta semana
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Valor Total Potencial</CardTitle>
-            <CardDescription>Valor total das oportunidades</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <span className="text-3xl font-bold">R$ 1.578.234,56</span>
-              <Badge variant="outline" className="bg-green-50 text-green-700">
-                +R$ 234.567,00
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Taxa de Conversão</CardTitle>
-            <CardDescription>Oportunidades aprovadas</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <span className="text-3xl font-bold">73%</span>
-              <Badge variant="outline" className="bg-amber-50 text-amber-700">
-                +5% este mês
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div className="flex flex-col sm:flex-row items-center gap-3">
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Buscar oportunidades..."
-            className="pl-8"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        
-        <div className="flex items-center gap-2 ml-auto">
-          <Button variant="outline" size="sm" className="h-9">
-            <Filter className="mr-2 h-4 w-4" />
-            Filtros
+            disabled={isRefreshing}
+          >
+            {isRefreshing ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent mr-2" />
+                <span>Atualizando...</span>
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                <span>Atualizar</span>
+              </>
+            )}
           </Button>
-          <Button variant="outline" size="sm" className="h-9" onClick={handleGenerateReport}>
-            <BarChart4 className="mr-2 h-4 w-4" />
-            Relatório
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handleFilterOpportunities}
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            <span>Filtrar</span>
           </Button>
-          <Button variant="outline" size="sm" className="h-9" onClick={handleExportData}>
-            <Download className="mr-2 h-4 w-4" />
-            Exportar
+          <Button 
+            size="sm"
+            onClick={handleCreateOpportunity}
+          >
+            <PlusCircle className="h-4 w-4 mr-2" />
+            <span>Nova Oportunidade</span>
           </Button>
         </div>
       </div>
-      
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-4 mb-4 w-full sm:w-auto">
-          <TabsTrigger value="all">Todas</TabsTrigger>
-          <TabsTrigger value="available">Disponíveis</TabsTrigger>
-          <TabsTrigger value="analysis">Em Análise</TabsTrigger>
-          <TabsTrigger value="approved">Aprovadas</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="all">
-          <OpportunitiesTabContent />
-        </TabsContent>
-        
-        <TabsContent value="available">
-          <OpportunitiesTabContent />
-        </TabsContent>
-        
-        <TabsContent value="analysis">
-          <OpportunitiesTabContent />
-        </TabsContent>
-        
-        <TabsContent value="approved">
-          <OpportunitiesTabContent />
-        </TabsContent>
-      </Tabs>
+
+      <OpportunitiesTabContent />
     </div>
   );
 };

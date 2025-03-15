@@ -45,6 +45,17 @@ const CreditActionButtons: React.FC<CreditActionButtonsProps> = ({
     }
   };
 
+  const handleDownload = (id: string) => {
+    if (onDownload) {
+      onDownload(id);
+    } else {
+      toast({
+        title: "Download iniciado",
+        description: `Fazendo download dos detalhes do crédito ${id}.`,
+      });
+    }
+  };
+
   return (
     <ActionButtons
       id={creditId}
@@ -54,7 +65,7 @@ const CreditActionButtons: React.FC<CreditActionButtonsProps> = ({
       showApprove={showApproveReject}
       showReject={showApproveReject}
       onView={onViewDetails}
-      onDownload={onDownload}
+      onDownload={handleDownload}
       onApprove={handleApprove}
       onReject={handleReject}
     />

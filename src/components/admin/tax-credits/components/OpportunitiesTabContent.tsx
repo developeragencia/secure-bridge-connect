@@ -4,10 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import OpportunityCard from './OpportunityCard';
 import OpportunityDetailsModal from './OpportunityDetailsModal';
 import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
+import { RefreshCw, Filter, PlusCircle } from 'lucide-react';
 
 const OpportunitiesTabContent: React.FC = () => {
   const [selectedOpportunity, setSelectedOpportunity] = useState<any | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -91,29 +94,102 @@ const OpportunitiesTabContent: React.FC = () => {
     navigate('/admin/tax_credits');
   };
 
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    
+    // Simulate refresh operation
+    setTimeout(() => {
+      setIsRefreshing(false);
+      toast({
+        title: "Dados atualizados",
+        description: "Lista de oportunidades atualizada com sucesso.",
+      });
+    }, 1500);
+  };
+
+  const handleCreateOpportunity = () => {
+    toast({
+      title: "Nova oportunidade",
+      description: "Formulário para criar nova oportunidade de crédito.",
+    });
+    // You could open a modal here for creating new opportunities
+  };
+
+  const handleFilterOpportunities = () => {
+    toast({
+      title: "Filtrar oportunidades",
+      description: "Opções de filtro para oportunidades de crédito.",
+    });
+    // You could open a filter dialog here
+  };
+
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {opportunities.map((opportunity) => (
-          <div key={opportunity.id}>
-            <OpportunityCard
-              id={opportunity.id}
-              title={opportunity.title}
-              client={opportunity.client}
-              value={opportunity.value}
-              confidence={opportunity.confidence}
-              date={opportunity.date}
-              status={opportunity.status as any}
-              onClick={() => handleCardClick(opportunity)}
-            />
+      <div className="flex flex-col space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <h2 className="text-xl font-semibold">Oportunidades de Crédito</h2>
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+            >
+              {isRefreshing ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent mr-2" />
+                  <span>Atualizando...</span>
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  <span>Atualizar</span>
+                </>
+              )}
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleFilterOpportunities}
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              <span>Filtrar</span>
+            </Button>
+            <Button 
+              size="sm"
+              onClick={handleCreateOpportunity}
+            >
+              <PlusCircle className="h-4 w-4 mr-2" />
+              <span>Nova Oportunidade</span>
+            </Button>
           </div>
-        ))}
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {opportunities.map((opportunity) => (
+            <div key={opportunity.id}>
+              <OpportunityCard
+                id={opportunity.id}
+                title={opportunity.title}
+                client={opportunity.client}
+                value={opportunity.value}
+                confidence={opportunity.confidence}
+                date={opportunity.date}
+                status={opportunity.status as any}
+                onClick={() => handleCardClick(opportunity)}
+                onViewDetails={() => handleCardClick(opportunity)}
+                onStartRecovery={() => handleStartRecovery(opportunity.id)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       <OpportunityDetailsModal 
         isOpen={isDetailsModalOpen}
         onClose={closeModal}
         opportunity={selectedOpportunity}
+        onStartRecovery={handleStartRecovery}
       />
     </>
   );
