@@ -103,6 +103,25 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     }
   };
 
+  // Estilos e cores melhorados para os módulos
+  const getCardStyles = (color: string) => {
+    // Mapeamento de cores para gradientes mais harmoniosos
+    const colorMap: Record<string, string> = {
+      'bg-blue-600/10': 'bg-gradient-to-br from-blue-500/20 to-blue-700/20 hover:from-blue-500/30 hover:to-blue-700/30',
+      'bg-purple-600/10': 'bg-gradient-to-br from-purple-500/20 to-purple-700/20 hover:from-purple-500/30 hover:to-purple-700/30',
+      'bg-green-600/10': 'bg-gradient-to-br from-green-500/20 to-green-700/20 hover:from-green-500/30 hover:to-green-700/30',
+      'bg-yellow-600/10': 'bg-gradient-to-br from-yellow-500/20 to-yellow-700/20 hover:from-yellow-500/30 hover:to-yellow-700/30',
+      'bg-red-600/10': 'bg-gradient-to-br from-red-500/20 to-red-700/20 hover:from-red-500/30 hover:to-red-700/30',
+      'bg-pink-600/10': 'bg-gradient-to-br from-pink-500/20 to-pink-700/20 hover:from-pink-500/30 hover:to-pink-700/30',
+      'bg-indigo-600/10': 'bg-gradient-to-br from-indigo-500/20 to-indigo-700/20 hover:from-indigo-500/30 hover:to-indigo-700/30',
+      'bg-teal-600/10': 'bg-gradient-to-br from-teal-500/20 to-teal-700/20 hover:from-teal-500/30 hover:to-teal-700/30',
+      'bg-orange-600/10': 'bg-gradient-to-br from-orange-500/20 to-orange-700/20 hover:from-orange-500/30 hover:to-orange-700/30',
+      'bg-cyan-600/10': 'bg-gradient-to-br from-cyan-500/20 to-cyan-700/20 hover:from-cyan-500/30 hover:to-cyan-700/30',
+    };
+    
+    return colorMap[color] || color;
+  };
+
   return (
     <motion.div 
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6"
@@ -117,20 +136,20 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
           className={cn(
             "relative overflow-hidden rounded-xl p-6 cursor-pointer",
             "border border-white/10 backdrop-blur-sm group transition-all duration-500",
-            "hover:shadow-xl",
-            item.color
+            "hover:shadow-xl hover:shadow-primary/5",
+            getCardStyles(item.color),
           )}
           variants={itemVariants}
           whileHover="hover"
           onClick={(e) => handleMenuClick(item, e)}
           layoutId={`menu-card-${item.id}`}
         >
-          {/* Gradiente de fundo com transição melhorada */}
-          <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-white via-white/20 to-transparent" />
+          {/* Gradiente de fundo melhorado */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/5 opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
           
           {/* Efeito de shimmer que percorre o card */}
           <motion.div 
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
             variants={shimmerVariants}
             initial="initial"
             animate="animate"
@@ -160,7 +179,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
                 variants={pulseVariants}
                 initial="initial"
                 animate="animate"
-                className="flex items-center px-2 py-1 bg-green-500/80 rounded-full text-xs font-semibold text-white"
+                className="flex items-center px-2 py-1 bg-green-500/90 backdrop-blur-sm rounded-full text-xs font-semibold text-white shadow-sm"
               >
                 <Star className="h-3 w-3 mr-1" />
                 Novo
@@ -168,34 +187,35 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
             </div>
           )}
           
-          {/* Container do ícone com efeito de flutuação */}
+          {/* Container do ícone com efeito de flutuação melhorado */}
           <motion.div 
-            className="h-14 w-14 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center mb-4 overflow-hidden"
+            className="h-14 w-14 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center mb-4 overflow-hidden shadow-inner"
             whileHover={{ y: -5, transition: { duration: 0.3, yoyo: Infinity } }}
           >
             <motion.div
               initial={{ scale: 1 }}
               whileHover={{ scale: 1.2, rotate: [0, 5, -5, 0] }}
               transition={{ duration: 0.5 }}
+              className="text-primary"
             >
               {item.icon}
             </motion.div>
           </motion.div>
 
           {/* Título com transição de cores */}
-          <h3 className="text-lg font-medium mb-2 transition-colors duration-300 group-hover:text-white">
+          <h3 className="text-lg font-medium mb-2 transition-all duration-300 group-hover:text-primary">
             {item.title}
           </h3>
           
           {/* Descrição com efeito fade-in no hover */}
-          <p className="text-sm opacity-80 mb-4 transition-all duration-300 group-hover:opacity-100 group-hover:text-white/90">
+          <p className="text-sm opacity-80 mb-4 transition-all duration-300 group-hover:opacity-100">
             {item.description}
           </p>
           
           {/* Botão de ação com efeito hover melhorado */}
           <div className="flex items-center mt-auto text-sm font-medium">
             <motion.span 
-              className="transition-colors duration-300 group-hover:text-white"
+              className="transition-all duration-300 text-foreground/70 group-hover:text-primary"
               initial={{ x: 0 }}
               whileHover={{ x: 3 }}
             >
@@ -206,6 +226,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
                 initial={{ x: 0, rotate: 0 }}
                 whileHover={{ x: 5, rotate: 15 }}
                 transition={{ duration: 0.2 }}
+                className="text-foreground/70 group-hover:text-primary"
               >
                 <ExternalLink className="ml-2 h-4 w-4" />
               </motion.div>
@@ -214,6 +235,7 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
                 initial={{ x: 0 }}
                 whileHover={{ x: 5 }}
                 transition={{ duration: 0.2 }}
+                className="text-foreground/70 group-hover:text-primary"
               >
                 <ArrowRight className="ml-2 h-4 w-4" />
               </motion.div>
@@ -233,13 +255,13 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
                 transition: { duration: 0.7 }
               }}
             >
-              <MousePointerClick className="h-8 w-8 text-white" />
+              <MousePointerClick className="h-8 w-8 text-primary" />
             </motion.div>
           </motion.div>
 
           {/* Decoração de canto com animação melhorada */}
           <motion.div 
-            className="absolute -bottom-10 -right-10 w-20 h-20 rounded-full bg-white/5" 
+            className="absolute -bottom-10 -right-10 w-20 h-20 rounded-full bg-gradient-to-br from-primary/10 to-transparent" 
             initial={{ rotate: 0, scale: 1 }}
             animate={{ rotate: 360, scale: [1, 1.2, 1] }}
             transition={{ 
