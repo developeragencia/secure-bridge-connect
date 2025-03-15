@@ -1,721 +1,652 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { 
-  FileText, Search, Filter, ArrowRight, CheckCircle, XCircle, 
-  Clock, Building, Calendar, DollarSign, UserCircle, AlertCircle, 
-  FileBarChart, Plus, User, Briefcase 
-} from "lucide-react";
-import { useClientStore } from '@/hooks/useClientStore';
-import { useToast } from '@/components/ui/use-toast';
+import { useActiveClient } from '@/hooks/useActiveClient';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, Filter, FileText, MoreVertical, Clock, Activity, CheckCircle, XCircle, FileCheck } from 'lucide-react';
+import ProposalStatus from './ProposalStatus';
+import ProposalForm from './ProposalForm';
+import ProposalTimeline from './ProposalTimeline';
 
-// Mock proposal statuses
-const PROPOSAL_STATUS = {
-  REQUESTED: 'requested',
-  ANALYZING: 'analyzing',
-  APPROVED: 'approved',
-  REJECTED: 'rejected',
-  CONVERTED: 'converted'
-};
-
-// Mock proposals data
-const MOCK_PROPOSALS = [
+// Mock data for proposals
+const mockProposals = [
   {
-    id: 'PROP-1001',
+    id: 'prop-1',
+    clientId: 'client-1',
     clientName: 'Prefeitura Municipal de São Paulo',
-    clientId: '1',
-    cnpj: '12.345.678/0001-90',
-    status: PROPOSAL_STATUS.APPROVED,
-    createdAt: '2023-10-15',
-    value: 125000.00,
-    requestedBy: 'Carlos Representante',
-    description: 'Análise de recuperação de créditos IRRF/PJ para os últimos 36 meses',
-    segment: 'Municipal',
+    cnpj: '12.345.678/0001-01',
+    title: 'Recuperação de Créditos IRRF',
+    description: 'Serviço de recuperação de créditos de IRRF de fornecedores de serviços.',
+    service: 'recovery_irrf',
+    value: 75000,
+    status: 'REQUEST',
+    createdBy: 'user-1',
+    createdByName: 'João Silva',
+    representativeId: 'rep-1',
+    representativeName: 'Carlos Representante',
+    createdAt: '2023-06-15T10:30:00',
+    updatedAt: '2023-06-15T10:30:00',
     timeline: [
-      { date: '2023-10-15', status: 'Solicitação enviada', user: 'Carlos Representante' },
-      { date: '2023-10-17', status: 'Em análise', user: 'Equipe Interna' },
-      { date: '2023-10-20', status: 'Aprovada', user: 'Claudio Figueiredo' }
+      {
+        id: 'timeline-1',
+        proposalId: 'prop-1',
+        type: 'CREATED',
+        description: 'Proposta criada pelo representante',
+        userId: 'rep-1',
+        userName: 'Carlos Representante',
+        createdAt: '2023-06-15T10:30:00'
+      }
     ]
   },
   {
-    id: 'PROP-1002',
-    clientName: 'Secretaria Estadual de Saúde',
-    clientId: '2',
-    cnpj: '98.765.432/0001-10',
-    status: PROPOSAL_STATUS.ANALYZING,
-    createdAt: '2023-10-18',
-    value: 87500.00,
-    requestedBy: 'Maria Representante',
-    description: 'Recuperação de créditos tributários com avaliação completa',
-    segment: 'Estadual',
+    id: 'prop-2',
+    clientId: 'client-2',
+    clientName: 'Secretaria de Educação do Estado',
+    cnpj: '23.456.789/0001-02',
+    title: 'Auditoria Fiscal Completa',
+    description: 'Auditoria fiscal completa com foco em otimização tributária.',
+    service: 'tax_audit',
+    value: 45000,
+    status: 'ANALYSIS',
+    createdBy: 'user-2',
+    createdByName: 'Maria Oliveira',
+    representativeId: 'rep-2',
+    representativeName: 'Fernanda Representante',
+    createdAt: '2023-06-10T14:20:00',
+    updatedAt: '2023-06-11T09:15:00',
     timeline: [
-      { date: '2023-10-18', status: 'Solicitação enviada', user: 'Maria Representante' },
-      { date: '2023-10-19', status: 'Em análise', user: 'Equipe Interna' }
+      {
+        id: 'timeline-2-1',
+        proposalId: 'prop-2',
+        type: 'CREATED',
+        description: 'Proposta criada pelo representante',
+        userId: 'rep-2',
+        userName: 'Fernanda Representante',
+        createdAt: '2023-06-10T14:20:00'
+      },
+      {
+        id: 'timeline-2-2',
+        proposalId: 'prop-2',
+        type: 'ANALYZED',
+        description: 'Proposta em análise pela equipe técnica',
+        userId: 'user-3',
+        userName: 'Pedro Analista',
+        createdAt: '2023-06-11T09:15:00'
+      }
     ]
   },
   {
-    id: 'PROP-1003',
-    clientName: 'Universidade Federal',
-    clientId: '3',
-    cnpj: '56.789.123/0001-45',
-    status: PROPOSAL_STATUS.CONVERTED,
-    createdAt: '2023-09-05',
-    value: 150000.00,
-    requestedBy: 'João Representante',
-    description: 'Análise completa de retenções para os últimos 60 meses',
-    segment: 'Federal',
+    id: 'prop-3',
+    clientId: 'client-3',
+    clientName: 'Departamento de Obras Públicas',
+    cnpj: '34.567.890/0001-03',
+    title: 'Planejamento Tributário Anual',
+    description: 'Elaboração de planejamento tributário estratégico para o exercício fiscal.',
+    service: 'tax_planning',
+    value: 62000,
+    status: 'APPROVED',
+    createdBy: 'user-2',
+    createdByName: 'Maria Oliveira',
+    approvedBy: 'user-4',
+    approvedByName: 'Roberto Gerente',
+    representativeId: 'rep-1',
+    representativeName: 'Carlos Representante',
+    createdAt: '2023-05-20T16:45:00',
+    updatedAt: '2023-05-25T11:30:00',
+    approvedAt: '2023-05-25T11:30:00',
     timeline: [
-      { date: '2023-09-05', status: 'Solicitação enviada', user: 'João Representante' },
-      { date: '2023-09-07', status: 'Em análise', user: 'Equipe Interna' },
-      { date: '2023-09-10', status: 'Aprovada', user: 'Claudio Figueiredo' },
-      { date: '2023-09-15', status: 'Convertida em contrato', user: 'Claudio Figueiredo' }
+      {
+        id: 'timeline-3-1',
+        proposalId: 'prop-3',
+        type: 'CREATED',
+        description: 'Proposta criada pelo representante',
+        userId: 'rep-1',
+        userName: 'Carlos Representante',
+        createdAt: '2023-05-20T16:45:00'
+      },
+      {
+        id: 'timeline-3-2',
+        proposalId: 'prop-3',
+        type: 'ANALYZED',
+        description: 'Proposta em análise pela equipe técnica',
+        userId: 'user-3',
+        userName: 'Pedro Analista',
+        createdAt: '2023-05-22T10:15:00'
+      },
+      {
+        id: 'timeline-3-3',
+        proposalId: 'prop-3',
+        type: 'APPROVED',
+        description: 'Proposta aprovada pela gerência',
+        userId: 'user-4',
+        userName: 'Roberto Gerente',
+        createdAt: '2023-05-25T11:30:00'
+      }
     ]
   },
   {
-    id: 'PROP-1004',
-    clientName: 'Tribunal Regional do Trabalho',
-    clientId: '4',
-    cnpj: '45.678.123/0001-67',
-    status: PROPOSAL_STATUS.REJECTED,
-    createdAt: '2023-10-01',
-    value: 95000.00,
-    requestedBy: 'Ana Representante',
-    description: 'Análise e recuperação de créditos IRRF',
-    segment: 'Federal',
+    id: 'prop-4',
+    clientId: 'client-4',
+    clientName: 'Autarquia de Transportes',
+    cnpj: '45.678.901/0001-04',
+    title: 'Compliance Fiscal',
+    description: 'Implementação de processos de compliance fiscal e tributário.',
+    service: 'tax_compliance',
+    value: 38000,
+    status: 'REJECTED',
+    createdBy: 'user-1',
+    createdByName: 'João Silva',
+    rejectedBy: 'user-4',
+    rejectedByName: 'Roberto Gerente',
+    rejectionReason: 'Fora do escopo atual de serviços para este cliente',
+    representativeId: 'rep-2',
+    representativeName: 'Fernanda Representante',
+    createdAt: '2023-05-05T09:10:00',
+    updatedAt: '2023-05-08T14:45:00',
+    rejectedAt: '2023-05-08T14:45:00',
     timeline: [
-      { date: '2023-10-01', status: 'Solicitação enviada', user: 'Ana Representante' },
-      { date: '2023-10-03', status: 'Em análise', user: 'Equipe Interna' },
-      { date: '2023-10-07', status: 'Rejeitada', user: 'Claudio Figueiredo', 
-        note: 'Cliente com processos pendentes que precisam ser resolvidos primeiro' }
+      {
+        id: 'timeline-4-1',
+        proposalId: 'prop-4',
+        type: 'CREATED',
+        description: 'Proposta criada pelo representante',
+        userId: 'rep-2',
+        userName: 'Fernanda Representante',
+        createdAt: '2023-05-05T09:10:00'
+      },
+      {
+        id: 'timeline-4-2',
+        proposalId: 'prop-4',
+        type: 'ANALYZED',
+        description: 'Proposta em análise pela equipe técnica',
+        userId: 'user-3',
+        userName: 'Pedro Analista',
+        createdAt: '2023-05-06T16:20:00'
+      },
+      {
+        id: 'timeline-4-3',
+        proposalId: 'prop-4',
+        type: 'REJECTED',
+        description: 'Proposta rejeitada: Fora do escopo atual de serviços para este cliente',
+        userId: 'user-4',
+        userName: 'Roberto Gerente',
+        createdAt: '2023-05-08T14:45:00'
+      }
     ]
   },
   {
-    id: 'PROP-1005',
-    clientName: 'Ministério Público Estadual',
-    clientId: '5',
-    cnpj: '34.567.890/0001-23',
-    status: PROPOSAL_STATUS.REQUESTED,
-    createdAt: '2023-10-20',
-    value: 110000.00,
-    requestedBy: 'Roberto Representante',
-    description: 'Análise de retenções e recuperação de créditos',
-    segment: 'Estadual',
+    id: 'prop-5',
+    clientId: 'client-5',
+    clientName: 'Câmara Municipal de São Bernardo',
+    cnpj: '56.789.012/0001-05',
+    title: 'Consultoria Empresarial',
+    description: 'Consultoria tributária especializada para otimização fiscal.',
+    service: 'consultancy',
+    value: 50000,
+    status: 'CONVERTED',
+    createdBy: 'user-2',
+    createdByName: 'Maria Oliveira',
+    approvedBy: 'user-4',
+    approvedByName: 'Roberto Gerente',
+    representativeId: 'rep-1',
+    representativeName: 'Carlos Representante',
+    contractId: 'contract-1',
+    createdAt: '2023-04-15T11:25:00',
+    updatedAt: '2023-04-30T15:40:00',
+    approvedAt: '2023-04-20T13:15:00',
+    convertedAt: '2023-04-30T15:40:00',
     timeline: [
-      { date: '2023-10-20', status: 'Solicitação enviada', user: 'Roberto Representante' }
+      {
+        id: 'timeline-5-1',
+        proposalId: 'prop-5',
+        type: 'CREATED',
+        description: 'Proposta criada pelo representante',
+        userId: 'rep-1',
+        userName: 'Carlos Representante',
+        createdAt: '2023-04-15T11:25:00'
+      },
+      {
+        id: 'timeline-5-2',
+        proposalId: 'prop-5',
+        type: 'ANALYZED',
+        description: 'Proposta em análise pela equipe técnica',
+        userId: 'user-3',
+        userName: 'Pedro Analista',
+        createdAt: '2023-04-17T14:30:00'
+      },
+      {
+        id: 'timeline-5-3',
+        proposalId: 'prop-5',
+        type: 'APPROVED',
+        description: 'Proposta aprovada pela gerência',
+        userId: 'user-4',
+        userName: 'Roberto Gerente',
+        createdAt: '2023-04-20T13:15:00'
+      },
+      {
+        id: 'timeline-5-4',
+        proposalId: 'prop-5',
+        type: 'CONVERTED',
+        description: 'Proposta convertida em contrato',
+        userId: 'user-5',
+        userName: 'Ana Comercial',
+        createdAt: '2023-04-30T15:40:00',
+        metadata: {
+          contractId: 'contract-1'
+        }
+      }
     ]
   }
 ];
 
 const CommercialProposalsPanel = () => {
-  const [activeTab, setActiveTab] = useState('pending');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showDetails, setShowDetails] = useState(false);
-  const [selectedProposal, setSelectedProposal] = useState<any>(null);
-  const [showNewProposalForm, setShowNewProposalForm] = useState(false);
-  const [newProposal, setNewProposal] = useState({
-    clientName: '',
-    cnpj: '',
-    value: '',
-    description: '',
-    segment: 'Municipal'
-  });
-  
-  const { allClients } = useClientStore();
-  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState('all');
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+  const [selectedProposal, setSelectedProposal] = useState(null);
+  const [proposalDetailOpen, setProposalDetailOpen] = useState(false);
+  const { activeClient, isRepresentative } = useActiveClient();
 
-  const handleOpenDetails = (proposal: any) => {
+  const handleCreateProposal = (data) => {
+    // In a real application, this would send the data to your backend
+    toast.success('Proposta criada com sucesso!', {
+      description: `Proposta "${data.title}" foi criada e está aguardando análise.`,
+    });
+    setIsFormDialogOpen(false);
+  };
+
+  const handleViewDetails = (proposal) => {
     setSelectedProposal(proposal);
-    setShowDetails(true);
+    setProposalDetailOpen(true);
   };
 
-  const handleCreateProposal = () => {
-    toast({
-      title: "Proposta enviada com sucesso",
-      description: "A proposta foi enviada e está aguardando análise.",
-    });
-    setShowNewProposalForm(false);
-    setNewProposal({
-      clientName: '',
-      cnpj: '',
-      value: '',
-      description: '',
-      segment: 'Municipal'
+  const handleChangeStatus = (proposalId, newStatus) => {
+    // In a real application, this would update the status in your backend
+    toast.success(`Status da proposta atualizado para ${newStatus}`, {
+      description: 'A proposta foi atualizada com sucesso.',
     });
   };
 
-  const handleStatusChange = (proposal: any, newStatus: string) => {
-    toast({
-      title: "Status atualizado",
-      description: `A proposta ${proposal.id} foi ${
-        newStatus === PROPOSAL_STATUS.APPROVED ? 'aprovada' : 
-        newStatus === PROPOSAL_STATUS.REJECTED ? 'rejeitada' : 
-        newStatus === PROPOSAL_STATUS.ANALYZING ? 'movida para análise' : 
-        newStatus === PROPOSAL_STATUS.CONVERTED ? 'convertida em contrato' : 'atualizada'
-      }.`,
-    });
-    setShowDetails(false);
-  };
-
-  // Filter proposals based on search query and active tab
-  const filteredProposals = MOCK_PROPOSALS.filter(proposal => {
-    const matchesSearch = 
-      proposal.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      proposal.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      proposal.cnpj.includes(searchQuery);
-    
-    if (activeTab === 'pending') {
-      return matchesSearch && [PROPOSAL_STATUS.REQUESTED, PROPOSAL_STATUS.ANALYZING].includes(proposal.status);
-    } else if (activeTab === 'approved') {
-      return matchesSearch && [PROPOSAL_STATUS.APPROVED, PROPOSAL_STATUS.CONVERTED].includes(proposal.status);
-    } else if (activeTab === 'rejected') {
-      return matchesSearch && proposal.status === PROPOSAL_STATUS.REJECTED;
-    }
-    
-    return matchesSearch;
+  // Filter proposals based on active tab
+  const filteredProposals = mockProposals.filter(proposal => {
+    if (activeTab === 'all') return true;
+    return proposal.status === activeTab;
   });
+
+  const getProposalCountByStatus = (status) => {
+    return mockProposals.filter(p => p.status === status).length;
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Propostas Comerciais</h2>
           <p className="text-muted-foreground">
-            Gerencie as propostas comerciais e acompanhe o status de cada uma.
+            Gerencie propostas comerciais, desde a solicitação até a conversão em contrato.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="flex items-center gap-2">
-            <FileBarChart className="h-4 w-4" />
-            Relatórios
-          </Button>
-          <Button className="flex items-center gap-2" onClick={() => setShowNewProposalForm(true)}>
-            <Plus className="h-4 w-4" />
-            Nova Proposta
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-1.5">
-              <div className="h-2 w-2 rounded-full bg-amber-500"></div>
-              <CardTitle className="text-sm font-medium">Aguardando Análise</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {MOCK_PROPOSALS.filter(p => p.status === PROPOSAL_STATUS.REQUESTED).length}
-            </div>
-            <div className="text-xs text-muted-foreground">Propostas recém solicitadas</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-1.5">
-              <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-              <CardTitle className="text-sm font-medium">Em Análise</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {MOCK_PROPOSALS.filter(p => p.status === PROPOSAL_STATUS.ANALYZING).length}
-            </div>
-            <div className="text-xs text-muted-foreground">Propostas em processamento</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-1.5">
-              <div className="h-2 w-2 rounded-full bg-green-500"></div>
-              <CardTitle className="text-sm font-medium">Aprovadas</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {MOCK_PROPOSALS.filter(p => p.status === PROPOSAL_STATUS.APPROVED).length}
-            </div>
-            <div className="text-xs text-muted-foreground">Prontas para conversão</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-1.5">
-              <div className="h-2 w-2 rounded-full bg-purple-500"></div>
-              <CardTitle className="text-sm font-medium">Convertidas</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {MOCK_PROPOSALS.filter(p => p.status === PROPOSAL_STATUS.CONVERTED).length}
-            </div>
-            <div className="text-xs text-muted-foreground">Em execução</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>Buscar Propostas</CardTitle>
-          <CardDescription>
-            Pesquise propostas por cliente, número ou CNPJ.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input 
-                type="search" 
-                placeholder="Buscar proposta..." 
-                className="pl-9" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          {isRepresentative && (
+            <Button onClick={() => setIsFormDialogOpen(true)} className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Nova Proposta
+            </Button>
+          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
                 Filtros
               </Button>
-              <Button>Buscar</Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setActiveTab('all')}>
+                Todas as Propostas
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setActiveTab('REQUEST')}>
+                Solicitações
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setActiveTab('ANALYSIS')}>
+                Em Análise
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setActiveTab('APPROVED')}>
+                Aprovadas
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setActiveTab('REJECTED')}>
+                Rejeitadas
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setActiveTab('CONVERTED')}>
+                Convertidas
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Solicitações</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{getProposalCountByStatus('REQUEST')}</div>
+            <p className="text-xs text-muted-foreground mt-1">Propostas aguardando análise</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Em Análise</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{getProposalCountByStatus('ANALYSIS')}</div>
+            <p className="text-xs text-muted-foreground mt-1">Propostas em análise técnica</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Aprovadas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{getProposalCountByStatus('APPROVED')}</div>
+            <p className="text-xs text-muted-foreground mt-1">Propostas aprovadas</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Rejeitadas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{getProposalCountByStatus('REJECTED')}</div>
+            <p className="text-xs text-muted-foreground mt-1">Propostas rejeitadas</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium">Convertidas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{getProposalCountByStatus('CONVERTED')}</div>
+            <p className="text-xs text-muted-foreground mt-1">Propostas convertidas em contratos</p>
+          </CardContent>
+        </Card>
+      </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="pending">Pendentes</TabsTrigger>
-          <TabsTrigger value="approved">Aprovadas</TabsTrigger>
-          <TabsTrigger value="rejected">Rejeitadas</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="all">
+            Todas
+          </TabsTrigger>
+          <TabsTrigger value="REQUEST" className="flex items-center">
+            <Clock className="h-3.5 w-3.5 mr-1.5" />
+            Solicitações
+          </TabsTrigger>
+          <TabsTrigger value="ANALYSIS" className="flex items-center">
+            <Activity className="h-3.5 w-3.5 mr-1.5" />
+            Em Análise
+          </TabsTrigger>
+          <TabsTrigger value="APPROVED" className="flex items-center">
+            <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
+            Aprovadas
+          </TabsTrigger>
+          <TabsTrigger value="REJECTED" className="flex items-center">
+            <XCircle className="h-3.5 w-3.5 mr-1.5" />
+            Rejeitadas
+          </TabsTrigger>
+          <TabsTrigger value="CONVERTED" className="flex items-center">
+            <FileCheck className="h-3.5 w-3.5 mr-1.5" />
+            Convertidas
+          </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="pending" className="space-y-4 pt-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-center">
-                <CardTitle>Propostas Pendentes</CardTitle>
-              </div>
-              <CardDescription>
-                Lista de propostas comerciais aguardando análise ou em processamento.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {filteredProposals.length > 0 ? (
-                  filteredProposals.map((proposal) => (
-                    <div 
-                      key={proposal.id} 
-                      className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                      onClick={() => handleOpenDetails(proposal)}
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center gap-3 mb-3 md:mb-0">
-                        <div className="bg-primary/10 p-2 rounded-full">
-                          <FileText className="h-5 w-5 text-primary" />
+        <TabsContent value={activeTab} className="space-y-4 pt-4">
+          {filteredProposals.length > 0 ? (
+            <div className="rounded-md border overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-muted">
+                    <th className="p-3 text-left font-medium text-sm">Título</th>
+                    <th className="p-3 text-left font-medium text-sm">Cliente</th>
+                    <th className="p-3 text-left font-medium text-sm">Valor</th>
+                    <th className="p-3 text-left font-medium text-sm">Status</th>
+                    <th className="p-3 text-left font-medium text-sm">Data</th>
+                    <th className="p-3 text-left font-medium text-sm">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {filteredProposals.map((proposal) => (
+                    <tr key={proposal.id} className="hover:bg-muted/50">
+                      <td className="p-3 text-sm">{proposal.title}</td>
+                      <td className="p-3 text-sm">{proposal.clientName}</td>
+                      <td className="p-3 text-sm">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposal.value)}
+                      </td>
+                      <td className="p-3 text-sm">
+                        <ProposalStatus status={proposal.status} />
+                      </td>
+                      <td className="p-3 text-sm">
+                        {new Date(proposal.createdAt).toLocaleDateString('pt-BR')}
+                      </td>
+                      <td className="p-3 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => handleViewDetails(proposal)}
+                          >
+                            <FileText className="h-4 w-4" />
+                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem onClick={() => handleViewDetails(proposal)}>
+                                Ver Detalhes
+                              </DropdownMenuItem>
+                              {proposal.status === 'REQUEST' && (
+                                <DropdownMenuItem onClick={() => handleChangeStatus(proposal.id, 'ANALYSIS')}>
+                                  Iniciar Análise
+                                </DropdownMenuItem>
+                              )}
+                              {proposal.status === 'ANALYSIS' && (
+                                <>
+                                  <DropdownMenuItem onClick={() => handleChangeStatus(proposal.id, 'APPROVED')}>
+                                    Aprovar
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleChangeStatus(proposal.id, 'REJECTED')}>
+                                    Rejeitar
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                              {proposal.status === 'APPROVED' && (
+                                <DropdownMenuItem onClick={() => handleChangeStatus(proposal.id, 'CONVERTED')}>
+                                  Converter em Contrato
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium">{proposal.id}</p>
-                            <Badge variant={
-                              proposal.status === PROPOSAL_STATUS.REQUESTED ? "warning" :
-                              proposal.status === PROPOSAL_STATUS.ANALYZING ? "info" : "default"
-                            }>
-                              {proposal.status === PROPOSAL_STATUS.REQUESTED ? "Aguardando Análise" :
-                               proposal.status === PROPOSAL_STATUS.ANALYZING ? "Em Análise" : "Pendente"}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Building className="h-3.5 w-3.5" />
-                            <span>{proposal.clientName}</span>
-                            <span className="h-1 w-1 rounded-full bg-muted-foreground"></span>
-                            <Calendar className="h-3.5 w-3.5" />
-                            <span>Solicitada: {proposal.createdAt}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="flex items-center gap-1.5">
-                          <DollarSign className="h-3 w-3" />
-                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposal.value)}
-                        </Badge>
-                        <Button variant="outline" size="sm">Ver Detalhes</Button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <AlertCircle className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-                    <h3 className="text-lg font-medium">Nenhuma proposta encontrada</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Não há propostas pendentes que correspondam aos seus critérios de busca.
-                    </p>
-                  </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center p-6">
+                <div className="rounded-full p-3 bg-muted mb-4">
+                  <FileText className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold">Nenhuma proposta encontrada</h3>
+                <p className="text-sm text-muted-foreground text-center max-w-md mt-1">
+                  Não existem propostas na categoria selecionada. Clique no botão "Nova Proposta" para criar uma.
+                </p>
+                {isRepresentative && (
+                  <Button 
+                    onClick={() => setIsFormDialogOpen(true)} 
+                    variant="outline" 
+                    className="mt-4"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nova Proposta
+                  </Button>
                 )}
-              </div>
-            </CardContent>
-            {filteredProposals.length > 5 && (
-              <CardFooter className="flex justify-center">
-                <Button variant="outline">Ver Mais</Button>
-              </CardFooter>
-            )}
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="approved" className="space-y-4 pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Propostas Aprovadas</CardTitle>
-              <CardDescription>
-                Lista de propostas comerciais aprovadas e convertidas em contratos.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {filteredProposals.length > 0 ? (
-                  filteredProposals.map((proposal) => (
-                    <div 
-                      key={proposal.id} 
-                      className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                      onClick={() => handleOpenDetails(proposal)}
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center gap-3 mb-3 md:mb-0">
-                        <div className={`p-2 rounded-full ${
-                          proposal.status === PROPOSAL_STATUS.APPROVED ? "bg-green-500/10" : "bg-purple-500/10"
-                        }`}>
-                          <FileText className={`h-5 w-5 ${
-                            proposal.status === PROPOSAL_STATUS.APPROVED ? "text-green-600" : "text-purple-600"
-                          }`} />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium">{proposal.id}</p>
-                            <Badge variant={
-                              proposal.status === PROPOSAL_STATUS.APPROVED ? "success" : "secondary"
-                            }>
-                              {proposal.status === PROPOSAL_STATUS.APPROVED ? "Aprovada" : "Convertida em Contrato"}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Building className="h-3.5 w-3.5" />
-                            <span>{proposal.clientName}</span>
-                            <span className="h-1 w-1 rounded-full bg-muted-foreground"></span>
-                            <UserCircle className="h-3.5 w-3.5" />
-                            <span>Solicitada por: {proposal.requestedBy}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="flex items-center gap-1.5">
-                          <DollarSign className="h-3 w-3" />
-                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proposal.value)}
-                        </Badge>
-                        <Button variant="outline" size="sm">Ver Detalhes</Button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <AlertCircle className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-                    <h3 className="text-lg font-medium">Nenhuma proposta encontrada</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Não há propostas aprovadas que correspondam aos seus critérios de busca.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="rejected" className="space-y-4 pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Propostas Rejeitadas</CardTitle>
-              <CardDescription>
-                Lista de propostas comerciais que foram rejeitadas.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {filteredProposals.length > 0 ? (
-                  filteredProposals.map((proposal) => (
-                    <div 
-                      key={proposal.id} 
-                      className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                      onClick={() => handleOpenDetails(proposal)}
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center gap-3 mb-3 md:mb-0">
-                        <div className="bg-red-500/10 p-2 rounded-full">
-                          <FileText className="h-5 w-5 text-red-600" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium">{proposal.id}</p>
-                            <Badge variant="destructive">Rejeitada</Badge>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Building className="h-3.5 w-3.5" />
-                            <span>{proposal.clientName}</span>
-                            <span className="h-1 w-1 rounded-full bg-muted-foreground"></span>
-                            <Calendar className="h-3.5 w-3.5" />
-                            <span>Rejeitada em: {
-                              proposal.timeline.find((t: any) => t.status.includes('Rejeitada'))?.date || 'N/A'
-                            }</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm">Ver Detalhes</Button>
-                        <Button variant="outline" size="sm">Reavaliar</Button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <AlertCircle className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-                    <h3 className="text-lg font-medium">Nenhuma proposta encontrada</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Não há propostas rejeitadas que correspondam aos seus critérios de busca.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
 
-      {/* Proposal Details Dialog */}
-      <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-3xl">
+      {/* Form Dialog for New Proposal */}
+      <Dialog open={isFormDialogOpen} onOpenChange={setIsFormDialogOpen}>
+        <DialogContent className="max-w-xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <span>Detalhes da Proposta {selectedProposal?.id}</span>
-              <Badge variant={
-                selectedProposal?.status === PROPOSAL_STATUS.REQUESTED ? "warning" :
-                selectedProposal?.status === PROPOSAL_STATUS.ANALYZING ? "info" :
-                selectedProposal?.status === PROPOSAL_STATUS.APPROVED ? "success" :
-                selectedProposal?.status === PROPOSAL_STATUS.CONVERTED ? "secondary" :
-                "destructive"
-              }>
-                {selectedProposal?.status === PROPOSAL_STATUS.REQUESTED ? "Aguardando Análise" :
-                 selectedProposal?.status === PROPOSAL_STATUS.ANALYZING ? "Em Análise" :
-                 selectedProposal?.status === PROPOSAL_STATUS.APPROVED ? "Aprovada" :
-                 selectedProposal?.status === PROPOSAL_STATUS.CONVERTED ? "Convertida" :
-                 "Rejeitada"}
-              </Badge>
-            </DialogTitle>
+            <DialogTitle>Nova Proposta Comercial</DialogTitle>
+            <DialogDescription>
+              Preencha os detalhes da proposta comercial. Após submetida, ela será analisada pela nossa equipe.
+            </DialogDescription>
           </DialogHeader>
-          
-          {selectedProposal && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Cliente</h3>
-                    <div className="flex items-center gap-2">
-                      <Building className="h-4 w-4 text-primary" />
-                      <span className="font-medium">{selectedProposal.clientName}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{selectedProposal.cnpj}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Informações</h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span>Solicitada em: {selectedProposal.createdAt}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        <span>Solicitada por: {selectedProposal.requestedBy}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                        <span>Valor: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(selectedProposal.value)}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Briefcase className="h-4 w-4 text-muted-foreground" />
-                        <span>Segmento: {selectedProposal.segment}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Descrição</h3>
-                    <p className="text-sm p-3 border rounded-md bg-muted/30">
-                      {selectedProposal.description}
-                    </p>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Timeline de Eventos</h3>
-                  <div className="border rounded-md overflow-hidden">
-                    <div className="p-3 bg-muted/30 border-b text-sm font-medium">
-                      Histórico da Proposta
-                    </div>
-                    <div className="p-2 space-y-1 max-h-[300px] overflow-y-auto">
-                      {selectedProposal.timeline.map((event: any, index: number) => (
-                        <div key={index} className="relative pl-6 pb-3">
-                          <div className="absolute left-0 top-0.5 h-full w-px bg-muted-foreground/30"></div>
-                          <div className="absolute left-0 top-1 h-2 w-2 rounded-full bg-primary"></div>
-                          <div className="text-sm font-medium">{event.status}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {event.date} • {event.user}
-                          </div>
-                          {event.note && (
-                            <div className="text-xs italic mt-1 text-muted-foreground">
-                              Nota: {event.note}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <DialogFooter>
-                <div className="flex flex-wrap gap-2 justify-end">
-                  {selectedProposal.status === PROPOSAL_STATUS.REQUESTED && (
-                    <>
-                      <Button 
-                        variant="outline" 
-                        onClick={() => handleStatusChange(selectedProposal, PROPOSAL_STATUS.ANALYZING)}
-                      >
-                        <Clock className="mr-2 h-4 w-4" />
-                        Mover para Análise
-                      </Button>
-                      <Button 
-                        variant="destructive" 
-                        onClick={() => handleStatusChange(selectedProposal, PROPOSAL_STATUS.REJECTED)}
-                      >
-                        <XCircle className="mr-2 h-4 w-4" />
-                        Rejeitar
-                      </Button>
-                    </>
-                  )}
-                  
-                  {selectedProposal.status === PROPOSAL_STATUS.ANALYZING && (
-                    <>
-                      <Button 
-                        variant="success" 
-                        onClick={() => handleStatusChange(selectedProposal, PROPOSAL_STATUS.APPROVED)}
-                      >
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        Aprovar
-                      </Button>
-                      <Button 
-                        variant="destructive" 
-                        onClick={() => handleStatusChange(selectedProposal, PROPOSAL_STATUS.REJECTED)}
-                      >
-                        <XCircle className="mr-2 h-4 w-4" />
-                        Rejeitar
-                      </Button>
-                    </>
-                  )}
-                  
-                  {selectedProposal.status === PROPOSAL_STATUS.APPROVED && (
-                    <Button 
-                      variant="success" 
-                      onClick={() => handleStatusChange(selectedProposal, PROPOSAL_STATUS.CONVERTED)}
-                    >
-                      <ArrowRight className="mr-2 h-4 w-4" />
-                      Converter em Contrato
-                    </Button>
-                  )}
-                  
-                  <Button variant="outline" onClick={() => setShowDetails(false)}>
-                    Fechar
-                  </Button>
-                </div>
-              </DialogFooter>
-            </div>
-          )}
+          <ProposalForm 
+            onSubmit={handleCreateProposal} 
+            onCancel={() => setIsFormDialogOpen(false)} 
+          />
         </DialogContent>
       </Dialog>
 
-      {/* New Proposal Form Dialog */}
-      <Dialog open={showNewProposalForm} onOpenChange={setShowNewProposalForm}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Nova Proposta Comercial</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-2">
-              <label htmlFor="clientName" className="text-sm font-medium">Cliente</label>
-              <Input 
-                id="clientName" 
-                placeholder="Nome do cliente" 
-                value={newProposal.clientName}
-                onChange={(e) => setNewProposal({...newProposal, clientName: e.target.value})}
-              />
+      {/* Proposal Detail Dialog */}
+      {selectedProposal && (
+        <Dialog open={proposalDetailOpen} onOpenChange={setProposalDetailOpen}>
+          <DialogContent className="max-w-3xl">
+            <DialogHeader>
+              <DialogTitle>{selectedProposal.title}</DialogTitle>
+              <DialogDescription>
+                Detalhes da proposta comercial e linha do tempo de eventos.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-sm font-semibold mb-1">Cliente</h3>
+                  <p className="text-sm">{selectedProposal.clientName}</p>
+                  <p className="text-xs text-muted-foreground">CNPJ: {selectedProposal.cnpj}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold mb-1">Serviço</h3>
+                  <p className="text-sm">{selectedProposal.service}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold mb-1">Valor</h3>
+                  <p className="text-sm font-medium">
+                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(selectedProposal.value)}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold mb-1">Status</h3>
+                  <ProposalStatus status={selectedProposal.status} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold mb-1">Descrição</h3>
+                  <p className="text-sm">{selectedProposal.description}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold mb-1">Representante</h3>
+                  <p className="text-sm">{selectedProposal.representativeName}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold mb-1">Data de Criação</h3>
+                  <p className="text-sm">
+                    {new Date(selectedProposal.createdAt).toLocaleString('pt-BR')}
+                  </p>
+                </div>
+                {selectedProposal.status === 'REJECTED' && (
+                  <div>
+                    <h3 className="text-sm font-semibold mb-1 text-red-600">Motivo da Rejeição</h3>
+                    <p className="text-sm">{selectedProposal.rejectionReason}</p>
+                  </div>
+                )}
+                {selectedProposal.status === 'CONVERTED' && (
+                  <div>
+                    <h3 className="text-sm font-semibold mb-1 text-purple-600">Informações do Contrato</h3>
+                    <p className="text-sm">Contrato #{selectedProposal.contractId}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Convertido em: {new Date(selectedProposal.convertedAt).toLocaleString('pt-BR')}
+                    </p>
+                  </div>
+                )}
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold mb-3">Linha do Tempo</h3>
+                <ProposalTimeline events={selectedProposal.timeline} />
+              </div>
             </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="cnpj" className="text-sm font-medium">CNPJ</label>
-              <Input 
-                id="cnpj" 
-                placeholder="00.000.000/0000-00" 
-                value={newProposal.cnpj}
-                onChange={(e) => setNewProposal({...newProposal, cnpj: e.target.value})}
-              />
+            <div className="flex justify-between mt-4">
+              <Button variant="outline" onClick={() => setProposalDetailOpen(false)}>
+                Fechar
+              </Button>
+              {selectedProposal.status === 'REQUEST' && (
+                <Button onClick={() => handleChangeStatus(selectedProposal.id, 'ANALYSIS')}>
+                  Iniciar Análise
+                </Button>
+              )}
+              {selectedProposal.status === 'ANALYSIS' && (
+                <div className="space-x-2">
+                  <Button 
+                    variant="outline" 
+                    className="border-red-200 text-red-700 hover:bg-red-50"
+                    onClick={() => handleChangeStatus(selectedProposal.id, 'REJECTED')}
+                  >
+                    Rejeitar
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="border-green-200 text-green-700 hover:bg-green-50"
+                    onClick={() => handleChangeStatus(selectedProposal.id, 'APPROVED')}
+                  >
+                    Aprovar
+                  </Button>
+                </div>
+              )}
+              {selectedProposal.status === 'APPROVED' && (
+                <Button 
+                  className="bg-purple-600 hover:bg-purple-700"
+                  onClick={() => handleChangeStatus(selectedProposal.id, 'CONVERTED')}
+                >
+                  Converter em Contrato
+                </Button>
+              )}
             </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="value" className="text-sm font-medium">Valor Estimado (R$)</label>
-              <Input 
-                id="value" 
-                placeholder="0,00" 
-                value={newProposal.value}
-                onChange={(e) => setNewProposal({...newProposal, value: e.target.value})}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="segment" className="text-sm font-medium">Segmento</label>
-              <select 
-                id="segment"
-                className="w-full px-3 py-2 border rounded-md"
-                value={newProposal.segment}
-                onChange={(e) => setNewProposal({...newProposal, segment: e.target.value})}
-              >
-                <option value="Municipal">Municipal</option>
-                <option value="Estadual">Estadual</option>
-                <option value="Federal">Federal</option>
-                <option value="Privado">Privado</option>
-              </select>
-            </div>
-            
-            <div className="space-y-2">
-              <label htmlFor="description" className="text-sm font-medium">Descrição</label>
-              <Textarea 
-                id="description" 
-                placeholder="Descreva a proposta comercial" 
-                rows={3}
-                value={newProposal.description}
-                onChange={(e) => setNewProposal({...newProposal, description: e.target.value})}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNewProposalForm(false)}>Cancelar</Button>
-            <Button onClick={handleCreateProposal}>Enviar Proposta</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

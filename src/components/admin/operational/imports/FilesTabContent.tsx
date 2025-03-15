@@ -1,44 +1,28 @@
 
 import React from 'react';
-import { TabsContent } from "@/components/ui/tabs";
 import ImportFormatsCard from './ImportFormatsCard';
 import RecentImportsCard from './RecentImportsCard';
-import { motion } from 'framer-motion';
+import { Button } from "@/components/ui/button";
+import { PlusCircle, FileUp } from "lucide-react";
 
 interface FilesTabContentProps {
   onFormatClick: (format: string) => void;
 }
 
-const FilesTabContent = ({ onFormatClick }: FilesTabContentProps) => {
+const FilesTabContent: React.FC<FilesTabContentProps> = ({ onFormatClick }) => {
   return (
-    <TabsContent value="files" className="space-y-4 pt-4">
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="space-y-4"
-      >
-        <motion.div
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.1, duration: 0.3 }}
-          whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
-          className="card-shimmer"
-        >
-          <ImportFormatsCard onFormatClick={onFormatClick} />
-        </motion.div>
-        
-        <motion.div
-          initial={{ x: 20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
-          className="card-shimmer"
-        >
-          <RecentImportsCard />
-        </motion.div>
-      </motion.div>
-    </TabsContent>
+    <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button className="flex items-center gap-2">
+          <FileUp className="h-4 w-4" />
+          Novo Upload
+        </Button>
+      </div>
+      
+      <ImportFormatsCard onFormatClick={onFormatClick} />
+      
+      <RecentImportsCard />
+    </div>
   );
 };
 

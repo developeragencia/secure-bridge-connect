@@ -4,7 +4,8 @@ import {
   Layout, Users, Settings, FileText, CreditCard, Calculator, 
   PieChart, Shield, Paintbrush, LineChart, BookOpen, Building,
   FileType, Mail, BriefcaseBusiness, Dices, Landmark, Receipt,
-  ServerCog, FileDigit, FileClock
+  ServerCog, FileDigit, FileClock, ChartPie, FileSpreadsheet,
+  FolderCheck
 } from 'lucide-react';
 import { MenuItem } from './MenuGrid';
 
@@ -62,6 +63,15 @@ export const getMainMenuItems = (): MenuItem[] => {
       highlight: true
     },
     {
+      id: 'credit_identification',
+      title: 'Identificação de Créditos',
+      description: 'Identificação automática de créditos tributários',
+      icon: <FileSearch className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 text-white',
+      route: 'credit_identification',
+      highlight: true
+    },
+    {
       id: 'detailed_reports',
       title: 'Relatórios Detalhados',
       description: 'Visualize relatórios detalhados sobre os créditos',
@@ -91,7 +101,8 @@ export const getMainMenuItems = (): MenuItem[] => {
       description: 'Crie e gerencie propostas para clientes',
       icon: <FileType className="h-6 w-6 text-white" />,
       color: 'bg-gradient-to-br from-cyan-400 via-cyan-500 to-blue-600 text-white',
-      route: 'proposals'
+      route: 'proposals',
+      highlight: true
     },
     {
       id: 'audit_management',
@@ -124,6 +135,23 @@ export const getMainMenuItems = (): MenuItem[] => {
       icon: <ServerCog className="h-6 w-6 text-white" />,
       color: 'bg-gradient-to-br from-stone-400 via-stone-500 to-neutral-600 text-white',
       route: 'audit_automation'
-    }
+    },
+    {
+      id: 'data_import',
+      title: 'Importação de Dados',
+      description: 'Importe dados de diferentes formatos',
+      icon: <FileSpreadsheet className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-600 text-white',
+      route: 'operational_imports',
+      highlight: true
+    },
+    {
+      id: 'interactive_dashboard',
+      title: 'Dashboard Interativo',
+      description: 'Visualize métricas e indicadores em tempo real',
+      icon: <ChartPie className="h-6 w-6 text-white" />,
+      color: 'bg-gradient-to-br from-purple-400 via-purple-500 to-indigo-600 text-white',
+      route: 'operational_dashboard'
+    },
   ];
 };
