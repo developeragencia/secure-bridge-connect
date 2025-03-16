@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -141,6 +140,25 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     return hoverColorMap[color] || 'group-hover:bg-gradient-to-br group-hover:from-primary/20 group-hover:to-primary/30 group-active:from-primary/30 group-active:to-primary/40';
   };
 
+  // Function to extract color from the gradient bg class for icon background
+  const getIconColorFromGradient = (color: string): string => {
+    // Map color class to corresponding hsl var
+    const colorMap: Record<string, string> = {
+      'bg-blue-600/10': 'hsl(var(--primary))',
+      'bg-purple-600/10': 'hsl(var(--primary))',
+      'bg-green-600/10': 'hsl(var(--primary))',
+      'bg-yellow-600/10': 'hsl(var(--primary))',
+      'bg-red-600/10': 'hsl(var(--primary))',
+      'bg-pink-600/10': 'hsl(var(--primary))',
+      'bg-indigo-600/10': 'hsl(var(--primary))',
+      'bg-teal-600/10': 'hsl(var(--primary))',
+      'bg-orange-600/10': 'hsl(var(--primary))',
+      'bg-cyan-600/10': 'hsl(var(--primary))',
+    };
+    
+    return colorMap[color] || 'hsl(var(--primary))';
+  };
+
   return (
     <motion.div 
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6"
@@ -210,13 +228,16 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
             </div>
           )}
           
-          {/* Icon container with enhanced visibility and hover interaction */}
+          {/* Icon container with site color styling */}
           <motion.div 
-            className="h-14 w-14 rounded-lg bg-white/90 backdrop-blur-sm flex items-center justify-center mb-4 shadow-sm border border-muted/50 group-hover:border-primary/20 transition-all duration-300"
+            className="h-14 w-14 rounded-lg flex items-center justify-center mb-4 shadow-sm border border-muted/50 group-hover:border-primary/20 transition-all duration-300"
+            style={{ 
+              background: `linear-gradient(135deg, ${getIconColorFromGradient(item.color)}40, ${getIconColorFromGradient(item.color)}70)` 
+            }}
             whileHover={{ y: -5, transition: { duration: 0.3 } }}
           >
-            {/* Fix: Using a div wrapper instead of motion.div for the icon to ensure it's rendered properly */}
-            <div className="text-primary transition-colors duration-300 flex items-center justify-center">
+            {/* Use the icon with white fill for better visibility on colored backgrounds */}
+            <div className="text-white flex items-center justify-center">
               {item.icon}
             </div>
           </motion.div>
