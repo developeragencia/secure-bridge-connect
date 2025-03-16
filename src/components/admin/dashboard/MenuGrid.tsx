@@ -159,6 +159,20 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
     return colorMap[color] || 'hsl(var(--primary))';
   };
 
+  // Icon animation variants
+  const iconAnimationVariants = {
+    initial: { rotate: 0, scale: 1 },
+    hover: { 
+      rotate: [0, -10, 10, -5, 5, 0],
+      scale: [1, 1.1, 1.05, 1.1, 1],
+      transition: {
+        duration: 0.8,
+        ease: "easeInOut",
+        times: [0, 0.2, 0.4, 0.6, 0.8, 1],
+      }
+    }
+  };
+
   return (
     <motion.div 
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6"
@@ -228,18 +242,30 @@ const MenuGrid: React.FC<MenuGridProps> = ({ items }) => {
             </div>
           )}
           
-          {/* Icon container with site color styling */}
+          {/* Icon container with site color styling and animation */}
           <motion.div 
             className="h-14 w-14 rounded-lg flex items-center justify-center mb-4 shadow-sm border border-muted/50 group-hover:border-primary/20 transition-all duration-300"
             style={{ 
               background: `linear-gradient(135deg, ${getIconColorFromGradient(item.color)}40, ${getIconColorFromGradient(item.color)}70)` 
             }}
-            whileHover={{ y: -5, transition: { duration: 0.3 } }}
+            variants={iconAnimationVariants}
+            initial="initial"
+            whileHover="hover"
           >
-            {/* Use the icon with white fill for better visibility on colored backgrounds */}
-            <div className="text-white flex items-center justify-center">
+            {/* Animated icon wrapper */}
+            <motion.div 
+              className="text-white flex items-center justify-center"
+              animate={{ 
+                scale: [1, 1.05, 1], 
+              }}
+              transition={{ 
+                duration: 2, 
+                repeat: Infinity, 
+                repeatType: "reverse" 
+              }}
+            >
               {item.icon}
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Title with color transition on hover */}
