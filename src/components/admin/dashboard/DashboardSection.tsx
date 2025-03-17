@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import MenuGrid from './MenuGrid';
-import { MenuItem } from './MenuGrid';
+import { MenuItem } from './types';
 
 interface DashboardSectionProps {
   title: string;

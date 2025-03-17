@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Building,
@@ -15,7 +14,7 @@ import {
   FileDigit,
   Shield
 } from 'lucide-react';
-import { MenuItem } from './MenuGrid';
+import { MenuItem } from './types';
 
 export const getMainMenuItems = (): MenuItem[] => [
   {

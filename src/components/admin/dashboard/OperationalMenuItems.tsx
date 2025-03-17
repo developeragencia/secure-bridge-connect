@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   FileSpreadsheet,
@@ -13,7 +12,7 @@ import {
   Layers,
   ArrowUpDown
 } from 'lucide-react';
-import { MenuItem } from './MenuGrid';
+import { MenuItem } from './types';
 
 export const getOperationalMenuItems = (): MenuItem[] => [
   {
