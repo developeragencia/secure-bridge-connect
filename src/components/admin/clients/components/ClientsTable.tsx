@@ -58,6 +58,7 @@ const ClientsTable: React.FC<ClientsTableProps> = ({
   
   const handleDeleteConfirmed = () => {
     if (clientToDelete) {
+      // Call the parent's delete function with the client ID
       onDeleteClient(clientToDelete);
       setClientToDelete(null);
       setIsDeleteDialogOpen(false);
@@ -146,7 +147,10 @@ const ClientsTable: React.FC<ClientsTableProps> = ({
                         <DropdownMenuItem onClick={() => onSetActiveClient(client.id)}>
                           <UserCheck className="mr-2 h-4 w-4" /> Definir como ativo
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => confirmDelete(client.id)}>
+                        <DropdownMenuItem 
+                          onClick={() => confirmDelete(client.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
                           <Trash2 className="mr-2 h-4 w-4 text-red-500" /> Excluir
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -191,7 +195,10 @@ const ClientsTable: React.FC<ClientsTableProps> = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteConfirmed} className="bg-red-500 hover:bg-red-600">
+            <AlertDialogAction 
+              onClick={handleDeleteConfirmed} 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>

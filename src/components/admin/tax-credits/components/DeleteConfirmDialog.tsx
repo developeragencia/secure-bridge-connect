@@ -27,7 +27,9 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
 }) => {
   const handleConfirm = () => {
     if (credit) {
+      // Make sure we're passing the credit ID to the onConfirm callback
       onConfirm(credit.id);
+      // Close the dialog after confirming deletion
       onClose();
     }
   };
@@ -48,7 +50,10 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm} className="bg-destructive text-destructive-foreground">
+          <AlertDialogAction 
+            onClick={handleConfirm} 
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
             Sim, excluir
           </AlertDialogAction>
         </AlertDialogFooter>
