@@ -40,6 +40,7 @@ const TaxCreditManagement: React.FC = () => {
     handleCreateCredit,
     handleViewDetails,
     handleExportData,
+    deleteCredit
   } = useTaxCreditManagement();
 
   const { classes: cardClasses } = useAnimationOnScroll<HTMLDivElement>({
@@ -93,11 +94,11 @@ const TaxCreditManagement: React.FC = () => {
   };
   
   const handleDeleteCredit = (creditId: string) => {
-    toast({
-      title: "Crédito excluído",
-      description: "O crédito tributário foi excluído com sucesso.",
-      variant: "destructive",
-    });
+    // Call the delete function from the hook
+    deleteCredit(creditId);
+    
+    // Close the dialog and refresh the data
+    setIsDeleteDialogOpen(false);
     handleRefresh();
   };
 

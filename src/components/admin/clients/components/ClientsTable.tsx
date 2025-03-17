@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +22,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import ClientDetailDialog from './ClientDetailDialog';
+import { useToast } from '@/components/ui/use-toast';
 
 interface ClientsTableProps {
   clients: Client[];
@@ -45,6 +45,7 @@ const ClientsTable: React.FC<ClientsTableProps> = ({
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { toast } = useToast();
 
   const handleViewDetails = (client: Client) => {
     setDetailsClient(client);
@@ -60,6 +61,15 @@ const ClientsTable: React.FC<ClientsTableProps> = ({
     if (clientToDelete) {
       // Call the parent's delete function with the client ID
       onDeleteClient(clientToDelete);
+      
+      // Show toast notification
+      toast({
+        title: "Cliente excluído",
+        description: "O cliente foi excluído com sucesso.",
+        variant: "destructive",
+      });
+      
+      // Reset state and close dialog
       setClientToDelete(null);
       setIsDeleteDialogOpen(false);
     }

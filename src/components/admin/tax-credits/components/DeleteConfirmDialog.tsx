@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { TaxCredit } from '@/types/tax-credits';
+import { useToast } from '@/components/ui/use-toast';
 
 interface DeleteConfirmDialogProps {
   open: boolean;
@@ -25,11 +26,21 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
   credit,
   onConfirm,
 }) => {
+  const { toast } = useToast();
+  
   const handleConfirm = () => {
     if (credit) {
-      // Make sure we're passing the credit ID to the onConfirm callback
+      // Call the parent's delete handler with the credit ID
       onConfirm(credit.id);
-      // Close the dialog after confirming deletion
+      
+      // Show confirmation toast
+      toast({
+        title: "Crédito excluído",
+        description: `O crédito de ${credit.clientName} foi excluído com sucesso.`,
+        variant: "destructive",
+      });
+      
+      // Close the dialog
       onClose();
     }
   };

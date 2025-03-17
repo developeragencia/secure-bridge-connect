@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -88,8 +87,10 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handleDelete = () => {
     if (onDelete) {
+      // Call the passed delete handler with the correct ID
       onDelete(id);
     } else {
+      // Default behavior with toast message
       toast({
         title: "Excluir",
         description: `Excluindo ${entityType} ${id}`,
