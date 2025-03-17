@@ -17,6 +17,7 @@ import SupportContent from './support/SupportContent';
 import AdminTabHeader from './AdminTabHeader';
 import AdminProfileSettings from './profile/AdminProfileSettings';
 import DocumentationContent from './documentation/DocumentationContent';
+import UsersPermissionsPanel from './users/UsersPermissionsPanel';
 
 // Tax Credits Components
 import TaxCreditManagement from './tax-credits/TaxCreditManagement';
@@ -99,7 +100,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'dashboard':
         return <AdminDashboard />;
       case 'users':
-        return <AdminUsers />;
+        return <UsersPermissionsPanel />;
       case 'profile':
         return <UserProfilePermissions userRole={user?.role || "client"} />;
       case 'notifications':
@@ -166,6 +167,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'data_reconciliation':
         return <DataReconciliationPanel />;
       
+      // Security routes
       case 'two_factor_auth':
         return <TwoFactorAuthPanel />;
       case 'session_expiration':

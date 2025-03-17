@@ -26,6 +26,7 @@ import IRRFRecoveryPanel from '../components/admin/tax-credits/recovery/IRRFReco
 import CreditIdentificationPanel from '../components/admin/tax-credits/identification/CreditIdentificationPanel';
 import AuditManagementPanel from '../components/admin/audit/AuditManagementPanel';
 import AdminProfileSettings from '../components/admin/profile/AdminProfileSettings';
+import UsersPermissionsPanel from '../components/admin/users/UsersPermissionsPanel';
 
 // Operational routes components
 import OperationalDashboardPanel from '../components/admin/operational/OperationalDashboardPanel';
@@ -76,6 +77,7 @@ const AdminRoutes = () => {
     if (path.includes('/admin/fiscal_reports')) return 'fiscal_reports';
     if (path.includes('/admin/proposals')) return 'proposals';
     if (path.includes('/admin/audit_management')) return 'audit_management';
+    if (path.includes('/admin/users_permissions')) return 'users';
     
     // Operational route paths
     if (path.includes('/admin/operational_dashboard')) return 'operational_dashboard';
@@ -131,6 +133,7 @@ const AdminRoutes = () => {
         <Route path="session_expiration" element={<SessionExpirationPanel />} />
         <Route path="access_protection" element={<AccessProtectionContent />} />
         <Route path="audit_trails" element={<AuditTrailsPanel />} />
+        <Route path="users_permissions" element={<UsersPermissionsPanel />} />
         <Route path="tax_compensation_reports" element={<TaxCompensationReportsPanel />} />
         <Route path="tax_calculator" element={<AdvancedTaxCreditCalculator />} />
         <Route path="irrf_recovery" element={<IRRFRecoveryPanel />} />
