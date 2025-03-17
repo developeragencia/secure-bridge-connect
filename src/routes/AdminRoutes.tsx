@@ -16,6 +16,16 @@ import AccessProtectionContent from '../components/admin/security/AccessProtecti
 import AuditTrailsPanel from '../components/admin/security/AuditTrailsPanel';
 import TaxCompensationReportsPanel from '../components/admin/tax-reports/TaxCompensationReportsPanel';
 import AdvancedTaxCreditCalculator from '../components/admin/tax-credits/AdvancedTaxCreditCalculator';
+import ClientManagement from '../components/admin/tax-credits/ClientManagement';
+import DetailedReportsPanel from '../components/admin/tax-reports/DetailedReportsPanel';
+import InteractiveDashboardPanel from '../components/admin/tax-reports/InteractiveDashboardPanel';
+import RetentionReceiptsPanel from '../components/admin/tax-reports/RetentionReceiptsPanel';
+import FiscalReportsPanel from '../components/admin/tax-reports/FiscalReportsPanel';
+import IRRFCalculationsPanel from '../components/admin/tax-credits/calculations/IRRFCalculationsPanel';
+import IRRFRecoveryPanel from '../components/admin/tax-credits/recovery/IRRFRecoveryPanel';
+import CreditIdentificationPanel from '../components/admin/tax-credits/identification/CreditIdentificationPanel';
+import AuditManagementPanel from '../components/admin/audit/AuditManagementPanel';
+import AdminProfileSettings from '../components/admin/profile/AdminProfileSettings';
 
 // Operational routes components
 import OperationalDashboardPanel from '../components/admin/operational/OperationalDashboardPanel';
@@ -44,6 +54,7 @@ const AdminRoutes = () => {
     if (path.includes('/admin/site')) return 'site';
     if (path.includes('/admin/settings')) return 'settings';
     if (path.includes('/admin/tax_credits')) return 'tax_credits';
+    if (path.includes('/admin/clients')) return 'clients';
     if (path.includes('/admin/credit_identification')) return 'credit_identification';
     if (path.includes('/admin/operational_imports')) return 'operational_imports';
     if (path.includes('/admin/imports/filter')) return 'imports_filter';
@@ -56,6 +67,15 @@ const AdminRoutes = () => {
     if (path.includes('/admin/audit_trails')) return 'audit_trails';
     if (path.includes('/admin/tax_compensation_reports')) return 'tax_compensation_reports';
     if (path.includes('/admin/tax_calculator')) return 'tax_calculator';
+    if (path.includes('/admin/admin_profile')) return 'admin_profile';
+    if (path.includes('/admin/calculations/irrf')) return 'calculations';
+    if (path.includes('/admin/irrf_recovery')) return 'irrf_recovery';
+    if (path.includes('/admin/detailed_reports')) return 'detailed_reports';
+    if (path.includes('/admin/interactive_dashboard')) return 'interactive_dashboard';
+    if (path.includes('/admin/retention_receipts')) return 'retention_receipts';
+    if (path.includes('/admin/fiscal_reports')) return 'fiscal_reports';
+    if (path.includes('/admin/proposals')) return 'proposals';
+    if (path.includes('/admin/audit_management')) return 'audit_management';
     
     // Operational route paths
     if (path.includes('/admin/operational_dashboard')) return 'operational_dashboard';
@@ -97,12 +117,15 @@ const AdminRoutes = () => {
             <AdminSettings />
           </Suspense>
         } />
+        <Route path="admin_profile" element={<AdminProfileSettings />} />
         <Route path="tax_credits" element={<TaxCreditManagement />} />
-        <Route path="credit_identification" element={<OperationalCreditIdentificationPanel />} />
+        <Route path="clients" element={<ClientManagement />} />
+        <Route path="credit_identification" element={<CreditIdentificationPanel />} />
         <Route path="operational_imports" element={<OperationalImportsPanel />} />
         <Route path="imports/filter" element={<DataFilterPanel />} />
         <Route path="calculations/selic" element={<SelicCorrectionPanel />} />
         <Route path="calculations/selic-integration" element={<SelicIntegrationPanel />} />
+        <Route path="calculations/irrf" element={<IRRFCalculationsPanel />} />
         <Route path="commercial/proposals" element={<CommercialProposalsPanel />} />
         <Route path="two_factor_auth" element={<TwoFactorAuthPanel />} />
         <Route path="session_expiration" element={<SessionExpirationPanel />} />
@@ -110,6 +133,13 @@ const AdminRoutes = () => {
         <Route path="audit_trails" element={<AuditTrailsPanel />} />
         <Route path="tax_compensation_reports" element={<TaxCompensationReportsPanel />} />
         <Route path="tax_calculator" element={<AdvancedTaxCreditCalculator />} />
+        <Route path="irrf_recovery" element={<IRRFRecoveryPanel />} />
+        <Route path="detailed_reports" element={<DetailedReportsPanel />} />
+        <Route path="interactive_dashboard" element={<InteractiveDashboardPanel />} />
+        <Route path="retention_receipts" element={<RetentionReceiptsPanel />} />
+        <Route path="fiscal_reports" element={<FiscalReportsPanel />} />
+        <Route path="proposals" element={<CommercialProposalsPanel />} />
+        <Route path="audit_management" element={<AuditManagementPanel />} />
         
         {/* Operational routes */}
         <Route path="operational_dashboard" element={<OperationalDashboardPanel />} />

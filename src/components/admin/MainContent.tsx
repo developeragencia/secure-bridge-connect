@@ -39,6 +39,7 @@ import DetailedReportsPanel from './tax-reports/DetailedReportsPanel';
 import InteractiveDashboardPanel from './tax-reports/InteractiveDashboardPanel';
 import RetentionReceiptsPanel from './tax-reports/RetentionReceiptsPanel';
 import TaxCompensationReportsPanel from './tax-reports/TaxCompensationReportsPanel';
+import FiscalReportsPanel from './tax-reports/FiscalReportsPanel';
 
 // Operational Components
 import OperationalImportsPanel from './operational/OperationalImportsPanel';
@@ -53,6 +54,13 @@ import ComplianceChecksPanel from './operational/ComplianceChecksPanel';
 import OperationalReportsPanel from './operational/OperationalReportsPanel';
 import DataProcessingPanel from './operational/DataProcessingPanel';
 import DataReconciliationPanel from './operational/DataReconciliationPanel';
+
+// New panels for Module Components
+import IRRFCalculationsPanel from './tax-credits/calculations/IRRFCalculationsPanel';
+import IRRFRecoveryPanel from './tax-credits/recovery/IRRFRecoveryPanel';
+import CreditIdentificationPanel from './tax-credits/identification/CreditIdentificationPanel';
+import AuditManagementPanel from './audit/AuditManagementPanel';
+import CommercialProposalsPanel from './commercial/CommercialProposalsPanel';
 
 // Extra Tab Content for any other tabs that are not yet implemented
 import ExtraTabContent from './ExtraTabContent';
@@ -105,25 +113,25 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'recovery':
         return <RecoveryManagement />;
       case 'credit_identification':
-        return <CreditIdentification />;
+        return <CreditIdentificationPanel />;
       case 'data_processing':
         return <DataProcessingPanel />;
       case 'audits':
         return <AuditManagement />;
       case 'calculations':
-        return <IRRFCalculations />;
+        return <IRRFCalculationsPanel />;
       case 'irrf_recovery':
-        return <IRRFRecovery />;
+        return <IRRFRecoveryPanel />;
       case 'tax_calculator':
         return <AdvancedTaxCreditCalculator />;
       case 'imports':
         return <DataImports />;
       case 'fiscal_reports':
-        return <FiscalReports />;
+        return <FiscalReportsPanel />;
       case 'proposals':
-        return <CommercialProposals />;
+        return <CommercialProposalsPanel />;
       case 'audit_management':
-        return <AuditManagement />;
+        return <AuditManagementPanel />;
       
       case 'detailed_reports':
         return <DetailedReportsPanel />;

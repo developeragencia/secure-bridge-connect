@@ -35,8 +35,34 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
     if (item.isExternal) {
       window.open(item.route, '_blank');
     } else {
-      // Check if we need to add /admin prefix or not
-      if (item.route.startsWith('/')) {
+      // Navigate to the appropriate route based on the item's route value
+      if (item.route === 'clients') {
+        navigate('/admin/clients');
+      } else if (item.route === 'tax_credits') {
+        navigate('/admin/tax_credits');
+      } else if (item.route === 'tax_calculator') {
+        navigate('/admin/tax_calculator');
+      } else if (item.route === 'calculations/irrf') {
+        navigate('/admin/calculations/irrf');
+      } else if (item.route === 'irrf_recovery') {
+        navigate('/admin/irrf_recovery');
+      } else if (item.route === 'credit_identification') {
+        navigate('/admin/credit_identification');
+      } else if (item.route === 'detailed_reports') {
+        navigate('/admin/detailed_reports');
+      } else if (item.route === 'tax_compensation_reports') {
+        navigate('/admin/tax_compensation_reports');
+      } else if (item.route === 'interactive_dashboard') {
+        navigate('/admin/interactive_dashboard');
+      } else if (item.route === 'retention_receipts') {
+        navigate('/admin/retention_receipts');
+      } else if (item.route === 'fiscal_reports') {
+        navigate('/admin/fiscal_reports');
+      } else if (item.route === 'commercial/proposals') {
+        navigate('/admin/proposals');
+      } else if (item.route === 'audit_management') {
+        navigate('/admin/audit_management');
+      } else if (item.route.startsWith('/')) {
         // Route already has a leading slash
         navigate(item.route);
       } else if (item.route === 'dashboard') {
