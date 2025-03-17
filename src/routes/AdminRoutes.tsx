@@ -17,6 +17,17 @@ import AuditTrailsPanel from '../components/admin/security/AuditTrailsPanel';
 import TaxCompensationReportsPanel from '../components/admin/tax-reports/TaxCompensationReportsPanel';
 import AdvancedTaxCreditCalculator from '../components/admin/tax-credits/AdvancedTaxCreditCalculator';
 
+// Operational routes components
+import OperationalDashboardPanel from '../components/admin/operational/OperationalDashboardPanel';
+import OperationalAuditsPanel from '../components/admin/operational/OperationalAuditsPanel';
+import OperationalReceiptsPanel from '../components/admin/operational/OperationalReceiptsPanel';
+import DataVisualizationPanel from '../components/admin/operational/DataVisualizationPanel';
+import OperationalMonitoringPanel from '../components/admin/operational/OperationalMonitoringPanel';
+import ComplianceChecksPanel from '../components/admin/operational/ComplianceChecksPanel';
+import OperationalReportsPanel from '../components/admin/operational/OperationalReportsPanel';
+import DataProcessingPanel from '../components/admin/operational/DataProcessingPanel';
+import DataReconciliationPanel from '../components/admin/operational/DataReconciliationPanel';
+
 // Lazy-loaded components
 const AdminUsers = lazy(() => import('../components/admin/AdminUsers'));
 const AdminDashboard = lazy(() => import('../components/admin/AdminDashboard'));
@@ -45,6 +56,18 @@ const AdminRoutes = () => {
     if (path.includes('/admin/audit_trails')) return 'audit_trails';
     if (path.includes('/admin/tax_compensation_reports')) return 'tax_compensation_reports';
     if (path.includes('/admin/tax_calculator')) return 'tax_calculator';
+    
+    // Operational route paths
+    if (path.includes('/admin/operational_dashboard')) return 'operational_dashboard';
+    if (path.includes('/admin/operational_audits')) return 'operational_audits';
+    if (path.includes('/admin/operational_receipts')) return 'operational_receipts';
+    if (path.includes('/admin/data_visualization')) return 'data_visualization';
+    if (path.includes('/admin/operational_monitoring')) return 'operational_monitoring';
+    if (path.includes('/admin/compliance_checks')) return 'compliance_checks';
+    if (path.includes('/admin/operational_reports')) return 'operational_reports';
+    if (path.includes('/admin/data_processing')) return 'data_processing';
+    if (path.includes('/admin/data_reconciliation')) return 'data_reconciliation';
+    
     // Default to dashboard
     return 'dashboard';
   };
@@ -87,6 +110,17 @@ const AdminRoutes = () => {
         <Route path="audit_trails" element={<AuditTrailsPanel />} />
         <Route path="tax_compensation_reports" element={<TaxCompensationReportsPanel />} />
         <Route path="tax_calculator" element={<AdvancedTaxCreditCalculator />} />
+        
+        {/* Operational routes */}
+        <Route path="operational_dashboard" element={<OperationalDashboardPanel />} />
+        <Route path="operational_audits" element={<OperationalAuditsPanel />} />
+        <Route path="operational_receipts" element={<OperationalReceiptsPanel />} />
+        <Route path="data_visualization" element={<DataVisualizationPanel />} />
+        <Route path="operational_monitoring" element={<OperationalMonitoringPanel />} />
+        <Route path="compliance_checks" element={<ComplianceChecksPanel />} />
+        <Route path="operational_reports" element={<OperationalReportsPanel />} />
+        <Route path="data_processing" element={<DataProcessingPanel />} />
+        <Route path="data_reconciliation" element={<DataReconciliationPanel />} />
       </Route>
     </Routes>
   );

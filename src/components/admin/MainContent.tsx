@@ -47,6 +47,12 @@ import OperationalCreditIdentificationPanel from './operational/OperationalCredi
 import OperationalDashboardPanel from './operational/OperationalDashboardPanel';
 import OperationalReceiptsPanel from './operational/OperationalReceiptsPanel';
 import OperationalAuditsPanel from './operational/OperationalAuditsPanel';
+import DataVisualizationPanel from './operational/DataVisualizationPanel';
+import OperationalMonitoringPanel from './operational/OperationalMonitoringPanel';
+import ComplianceChecksPanel from './operational/ComplianceChecksPanel';
+import OperationalReportsPanel from './operational/OperationalReportsPanel';
+import DataProcessingPanel from './operational/DataProcessingPanel';
+import DataReconciliationPanel from './operational/DataReconciliationPanel';
 
 // Extra Tab Content for any other tabs that are not yet implemented
 import ExtraTabContent from './ExtraTabContent';
@@ -101,7 +107,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'credit_identification':
         return <CreditIdentification />;
       case 'data_processing':
-        return <DataProcessing />;
+        return <DataProcessingPanel />;
       case 'audits':
         return <AuditManagement />;
       case 'calculations':
@@ -128,6 +134,7 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
       case 'tax_compensation_reports':
         return <TaxCompensationReportsPanel />;
       
+      // Operational routes
       case 'operational_imports':
         return <OperationalImportsPanel />;
       case 'operational_recovery':
@@ -140,6 +147,16 @@ const MainContent = ({ activeTab, user }: MainContentProps) => {
         return <OperationalReceiptsPanel />;
       case 'operational_audits':
         return <OperationalAuditsPanel />;
+      case 'data_visualization':
+        return <DataVisualizationPanel />;
+      case 'operational_monitoring':
+        return <OperationalMonitoringPanel />;
+      case 'compliance_checks':
+        return <ComplianceChecksPanel />;
+      case 'operational_reports':
+        return <OperationalReportsPanel />;
+      case 'data_reconciliation':
+        return <DataReconciliationPanel />;
       
       case 'two_factor_auth':
         return <TwoFactorAuthPanel />;

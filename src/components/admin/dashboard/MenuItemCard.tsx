@@ -36,7 +36,10 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
       window.open(item.route, '_blank');
     } else {
       // Check if we need to add /admin prefix or not
-      if (item.route === 'dashboard') {
+      if (item.route.startsWith('/')) {
+        // Route already has a leading slash
+        navigate(item.route);
+      } else if (item.route === 'dashboard') {
         // For dashboard, navigate to the admin root
         navigate('/admin');
       } else {
