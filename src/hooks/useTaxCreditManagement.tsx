@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { TaxCredit, TaxCreditSummary } from '@/types/tax-credits';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 export const useTaxCreditManagement = () => {
   // Estado para os filtros
@@ -17,7 +18,7 @@ export const useTaxCreditManagement = () => {
   const [isListening, setIsListening] = useState(false);
   
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
 
   // Função para simular listeners em tempo real
   const startListening = () => {
@@ -140,7 +141,7 @@ export const useTaxCreditManagement = () => {
       startListening();
     } catch (error) {
       console.error('Erro ao buscar créditos:', error);
-      toast({
+      uiToast({
         title: 'Erro ao carregar dados',
         description: 'Não foi possível carregar os créditos. Tente novamente mais tarde.',
         variant: 'destructive',
@@ -181,11 +182,10 @@ export const useTaxCreditManagement = () => {
   // Funções de ação
   const handleRefresh = useCallback(() => {
     fetchCredits();
-    toast({
-      title: 'Dados atualizados',
+    toast.success('Dados atualizados', {
       description: 'Lista de créditos atualizada com sucesso',
     });
-  }, [toast]);
+  }, []);
 
   const handleCreateCredit = useCallback(() => {
     // This is now handled in the component
@@ -197,55 +197,55 @@ export const useTaxCreditManagement = () => {
   }, [navigate]);
 
   const handleExportData = useCallback(() => {
-    toast({
-      title: 'Exportação iniciada',
+    toast.info('Exportação iniciada', {
       description: 'Os dados estão sendo exportados. Você receberá uma notificação quando estiver pronto.',
     });
-  }, [toast]);
+  }, []);
 
   // Funções adicionais para CRUD
   const createCredit = useCallback((creditData: Partial<TaxCredit>) => {
     console.log('Creating credit:', creditData);
     // API call would go here
-    toast({
-      title: 'Crédito criado',
+    toast.success('Crédito criado', {
       description: 'O crédito tributário foi criado com sucesso',
     });
     fetchCredits();
-  }, [toast]);
+  }, []);
 
   const updateCredit = useCallback((creditId: string, creditData: Partial<TaxCredit>) => {
     console.log('Updating credit:', creditId, creditData);
     // API call would go here
-    toast({
-      title: 'Crédito atualizado',
+    toast.success('Crédito atualizado', {
       description: 'O crédito tributário foi atualizado com sucesso',
     });
     fetchCredits();
-  }, [toast]);
+  }, []);
 
   const deleteCredit = useCallback((creditId: string) => {
     console.log('Deleting credit:', creditId);
     // In a real app, we would call an API to delete the credit
-    // For now, we'll just remove it from our local state
     setCredits(prevCredits => prevCredits.filter(credit => credit.id !== creditId));
     
-    toast({
-      title: 'Crédito excluído',
+    toast.error('Crédito excluído', {
       description: 'O crédito tributário foi excluído com sucesso',
-      variant: 'destructive',
     });
-  }, [toast]);
+  }, []);
 
   const changeStatus = useCallback((creditId: string, newStatus: string, notes: string) => {
     console.log('Changing status:', creditId, newStatus, notes);
     // API call would go here
-    toast({
-      title: 'Status atualizado',
+    const updatedCredits = credits.map(credit => 
+      credit.id === creditId 
+        ? { ...credit, status: newStatus as TaxCredit['status'], updatedAt: new Date().toISOString() }
+        : credit
+    );
+    
+    setCredits(updatedCredits);
+    
+    toast.success('Status atualizado', {
       description: `O status do crédito foi atualizado para ${newStatus}`,
     });
-    fetchCredits();
-  }, [toast]);
+  }, [credits]);
 
   return {
     searchQuery,

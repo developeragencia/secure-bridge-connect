@@ -40,7 +40,10 @@ const TaxCreditManagement: React.FC = () => {
     handleCreateCredit,
     handleViewDetails,
     handleExportData,
-    deleteCredit // Make sure this is properly destructured
+    createCredit,
+    updateCredit,
+    deleteCredit,
+    changeStatus
   } = useTaxCreditManagement();
 
   const { classes: cardClasses } = useAnimationOnScroll<HTMLDivElement>({
@@ -72,25 +75,28 @@ const TaxCreditManagement: React.FC = () => {
   
   const handleSaveCredit = (formData: any) => {
     if (isEditMode && selectedCredit) {
+      updateCredit(selectedCredit.id, formData);
       toast({
         title: "Crédito atualizado",
         description: `O crédito de ${formData.clientName} foi atualizado com sucesso.`,
       });
     } else {
+      createCredit(formData);
       toast({
         title: "Crédito criado",
         description: `O novo crédito de ${formData.clientName} foi criado com sucesso.`,
       });
-      handleRefresh();
     }
+    setIsCreditFormOpen(false);
   };
   
   const handleStatusChange = (creditId: string, newStatus: string, notes: string) => {
+    changeStatus(creditId, newStatus, notes);
+    setIsStatusDialogOpen(false);
     toast({
       title: "Status atualizado",
       description: `O status do crédito foi alterado para ${newStatus}.`,
     });
-    handleRefresh();
   };
   
   const handleDeleteCredit = (creditId: string) => {
