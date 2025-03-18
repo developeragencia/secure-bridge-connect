@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { TaxCredit, TaxCreditSummary } from '@/types/tax-credits';
 import { useNavigate } from 'react-router-dom';
