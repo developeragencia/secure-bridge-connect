@@ -40,7 +40,7 @@ const TaxCreditManagement: React.FC = () => {
     handleCreateCredit,
     handleViewDetails,
     handleExportData,
-    deleteCredit
+    deleteCredit // Make sure this is properly destructured
   } = useTaxCreditManagement();
 
   const { classes: cardClasses } = useAnimationOnScroll<HTMLDivElement>({

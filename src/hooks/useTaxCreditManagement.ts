@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { TaxCredit, TaxCreditSummary } from '@/types/tax-credits';
 import { toast } from 'sonner';
 
@@ -88,7 +87,6 @@ export const useTaxCreditManagement = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
-  // Filter credits based on search query and filters
   const filteredCredits = useMemo(() => {
     return credits.filter(credit => {
       const matchesSearch = 
@@ -103,7 +101,6 @@ export const useTaxCreditManagement = () => {
     });
   }, [credits, searchQuery, statusFilter, typeFilter]);
 
-  // Calculate summary statistics
   const summary: TaxCreditSummary = useMemo(() => {
     const totalValue = credits.reduce((sum, credit) => sum + credit.creditAmount, 0);
     const pendingValue = credits
@@ -124,16 +121,13 @@ export const useTaxCreditManagement = () => {
     };
   }, [credits]);
 
-  // Simulate loading data
   const handleRefresh = () => {
     setIsLoading(true);
     setIsListening(true);
     
     setTimeout(() => {
-      // Simulate API call completion
       setIsLoading(false);
       
-      // Simulate voice recognition running for a bit longer
       setTimeout(() => {
         setIsListening(false);
         toast.success('Dados atualizados com sucesso');
@@ -141,29 +135,31 @@ export const useTaxCreditManagement = () => {
     }, 1500);
   };
 
-  // Handle creating a new credit
   const handleCreateCredit = () => {
-    // This would open a form to create a new credit
     toast.info('Criando novo crédito tributário');
   };
 
-  // Handle viewing credit details
   const handleViewDetails = (creditId: string) => {
     toast.info('Visualizando detalhes do crédito', {
       description: `ID: ${creditId}`
     });
   };
 
-  // Handle exporting data
   const handleExportData = () => {
     toast.info('Exportando dados', {
       description: 'Os dados serão exportados em formato Excel'
     });
   };
 
-  // Initialize data
+  const deleteCredit = useCallback((creditId: string) => {
+    setCredits(prevCredits => prevCredits.filter(credit => credit.id !== creditId));
+    
+    toast.error('Crédito excluído', {
+      description: 'O crédito tributário foi excluído com sucesso'
+    });
+  }, []);
+
   useEffect(() => {
-    // In a real app, we would fetch data from an API here
     setIsLoading(true);
     
     setTimeout(() => {
@@ -186,6 +182,7 @@ export const useTaxCreditManagement = () => {
     handleRefresh,
     handleCreateCredit,
     handleViewDetails,
-    handleExportData
+    handleExportData,
+    deleteCredit
   };
 };
