@@ -97,9 +97,8 @@ const TaxCreditManagement: React.FC = () => {
     // Call the delete function from the hook
     deleteCredit(creditId);
     
-    // Close the dialog and refresh the data
+    // Close the dialog
     setIsDeleteDialogOpen(false);
-    handleRefresh();
   };
 
   return (

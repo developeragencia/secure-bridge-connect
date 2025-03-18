@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { TaxCredit, TaxCreditSummary } from '@/types/tax-credits';
 import { useNavigate } from 'react-router-dom';
@@ -225,13 +226,15 @@ export const useTaxCreditManagement = () => {
 
   const deleteCredit = useCallback((creditId: string) => {
     console.log('Deleting credit:', creditId);
-    // API call would go here
+    // In a real app, we would call an API to delete the credit
+    // For now, we'll just remove it from our local state
+    setCredits(prevCredits => prevCredits.filter(credit => credit.id !== creditId));
+    
     toast({
       title: 'Crédito excluído',
       description: 'O crédito tributário foi excluído com sucesso',
       variant: 'destructive',
     });
-    fetchCredits();
   }, [toast]);
 
   const changeStatus = useCallback((creditId: string, newStatus: string, notes: string) => {

@@ -48,12 +48,6 @@ const RecoveryActionButtons: React.FC<RecoveryActionButtonsProps> = ({
   const handleDeleteConfirmed = () => {
     onDelete(process.id);
     setIsDeleteDialogOpen(false);
-    
-    toast({
-      title: "Processo excluído",
-      description: `O processo de recuperação foi excluído com sucesso.`,
-      variant: "destructive",
-    });
   };
   
   const handleApprove = () => {
