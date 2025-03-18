@@ -40,100 +40,105 @@ const TaxCreditManagement: React.FC = () => {
     handleCreateCredit,
     handleViewDetails,
     handleExportData,
-    // CRUD operations
+    // Funções CRUD
     createCredit,
     updateCredit,
     deleteCredit,
     changeStatus
   } = useTaxCreditManagement();
-
-  const { classes: cardClasses } = useAnimationOnScroll<HTMLDivElement>({
-    threshold: 0.1,
-    transitionType: 'fade-in',
-  });
   
-  const openCreateCreditForm = () => {
+  // Função para abrir o formulário de criação de crédito
+  const openCreditForm = () => {
     setSelectedCredit(null);
     setIsEditMode(false);
     setIsCreditFormOpen(true);
   };
   
-  const openEditCreditForm = (credit: TaxCredit) => {
+  // Função para abrir o formulário de edição de crédito
+  const handleEditCredit = (credit: TaxCredit) => {
     setSelectedCredit(credit);
     setIsEditMode(true);
     setIsCreditFormOpen(true);
   };
   
-  const openStatusChangeDialog = (credit: TaxCredit) => {
+  // Função para abrir o diálogo de alteração de status
+  const handleStatusChange = (credit: TaxCredit) => {
     setSelectedCredit(credit);
     setIsStatusDialogOpen(true);
   };
   
-  const openDeleteDialog = (credit: TaxCredit) => {
+  // Função para confirmar a exclusão de um crédito
+  const handleDeleteConfirm = (credit: TaxCredit) => {
     setSelectedCredit(credit);
     setIsDeleteDialogOpen(true);
   };
   
-  const handleSaveCredit = (formData: any) => {
+  // Função para salvar um crédito (novo ou editado)
+  const handleSaveCredit = (creditData: Partial<TaxCredit>) => {
     if (isEditMode && selectedCredit) {
-      console.log("Updating credit with data:", formData);
-      updateCredit(selectedCredit.id, formData);
+      updateCredit(selectedCredit.id, creditData);
       toast({
         title: "Crédito atualizado",
-        description: `O crédito de ${formData.clientName} foi atualizado com sucesso.`,
+        description: "O crédito foi atualizado com sucesso",
       });
     } else {
-      console.log("Creating new credit with data:", formData);
-      createCredit(formData);
+      createCredit(creditData);
       toast({
         title: "Crédito criado",
-        description: `O novo crédito de ${formData.clientName} foi criado com sucesso.`,
+        description: "O novo crédito foi criado com sucesso",
       });
     }
+    
     setIsCreditFormOpen(false);
   };
   
-  const handleStatusChange = (creditId: string, newStatus: string, notes: string) => {
-    console.log("Changing status of credit:", creditId, "to", newStatus);
-    changeStatus(creditId, newStatus, notes);
+  // Função para confirmar a alteração de status
+  const handleStatusConfirm = (newStatus: string, notes: string) => {
+    if (selectedCredit) {
+      changeStatus(selectedCredit.id, newStatus, notes);
+      toast({
+        title: "Status atualizado",
+        description: `O status do crédito foi alterado para ${newStatus}`,
+      });
+    }
+    
     setIsStatusDialogOpen(false);
-    toast({
-      title: "Status atualizado",
-      description: `O status do crédito foi alterado para ${newStatus}.`,
-    });
   };
   
-  const handleDeleteCredit = (creditId: string) => {
-    console.log("Deleting credit:", creditId);
-    // Call the delete function from the hook
-    deleteCredit(creditId);
+  // Função para confirmar a exclusão
+  const handleDeleteCredit = () => {
+    if (selectedCredit) {
+      deleteCredit(selectedCredit.id);
+      toast({
+        title: "Crédito excluído",
+        description: "O crédito foi excluído com sucesso",
+        variant: "destructive",
+      });
+    }
     
-    // Close the dialog
     setIsDeleteDialogOpen(false);
-    
-    toast({
-      title: "Crédito excluído",
-      description: "O crédito tributário foi excluído permanentemente.",
-      variant: "destructive"
-    });
   };
+
+  // Efeito de animação para os cards de resumo
+  const { classes: cardClasses } = useAnimationOnScroll<HTMLDivElement>({
+    threshold: 0.1,
+    transitionType: 'fade-in',
+  });
 
   return (
     <div className="space-y-6">
-      {/* Header with Create and Refresh buttons */}
+      {/* Header */}
       <CreditHeader 
         onRefresh={handleRefresh} 
-        onCreateCredit={openCreateCreditForm}
+        onExport={handleExportData}
+        onCreateCredit={openCreditForm}
         isListening={isListening}
       />
 
-      {/* Summary Cards */}
-      {summary && (
-        <CreditSummaryCards summary={summary} className={cardClasses} />
-      )}
-
-      {/* Overview Chart */}
-      {summary && <CreditChart summary={summary} />}
+      {/* Status Cards */}
+      <div className={cardClasses}>
+        <CreditSummaryCards summary={summary} />
+      </div>
 
       {/* Filters */}
       <CreditFilters
@@ -143,37 +148,38 @@ const TaxCreditManagement: React.FC = () => {
         setStatusFilter={setStatusFilter}
         typeFilter={typeFilter}
         setTypeFilter={setTypeFilter}
-        onExportData={handleExportData}
       />
 
-      {/* Tax Credits Table */}
+      {/* Credits Table */}
       <Card>
         <CreditTable 
           credits={filteredCredits} 
           isLoading={isLoading} 
           onViewDetails={handleViewDetails}
-          onEdit={openEditCreditForm}
-          onDelete={openDeleteDialog}
-          onStatusChange={openStatusChangeDialog}
+          onEditCredit={handleEditCredit}
+          onStatusChange={handleStatusChange}
+          onDeleteCredit={handleDeleteConfirm}
         />
       </Card>
-      
-      {/* Forms and Dialogs */}
+
+      {/* Credit Form Dialog */}
       <TaxCreditForm
         open={isCreditFormOpen}
         onClose={() => setIsCreditFormOpen(false)}
         onSave={handleSaveCredit}
-        initialData={selectedCredit || undefined}
+        initialData={selectedCredit}
         isEdit={isEditMode}
       />
-      
+
+      {/* Status Change Dialog */}
       <StatusChangeDialog
         open={isStatusDialogOpen}
         onClose={() => setIsStatusDialogOpen(false)}
         credit={selectedCredit}
-        onStatusChange={handleStatusChange}
+        onConfirm={handleStatusConfirm}
       />
-      
+
+      {/* Delete Confirmation Dialog */}
       <DeleteConfirmDialog
         open={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
