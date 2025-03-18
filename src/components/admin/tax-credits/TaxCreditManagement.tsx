@@ -40,6 +40,7 @@ const TaxCreditManagement: React.FC = () => {
     handleCreateCredit,
     handleViewDetails,
     handleExportData,
+    // CRUD operations
     createCredit,
     updateCredit,
     deleteCredit,
@@ -75,12 +76,14 @@ const TaxCreditManagement: React.FC = () => {
   
   const handleSaveCredit = (formData: any) => {
     if (isEditMode && selectedCredit) {
+      console.log("Updating credit with data:", formData);
       updateCredit(selectedCredit.id, formData);
       toast({
         title: "Crédito atualizado",
         description: `O crédito de ${formData.clientName} foi atualizado com sucesso.`,
       });
     } else {
+      console.log("Creating new credit with data:", formData);
       createCredit(formData);
       toast({
         title: "Crédito criado",
@@ -91,6 +94,7 @@ const TaxCreditManagement: React.FC = () => {
   };
   
   const handleStatusChange = (creditId: string, newStatus: string, notes: string) => {
+    console.log("Changing status of credit:", creditId, "to", newStatus);
     changeStatus(creditId, newStatus, notes);
     setIsStatusDialogOpen(false);
     toast({
@@ -100,11 +104,18 @@ const TaxCreditManagement: React.FC = () => {
   };
   
   const handleDeleteCredit = (creditId: string) => {
+    console.log("Deleting credit:", creditId);
     // Call the delete function from the hook
     deleteCredit(creditId);
     
     // Close the dialog
     setIsDeleteDialogOpen(false);
+    
+    toast({
+      title: "Crédito excluído",
+      description: "O crédito tributário foi excluído permanentemente.",
+      variant: "destructive"
+    });
   };
 
   return (

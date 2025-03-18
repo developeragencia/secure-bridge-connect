@@ -75,6 +75,7 @@ export const useTaxCreditManagement = () => {
 
   // Return all needed values and functions
   return {
+    // State and filters
     searchQuery,
     setSearchQuery,
     statusFilter,
@@ -85,10 +86,14 @@ export const useTaxCreditManagement = () => {
     summary,
     isLoading,
     isListening,
+    
+    // UI action handlers
     handleRefresh,
     handleCreateCredit,
     handleViewDetails,
     handleExportData,
+    
+    // CRUD operations
     createCredit,
     updateCredit,
     deleteCredit,

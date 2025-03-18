@@ -27,7 +27,7 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
 }) => {
   const handleConfirm = () => {
     if (credit) {
-      // Call the parent's delete handler with the credit ID
+      console.log('Confirming deletion of credit:', credit.id);
       onConfirm(credit.id);
     }
   };

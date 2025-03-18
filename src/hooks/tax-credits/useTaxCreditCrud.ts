@@ -24,6 +24,8 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
     toast.success('Crédito criado', {
       description: 'O crédito tributário foi criado com sucesso',
     });
+    
+    return newCredit;
   }, []);
 
   // Update an existing credit
@@ -31,11 +33,15 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
     console.log('Updating credit:', creditId, creditData);
     
     // In a real app, we would call an API to update the credit
-    setCredits(prevCredits => prevCredits.map(credit => 
-      credit.id === creditId 
-        ? { ...credit, ...creditData, updatedAt: new Date().toISOString() }
-        : credit
-    ));
+    setCredits(prevCredits => {
+      const updatedCredits = prevCredits.map(credit => 
+        credit.id === creditId 
+          ? { ...credit, ...creditData, updatedAt: new Date().toISOString() }
+          : credit
+      );
+      console.log('Updated credits:', updatedCredits);
+      return updatedCredits;
+    });
     
     toast.success('Crédito atualizado', {
       description: 'O crédito tributário foi atualizado com sucesso',
@@ -47,9 +53,13 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
     console.log('Deleting credit:', creditId);
     
     // In a real app, we would call an API to delete the credit
-    setCredits(prevCredits => prevCredits.filter(credit => credit.id !== creditId));
+    setCredits(prevCredits => {
+      const filteredCredits = prevCredits.filter(credit => credit.id !== creditId);
+      console.log('Remaining credits after deletion:', filteredCredits);
+      return filteredCredits;
+    });
     
-    toast.error('Crédito excluído', {
+    toast.success('Crédito excluído', {
       description: 'O crédito tributário foi excluído com sucesso',
     });
   }, []);
@@ -59,18 +69,25 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
     console.log('Changing status:', creditId, newStatus, notes);
     
     // In a real app, we would call an API to update the status
-    const updatedCredits = credits.map(credit => 
-      credit.id === creditId 
-        ? { ...credit, status: newStatus as TaxCredit['status'], updatedAt: new Date().toISOString() }
-        : credit
-    );
-    
-    setCredits(updatedCredits);
+    setCredits(prevCredits => {
+      const updatedCredits = prevCredits.map(credit => 
+        credit.id === creditId 
+          ? { 
+              ...credit, 
+              status: newStatus as TaxCredit['status'], 
+              updatedAt: new Date().toISOString(),
+              notes: notes ? `${credit.notes ? credit.notes + '\n\n' : ''}${notes}` : credit.notes
+            }
+          : credit
+      );
+      console.log('Credits after status change:', updatedCredits);
+      return updatedCredits;
+    });
     
     toast.success('Status atualizado', {
       description: `O status do crédito foi atualizado para ${newStatus}`,
     });
-  }, [credits]);
+  }, []);
 
   return {
     credits,

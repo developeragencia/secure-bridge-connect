@@ -39,13 +39,13 @@ const StatusChangeDialog: React.FC<StatusChangeDialogProps> = ({
   React.useEffect(() => {
     if (credit) {
       setNewStatus(credit.status);
+      setNotes('');
     }
   }, [credit]);
 
   const handleSubmit = () => {
     if (credit && newStatus) {
       onStatusChange(credit.id, newStatus, notes);
-      onClose();
     }
   };
 
