@@ -1,31 +1,23 @@
 
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { useAnimationOnScroll } from '@/hooks/useAnimationOnScroll';
-import { useTaxCreditManagement } from '@/hooks/useTaxCreditManagement';
+import { toast } from 'sonner';
+import { useTaxCreditManagement } from '@/hooks/tax-credits/useTaxCreditManagement';
 import { TaxCredit } from '@/types/tax-credits';
-import { useToast } from '@/components/ui/use-toast';
 
-// Import the components
+// Components
 import CreditHeader from './components/CreditHeader';
-import CreditSummaryCards from './components/CreditSummaryCards';
-import CreditChart from './components/CreditChart';
 import CreditFilters from './components/CreditFilters';
 import CreditTable from './components/CreditTable';
+import SummaryCards from './components/SummaryCards';
 import TaxCreditForm from './forms/TaxCreditForm';
-import StatusChangeDialog from './components/StatusChangeDialog';
 import DeleteConfirmDialog from './components/DeleteConfirmDialog';
+import StatusChangeDialog from './components/StatusChangeDialog';
+import CreditDetailDialog from './components/CreditDetailDialog';
 
 const TaxCreditManagement: React.FC = () => {
-  const [isCreditFormOpen, setIsCreditFormOpen] = useState(false);
-  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedCredit, setSelectedCredit] = useState<TaxCredit | null>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-  
-  const { toast } = useToast();
-  
   const {
+    // State and filters
     searchQuery,
     setSearchQuery,
     statusFilter,
@@ -36,117 +28,113 @@ const TaxCreditManagement: React.FC = () => {
     summary,
     isLoading,
     isListening,
+    
+    // UI action handlers
     handleRefresh,
-    handleCreateCredit,
+    handleCreateCredit: initCreateCredit,
     handleViewDetails,
     handleExportData,
-    // Funções CRUD
+    
+    // CRUD operations
     createCredit,
     updateCredit,
     deleteCredit,
-    changeStatus
+    changeStatus,
   } = useTaxCreditManagement();
-  
-  // Função para abrir o formulário de criação de crédito
-  const openCreditForm = () => {
+
+  // Form state
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [selectedCredit, setSelectedCredit] = useState<TaxCredit | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  // Handle creating a new credit
+  const handleCreateCredit = () => {
     setSelectedCredit(null);
     setIsEditMode(false);
-    setIsCreditFormOpen(true);
+    setIsFormOpen(true);
   };
-  
-  // Função para abrir o formulário de edição de crédito
+
+  // Handle editing a credit
   const handleEditCredit = (credit: TaxCredit) => {
     setSelectedCredit(credit);
     setIsEditMode(true);
-    setIsCreditFormOpen(true);
+    setIsFormOpen(true);
   };
-  
-  // Função para abrir o diálogo de alteração de status
+
+  // Handle deleting a credit
+  const handleDeleteCredit = (credit: TaxCredit) => {
+    setSelectedCredit(credit);
+    setIsDeleteDialogOpen(true);
+  };
+
+  // Handle confirming credit deletion
+  const handleConfirmDelete = (creditId: string) => {
+    deleteCredit(creditId);
+    setIsDeleteDialogOpen(false);
+    toast.success('Crédito excluído com sucesso');
+  };
+
+  // Handle changing credit status
   const handleStatusChange = (credit: TaxCredit) => {
     setSelectedCredit(credit);
     setIsStatusDialogOpen(true);
   };
-  
-  // Função para confirmar a exclusão de um crédito
-  const handleDeleteConfirm = (credit: TaxCredit) => {
-    setSelectedCredit(credit);
-    setIsDeleteDialogOpen(true);
+
+  // Handle confirming status change
+  const handleConfirmStatusChange = (newStatus: string, notes: string) => {
+    if (selectedCredit) {
+      changeStatus(selectedCredit.id, newStatus, notes);
+      setIsStatusDialogOpen(false);
+      toast.success(`Status atualizado para ${newStatus}`);
+    }
   };
-  
-  // Função para salvar um crédito (novo ou editado)
-  const handleSaveCredit = (creditData: any) => {
-    // Ensure creditAmount is a number
-    const formattedCreditData = {
-      ...creditData,
-      creditAmount: typeof creditData.creditAmount === 'string' 
-        ? parseFloat(creditData.creditAmount) 
-        : creditData.creditAmount
+
+  // Handle view credit details
+  const handleViewCreditDetails = (creditId: string) => {
+    const credit = filteredCredits.find(c => c.id === creditId);
+    if (credit) {
+      setSelectedCredit(credit);
+      setIsDetailDialogOpen(true);
+    }
+  };
+
+  // Handle saving credit form
+  const handleSaveCredit = (data: any) => {
+    // Convert string creditAmount to number if needed
+    const processedData = {
+      ...data,
+      creditAmount: typeof data.creditAmount === 'string' 
+        ? parseFloat(data.creditAmount) 
+        : data.creditAmount
     };
     
     if (isEditMode && selectedCredit) {
-      updateCredit(selectedCredit.id, formattedCreditData);
-      toast({
-        title: "Crédito atualizado",
-        description: "O crédito foi atualizado com sucesso",
-      });
+      updateCredit(selectedCredit.id, processedData);
+      toast.success('Crédito atualizado com sucesso');
     } else {
-      createCredit(formattedCreditData);
-      toast({
-        title: "Crédito criado",
-        description: "O novo crédito foi criado com sucesso",
-      });
+      createCredit(processedData);
+      toast.success('Crédito criado com sucesso');
     }
     
-    setIsCreditFormOpen(false);
+    setIsFormOpen(false);
   };
-  
-  // Função para confirmar a alteração de status
-  const handleStatusConfirm = (newStatus: string, notes: string) => {
-    if (selectedCredit) {
-      changeStatus(selectedCredit.id, newStatus, notes);
-      toast({
-        title: "Status atualizado",
-        description: `O status do crédito foi alterado para ${newStatus}`,
-      });
-    }
-    
-    setIsStatusDialogOpen(false);
-  };
-  
-  // Função para confirmar a exclusão
-  const handleDeleteCredit = () => {
-    if (selectedCredit) {
-      deleteCredit(selectedCredit.id);
-      toast({
-        title: "Crédito excluído",
-        description: "O crédito foi excluído com sucesso",
-        variant: "destructive",
-      });
-    }
-    
-    setIsDeleteDialogOpen(false);
-  };
-
-  // Efeito de animação para os cards de resumo
-  const { classes: cardClasses } = useAnimationOnScroll<HTMLDivElement>({
-    threshold: 0.1,
-    transitionType: 'fade-in',
-  });
 
   return (
     <div className="space-y-6">
+      {/* Summary Cards */}
+      <SummaryCards summary={summary} />
+      
       {/* Header */}
-      <CreditHeader 
-        onRefresh={handleRefresh} 
-        onCreateCredit={openCreditForm}
+      <CreditHeader
+        onRefresh={handleRefresh}
+        onCreateCredit={handleCreateCredit}
+        onExport={handleExportData}
         isListening={isListening}
       />
-
-      {/* Status Cards */}
-      <div className={cardClasses}>
-        <CreditSummaryCards summary={summary} />
-      </div>
-
+      
       {/* Filters */}
       <CreditFilters
         searchQuery={searchQuery}
@@ -157,43 +145,65 @@ const TaxCreditManagement: React.FC = () => {
         setTypeFilter={setTypeFilter}
         onExportData={handleExportData}
       />
-
+      
       {/* Credits Table */}
       <Card>
-        <CreditTable 
-          credits={filteredCredits} 
-          isLoading={isLoading} 
-          onViewDetails={handleViewDetails}
-          onEditCredit={handleEditCredit}
+        <CreditTable
+          credits={filteredCredits}
+          isLoading={isLoading}
+          onViewDetails={handleViewCreditDetails}
+          onEdit={handleEditCredit}
+          onDelete={handleDeleteCredit}
           onStatusChange={handleStatusChange}
-          onDeleteCredit={handleDeleteConfirm}
         />
       </Card>
-
-      {/* Credit Form Dialog */}
+      
+      {/* Dialogs and Forms */}
       <TaxCreditForm
-        open={isCreditFormOpen}
-        onClose={() => setIsCreditFormOpen(false)}
+        open={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
         onSave={handleSaveCredit}
         initialData={selectedCredit}
         isEdit={isEditMode}
       />
-
-      {/* Status Change Dialog */}
-      <StatusChangeDialog
-        open={isStatusDialogOpen}
-        onClose={() => setIsStatusDialogOpen(false)}
-        credit={selectedCredit}
-        onConfirm={handleStatusConfirm}
-      />
-
-      {/* Delete Confirmation Dialog */}
-      <DeleteConfirmDialog
-        open={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        credit={selectedCredit}
-        onConfirm={handleDeleteCredit}
-      />
+      
+      {selectedCredit && (
+        <>
+          <DeleteConfirmDialog
+            open={isDeleteDialogOpen}
+            onClose={() => setIsDeleteDialogOpen(false)}
+            credit={selectedCredit}
+            onConfirm={handleConfirmDelete}
+          />
+          
+          <StatusChangeDialog
+            open={isStatusDialogOpen}
+            onClose={() => setIsStatusDialogOpen(false)}
+            credit={selectedCredit}
+            onConfirm={handleConfirmStatusChange}
+          />
+          
+          {isDetailDialogOpen && (
+            <CreditDetailDialog
+              credit={selectedCredit}
+              open={isDetailDialogOpen}
+              onClose={() => setIsDetailDialogOpen(false)}
+              onEdit={() => {
+                setIsDetailDialogOpen(false);
+                handleEditCredit(selectedCredit);
+              }}
+              onDelete={() => {
+                setIsDetailDialogOpen(false);
+                handleDeleteCredit(selectedCredit);
+              }}
+              onStatusChange={() => {
+                setIsDetailDialogOpen(false);
+                handleStatusChange(selectedCredit);
+              }}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };

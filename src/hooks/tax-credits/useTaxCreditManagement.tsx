@@ -93,7 +93,7 @@ export const useTaxCreditManagement = () => {
     handleViewDetails,
     handleExportData,
     
-    // CRUD operations - explicitamente retornamos estas funções
+    // CRUD operations
     createCredit,
     updateCredit,
     deleteCredit,
