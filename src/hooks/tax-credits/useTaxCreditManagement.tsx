@@ -1,13 +1,16 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { mockCredits } from './mockData';
 import { useTaxCreditFilters } from './useTaxCreditFilters';
 import { useTaxCreditSummary } from './useTaxCreditSummary';
 import { useTaxCreditCrud } from './useTaxCreditCrud';
 import { useTaxCreditActions } from './useTaxCreditActions';
+import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates';
+import { toast } from 'sonner';
+import { TaxCredit } from '@/types/tax-credits';
 
 export const useTaxCreditManagement = () => {
-  // Initialize CRUD operations with mock data
+  // Initialize CRUD operations with empty array (will be populated from Supabase)
   const { 
     credits, 
     setCredits, 
@@ -44,34 +47,43 @@ export const useTaxCreditManagement = () => {
   // Calculate summary
   const summary = useTaxCreditSummary(credits);
   
-  // Initial data fetch (simulated)
+  // Set up realtime updates
+  const { isListening: isRealtimeListening } = useRealtimeUpdates({
+    tableName: 'tax_credits',
+    onInsert: (newCredit) => {
+      console.log('Realtime: Tax credit added', newCredit);
+      setCredits(prev => [...prev, newCredit as TaxCredit]);
+      toast.success('Novo crédito adicionado', {
+        description: 'Um novo crédito tributário foi adicionado',
+      });
+    },
+    onUpdate: (updatedCredit) => {
+      console.log('Realtime: Tax credit updated', updatedCredit);
+      setCredits(prev => prev.map(credit => 
+        credit.id === (updatedCredit as TaxCredit).id ? (updatedCredit as TaxCredit) : credit
+      ));
+      toast.info('Crédito atualizado', {
+        description: 'Um crédito tributário foi atualizado',
+      });
+    },
+    onDelete: (deletedCredit) => {
+      console.log('Realtime: Tax credit deleted', deletedCredit);
+      setCredits(prev => prev.filter(credit => credit.id !== (deletedCredit as TaxCredit).id));
+      toast.info('Crédito removido', {
+        description: 'Um crédito tributário foi removido',
+      });
+    },
+    showToasts: false, // We'll handle our own toasts
+  });
+  
+  // Track if realtime is active
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        
-        // Simulate API request
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Set mock data
-        setCredits(mockCredits);
-        
-        // Start listening for real-time updates
-        startListening();
-      } catch (error) {
-        console.error('Error fetching credits:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchData();
-    
-    // Cleanup: stop listening when component unmounts
-    return () => {
-      stopListening();
-    };
-  }, [setCredits, setIsLoading, startListening, stopListening]);
+    if (isRealtimeListening) {
+      console.log('Started listening to tax credits changes');
+    } else {
+      console.log('Stopped listening to tax credits changes');
+    }
+  }, [isRealtimeListening]);
 
   // Return all needed values and functions
   return {
@@ -85,7 +97,7 @@ export const useTaxCreditManagement = () => {
     filteredCredits,
     summary,
     isLoading,
-    isListening,
+    isListening: isRealtimeListening,
     
     // UI action handlers
     handleRefresh,
