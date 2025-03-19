@@ -1,17 +1,19 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, RefreshCw } from 'lucide-react';
+import { PlusCircle, RefreshCw, Download } from 'lucide-react';
 
 interface CreditHeaderProps {
   onRefresh: () => void;
   onCreateCredit: () => void;
+  onExport?: () => void;
   isListening?: boolean;
 }
 
 const CreditHeader: React.FC<CreditHeaderProps> = ({ 
   onRefresh, 
   onCreateCredit,
+  onExport,
   isListening = false
 }) => {
   return (
@@ -40,6 +42,16 @@ const CreditHeader: React.FC<CreditHeaderProps> = ({
           <RefreshCw className="mr-2 h-4 w-4" />
           Atualizar
         </Button>
+        {onExport && (
+          <Button 
+            variant="outline" 
+            className="w-full sm:w-auto"
+            onClick={onExport}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Exportar
+          </Button>
+        )}
       </div>
     </div>
   );

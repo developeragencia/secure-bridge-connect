@@ -33,7 +33,7 @@ type FormValues = z.infer<typeof formSchema>;
 interface TaxCreditFormProps {
   open: boolean;
   onClose: () => void;
-  onSave: (data: FormValues) => void;
+  onSave: (data: Partial<TaxCredit> | FormValues) => void;
   initialData?: TaxCredit;
   isEdit?: boolean;
 }
@@ -73,7 +73,13 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
   });
 
   function onSubmit(data: FormValues) {
-    onSave(data);
+    // Convert string creditAmount to number
+    const processedData = {
+      ...data,
+      creditAmount: parseFloat(data.creditAmount)
+    };
+    
+    onSave(processedData);
     onClose();
   }
 

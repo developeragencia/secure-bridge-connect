@@ -16,9 +16,11 @@ interface CreditTableProps {
   credits: TaxCredit[];
   isLoading: boolean;
   onViewDetails: (creditId: string) => void;
-  onEdit: (credit: TaxCredit) => void;
-  onDelete: (credit: TaxCredit) => void;
-  onStatusChange: (credit: TaxCredit) => void;
+  onEditCredit?: (credit: TaxCredit) => void;
+  onDeleteCredit?: (credit: TaxCredit) => void;
+  onStatusChange?: (credit: TaxCredit) => void;
+  onEdit?: (credit: TaxCredit) => void;
+  onDelete?: (credit: TaxCredit) => void;
 }
 
 const CreditTable: React.FC<CreditTableProps> = ({ 
@@ -27,8 +29,33 @@ const CreditTable: React.FC<CreditTableProps> = ({
   onViewDetails,
   onEdit,
   onDelete,
-  onStatusChange
+  onStatusChange,
+  onEditCredit,
+  onDeleteCredit
 }) => {
+  // Use the appropriate handlers (support both naming conventions)
+  const handleEdit = (credit: TaxCredit) => {
+    if (onEditCredit) {
+      onEditCredit(credit);
+    } else if (onEdit) {
+      onEdit(credit);
+    }
+  };
+  
+  const handleDelete = (credit: TaxCredit) => {
+    if (onDeleteCredit) {
+      onDeleteCredit(credit);
+    } else if (onDelete) {
+      onDelete(credit);
+    }
+  };
+  
+  const handleStatusChange = (credit: TaxCredit) => {
+    if (onStatusChange) {
+      onStatusChange(credit);
+    }
+  };
+
   // Function to format currency values
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -107,17 +134,17 @@ const CreditTable: React.FC<CreditTableProps> = ({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => onEdit(credit)}>
+                        <DropdownMenuItem onClick={() => handleEdit(credit)}>
                           <Edit className="mr-2 h-4 w-4" />
                           <span>Editar</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onStatusChange(credit)}>
+                        <DropdownMenuItem onClick={() => handleStatusChange(credit)}>
                           <RefreshCcw className="mr-2 h-4 w-4" />
                           <span>Alterar status</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
-                          onClick={() => onDelete(credit)}
+                          onClick={() => handleDelete(credit)}
                           className="text-destructive focus:text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />

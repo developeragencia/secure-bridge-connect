@@ -74,15 +74,23 @@ const TaxCreditManagement: React.FC = () => {
   };
   
   // Função para salvar um crédito (novo ou editado)
-  const handleSaveCredit = (creditData: Partial<TaxCredit>) => {
+  const handleSaveCredit = (creditData: any) => {
+    // Ensure creditAmount is a number
+    const formattedCreditData = {
+      ...creditData,
+      creditAmount: typeof creditData.creditAmount === 'string' 
+        ? parseFloat(creditData.creditAmount) 
+        : creditData.creditAmount
+    };
+    
     if (isEditMode && selectedCredit) {
-      updateCredit(selectedCredit.id, creditData);
+      updateCredit(selectedCredit.id, formattedCreditData);
       toast({
         title: "Crédito atualizado",
         description: "O crédito foi atualizado com sucesso",
       });
     } else {
-      createCredit(creditData);
+      createCredit(formattedCreditData);
       toast({
         title: "Crédito criado",
         description: "O novo crédito foi criado com sucesso",
@@ -130,7 +138,6 @@ const TaxCreditManagement: React.FC = () => {
       {/* Header */}
       <CreditHeader 
         onRefresh={handleRefresh} 
-        onExport={handleExportData}
         onCreateCredit={openCreditForm}
         isListening={isListening}
       />
@@ -148,6 +155,7 @@ const TaxCreditManagement: React.FC = () => {
         setStatusFilter={setStatusFilter}
         typeFilter={typeFilter}
         setTypeFilter={setTypeFilter}
+        onExportData={handleExportData}
       />
 
       {/* Credits Table */}

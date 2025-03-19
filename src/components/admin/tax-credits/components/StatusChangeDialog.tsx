@@ -24,7 +24,8 @@ interface StatusChangeDialogProps {
   open: boolean;
   onClose: () => void;
   credit: TaxCredit | null;
-  onStatusChange: (creditId: string, newStatus: string, notes: string) => void;
+  onStatusChange?: (creditId: string, newStatus: string, notes: string) => void;
+  onConfirm?: (newStatus: string, notes: string) => void;
 }
 
 const StatusChangeDialog: React.FC<StatusChangeDialogProps> = ({
@@ -32,6 +33,7 @@ const StatusChangeDialog: React.FC<StatusChangeDialogProps> = ({
   onClose,
   credit,
   onStatusChange,
+  onConfirm,
 }) => {
   const [newStatus, setNewStatus] = React.useState<string>('');
   const [notes, setNotes] = React.useState('');
@@ -45,7 +47,11 @@ const StatusChangeDialog: React.FC<StatusChangeDialogProps> = ({
 
   const handleSubmit = () => {
     if (credit && newStatus) {
-      onStatusChange(credit.id, newStatus, notes);
+      if (onConfirm) {
+        onConfirm(newStatus, notes);
+      } else if (onStatusChange) {
+        onStatusChange(credit.id, newStatus, notes);
+      }
     }
   };
 

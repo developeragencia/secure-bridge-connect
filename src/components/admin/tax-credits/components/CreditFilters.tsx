@@ -18,7 +18,7 @@ interface CreditFiltersProps {
   setStatusFilter: (status: string) => void;
   typeFilter: string;
   setTypeFilter: (type: string) => void;
-  onExportData: () => void;
+  onExportData?: () => void;
 }
 
 const CreditFilters: React.FC<CreditFiltersProps> = ({
@@ -82,14 +82,16 @@ const CreditFilters: React.FC<CreditFiltersProps> = ({
         </Select>
       </div>
 
-      <Button
-        variant="outline"
-        className="w-full sm:w-auto"
-        onClick={onExportData}
-      >
-        <Download className="h-4 w-4 mr-2" />
-        Exportar
-      </Button>
+      {onExportData && (
+        <Button
+          variant="outline"
+          className="w-full sm:w-auto"
+          onClick={onExportData}
+        >
+          <Download className="h-4 w-4 mr-2" />
+          Exportar
+        </Button>
+      )}
     </div>
   );
 };
