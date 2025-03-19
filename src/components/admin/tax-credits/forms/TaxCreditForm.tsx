@@ -172,7 +172,7 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                           <Button
                             variant={"outline"}
                             className={cn(
-                              "w-[240px] pl-3 text-left font-normal",
+                              "w-full pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
                             )}
                           >
@@ -194,6 +194,7 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                             date > new Date()
                           }
                           initialFocus
+                          className="pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>
@@ -214,7 +215,7 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                           <Button
                             variant={"outline"}
                             className={cn(
-                              "w-[240px] pl-3 text-left font-normal",
+                              "w-full pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
                             )}
                           >
@@ -236,6 +237,7 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                             date > new Date()
                           }
                           initialFocus
+                          className="pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>
