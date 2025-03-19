@@ -9,7 +9,7 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, PlusCircle } from 'lucide-react';
+import { CheckCircle, X, Check } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -26,6 +26,7 @@ export const BillingPlans = () => {
   const { toast } = useToast();
   const [showChangePlanDialog, setShowChangePlanDialog] = React.useState(false);
   const [selectedPlan, setSelectedPlan] = React.useState<Plan | null>(null);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const plans: Plan[] = [
     {
@@ -66,12 +67,29 @@ export const BillingPlans = () => {
 
   const confirmPlanChange = () => {
     if (selectedPlan) {
-      toast({
-        title: "Plano alterado com sucesso",
-        description: `Seu plano foi alterado para ${selectedPlan.name}`,
-      });
-      setShowChangePlanDialog(false);
+      setIsSubmitting(true);
+      
+      // Simulate API call
+      setTimeout(() => {
+        // Update current plan in UI (in a real app, this would be handled by API response)
+        plans.forEach(plan => {
+          plan.popular = plan.id === selectedPlan.id;
+        });
+        
+        setIsSubmitting(false);
+        setShowChangePlanDialog(false);
+        
+        toast({
+          title: "Plano alterado com sucesso",
+          description: `Seu plano foi alterado para ${selectedPlan.name}. A nova cobrança será efetuada no próximo ciclo.`,
+          variant: "success",
+        });
+      }, 1500);
     }
+  };
+
+  const cancelPlanChange = () => {
+    setShowChangePlanDialog(false);
   };
 
   return (
@@ -106,6 +124,7 @@ export const BillingPlans = () => {
                 variant={plan.popular ? "outline" : "default"} 
                 className="w-full" 
                 onClick={() => handleChangePlan(plan)}
+                disabled={plan.popular}
               >
                 {plan.popular ? 'Seu plano atual' : 'Alterar para este plano'}
               </Button>
@@ -135,11 +154,34 @@ export const BillingPlans = () => {
             </ul>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowChangePlanDialog(false)}>
+            <Button 
+              variant="outline" 
+              onClick={cancelPlanChange}
+              disabled={isSubmitting}
+              className="flex items-center gap-1"
+            >
+              <X className="h-4 w-4" />
               Cancelar
             </Button>
-            <Button onClick={confirmPlanChange}>
-              Confirmar alteração
+            <Button 
+              onClick={confirmPlanChange} 
+              disabled={isSubmitting}
+              className="flex items-center gap-1"
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Processando...
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4" />
+                  Confirmar alteração
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
