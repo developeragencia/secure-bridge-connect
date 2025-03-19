@@ -31,8 +31,10 @@ const CreditDetailDialog: React.FC<CreditDetailDialogProps> = ({
   onStatusChange,
 }) => {
   // Format date for display
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+  const formatDate = (dateValue: string | Date) => {
+    if (!dateValue) return '';
+    const date = typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
+    return date.toLocaleDateString('pt-BR');
   };
 
   // Format currency for display
@@ -109,7 +111,7 @@ const CreditDetailDialog: React.FC<CreditDetailDialogProps> = ({
               </div>
               <div>
                 <span className="text-muted-foreground">Atualizado em:</span>{' '}
-                {formatDate(credit.updatedAt)}
+                {credit.updatedAt ? formatDate(credit.updatedAt) : '-'}
               </div>
             </div>
           </div>

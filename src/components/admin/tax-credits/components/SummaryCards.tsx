@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  ArrowTrendingUp,
+  ArrowTrendingUpIcon,
   BanknotesIcon,
   ClockIcon,
   CheckCircleIcon,
@@ -121,7 +121,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ summary }) => {
         title="Recuperados"
         value={summary.recovered || 0}
         formattedValue={summary.recovered > 0 ? `${summary.recovered}` : '0'}
-        icon={<ArrowTrendingUp className="h-6 w-6 text-indigo-500" />}
+        icon={<ArrowTrendingUpIcon className="h-6 w-6 text-indigo-500" />}
         color="border-indigo-100"
       />
     </div>
