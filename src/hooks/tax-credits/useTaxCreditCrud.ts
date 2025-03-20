@@ -4,7 +4,7 @@ import { TaxCredit } from '@/types/tax-credits';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
-// Type for database credit data
+// Helper types for database interaction
 interface DbTaxCredit {
   id: string;
   client_name: string;
@@ -43,7 +43,7 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
         
         if (data) {
           // Transform snake_case DB fields to camelCase for frontend
-          const transformedData = data.map(item => ({
+          const transformedData = data.map((item: DbTaxCredit) => ({
             id: item.id,
             clientName: item.client_name,
             clientId: item.client_id,
@@ -53,9 +53,8 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
             originalAmount: item.original_amount,
             periodStart: item.period_start,
             periodEnd: item.period_end,
-            status: item.status,
+            status: item.status as TaxCredit['status'],
             notes: item.notes,
-            attachments: item.attachments,
             createdAt: item.created_at,
             updatedAt: item.updated_at,
             approvedAt: item.approved_at,
@@ -80,11 +79,11 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
     try {
       // Transform camelCase to snake_case for DB
       const dbData = {
-        client_name: creditData.clientName,
+        client_name: creditData.clientName || '',
         client_id: creditData.clientId,
         document_number: creditData.documentNumber,
-        credit_type: creditData.creditType,
-        credit_amount: creditData.creditAmount,
+        credit_type: creditData.creditType || '',
+        credit_amount: creditData.creditAmount || 0,
         original_amount: creditData.originalAmount,
         period_start: creditData.periodStart,
         period_end: creditData.periodEnd,
@@ -131,9 +130,8 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
         originalAmount: data.original_amount,
         periodStart: data.period_start,
         periodEnd: data.period_end,
-        status: data.status,
+        status: data.status as TaxCredit['status'],
         notes: data.notes,
-        attachments: data.attachments,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
         approvedAt: data.approved_at,
@@ -179,7 +177,6 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
       if (creditData.periodEnd !== undefined) dbData.period_end = creditData.periodEnd;
       if (creditData.status !== undefined) dbData.status = creditData.status;
       if (creditData.notes !== undefined) dbData.notes = creditData.notes;
-      if (creditData.attachments !== undefined) dbData.attachments = creditData.attachments;
       if (creditData.approvedAt !== undefined) dbData.approved_at = creditData.approvedAt;
       
       // Update in Supabase

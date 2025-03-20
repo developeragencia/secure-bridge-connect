@@ -11,8 +11,10 @@ interface LogoTypeSelectorProps {
 
 const LogoTypeSelector = ({ logoType, setLogoType }: LogoTypeSelectorProps) => {
   const handleChange = (value: string) => {
-    // Cast the string value to our union type
-    setLogoType(value as 'static' | 'animated');
+    // Only set if the value is one of our allowed types
+    if (value === 'static' || value === 'animated') {
+      setLogoType(value);
+    }
   };
 
   return (

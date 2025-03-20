@@ -9,7 +9,93 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      site_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          settings: Json
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          settings?: Json
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          settings?: Json
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      tax_credits: {
+        Row: {
+          approved_at: string | null
+          attachments: Json | null
+          attachments_count: number | null
+          client_id: string | null
+          client_name: string | null
+          created_at: string | null
+          created_by: string | null
+          credit_amount: number | null
+          credit_type: string | null
+          description: string | null
+          document_number: string | null
+          id: string
+          notes: string | null
+          original_amount: number | null
+          period_end: string | null
+          period_start: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          attachments?: Json | null
+          attachments_count?: number | null
+          client_id?: string | null
+          client_name?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          credit_amount?: number | null
+          credit_type?: string | null
+          description?: string | null
+          document_number?: string | null
+          id?: string
+          notes?: string | null
+          original_amount?: number | null
+          period_end?: string | null
+          period_start?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          attachments?: Json | null
+          attachments_count?: number | null
+          client_id?: string | null
+          client_name?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          credit_amount?: number | null
+          credit_type?: string | null
+          description?: string | null
+          document_number?: string | null
+          id?: string
+          notes?: string | null
+          original_amount?: number | null
+          period_end?: string | null
+          period_start?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

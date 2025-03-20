@@ -19,9 +19,9 @@ export const useGeneralSettings = () => {
         .from('site_settings')
         .select('*')
         .eq('type', 'general')
-        .single();
+        .maybeSingle();
         
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('Error loading general settings:', error);
         return;
       }
@@ -64,9 +64,9 @@ export const useGeneralSettings = () => {
         .from('site_settings')
         .select('id')
         .eq('type', 'general')
-        .single();
+        .maybeSingle();
         
-      if (checkError && checkError.code !== 'PGRST116') {
+      if (checkError) {
         console.error('Error checking general settings:', checkError);
         throw checkError;
       }
