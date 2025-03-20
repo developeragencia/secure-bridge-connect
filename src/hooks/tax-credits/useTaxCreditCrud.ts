@@ -3,27 +3,29 @@ import { useState, useCallback, useEffect } from 'react';
 import { TaxCredit } from '@/types/tax-credits';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { Json } from '@/integrations/supabase/types';
 
-// Helper types for database interaction
-interface DbTaxCredit {
+// Define proper types for database interaction
+type DbTaxCredit = {
   id: string;
-  client_name: string;
-  client_id?: string;
-  document_number?: string;
-  credit_type: string;
-  credit_amount: number;
-  original_amount?: number;
-  period_start?: string;
-  period_end?: string;
-  status: string;
-  notes?: string;
-  attachments?: any[];
-  created_at: string;
-  updated_at: string;
-  approved_at?: string;
-  created_by?: string;
-  attachments_count?: number;
-}
+  client_name: string | null;
+  client_id: string | null;
+  document_number: string | null;
+  credit_type: string | null;
+  credit_amount: number | null;
+  original_amount: number | null;
+  period_start: string | null;
+  period_end: string | null;
+  status: string | null;
+  notes: string | null;
+  attachments: Json | null;
+  created_at: string | null;
+  updated_at: string | null;
+  approved_at: string | null;
+  created_by: string | null;
+  attachments_count: number | null;
+  description: string | null;
+};
 
 export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
   const [credits, setCredits] = useState<TaxCredit[]>(initialCredits);
@@ -45,21 +47,21 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
           // Transform snake_case DB fields to camelCase for frontend
           const transformedData = data.map((item: DbTaxCredit) => ({
             id: item.id,
-            clientName: item.client_name,
-            clientId: item.client_id,
-            documentNumber: item.document_number,
-            creditType: item.credit_type,
-            creditAmount: item.credit_amount,
-            originalAmount: item.original_amount,
-            periodStart: item.period_start,
-            periodEnd: item.period_end,
-            status: item.status as TaxCredit['status'],
-            notes: item.notes,
-            createdAt: item.created_at,
-            updatedAt: item.updated_at,
-            approvedAt: item.approved_at,
-            createdBy: item.created_by,
-            attachmentsCount: item.attachments_count
+            clientName: item.client_name || '',
+            clientId: item.client_id || '',
+            documentNumber: item.document_number || '',
+            creditType: item.credit_type || '',
+            creditAmount: item.credit_amount || 0,
+            originalAmount: item.original_amount || 0,
+            periodStart: item.period_start || '',
+            periodEnd: item.period_end || '',
+            status: (item.status || 'pending') as TaxCredit['status'],
+            notes: item.notes || '',
+            createdAt: item.created_at || new Date().toISOString(),
+            updatedAt: item.updated_at || undefined,
+            approvedAt: item.approved_at || undefined,
+            // Don't include createdBy if it doesn't exist in the TaxCredit interface
+            attachmentsCount: item.attachments_count || 0
           })) as TaxCredit[];
           
           setCredits(transformedData);
@@ -80,15 +82,15 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
       // Transform camelCase to snake_case for DB
       const dbData = {
         client_name: creditData.clientName || '',
-        client_id: creditData.clientId,
-        document_number: creditData.documentNumber,
+        client_id: creditData.clientId || '',
+        document_number: creditData.documentNumber || '',
         credit_type: creditData.creditType || '',
         credit_amount: creditData.creditAmount || 0,
-        original_amount: creditData.originalAmount,
-        period_start: creditData.periodStart,
-        period_end: creditData.periodEnd,
+        original_amount: creditData.originalAmount || 0,
+        period_start: creditData.periodStart ? creditData.periodStart.toString() : null,
+        period_end: creditData.periodEnd ? creditData.periodEnd.toString() : null,
         status: creditData.status || 'pending',
-        notes: creditData.notes,
+        notes: creditData.notes || '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
@@ -122,21 +124,20 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
       // Transform back to camelCase for frontend
       const savedCredit: TaxCredit = {
         id: data.id,
-        clientName: data.client_name,
-        clientId: data.client_id,
-        documentNumber: data.document_number,
-        creditType: data.credit_type,
-        creditAmount: data.credit_amount,
-        originalAmount: data.original_amount,
-        periodStart: data.period_start,
-        periodEnd: data.period_end,
-        status: data.status as TaxCredit['status'],
-        notes: data.notes,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
-        approvedAt: data.approved_at,
-        createdBy: data.created_by,
-        attachmentsCount: data.attachments_count
+        clientName: data.client_name || '',
+        clientId: data.client_id || '',
+        documentNumber: data.document_number || '',
+        creditType: data.credit_type || '',
+        creditAmount: data.credit_amount || 0,
+        originalAmount: data.original_amount || 0,
+        periodStart: data.period_start || '',
+        periodEnd: data.period_end || '',
+        status: (data.status || 'pending') as TaxCredit['status'],
+        notes: data.notes || '',
+        createdAt: data.created_at || '',
+        updatedAt: data.updated_at || undefined,
+        approvedAt: data.approved_at || undefined,
+        attachmentsCount: data.attachments_count || 0
       };
       
       // Update local state with the saved data
@@ -173,8 +174,16 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
       if (creditData.creditType !== undefined) dbData.credit_type = creditData.creditType;
       if (creditData.creditAmount !== undefined) dbData.credit_amount = creditData.creditAmount;
       if (creditData.originalAmount !== undefined) dbData.original_amount = creditData.originalAmount;
-      if (creditData.periodStart !== undefined) dbData.period_start = creditData.periodStart;
-      if (creditData.periodEnd !== undefined) dbData.period_end = creditData.periodEnd;
+      if (creditData.periodStart !== undefined) {
+        dbData.period_start = typeof creditData.periodStart === 'string' 
+          ? creditData.periodStart 
+          : creditData.periodStart.toISOString();
+      }
+      if (creditData.periodEnd !== undefined) {
+        dbData.period_end = typeof creditData.periodEnd === 'string' 
+          ? creditData.periodEnd 
+          : creditData.periodEnd.toISOString();
+      }
       if (creditData.status !== undefined) dbData.status = creditData.status;
       if (creditData.notes !== undefined) dbData.notes = creditData.notes;
       if (creditData.approvedAt !== undefined) dbData.approved_at = creditData.approvedAt;

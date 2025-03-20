@@ -2,6 +2,16 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Json } from '@/integrations/supabase/types';
+
+// Define the shape of our settings object
+interface GeneralSettings {
+  siteName: string;
+  siteDescription: string;
+  logoType: 'static' | 'animated';
+  logoPreview: string;
+  logoAnimation: string;
+}
 
 export const useGeneralSettings = () => {
   const [siteName, setSiteName] = useState('Crédito Fiscal Pro');
@@ -27,7 +37,8 @@ export const useGeneralSettings = () => {
       }
       
       if (data && data.settings) {
-        const settings = data.settings || {};
+        // Properly cast the settings object
+        const settings = data.settings as unknown as GeneralSettings;
         setSiteName(settings.siteName || 'Crédito Fiscal Pro');
         setSiteDescription(settings.siteDescription || 'Plataforma de gestão de créditos tributários');
         setLogoType(settings.logoType || 'static');
@@ -51,7 +62,7 @@ export const useGeneralSettings = () => {
     setIsLoading(true);
     
     try {
-      const settings = {
+      const settings: GeneralSettings = {
         siteName,
         siteDescription,
         logoType,
