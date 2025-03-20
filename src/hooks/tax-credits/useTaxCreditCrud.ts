@@ -45,7 +45,7 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
         
         if (data) {
           // Transform snake_case DB fields to camelCase for frontend
-          const transformedData = data.map((item: DbTaxCredit) => ({
+          const transformedData = data.map((item: any) => ({
             id: item.id,
             clientName: item.client_name || '',
             clientId: item.client_id || '',
@@ -60,7 +60,6 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
             createdAt: item.created_at || new Date().toISOString(),
             updatedAt: item.updated_at || undefined,
             approvedAt: item.approved_at || undefined,
-            // Don't include createdBy if it doesn't exist in the TaxCredit interface
             attachmentsCount: item.attachments_count || 0
           })) as TaxCredit[];
           
@@ -87,8 +86,10 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
         credit_type: creditData.creditType || '',
         credit_amount: creditData.creditAmount || 0,
         original_amount: creditData.originalAmount || 0,
-        period_start: creditData.periodStart ? creditData.periodStart.toString() : null,
-        period_end: creditData.periodEnd ? creditData.periodEnd.toString() : null,
+        period_start: typeof creditData.periodStart === 'string' ? creditData.periodStart : 
+                     creditData.periodStart ? creditData.periodStart.toString() : null,
+        period_end: typeof creditData.periodEnd === 'string' ? creditData.periodEnd : 
+                   creditData.periodEnd ? creditData.periodEnd.toString() : null,
         status: creditData.status || 'pending',
         notes: creditData.notes || '',
         created_at: new Date().toISOString(),
@@ -98,7 +99,7 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
       // Save to Supabase
       const { data, error } = await supabase
         .from('tax_credits')
-        .insert([dbData])
+        .insert(dbData)
         .select()
         .single();
         
@@ -177,12 +178,12 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
       if (creditData.periodStart !== undefined) {
         dbData.period_start = typeof creditData.periodStart === 'string' 
           ? creditData.periodStart 
-          : creditData.periodStart.toISOString();
+          : creditData.periodStart ? creditData.periodStart.toString() : null;
       }
       if (creditData.periodEnd !== undefined) {
         dbData.period_end = typeof creditData.periodEnd === 'string' 
           ? creditData.periodEnd 
-          : creditData.periodEnd.toISOString();
+          : creditData.periodEnd ? creditData.periodEnd.toString() : null;
       }
       if (creditData.status !== undefined) dbData.status = creditData.status;
       if (creditData.notes !== undefined) dbData.notes = creditData.notes;

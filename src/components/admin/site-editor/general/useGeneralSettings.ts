@@ -37,13 +37,13 @@ export const useGeneralSettings = () => {
       }
       
       if (data && data.settings) {
-        // Properly cast the settings object
-        const settings = data.settings as unknown as GeneralSettings;
-        setSiteName(settings.siteName || 'Crédito Fiscal Pro');
-        setSiteDescription(settings.siteDescription || 'Plataforma de gestão de créditos tributários');
-        setLogoType(settings.logoType || 'static');
-        setLogoPreview(settings.logoPreview || '/placeholder.svg');
-        setLogoAnimation(settings.logoAnimation || 'fade');
+        // Cast to an object with any first to ensure we can access properties safely
+        const settingsObj = data.settings as any;
+        setSiteName(settingsObj.siteName || 'Crédito Fiscal Pro');
+        setSiteDescription(settingsObj.siteDescription || 'Plataforma de gestão de créditos tributários');
+        setLogoType(settingsObj.logoType || 'static');
+        setLogoPreview(settingsObj.logoPreview || '/placeholder.svg');
+        setLogoAnimation(settingsObj.logoAnimation || 'fade');
       }
     } catch (error) {
       console.error('Error in loadSettings:', error);
@@ -62,7 +62,7 @@ export const useGeneralSettings = () => {
     setIsLoading(true);
     
     try {
-      const settings: GeneralSettings = {
+      const settings = {
         siteName,
         siteDescription,
         logoType,
@@ -87,7 +87,7 @@ export const useGeneralSettings = () => {
         const { error } = await supabase
           .from('site_settings')
           .update({ 
-            settings, 
+            settings: settings as Json, 
             updated_at: new Date().toISOString() 
           })
           .eq('id', data.id);
@@ -100,12 +100,12 @@ export const useGeneralSettings = () => {
         // Insert new settings
         const { error } = await supabase
           .from('site_settings')
-          .insert([{ 
+          .insert({ 
             type: 'general', 
-            settings, 
+            settings: settings as Json, 
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
-          }]);
+          });
           
         if (error) {
           console.error('Error inserting general settings:', error);
