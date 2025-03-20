@@ -11,7 +11,7 @@ export interface TaxCredit {
   originalAmount?: number;
   periodStart: string | Date;
   periodEnd: string | Date;
-  status: StatusType;
+  status: StatusType | string;
   createdAt: string | Date;
   updatedAt?: string | Date;
   approvedAt?: string | Date;
@@ -37,7 +37,7 @@ export interface TaxCreditSummary {
 }
 
 export interface TaxCreditFilterParams {
-  status?: StatusType;
+  status?: StatusType | string;
   type?: string;
   startDate?: Date | null;
   endDate?: Date | null;

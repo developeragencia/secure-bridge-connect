@@ -90,7 +90,7 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
                      creditData.periodStart ? creditData.periodStart.toString() : null,
         period_end: typeof creditData.periodEnd === 'string' ? creditData.periodEnd : 
                    creditData.periodEnd ? creditData.periodEnd.toString() : null,
-        status: creditData.status || 'pending',
+        status: (creditData.status || 'pending').toLowerCase(),
         notes: creditData.notes || '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -185,7 +185,7 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
           ? creditData.periodEnd 
           : creditData.periodEnd ? creditData.periodEnd.toString() : null;
       }
-      if (creditData.status !== undefined) dbData.status = creditData.status;
+      if (creditData.status !== undefined) dbData.status = creditData.status.toLowerCase();
       if (creditData.notes !== undefined) dbData.notes = creditData.notes;
       if (creditData.approvedAt !== undefined) dbData.approved_at = creditData.approvedAt;
       
@@ -268,7 +268,7 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
     
     try {
       const updateData: any = {
-        status: newStatus,
+        status: newStatus.toLowerCase(),
         updated_at: new Date().toISOString(),
       };
       

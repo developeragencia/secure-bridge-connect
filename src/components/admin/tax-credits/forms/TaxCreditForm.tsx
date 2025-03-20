@@ -24,7 +24,7 @@ const formSchema = z.object({
   creditAmount: z.string().min(1, "Valor obrigatório"),
   periodStart: z.date(),
   periodEnd: z.date(),
-  status: z.enum(["PENDING", "ANALYZING", "APPROVED", "REJECTED", "RECOVERED"]),
+  status: z.enum(["pending", "analyzing", "approved", "rejected", "recovered"]),
   notes: z.string().optional(),
 });
 
@@ -56,8 +56,8 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
           periodStart: new Date(initialData.periodStart),
           periodEnd: new Date(initialData.periodEnd),
           status: initialData.status === "ACTIVE" || initialData.status === "INACTIVE" 
-            ? "PENDING" 
-            : (initialData.status as "PENDING" | "ANALYZING" | "APPROVED" | "REJECTED" | "RECOVERED"),
+            ? "pending" 
+            : initialData.status.toLowerCase() as "pending" | "analyzing" | "approved" | "rejected" | "recovered",
           notes: initialData.notes || "",
         }
       : {
@@ -67,7 +67,7 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
           creditAmount: "",
           periodStart: new Date(),
           periodEnd: new Date(),
-          status: "PENDING",
+          status: "pending",
           notes: "",
         },
   });
@@ -260,11 +260,11 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="PENDING">Pendente</SelectItem>
-                      <SelectItem value="ANALYZING">Em Análise</SelectItem>
-                      <SelectItem value="APPROVED">Aprovado</SelectItem>
-                      <SelectItem value="REJECTED">Rejeitado</SelectItem>
-                      <SelectItem value="RECOVERED">Recuperado</SelectItem>
+                      <SelectItem value="pending">Pendente</SelectItem>
+                      <SelectItem value="analyzing">Em Análise</SelectItem>
+                      <SelectItem value="approved">Aprovado</SelectItem>
+                      <SelectItem value="rejected">Rejeitado</SelectItem>
+                      <SelectItem value="recovered">Recuperado</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
