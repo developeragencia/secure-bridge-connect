@@ -6,7 +6,7 @@ import { FormControl, FormItem, FormLabel } from '@/components/ui/form';
 
 interface LogoTypeSelectorProps {
   logoType: 'static' | 'animated';
-  setLogoType: React.Dispatch<React.SetStateAction<'static' | 'animated'>>;
+  setLogoType: (value: 'static' | 'animated') => void;
 }
 
 const LogoTypeSelector = ({ logoType, setLogoType }: LogoTypeSelectorProps) => {

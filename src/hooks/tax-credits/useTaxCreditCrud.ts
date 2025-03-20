@@ -4,6 +4,27 @@ import { TaxCredit } from '@/types/tax-credits';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
+// Type for database credit data
+interface DbTaxCredit {
+  id: string;
+  client_name: string;
+  client_id?: string;
+  document_number?: string;
+  credit_type: string;
+  credit_amount: number;
+  original_amount?: number;
+  period_start?: string;
+  period_end?: string;
+  status: string;
+  notes?: string;
+  attachments?: any[];
+  created_at: string;
+  updated_at: string;
+  approved_at?: string;
+  created_by?: string;
+  attachments_count?: number;
+}
+
 export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
   const [credits, setCredits] = useState<TaxCredit[]>(initialCredits);
   
@@ -33,7 +54,6 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
             periodStart: item.period_start,
             periodEnd: item.period_end,
             status: item.status,
-            description: item.description,
             notes: item.notes,
             attachments: item.attachments,
             createdAt: item.created_at,
@@ -69,7 +89,6 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
         period_start: creditData.periodStart,
         period_end: creditData.periodEnd,
         status: creditData.status || 'pending',
-        description: creditData.description,
         notes: creditData.notes,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -97,6 +116,10 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
         } as TaxCredit;
       }
       
+      if (!data) {
+        throw new Error('No data returned from insert operation');
+      }
+      
       // Transform back to camelCase for frontend
       const savedCredit: TaxCredit = {
         id: data.id,
@@ -109,7 +132,6 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
         periodStart: data.period_start,
         periodEnd: data.period_end,
         status: data.status,
-        description: data.description,
         notes: data.notes,
         attachments: data.attachments,
         createdAt: data.created_at,
@@ -156,7 +178,6 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
       if (creditData.periodStart !== undefined) dbData.period_start = creditData.periodStart;
       if (creditData.periodEnd !== undefined) dbData.period_end = creditData.periodEnd;
       if (creditData.status !== undefined) dbData.status = creditData.status;
-      if (creditData.description !== undefined) dbData.description = creditData.description;
       if (creditData.notes !== undefined) dbData.notes = creditData.notes;
       if (creditData.attachments !== undefined) dbData.attachments = creditData.attachments;
       if (creditData.approvedAt !== undefined) dbData.approved_at = creditData.approvedAt;

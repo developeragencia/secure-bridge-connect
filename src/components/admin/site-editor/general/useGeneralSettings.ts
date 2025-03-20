@@ -19,14 +19,14 @@ export const useGeneralSettings = () => {
         .from('site_settings')
         .select('*')
         .eq('type', 'general')
-        .maybeSingle();
+        .single();
         
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Error loading general settings:', error);
         return;
       }
       
-      if (data) {
+      if (data && data.settings) {
         const settings = data.settings || {};
         setSiteName(settings.siteName || 'Crédito Fiscal Pro');
         setSiteDescription(settings.siteDescription || 'Plataforma de gestão de créditos tributários');
@@ -64,9 +64,9 @@ export const useGeneralSettings = () => {
         .from('site_settings')
         .select('id')
         .eq('type', 'general')
-        .maybeSingle();
+        .single();
         
-      if (checkError) {
+      if (checkError && checkError.code !== 'PGRST116') {
         console.error('Error checking general settings:', checkError);
         throw checkError;
       }
