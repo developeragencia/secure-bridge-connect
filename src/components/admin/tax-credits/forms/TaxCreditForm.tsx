@@ -45,6 +45,11 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
   initialData,
   isEdit = false,
 }) => {
+  // Ensure initialData status is lowercase to match the schema enum
+  const normalizedStatus = initialData?.status 
+    ? initialData.status.toLowerCase() as "pending" | "analyzing" | "approved" | "rejected" | "recovered" 
+    : "pending";
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData
@@ -55,9 +60,7 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
           creditAmount: initialData.creditAmount.toString(),
           periodStart: new Date(initialData.periodStart),
           periodEnd: new Date(initialData.periodEnd),
-          status: initialData.status === "ACTIVE" || initialData.status === "INACTIVE" 
-            ? "pending" 
-            : initialData.status.toLowerCase() as "pending" | "analyzing" | "approved" | "rejected" | "recovered",
+          status: normalizedStatus,
           notes: initialData.notes || "",
         }
       : {
@@ -79,6 +82,7 @@ const TaxCreditForm: React.FC<TaxCreditFormProps> = ({
       creditAmount: parseFloat(data.creditAmount)
     };
     
+    console.log("Submitting form data:", processedData);
     onSave(processedData);
     onClose();
   }

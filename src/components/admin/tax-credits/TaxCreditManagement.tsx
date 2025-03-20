@@ -59,6 +59,7 @@ const TaxCreditManagement: React.FC = () => {
 
   // Handle editing a credit
   const handleEditCredit = (credit: TaxCredit) => {
+    console.log("Editing credit:", credit);
     setSelectedCredit(credit);
     setIsEditMode(true);
     setIsFormOpen(true);
@@ -66,19 +67,21 @@ const TaxCreditManagement: React.FC = () => {
 
   // Handle deleting a credit
   const handleDeleteCredit = (credit: TaxCredit) => {
+    console.log("Preparing to delete credit:", credit);
     setSelectedCredit(credit);
     setIsDeleteDialogOpen(true);
   };
 
   // Handle confirming credit deletion
   const handleConfirmDelete = (creditId: string) => {
+    console.log("Confirming delete for credit ID:", creditId);
     deleteCredit(creditId);
     setIsDeleteDialogOpen(false);
-    toast.success('Crédito excluído com sucesso');
   };
 
   // Handle changing credit status
   const handleStatusChange = (credit: TaxCredit) => {
+    console.log("Preparing to change status for credit:", credit);
     setSelectedCredit(credit);
     setIsStatusDialogOpen(true);
   };
@@ -86,9 +89,9 @@ const TaxCreditManagement: React.FC = () => {
   // Handle confirming status change
   const handleConfirmStatusChange = (newStatus: string, notes: string) => {
     if (selectedCredit) {
+      console.log("Changing status to", newStatus, "for credit ID:", selectedCredit.id);
       changeStatus(selectedCredit.id, newStatus, notes);
       setIsStatusDialogOpen(false);
-      toast.success(`Status atualizado para ${newStatus}`);
     }
   };
 
@@ -96,6 +99,7 @@ const TaxCreditManagement: React.FC = () => {
   const handleViewCreditDetails = (creditId: string) => {
     const credit = filteredCredits.find(c => c.id === creditId);
     if (credit) {
+      console.log("Viewing details for credit:", credit);
       setSelectedCredit(credit);
       setIsDetailDialogOpen(true);
     }
@@ -111,12 +115,12 @@ const TaxCreditManagement: React.FC = () => {
         : data.creditAmount
     };
     
+    console.log("Saving credit data:", processedData, "Edit mode:", isEditMode);
+    
     if (isEditMode && selectedCredit) {
       updateCredit(selectedCredit.id, processedData);
-      toast.success('Crédito atualizado com sucesso');
     } else {
       createCredit(processedData);
-      toast.success('Crédito criado com sucesso');
     }
     
     setIsFormOpen(false);

@@ -8,6 +8,7 @@ import { dbToTaxCredit } from './taxCreditTransformers';
  */
 export const fetchTaxCredits = async (): Promise<TaxCredit[]> => {
   try {
+    console.log('Fetching tax credits');
     const { data, error } = await supabase
       .from('tax_credits')
       .select('*');
@@ -18,8 +19,11 @@ export const fetchTaxCredits = async (): Promise<TaxCredit[]> => {
     }
     
     if (!data) {
+      console.log('No tax credits found');
       return [];
     }
+    
+    console.log('Fetched tax credits:', data.length);
     
     // Transform snake_case DB fields to camelCase for frontend
     return data.map(dbToTaxCredit);
