@@ -1,35 +1,53 @@
 
 import React from 'react';
 import { Label } from '@/components/ui/label';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { FormControl, FormItem, FormLabel } from '@/components/ui/form';
 
 interface LogoTypeSelectorProps {
-  logoType: string;
-  setLogoType: (value: string) => void;
+  logoType: 'static' | 'animated';
+  setLogoType: React.Dispatch<React.SetStateAction<'static' | 'animated'>>;
 }
 
 const LogoTypeSelector = ({ logoType, setLogoType }: LogoTypeSelectorProps) => {
+  const handleChange = (value: string) => {
+    // Cast the string value to our union type
+    setLogoType(value as 'static' | 'animated');
+  };
+
   return (
-    <div className="space-y-3">
-      <Label className="text-sm font-medium">Tipo de Logo</Label>
-      <Select
+    <div className="space-y-4">
+      <div>
+        <Label className="text-md font-semibold">Tipo de Logo</Label>
+        <p className="text-sm text-muted-foreground">
+          Escolha entre um logo estático ou animado
+        </p>
+      </div>
+      
+      <RadioGroup 
+        defaultValue={logoType} 
         value={logoType}
-        onValueChange={setLogoType}
+        onValueChange={handleChange}
+        className="flex flex-col space-y-3"
       >
-        <SelectTrigger className="w-full bg-card border-input hover:border-primary/50 transition-colors">
-          <SelectValue placeholder="Selecione o tipo de logo" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="static">Estático (imagem)</SelectItem>
-          <SelectItem value="animated">Animado</SelectItem>
-        </SelectContent>
-      </Select>
+        <FormItem className="flex items-center space-x-3 space-y-0">
+          <FormControl>
+            <RadioGroupItem value="static" />
+          </FormControl>
+          <FormLabel className="font-normal">
+            Logo Estático
+          </FormLabel>
+        </FormItem>
+        
+        <FormItem className="flex items-center space-x-3 space-y-0">
+          <FormControl>
+            <RadioGroupItem value="animated" />
+          </FormControl>
+          <FormLabel className="font-normal">
+            Logo Animado
+          </FormLabel>
+        </FormItem>
+      </RadioGroup>
     </div>
   );
 };

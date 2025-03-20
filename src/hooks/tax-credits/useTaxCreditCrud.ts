@@ -21,7 +21,29 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
         }
         
         if (data) {
-          setCredits(data as TaxCredit[]);
+          // Transform snake_case DB fields to camelCase for frontend
+          const transformedData = data.map(item => ({
+            id: item.id,
+            clientName: item.client_name,
+            clientId: item.client_id,
+            documentNumber: item.document_number,
+            creditType: item.credit_type,
+            creditAmount: item.credit_amount,
+            originalAmount: item.original_amount,
+            periodStart: item.period_start,
+            periodEnd: item.period_end,
+            status: item.status,
+            description: item.description,
+            notes: item.notes,
+            attachments: item.attachments,
+            createdAt: item.created_at,
+            updatedAt: item.updated_at,
+            approvedAt: item.approved_at,
+            createdBy: item.created_by,
+            attachmentsCount: item.attachments_count
+          })) as TaxCredit[];
+          
+          setCredits(transformedData);
         }
       } catch (error) {
         console.error('Error in fetchCredits:', error);
@@ -36,17 +58,27 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
     console.log('Creating credit:', creditData);
     
     try {
-      const newCredit: TaxCredit = {
-        ...creditData as TaxCredit,
-        id: `temp-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+      // Transform camelCase to snake_case for DB
+      const dbData = {
+        client_name: creditData.clientName,
+        client_id: creditData.clientId,
+        document_number: creditData.documentNumber,
+        credit_type: creditData.creditType,
+        credit_amount: creditData.creditAmount,
+        original_amount: creditData.originalAmount,
+        period_start: creditData.periodStart,
+        period_end: creditData.periodEnd,
+        status: creditData.status || 'pending',
+        description: creditData.description,
+        notes: creditData.notes,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
       
       // Save to Supabase
       const { data, error } = await supabase
         .from('tax_credits')
-        .insert([newCredit])
+        .insert([dbData])
         .select()
         .single();
         
@@ -55,11 +87,39 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
         toast.error('Erro ao criar crédito', {
           description: 'Não foi possível salvar o crédito tributário',
         });
-        return newCredit;
+        
+        // Return a temporary object for UI continuity
+        return {
+          ...creditData,
+          id: `temp-${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        } as TaxCredit;
       }
       
+      // Transform back to camelCase for frontend
+      const savedCredit: TaxCredit = {
+        id: data.id,
+        clientName: data.client_name,
+        clientId: data.client_id,
+        documentNumber: data.document_number,
+        creditType: data.credit_type,
+        creditAmount: data.credit_amount,
+        originalAmount: data.original_amount,
+        periodStart: data.period_start,
+        periodEnd: data.period_end,
+        status: data.status,
+        description: data.description,
+        notes: data.notes,
+        attachments: data.attachments,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at,
+        approvedAt: data.approved_at,
+        createdBy: data.created_by,
+        attachmentsCount: data.attachments_count
+      };
+      
       // Update local state with the saved data
-      const savedCredit = data as TaxCredit;
       setCredits(prevCredits => [...prevCredits, savedCredit]);
       
       toast.success('Crédito criado', {
@@ -81,13 +141,30 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
     console.log('Updating credit:', creditId, creditData);
     
     try {
+      // Transform camelCase to snake_case for DB
+      const dbData: any = {
+        updated_at: new Date().toISOString()
+      };
+      
+      // Only include fields that were provided
+      if (creditData.clientName !== undefined) dbData.client_name = creditData.clientName;
+      if (creditData.clientId !== undefined) dbData.client_id = creditData.clientId;
+      if (creditData.documentNumber !== undefined) dbData.document_number = creditData.documentNumber;
+      if (creditData.creditType !== undefined) dbData.credit_type = creditData.creditType;
+      if (creditData.creditAmount !== undefined) dbData.credit_amount = creditData.creditAmount;
+      if (creditData.originalAmount !== undefined) dbData.original_amount = creditData.originalAmount;
+      if (creditData.periodStart !== undefined) dbData.period_start = creditData.periodStart;
+      if (creditData.periodEnd !== undefined) dbData.period_end = creditData.periodEnd;
+      if (creditData.status !== undefined) dbData.status = creditData.status;
+      if (creditData.description !== undefined) dbData.description = creditData.description;
+      if (creditData.notes !== undefined) dbData.notes = creditData.notes;
+      if (creditData.attachments !== undefined) dbData.attachments = creditData.attachments;
+      if (creditData.approvedAt !== undefined) dbData.approved_at = creditData.approvedAt;
+      
       // Update in Supabase
       const { error } = await supabase
         .from('tax_credits')
-        .update({
-          ...creditData,
-          updatedAt: new Date().toISOString()
-        })
+        .update(dbData)
         .eq('id', creditId);
         
       if (error) {
@@ -162,18 +239,19 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
     console.log('Changing status:', creditId, newStatus, notes);
     
     try {
-      const updateData: Partial<TaxCredit> = {
-        status: newStatus as TaxCredit['status'],
-        updatedAt: new Date().toISOString(),
+      const updateData: any = {
+        status: newStatus,
+        updated_at: new Date().toISOString(),
       };
       
       if (notes) {
         // First get the current credit to append notes
         const currentCredit = credits.find(c => c.id === creditId);
         if (currentCredit) {
-          updateData.notes = currentCredit.notes 
+          const updatedNotes = currentCredit.notes 
             ? `${currentCredit.notes}\n\n${notes}` 
             : notes;
+          updateData.notes = updatedNotes;
         } else {
           updateData.notes = notes;
         }
@@ -199,7 +277,9 @@ export const useTaxCreditCrud = (initialCredits: TaxCredit[]) => {
           credit.id === creditId 
             ? { 
                 ...credit, 
-                ...updateData,
+                status: newStatus as TaxCredit['status'],
+                notes: updateData.notes,
+                updatedAt: updateData.updated_at
               }
             : credit
         );

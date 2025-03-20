@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -19,7 +19,7 @@ export const useGeneralSettings = () => {
         .from('site_settings')
         .select('*')
         .eq('type', 'general')
-        .single();
+        .maybeSingle();
         
       if (error) {
         console.error('Error loading general settings:', error);
@@ -42,9 +42,9 @@ export const useGeneralSettings = () => {
   }, []);
   
   // Load settings on component mount
-  useState(() => {
+  useEffect(() => {
     loadSettings();
-  });
+  }, [loadSettings]);
 
   // Save general settings
   const handleSaveGeneral = useCallback(async () => {
@@ -75,7 +75,10 @@ export const useGeneralSettings = () => {
         // Update existing settings
         const { error } = await supabase
           .from('site_settings')
-          .update({ settings, updated_at: new Date().toISOString() })
+          .update({ 
+            settings, 
+            updated_at: new Date().toISOString() 
+          })
           .eq('id', data.id);
           
         if (error) {
