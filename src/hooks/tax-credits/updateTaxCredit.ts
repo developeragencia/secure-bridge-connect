@@ -24,15 +24,16 @@ export const updateTaxCredit = async (creditId: string, creditData: Partial<TaxC
     console.log('Transformed update data for DB:', dbData);
     
     // Update in Supabase
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('tax_credits')
       .update(dbData)
-      .eq('id', creditId);
+      .eq('id', creditId)
+      .select();
       
     if (error) {
       console.error('Error updating tax credit:', error);
       toast.error('Erro ao atualizar crédito', {
-        description: 'Não foi possível atualizar o crédito tributário: ' + error.message,
+        description: `Não foi possível atualizar o crédito tributário: ${error.message}`,
       });
       return false;
     }
@@ -41,11 +42,12 @@ export const updateTaxCredit = async (creditId: string, creditData: Partial<TaxC
       description: 'O crédito tributário foi atualizado com sucesso',
     });
     
+    console.log('Updated credit data:', data);
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in updateCredit:', error);
     toast.error('Erro ao atualizar crédito', {
-      description: 'Não foi possível atualizar o crédito tributário',
+      description: `Não foi possível atualizar o crédito tributário: ${error.message || 'Erro desconhecido'}`,
     });
     return false;
   }

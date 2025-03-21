@@ -26,7 +26,7 @@ export const deleteTaxCredit = async (creditId: string) => {
     if (error) {
       console.error('Error deleting tax credit:', error);
       toast.error('Erro ao excluir crédito', {
-        description: 'Não foi possível excluir o crédito tributário',
+        description: `Não foi possível excluir o crédito tributário: ${error.message}`,
       });
       return false;
     }
@@ -36,10 +36,10 @@ export const deleteTaxCredit = async (creditId: string) => {
     });
     
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in deleteCredit:', error);
     toast.error('Erro ao excluir crédito', {
-      description: 'Não foi possível excluir o crédito tributário',
+      description: `Não foi possível excluir o crédito tributário: ${error.message || 'Erro desconhecido'}`,
     });
     return false;
   }

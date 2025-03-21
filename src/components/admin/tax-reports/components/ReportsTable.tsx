@@ -94,22 +94,23 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
               <div className="flex justify-end items-center gap-2">
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   onClick={() => onView(report.id)}
+                  title="Visualizar relatório"
                 >
                   <Eye className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   onClick={() => onDownload(report.id)}
-                  disabled={report.status !== 'completed'}
+                  title="Baixar relatório"
                 >
                   <Download className="h-4 w-4" />
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="icon">
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -117,14 +118,12 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                     <DropdownMenuLabel>Opções</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => onView(report.id)}>
-                      <Eye className="mr-2 h-4 w-4" /> Ver Detalhes
+                      <Eye className="h-4 w-4 mr-2" />
+                      Visualizar
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onDownload(report.id)} disabled={report.status !== 'completed'}>
-                      <Download className="mr-2 h-4 w-4" /> Baixar
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive">
-                      Excluir
+                    <DropdownMenuItem onClick={() => onDownload(report.id)}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Baixar
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

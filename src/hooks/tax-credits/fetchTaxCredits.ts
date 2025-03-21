@@ -16,7 +16,7 @@ export const fetchTaxCredits = async (): Promise<TaxCredit[]> => {
       
     if (error) {
       console.error('Error fetching tax credits:', error);
-      return [];
+      throw new Error(`Failed to fetch tax credits: ${error.message}`);
     }
     
     if (!data || data.length === 0) {
