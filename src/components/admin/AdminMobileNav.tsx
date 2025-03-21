@@ -35,15 +35,15 @@ const AdminMobileNav: React.FC<AdminMobileNavProps> = ({
           <button
             key={item.id}
             className={cn(
-              "flex flex-col items-center justify-center py-2 px-3 w-full transition-colors",
+              "flex flex-col items-center justify-center py-2 px-1 w-full transition-colors",
               activeTab === item.id 
                 ? "text-primary" 
                 : "text-muted-foreground hover:text-foreground"
             )}
             onClick={() => setActiveTab(item.id)}
           >
-            <item.icon className="h-5 w-5 mb-1" />
-            <span className="text-xs">{item.label}</span>
+            <item.icon className="h-4 w-4 mb-1" />
+            <span className="text-[10px] md:text-xs">{item.label}</span>
           </button>
         ))}
       </div>

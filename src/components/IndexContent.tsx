@@ -5,7 +5,7 @@ import IndexFooter from './IndexFooter';
 
 // Lazy loaded components
 const NavBar = lazy(() => import('@/components/NavBar'));
-const Hero = lazy(() => import('@/components/Hero'));
+const Hero = lazy(() => import('@/components/hero'));
 
 const IndexContent: React.FC = () => {
   return (

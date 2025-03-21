@@ -2,6 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { TaxCredit } from '@/types/tax-credits';
 import { dbToTaxCredit } from './taxCreditTransformers';
+import { toast } from 'sonner';
 
 /**
  * Fetches all tax credits from the database
@@ -16,7 +17,10 @@ export const fetchTaxCredits = async (): Promise<TaxCredit[]> => {
       
     if (error) {
       console.error('Error fetching tax credits:', error);
-      throw new Error(`Failed to fetch tax credits: ${error.message}`);
+      toast.error('Erro ao buscar créditos', {
+        description: `Falha ao carregar os créditos: ${error.message}`,
+      });
+      return [];
     }
     
     if (!data || data.length === 0) {
@@ -28,8 +32,11 @@ export const fetchTaxCredits = async (): Promise<TaxCredit[]> => {
     
     // Transform snake_case DB fields to camelCase for frontend
     return data.map(dbToTaxCredit);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in fetchTaxCredits:', error);
+    toast.error('Erro ao buscar créditos', {
+      description: `Falha ao carregar os créditos: ${error?.message || 'Erro desconhecido'}`,
+    });
     return [];
   }
 };

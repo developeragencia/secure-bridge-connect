@@ -44,9 +44,10 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    <nav className={cn(
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
       scrolled ? 'bg-background/80 backdrop-blur-md shadow-md py-2' : 'bg-transparent py-4'
-    }`}>
+    )}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
         <div className="flex items-center justify-between relative">
           <Link 
@@ -83,7 +84,7 @@ const NavBar: React.FC = () => {
       
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-background/95 backdrop-blur-md shadow-lg animate-fade-in">
+        <div className="md:hidden bg-background/95 backdrop-blur-md shadow-lg animate-in fade-in slide-in-from-top">
           <div className="px-4 py-3 space-y-2">
             <MobileNavButton to="/" label="Início" icon={<Home className="h-4 w-4" />} onClick={() => setMobileMenuOpen(false)} />
             <MobileNavButton to="/admin" label="Admin" icon={<Settings className="h-4 w-4" />} onClick={() => setMobileMenuOpen(false)} />

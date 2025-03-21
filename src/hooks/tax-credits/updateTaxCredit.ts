@@ -7,7 +7,7 @@ import { prepareUpdateFields } from './taxCreditTransformers';
 /**
  * Updates an existing tax credit in the database
  */
-export const updateTaxCredit = async (creditId: string, creditData: Partial<TaxCredit>) => {
+export const updateTaxCredit = async (creditId: string, creditData: Partial<TaxCredit>): Promise<boolean> => {
   console.log('Updating credit:', creditId, creditData);
   
   if (!creditId) {
@@ -47,7 +47,7 @@ export const updateTaxCredit = async (creditId: string, creditData: Partial<TaxC
   } catch (error: any) {
     console.error('Error in updateCredit:', error);
     toast.error('Erro ao atualizar crédito', {
-      description: `Não foi possível atualizar o crédito tributário: ${error.message || 'Erro desconhecido'}`,
+      description: `Não foi possível atualizar o crédito tributário: ${error?.message || 'Erro desconhecido'}`,
     });
     return false;
   }

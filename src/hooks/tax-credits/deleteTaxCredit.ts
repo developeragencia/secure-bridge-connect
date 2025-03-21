@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 /**
  * Deletes a tax credit from the database
  */
-export const deleteTaxCredit = async (creditId: string) => {
+export const deleteTaxCredit = async (creditId: string): Promise<boolean> => {
   console.log('Deleting credit with ID:', creditId);
   
   if (!creditId) {
@@ -39,7 +39,7 @@ export const deleteTaxCredit = async (creditId: string) => {
   } catch (error: any) {
     console.error('Error in deleteCredit:', error);
     toast.error('Erro ao excluir crédito', {
-      description: `Não foi possível excluir o crédito tributário: ${error.message || 'Erro desconhecido'}`,
+      description: `Não foi possível excluir o crédito tributário: ${error?.message || 'Erro desconhecido'}`,
     });
     return false;
   }

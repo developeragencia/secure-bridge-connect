@@ -29,7 +29,6 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
     if (credit && credit.id) {
       console.log('Confirming deletion of credit with ID:', credit.id);
       onConfirm(credit.id);
-      onClose();
     } else {
       console.error('Cannot delete credit: missing credit ID');
     }
