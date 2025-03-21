@@ -56,24 +56,48 @@ const AdminProfileSettings = () => {
   });
 
   const onSubmitProfile = async (data: ProfileFormValues) => {
+    if (!user?.id) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao atualizar perfil",
+        description: "Usuário não identificado. Por favor, faça login novamente.",
+      });
+      return;
+    }
+
     setLoadingProfile(true);
     try {
-      // Simulação de atualização de perfil
-      // Em um sistema real, isso seria uma chamada à API
-      setTimeout(() => {
-        toast({
-          title: "Perfil atualizado",
-          description: "Suas informações de perfil foram atualizadas com sucesso.",
-        });
-        setLoadingProfile(false);
-      }, 1000);
-    } catch (error) {
+      // Update user metadata and profile in database
+      const { error: updateError } = await supabase.auth.updateUser({
+        email: data.email,
+        data: { name: data.name }
+      });
+      
+      if (updateError) throw updateError;
+      
+      // Update profile in profiles table if it exists
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ name: data.name, email: data.email })
+        .eq('id', user.id);
+      
+      if (profileError) {
+        console.error("Error updating profile:", profileError);
+        // Continue anyway as the auth user was updated
+      }
+
+      toast({
+        title: "Perfil atualizado",
+        description: "Suas informações de perfil foram atualizadas com sucesso.",
+      });
+    } catch (error: any) {
       console.error("Erro ao atualizar perfil:", error);
       toast({
         variant: "destructive",
         title: "Erro ao atualizar perfil",
-        description: "Ocorreu um erro ao tentar atualizar seu perfil.",
+        description: error.message || "Ocorreu um erro ao tentar atualizar seu perfil.",
       });
+    } finally {
       setLoadingProfile(false);
     }
   };
@@ -81,7 +105,7 @@ const AdminProfileSettings = () => {
   const onSubmitPassword = async (data: PasswordFormValues) => {
     setLoadingPassword(true);
     try {
-      // Em um sistema real, verificaria a senha atual antes de alterá-la
+      // In a real system, we would verify the current password before updating
       const { error } = await supabase.auth.updateUser({
         password: data.newPassword
       });
@@ -110,18 +134,55 @@ const AdminProfileSettings = () => {
     }
   };
 
-  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file || !user?.id) return;
+
+    try {
+      // First show the local preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarUrl(reader.result as string);
-        toast({
-          title: "Avatar atualizado",
-          description: "Sua imagem de perfil foi atualizada com sucesso.",
-        });
       };
       reader.readAsDataURL(file);
+
+      // Upload to Supabase Storage if available
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      
+      // Check if storage bucket exists before uploading
+      const { data: buckets } = await supabase.storage.getBuckets();
+      
+      if (buckets && buckets.some(bucket => bucket.name === 'avatars')) {
+        const { error } = await supabase.storage
+          .from('avatars')
+          .upload(fileName, file, { upsert: true });
+          
+        if (error) throw error;
+        
+        // Get public URL 
+        const { data } = supabase.storage.from('avatars').getPublicUrl(fileName);
+        
+        if (data) {
+          // Update profile with avatar URL
+          await supabase
+            .from('profiles')
+            .update({ avatar_url: data.publicUrl })
+            .eq('id', user.id);
+        }
+      }
+      
+      toast({
+        title: "Avatar atualizado",
+        description: "Sua imagem de perfil foi atualizada com sucesso.",
+      });
+    } catch (error: any) {
+      console.error("Erro ao fazer upload do avatar:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao atualizar avatar",
+        description: error.message || "Ocorreu um erro ao tentar atualizar sua imagem de perfil.",
+      });
     }
   };
 
