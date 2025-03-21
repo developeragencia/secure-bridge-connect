@@ -28,7 +28,10 @@ const StatusChangeDialog: React.FC<StatusChangeDialogProps> = ({
   onConfirm,
   onStatusChange
 }) => {
-  const [selectedStatus, setSelectedStatus] = useState<string>(credit?.status || 'pending');
+  // Initialize with credit status, ensuring lowercase matching
+  const [selectedStatus, setSelectedStatus] = useState<string>(
+    credit?.status?.toLowerCase() || 'pending'
+  );
   const [notes, setNotes] = useState('');
 
   const handleConfirm = () => {

@@ -1,27 +1,40 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { TaxCredit } from '@/types/tax-credits';
 import { toast } from 'sonner';
 
 /**
  * Changes the status of a tax credit in the database
  */
-export const changeTaxCreditStatus = async (creditId: string, newStatus: string, notes: string, currentNotes?: string) => {
-  console.log('Changing status:', creditId, newStatus, notes);
+export const changeTaxCreditStatus = async (
+  creditId: string, 
+  newStatus: string, 
+  notes: string,
+  existingNotes?: string
+) => {
+  console.log('Changing status:', creditId, 'to', newStatus);
   
   try {
-    const updateData: any = {
+    // Prepare update data
+    const updateData: Record<string, any> = {
       status: newStatus.toLowerCase(),
       updated_at: new Date().toISOString(),
     };
     
+    // Append notes if provided
     if (notes) {
-      // Append new notes to existing notes if available
-      const updatedNotes = currentNotes 
-        ? `${currentNotes}\n\n${notes}` 
-        : notes;
-      updateData.notes = updatedNotes;
+      const datePrefix = new Date().toLocaleString('pt-BR');
+      const statusNote = `[${datePrefix} - Status alterado para ${newStatus}] ${notes}`;
+      updateData.notes = existingNotes 
+        ? `${existingNotes}\n\n${statusNote}`
+        : statusNote;
     }
+    
+    // Update approved_at timestamp if status is 'approved'
+    if (newStatus.toLowerCase() === 'approved') {
+      updateData.approved_at = new Date().toISOString();
+    }
+    
+    console.log('Update data:', updateData);
     
     // Update in Supabase
     const { error } = await supabase
@@ -30,22 +43,22 @@ export const changeTaxCreditStatus = async (creditId: string, newStatus: string,
       .eq('id', creditId);
       
     if (error) {
-      console.error('Error updating tax credit status:', error);
-      toast.error('Erro ao atualizar status', {
-        description: 'Não foi possível atualizar o status do crédito',
+      console.error('Error changing tax credit status:', error);
+      toast.error('Erro ao alterar status', {
+        description: 'Não foi possível alterar o status do crédito tributário',
       });
       return false;
     }
     
-    toast.success('Status atualizado', {
-      description: `O status do crédito foi atualizado para ${newStatus}`,
+    toast.success('Status alterado', {
+      description: `O status foi alterado para ${newStatus} com sucesso`,
     });
     
     return true;
   } catch (error) {
     console.error('Error in changeStatus:', error);
-    toast.error('Erro ao atualizar status', {
-      description: 'Não foi possível atualizar o status do crédito',
+    toast.error('Erro ao alterar status', {
+      description: 'Não foi possível alterar o status do crédito tributário',
     });
     return false;
   }

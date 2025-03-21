@@ -26,13 +26,22 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
   onConfirm,
 }) => {
   const handleConfirm = () => {
-    if (credit) {
-      console.log('Confirming deletion of credit:', credit.id);
+    if (credit && credit.id) {
+      console.log('Confirming deletion of credit with ID:', credit.id);
       onConfirm(credit.id);
+    } else {
+      console.error('Cannot delete credit: missing credit ID');
     }
   };
 
   if (!credit) return null;
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
@@ -41,7 +50,7 @@ const DeleteConfirmDialog: React.FC<DeleteConfirmDialogProps> = ({
           <AlertDialogTitle>Excluir crédito tributário</AlertDialogTitle>
           <AlertDialogDescription>
             Você está prestes a excluir o crédito tributário de <strong>{credit.clientName}</strong> no 
-            valor de <strong>R$ {new Intl.NumberFormat('pt-BR').format(credit.creditAmount)}</strong>.
+            valor de <strong>{formatCurrency(credit.creditAmount)}</strong>.
             <br /><br />
             Esta ação não pode ser desfeita. Deseja continuar?
           </AlertDialogDescription>

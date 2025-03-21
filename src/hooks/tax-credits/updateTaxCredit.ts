@@ -10,9 +10,18 @@ import { prepareUpdateFields } from './taxCreditTransformers';
 export const updateTaxCredit = async (creditId: string, creditData: Partial<TaxCredit>) => {
   console.log('Updating credit:', creditId, creditData);
   
+  if (!creditId) {
+    console.error('Error: No credit ID provided for update');
+    toast.error('Erro ao atualizar crédito', {
+      description: 'ID do crédito não fornecido',
+    });
+    return false;
+  }
+  
   try {
     // Transform camelCase to snake_case for DB
     const dbData = prepareUpdateFields(creditData);
+    console.log('Transformed update data for DB:', dbData);
     
     // Update in Supabase
     const { error } = await supabase
@@ -23,7 +32,7 @@ export const updateTaxCredit = async (creditId: string, creditData: Partial<TaxC
     if (error) {
       console.error('Error updating tax credit:', error);
       toast.error('Erro ao atualizar crédito', {
-        description: 'Não foi possível atualizar o crédito tributário',
+        description: 'Não foi possível atualizar o crédito tributário: ' + error.message,
       });
       return false;
     }

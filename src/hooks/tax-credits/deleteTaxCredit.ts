@@ -6,7 +6,15 @@ import { toast } from 'sonner';
  * Deletes a tax credit from the database
  */
 export const deleteTaxCredit = async (creditId: string) => {
-  console.log('Deleting credit:', creditId);
+  console.log('Deleting credit with ID:', creditId);
+  
+  if (!creditId) {
+    console.error('Error: No credit ID provided for deletion');
+    toast.error('Erro ao excluir crédito', {
+      description: 'ID do crédito não fornecido',
+    });
+    return false;
+  }
   
   try {
     // Delete from Supabase

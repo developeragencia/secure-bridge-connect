@@ -11,14 +11,15 @@ export const fetchTaxCredits = async (): Promise<TaxCredit[]> => {
     console.log('Fetching tax credits');
     const { data, error } = await supabase
       .from('tax_credits')
-      .select('*');
+      .select('*')
+      .order('created_at', { ascending: false });
       
     if (error) {
       console.error('Error fetching tax credits:', error);
       return [];
     }
     
-    if (!data) {
+    if (!data || data.length === 0) {
       console.log('No tax credits found');
       return [];
     }
@@ -28,7 +29,7 @@ export const fetchTaxCredits = async (): Promise<TaxCredit[]> => {
     // Transform snake_case DB fields to camelCase for frontend
     return data.map(dbToTaxCredit);
   } catch (error) {
-    console.error('Error in fetchCredits:', error);
+    console.error('Error in fetchTaxCredits:', error);
     return [];
   }
 };
