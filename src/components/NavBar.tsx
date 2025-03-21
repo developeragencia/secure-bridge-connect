@@ -3,14 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import AnimatedLogo from './AnimatedLogo';
 import { Menu, X, Home, Settings } from 'lucide-react';
-import { 
-  NavigationMenu, 
-  NavigationMenuList, 
-  NavigationMenuItem, 
-  NavigationMenuLink, 
-  NavigationMenuContent, 
-  NavigationMenuTrigger 
-} from '@/components/ui/navigation-menu';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';

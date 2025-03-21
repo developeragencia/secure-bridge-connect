@@ -53,7 +53,7 @@ const MobileMenuOverlay: React.FC<MobileMenuOverlayProps> = ({
           toggleDarkMode={toggleDarkMode}
           darkMode={darkMode}
           handleLogout={handleLogout}
-          closeMobileMenu={toggleMobileMenu}
+          toggleMobileMenu={toggleMobileMenu}
         />
       </div>
     </div>
