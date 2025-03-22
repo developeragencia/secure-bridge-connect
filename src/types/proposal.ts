@@ -27,7 +27,7 @@ export const PROPOSAL_STATUS_LABELS: Record<ProposalStatus, string> = {
 export interface ProposalTimeline {
   id: string;
   proposalId: string;
-  status: ProposalStatus;
+  status?: ProposalStatus;
   comment?: string;
   userId: string;
   userName?: string;

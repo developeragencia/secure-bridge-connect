@@ -3,6 +3,8 @@ import React, { lazy, Suspense } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import AdminLoading from '../components/admin/AdminLoading';
 import AdminLayout from '../components/admin/AdminLayout';
+
+// Eager-loaded components
 import TaxCreditManagement from '../components/admin/tax-credits/TaxCreditManagement';
 import OperationalCreditIdentificationPanel from '../components/admin/tax-credits/components/OperationalCreditIdentificationPanel';
 import OperationalImportsPanel from '../components/admin/operational/OperationalImportsPanel';

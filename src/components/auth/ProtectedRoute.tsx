@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,16 +11,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requiredPermission
 }) => {
-  const { isAuthenticated, checkPermission } = useAuth();
+  const { isAuthenticated, checkPermission, user } = useAuth();
   const location = useLocation();
 
   if (!isAuthenticated) {
-    // Redireciona para o login mantendo a URL original como state
+    // Redirect to login keeping the original URL as state
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (requiredPermission && !checkPermission(requiredPermission)) {
-    // Redireciona para uma página de acesso negado
+    // Redirect to unauthorized page
     return <Navigate to="/unauthorized" replace />;
   }
 

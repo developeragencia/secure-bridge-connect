@@ -38,6 +38,9 @@ const UserProfileHeader = ({ user }: UserProfileHeaderProps) => {
     }
   };
 
+  // Default user status to 'active' if not provided
+  const userStatus = user.status || 'active';
+
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border rounded-lg bg-card/50 mb-5">
       <div className="flex items-center gap-4 mb-4 sm:mb-0">
@@ -54,17 +57,17 @@ const UserProfileHeader = ({ user }: UserProfileHeaderProps) => {
             <Badge 
               variant="secondary" 
               className={cn(
-                (user.status === 'active') 
+                (userStatus === 'active') 
                   ? "bg-green-500/20 text-green-700 dark:text-green-300"
                   : "bg-amber-500/20 text-amber-700 dark:text-amber-300"
               )}
             >
-              {(user.status === 'active') ? (
+              {(userStatus === 'active') ? (
                 <CheckCircle className="h-3 w-3 mr-1" />
               ) : (
                 <XCircle className="h-3 w-3 mr-1" />
               )}
-              {(user.status === 'active') ? 'Ativo' : 'Inativo'}
+              {(userStatus === 'active') ? 'Ativo' : 'Inativo'}
             </Badge>
             
             <Badge 
