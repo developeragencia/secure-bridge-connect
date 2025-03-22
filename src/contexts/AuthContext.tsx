@@ -1,7 +1,7 @@
+
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { User } from '@/types/user';
 import { useToast } from '@/components/ui/use-toast';
-import { useNavigate } from 'react-router-dom';
 import { getAvailablePermissions } from '@/lib/permissions';
 
 interface AuthContextData {
@@ -10,15 +10,20 @@ interface AuthContextData {
   signIn: (credentials: { email: string; password: string }) => Promise<void>;
   signOut: () => void;
   updateUser: (user: User) => void;
+  navigate?: (path: string) => void; // Optional navigate function that will be set by the wrapper
 }
 
 export const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface AuthProviderProps {
+  children: React.ReactNode;
+  navigate?: (path: string) => void;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigate }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const loadStoredData = async () => {
@@ -69,7 +74,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('@SecureBridgeConnect:token', token);
 
       setUser(userData);
-      navigate('/dashboard');
+      
+      // Use the navigate function passed through props
+      if (navigate) {
+        navigate('/dashboard');
+      }
 
       toast({
         title: 'Login realizado com sucesso',
@@ -90,7 +99,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('@SecureBridgeConnect:user');
     localStorage.removeItem('@SecureBridgeConnect:token');
     setUser(null);
-    navigate('/login');
+    
+    // Use the navigate function passed through props
+    if (navigate) {
+      navigate('/login');
+    }
 
     toast({
       title: 'Logout realizado com sucesso',
@@ -113,9 +126,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signIn,
         signOut,
         updateUser,
+        navigate,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-}; 
+};

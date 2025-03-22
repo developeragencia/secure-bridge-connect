@@ -9,6 +9,8 @@ const useLoginCheck = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true; // Track component mount state
+    
     // Log domain information for debugging
     const hostname = window.location.hostname;
     console.log("Login check initialized on domain:", hostname);
@@ -22,9 +24,11 @@ const useLoginCheck = () => {
             const authData = JSON.parse(rememberedAuth);
             // If saved session is less than 30 days old, use it
             if (authData && (Date.now() - authData.timestamp) < 30 * 24 * 60 * 60 * 1000) {
-              setTimeout(() => {
-                navigate('/admin');
-              }, 200); // Faster transition
+              if (isMounted) {
+                setTimeout(() => {
+                  navigate('/admin');
+                }, 200); // Faster transition
+              }
               return;
             } else {
               localStorage.removeItem('adminAuthRemembered');
@@ -41,9 +45,11 @@ const useLoginCheck = () => {
           try {
             const authData = JSON.parse(sessionAuth);
             if (authData && (Date.now() - authData.timestamp) < 24 * 60 * 60 * 1000) {
-              setTimeout(() => {
-                navigate('/admin');
-              }, 200); // Faster transition
+              if (isMounted) {
+                setTimeout(() => {
+                  navigate('/admin');
+                }, 200); // Faster transition
+              }
               return;
             } else {
               localStorage.removeItem('adminAuth');
@@ -62,16 +68,20 @@ const useLoginCheck = () => {
         }
         
         if (data.session) {
-          setTimeout(() => {
-            navigate('/admin');
-          }, 200); // Faster transition
-        } else {
+          if (isMounted) {
+            setTimeout(() => {
+              navigate('/admin');
+            }, 200); // Faster transition
+          }
+        } else if (isMounted) {
           setInitializing(false);
         }
       } catch (error) {
         console.error("Error checking session:", error);
         toast.error("Erro ao verificar sua sessão. Por favor, tente novamente.");
-        setInitializing(false);
+        if (isMounted) {
+          setInitializing(false);
+        }
       }
     };
     
@@ -79,7 +89,7 @@ const useLoginCheck = () => {
     
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
+        if (event === 'SIGNED_IN' && session && isMounted) {
           setTimeout(() => {
             navigate('/admin');
           }, 200); // Faster transition
@@ -88,6 +98,7 @@ const useLoginCheck = () => {
     );
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
     };
   }, [navigate]);
