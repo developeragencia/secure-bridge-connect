@@ -37,39 +37,39 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
     } else {
       // Navigate to the appropriate route based on the item's route value
       if (item.route === 'clients') {
-        navigate('/admin/clients');
+        navigate('/secure/clients');
       } else if (item.route === 'tax_credits') {
-        navigate('/admin/tax_credits');
+        navigate('/secure/tax_credits');
       } else if (item.route === 'tax_calculator') {
-        navigate('/admin/tax_calculator');
+        navigate('/secure/tax_calculator');
       } else if (item.route === 'calculations/irrf') {
-        navigate('/admin/calculations/irrf');
+        navigate('/secure/calculations/irrf');
       } else if (item.route === 'irrf_recovery') {
-        navigate('/admin/irrf_recovery');
+        navigate('/secure/irrf_recovery');
       } else if (item.route === 'credit_identification') {
-        navigate('/admin/credit_identification');
+        navigate('/secure/credit_identification');
       } else if (item.route === 'detailed_reports') {
-        navigate('/admin/detailed_reports');
+        navigate('/secure/detailed_reports');
       } else if (item.route === 'tax_compensation_reports') {
-        navigate('/admin/tax_compensation_reports');
+        navigate('/secure/tax_compensation_reports');
       } else if (item.route === 'interactive_dashboard') {
-        navigate('/admin/interactive_dashboard');
+        navigate('/secure/interactive_dashboard');
       } else if (item.route === 'retention_receipts') {
-        navigate('/admin/retention_receipts');
+        navigate('/secure/retention_receipts');
       } else if (item.route === 'fiscal_reports') {
-        navigate('/admin/fiscal_reports');
+        navigate('/secure/fiscal_reports');
       } else if (item.route === 'commercial/proposals') {
-        navigate('/admin/proposals');
+        navigate('/secure/proposals');
       } else if (item.route === 'audit_management') {
-        navigate('/admin/audit_management');
+        navigate('/secure/audit_management');
       } else if (item.route.startsWith('/')) {
         // Route already has a leading slash
         navigate(item.route);
       } else if (item.route === 'dashboard') {
-        // For dashboard, navigate to the admin root
-        navigate('/admin');
+        // For dashboard, navigate to the secure dashboard
+        navigate('/secure/dashboard');
       } else {
-        navigate(`/admin/${item.route}`);
+        navigate(`/secure/${item.route}`);
       }
     }
   };

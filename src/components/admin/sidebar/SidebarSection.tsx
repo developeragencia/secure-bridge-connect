@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -31,13 +30,15 @@ const SidebarSection = ({
     
     // Navigate to the appropriate route
     if (tabId === 'profile') {
-      navigate('/admin/profile');
+      navigate('/secure/profile');
     } else if (tabId === 'notifications') {
-      navigate('/admin/notifications');
+      navigate('/secure/notifications');
     } else if (tabId === 'clients') {
-      navigate('/admin/clients');
+      navigate('/secure/clients');
+    } else if (tabId === 'dashboard') {
+      navigate('/secure/dashboard');
     } else {
-      navigate(`/admin/${tabId}`);
+      navigate(`/secure/${tabId}`);
     }
   };
 
