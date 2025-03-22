@@ -7,7 +7,7 @@ const Layout: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="container py-8 max-w-7xl mx-auto">
+      <main className="container mx-auto px-4 py-8">
         <Outlet />
       </main>
       <NotificationCenter />
