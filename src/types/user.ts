@@ -1,4 +1,3 @@
-
 export type UserRole = 
   | 'MASTER_ADMIN' // Administrador Master
   | 'OFFICE_TEAM' // Equipe do Escritório
@@ -15,6 +14,23 @@ export type UserRole =
   | 'staff_outsourced' // Backwards compatibility
   | 'commercial_rep'; // Backwards compatibility
 
+export const USER_ROLE_LABELS: Record<UserRole, string> = {
+  MASTER_ADMIN: 'Administrador Master',
+  OFFICE_TEAM: 'Equipe do Escritório',
+  CLIENT: 'Cliente',
+  SALES_REP: 'Representante Comercial',
+  admin: 'Administrador',
+  staff: 'Equipe do Escritório',
+  client: 'Cliente',
+  representative: 'Representante',
+  office: 'Escritório',
+  sales: 'Comercial',
+  admin_master: 'Administrador Master',
+  staff_permanent: 'Equipe Permanente',
+  staff_outsourced: 'Equipe Terceirizada',
+  commercial_rep: 'Representante Comercial'
+};
+
 export interface User {
   id: string;
   name: string;
@@ -25,6 +41,7 @@ export interface User {
   clientId?: string;
   createdAt: string;
   updatedAt?: string;
+  avatar?: string; // Adding avatar property for user-nav.tsx
 }
 
 export interface UserProfile {
