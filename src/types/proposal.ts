@@ -1,41 +1,118 @@
+import { User, Client } from './user';
 
-export type ProposalStatus = 'REQUEST' | 'ANALYSIS' | 'APPROVED' | 'REJECTED' | 'CONVERTED';
+export type ProposalStatus = 
+  | 'DRAFT' // Rascunho
+  | 'PENDING' // Aguardando análise
+  | 'IN_ANALYSIS' // Em análise
+  | 'APPROVED' // Aprovada
+  | 'REJECTED' // Rejeitada
+  | 'CONVERTED' // Convertida em contrato
+  | 'CANCELLED'; // Cancelada
+
+export const PROPOSAL_STATUS_LABELS: Record<ProposalStatus, string> = {
+  DRAFT: 'Rascunho',
+  PENDING: 'Aguardando análise',
+  IN_ANALYSIS: 'Em análise',
+  APPROVED: 'Aprovada',
+  REJECTED: 'Rejeitada',
+  CONVERTED: 'Convertida em contrato',
+  CANCELLED: 'Cancelada',
+};
+
+export interface ProposalTimeline {
+  id: string;
+  proposalId: string;
+  status: ProposalStatus;
+  comment?: string;
+  userId: string;
+  createdAt: string;
+}
+
+export interface ProposalService {
+  id: string;
+  name: string;
+  description: string;
+  value: number;
+  recurrence: 'one_time' | 'monthly' | 'yearly';
+}
 
 export interface Proposal {
   id: string;
-  clientId: string;
-  clientName: string;
-  cnpj: string;
   title: string;
-  description: string;
-  service: string;
-  value: number;
+  clientId: string;
+  client?: Client;
+  salesRepId: string;
+  salesRep?: User;
   status: ProposalStatus;
-  createdBy: string;
-  createdByName: string;
-  representativeId?: string;
-  representativeName?: string;
-  approvedBy?: string;
-  approvedByName?: string;
-  rejectedBy?: string;
-  rejectedByName?: string;
-  rejectionReason?: string;
+  services: ProposalService[];
+  totalValue: number;
+  description: string;
+  validUntil: string;
+  timeline: ProposalTimeline[];
+  attachments?: {
+    id: string;
+    name: string;
+    url: string;
+    type: string;
+    size: number;
+    uploadedAt: string;
+  }[];
   contractId?: string;
   createdAt: string;
   updatedAt: string;
-  approvedAt?: string;
-  rejectedAt?: string;
-  convertedAt?: string;
-  timeline: ProposalTimelineEvent[];
 }
 
-export interface ProposalTimelineEvent {
+export interface ProposalFilters {
+  status?: ProposalStatus[];
+  clientId?: string;
+  salesRepId?: string;
+  startDate?: string;
+  endDate?: string;
+  search?: string;
+}
+
+// Tipos para análise automática de créditos
+export interface CreditAnalysis {
   id: string;
-  proposalId: string;
-  type: 'CREATED' | 'UPDATED' | 'ANALYZED' | 'APPROVED' | 'REJECTED' | 'CONVERTED';
-  description: string;
-  userId: string;
-  userName: string;
+  clientId: string;
+  period: {
+    start: string;
+    end: string;
+  };
+  transactions: CreditTransaction[];
+  summary: {
+    totalCredits: number;
+    totalRetentions: number;
+    potentialCredits: number;
+  };
+  status: 'pending' | 'processing' | 'completed' | 'error';
   createdAt: string;
-  metadata?: Record<string, any>;
+  updatedAt: string;
+}
+
+export interface CreditTransaction {
+  id: string;
+  date: string;
+  supplier: {
+    id: string;
+    name: string;
+    cnpj: string;
+    retentionType: 'full' | 'partial' | 'exempt';
+    retentionReason?: string;
+  };
+  value: number;
+  retentionValue: number;
+  retentionRules: {
+    ruleId: string;
+    description: string;
+    appliedValue: number;
+  }[];
+  status: 'identified' | 'pending_review' | 'approved' | 'rejected';
+  observations?: string;
+  attachments?: {
+    id: string;
+    name: string;
+    url: string;
+    type: string;
+  }[];
 }

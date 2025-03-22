@@ -1,92 +1,74 @@
-
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
-import { Toaster as SonnerToaster } from 'sonner';
+import { ThemeProvider } from '@/components/theme-provider';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
+import Layout from '@/components/layout/Layout';
+import Login from '@/pages/Login';
+import Dashboard from '@/pages/Dashboard';
+import Transactions from '@/pages/Transactions';
+import Clients from '@/pages/Clients';
+import ClientDetails from '@/pages/ClientDetails';
+import Profile from '@/pages/Profile';
+import NotFound from '@/pages/NotFound';
 
-// Loading component
-import IndexLoading from '@/components/IndexLoading';
-import AdminLoading from '@/components/admin/AdminLoading';
-import LoadingScreen from '@/components/LoadingScreen';
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      cacheTime: 1000 * 60 * 30, // 30 minutes
+      retry: 3,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    },
+  },
+});
 
-// Lazy loaded pages with proper loading components
-const Index = lazy(() => import('@/pages/Index'));
-const Admin = lazy(() => import('@/pages/Admin'));
-const Login = lazy(() => import('@/pages/Login'));
-const NotFound = lazy(() => import('@/pages/NotFound'));
-const ClientDetailPage = lazy(() => import('@/pages/admin/ClientDetailPage'));
-const AuditoriaPage = lazy(() => import('@/pages/admin/AuditoriaPage'));
-const DocumentationPage = lazy(() => import('@/pages/admin/DocumentationPage'));
-const OpportunitiesPage = lazy(() => import('@/pages/admin/OpportunitiesPage'));
+const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, isLoading } = useAuth();
 
-// Layout providers
-import { ThemeProvider } from '@/components/ThemeProvider';
+  if (isLoading) {
+    return null;
+  }
 
-function App() {
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  return <>{children}</>;
+};
+
+const App = () => {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="theme">
-      <Router>
-        <Routes>
-          {/* Home route shows the Index component */}
-          <Route path="/" element={
-            <Suspense fallback={<IndexLoading />}>
-              <Index />
-            </Suspense>
-          } />
-          
-          {/* Admin Panel Routes */}
-          <Route path="/admin" element={
-            <Suspense fallback={<AdminLoading />}>
-              <Admin />
-            </Suspense>
-          } />
-          <Route path="/admin/:tab" element={
-            <Suspense fallback={<AdminLoading />}>
-              <Admin />
-            </Suspense>
-          } />
-          <Route path="/admin/client/:clientId" element={
-            <Suspense fallback={<AdminLoading />}>
-              <ClientDetailPage />
-            </Suspense>
-          } />
-          <Route path="/admin/auditorias" element={
-            <Suspense fallback={<AdminLoading />}>
-              <AuditoriaPage />
-            </Suspense>
-          } />
-          <Route path="/admin/opportunities" element={
-            <Suspense fallback={<AdminLoading />}>
-              <OpportunitiesPage />
-            </Suspense>
-          } />
-          <Route path="/admin/documentation" element={
-            <Suspense fallback={<AdminLoading />}>
-              <DocumentationPage />
-            </Suspense>
-          } />
-          
-          {/* Auth Routes */}
-          <Route path="/login" element={
-            <Suspense fallback={<IndexLoading />}>
-              <Login />
-            </Suspense>
-          } />
-          
-          {/* 404 Route */}
-          <Route path="*" element={
-            <Suspense fallback={<IndexLoading />}>
-              <NotFound />
-            </Suspense>
-          } />
-        </Routes>
-      </Router>
-      
-      {/* Toast notifications */}
-      <Toaster />
-      <SonnerToaster position="top-right" />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <AuthProvider>
+          <Router>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <Layout />
+                  </PrivateRoute>
+                }
+              >
+                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="transactions" element={<Transactions />} />
+                <Route path="clients" element={<Clients />} />
+                <Route path="clients/:id" element={<ClientDetails />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Routes>
+          </Router>
+          <Toaster />
+        </AuthProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
-}
+};
 
 export default App;
