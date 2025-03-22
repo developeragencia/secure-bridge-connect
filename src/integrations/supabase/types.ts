@@ -199,6 +199,56 @@ export type Database = {
         }
         Relationships: []
       }
+      utms: {
+        Row: {
+          base_url: string
+          campaign: string
+          content: string | null
+          created_at: string | null
+          created_by: string
+          id: string
+          medium: string
+          name: string
+          source: string
+          term: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          base_url: string
+          campaign: string
+          content?: string | null
+          created_at?: string | null
+          created_by: string
+          id?: string
+          medium: string
+          name: string
+          source: string
+          term?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          base_url?: string
+          campaign?: string
+          content?: string | null
+          created_at?: string | null
+          created_by?: string
+          id?: string
+          medium?: string
+          name?: string
+          source?: string
+          term?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "utms_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

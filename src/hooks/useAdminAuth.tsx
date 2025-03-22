@@ -20,6 +20,8 @@ export const useAdminAuth = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log("Checking auth status...");
+        
         // First check for remembered auth in localStorage
         const rememberedAuth = localStorage.getItem('adminAuthRemembered');
         const adminAuth = localStorage.getItem('adminAuth');
@@ -32,7 +34,12 @@ export const useAdminAuth = () => {
             const authTime = authData.timestamp || 0;
             // 30 days validity
             if (now - authTime < 30 * 24 * 60 * 60 * 1000) {
-              setUser({ email: authData.email || 'admin@sistemasclaudio.com' });
+              console.log("Using remembered auth");
+              setUser({ 
+                id: authData.id || 'default-id',
+                email: authData.email || 'admin@sistemasclaudio.com',
+                name: authData.name || 'Admin User'
+              });
               setLoading(false);
               return;
             } else {
@@ -52,7 +59,12 @@ export const useAdminAuth = () => {
             const authTime = adminAuthData.timestamp || 0;
             // 1 day validity
             if (now - authTime < 24 * 60 * 60 * 1000) {
-              setUser({ email: adminAuthData.email || 'admin@sistemasclaudio.com' });
+              console.log("Using admin auth");
+              setUser({ 
+                id: adminAuthData.id || 'default-id',
+                email: adminAuthData.email || 'admin@sistemasclaudio.com',
+                name: adminAuthData.name || 'Admin User'
+              });
               setLoading(false);
               return;
             } else {
@@ -66,6 +78,7 @@ export const useAdminAuth = () => {
         }
         
         // Finally check Supabase session
+        console.log("Checking Supabase session");
         const { data, error } = await supabase.auth.getSession();
         if (error) {
           console.error("Supabase auth error:", error);
@@ -73,17 +86,48 @@ export const useAdminAuth = () => {
         }
         
         if (data.session) {
-          setUser(data.session.user);
+          console.log("Found Supabase session");
+          const userData = {
+            id: data.session.user.id,
+            email: data.session.user.email,
+            name: data.session.user.user_metadata?.name || 'Admin User',
+            avatar: data.session.user.user_metadata?.avatar
+          };
+          setUser(userData);
+          
+          // Also save in localStorage for fallback
+          localStorage.setItem('adminAuth', JSON.stringify({
+            ...userData,
+            timestamp: Date.now()
+          }));
+          
           setLoading(false);
         } else {
-          // No valid session found, redirect to login
-          navigate('/login');
+          // For development, use a fallback user if no session
+          if (import.meta.env.DEV) {
+            console.log("DEV mode: using fallback user");
+            setUser({
+              id: 'fallback-id',
+              email: 'admin@sistemasclaudio.com',
+              name: 'Admin User (Dev)'
+            });
+            setLoading(false);
+          } else {
+            console.log("No valid session found, redirecting to login");
+            // No valid session found, redirect to login
+            if (window.location.pathname !== '/login') {
+              navigate('/login');
+            }
+            setLoading(false);
+          }
         }
       } catch (error) {
         console.error("Authentication error:", error);
         toast.error("Erro de autenticação. Por favor, faça login novamente.");
         setLoading(false);
-        navigate('/login');
+        if (window.location.pathname !== '/login') {
+          navigate('/login');
+        }
       }
     };
     
@@ -91,13 +135,22 @@ export const useAdminAuth = () => {
     
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log("Auth state change:", event);
         if (event === 'SIGNED_OUT') {
           localStorage.removeItem('adminAuth');
           localStorage.removeItem('adminAuthRemembered');
           setUser(null);
-          navigate('/login');
+          if (window.location.pathname !== '/login') {
+            navigate('/login');
+          }
         } else if (session) {
-          setUser(session.user);
+          const userData = {
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.user_metadata?.name || 'Admin User',
+            avatar: session.user.user_metadata?.avatar
+          };
+          setUser(userData);
           setLoading(false);
         }
       }

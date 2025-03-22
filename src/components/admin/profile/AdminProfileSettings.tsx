@@ -151,9 +151,9 @@ const AdminProfileSettings = () => {
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       
       // Check if storage bucket exists before uploading
-      const { data: buckets } = await supabase.storage.getBuckets();
+      const { data: bucketData } = await supabase.storage.getBucket('avatars');
       
-      if (buckets && buckets.some(bucket => bucket.name === 'avatars')) {
+      if (bucketData) {
         const { error } = await supabase.storage
           .from('avatars')
           .upload(fileName, file, { upsert: true });
@@ -169,7 +169,14 @@ const AdminProfileSettings = () => {
             .from('profiles')
             .update({ avatar_url: data.publicUrl })
             .eq('id', user.id);
+            
+          // Also update it in user metadata
+          await supabase.auth.updateUser({
+            data: { avatar: data.publicUrl }
+          });
         }
+      } else {
+        console.log("Avatars bucket doesn't exist or is not accessible");
       }
       
       toast({
