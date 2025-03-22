@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Check, Clock, Edit, FileCheck, FilePlus, ThumbsDown, ThumbsUp } from 'lucide-react';
-import { ProposalTimelineEvent } from '@/types/proposal';
+import { ProposalTimeline as ProposalTimelineType, ProposalTimelineEvent } from '@/types/proposal';
 import { cn } from '@/lib/utils';
 
 interface ProposalTimelineProps {
-  events: ProposalTimelineEvent[];
+  events: ProposalTimelineType[] | ProposalTimelineEvent[];
 }
 
 const ProposalTimeline: React.FC<ProposalTimelineProps> = ({ events }) => {
@@ -18,51 +18,79 @@ const ProposalTimeline: React.FC<ProposalTimelineProps> = ({ events }) => {
       <div className="relative ml-6 py-2">
         <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-border -ml-3" />
         
-        {sortedEvents.map((event, index) => (
-          <div key={event.id} className="relative mb-8 last:mb-0">
-            <div className="absolute -left-6 mt-1.5">
-              <div className={cn(
-                "h-6 w-6 rounded-full flex items-center justify-center",
-                getEventIconBackground(event.type)
-              )}>
-                {getEventIcon(event.type)}
+        {sortedEvents.map((event, index) => {
+          // Handle both event types (backward compatibility)
+          const eventType = 'type' in event ? event.type : getStatusEventType(event.status);
+          const eventDescription = 'description' in event ? event.description : `Status changed to ${event.status}`;
+          const userName = 'userName' in event ? event.userName : 'User';
+
+          return (
+            <div key={event.id || index} className="relative mb-8 last:mb-0">
+              <div className="absolute -left-6 mt-1.5">
+                <div className={cn(
+                  "h-6 w-6 rounded-full flex items-center justify-center",
+                  getEventIconBackground(eventType)
+                )}>
+                  {getEventIcon(eventType)}
+                </div>
               </div>
-            </div>
-            
-            <div className="ml-4">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1">
-                <h4 className="font-medium">{getEventTitle(event.type)}</h4>
+              
+              <div className="ml-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-1">
+                  <h4 className="font-medium">{getEventTitle(eventType)}</h4>
+                  <div className="text-xs text-muted-foreground flex items-center">
+                    <Clock className="h-3 w-3 mr-1 inline" />
+                    {formatDateTime(event.createdAt)}
+                  </div>
+                </div>
+                
+                <p className="text-sm mb-2">{eventDescription}</p>
+                
                 <div className="text-xs text-muted-foreground flex items-center">
-                  <Clock className="h-3 w-3 mr-1 inline" />
-                  {formatDateTime(event.createdAt)}
+                  <div className="h-4 w-4 rounded-full bg-muted flex items-center justify-center mr-1.5">
+                    <span className="text-[10px]">{userName.charAt(0)}</span>
+                  </div>
+                  <span>{userName}</span>
                 </div>
+                
+                {'metadata' in event && event.metadata && event.type === 'REJECTED' && (
+                  <div className="mt-2 text-sm border border-red-200 rounded-md p-2 bg-red-50 text-red-800 dark:border-red-900 dark:bg-red-900/20 dark:text-red-300">
+                    <strong>Motivo:</strong> {event.metadata.reason}
+                  </div>
+                )}
               </div>
-              
-              <p className="text-sm mb-2">{event.description}</p>
-              
-              <div className="text-xs text-muted-foreground flex items-center">
-                <div className="h-4 w-4 rounded-full bg-muted flex items-center justify-center mr-1.5">
-                  <span className="text-[10px]">{event.userName.charAt(0)}</span>
-                </div>
-                <span>{event.userName}</span>
-              </div>
-              
-              {event.metadata && event.type === 'REJECTED' && (
-                <div className="mt-2 text-sm border border-red-200 rounded-md p-2 bg-red-50 text-red-800 dark:border-red-900 dark:bg-red-900/20 dark:text-red-300">
-                  <strong>Motivo:</strong> {event.metadata.reason}
-                </div>
-              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 };
 
 // Helper functions
+function getStatusEventType(status: string): string {
+  switch (status) {
+    case 'DRAFT':
+    case 'PENDING':
+    case 'REQUEST':
+      return 'CREATED';
+    case 'IN_ANALYSIS':
+    case 'ANALYSIS':
+      return 'ANALYZED';
+    case 'APPROVED':
+      return 'APPROVED';
+    case 'REJECTED':
+      return 'REJECTED';
+    case 'CONVERTED':
+      return 'CONVERTED';
+    case 'CANCELLED':
+      return 'CANCELLED';
+    default:
+      return 'UPDATED';
+  }
+}
 
-function getEventIcon(type: ProposalTimelineEvent['type']) {
+function getEventIcon(type: string) {
   switch (type) {
     case 'CREATED':
       return <FilePlus className="h-3.5 w-3.5 text-white" />;
@@ -81,7 +109,7 @@ function getEventIcon(type: ProposalTimelineEvent['type']) {
   }
 }
 
-function getEventIconBackground(type: ProposalTimelineEvent['type']) {
+function getEventIconBackground(type: string) {
   switch (type) {
     case 'CREATED':
       return 'bg-blue-600';
@@ -95,12 +123,14 @@ function getEventIconBackground(type: ProposalTimelineEvent['type']) {
       return 'bg-red-600';
     case 'CONVERTED':
       return 'bg-purple-600';
+    case 'CANCELLED':
+      return 'bg-slate-600';
     default:
       return 'bg-slate-600';
   }
 }
 
-function getEventTitle(type: ProposalTimelineEvent['type']) {
+function getEventTitle(type: string) {
   switch (type) {
     case 'CREATED':
       return 'Proposta criada';
@@ -114,6 +144,8 @@ function getEventTitle(type: ProposalTimelineEvent['type']) {
       return 'Proposta rejeitada';
     case 'CONVERTED':
       return 'Convertida em contrato';
+    case 'CANCELLED':
+      return 'Proposta cancelada';
     default:
       return 'Evento registrado';
   }

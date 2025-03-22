@@ -1,79 +1,56 @@
-import { api } from '@/lib/api';
-import { CreditAnalysis, CreditTransaction } from '@/types/proposal';
 
-interface CreateAnalysisData {
-  clientId: string;
-  period: {
-    start: string;
-    end: string;
-  };
-}
+import api from '@/lib/api';
+import { CreditAnalysis } from '@/types/proposal';
 
-interface UpdateTransactionData {
-  id: string;
-  status: CreditTransaction['status'];
-  observations?: string;
-}
-
-interface GetAnalysesParams {
+interface GetCreditAnalysisParams {
   clientId?: string;
-  status?: CreditAnalysis['status'];
   startDate?: string;
   endDate?: string;
+  status?: string;
   page?: number;
   limit?: number;
 }
 
-interface AnalysesResponse {
-  analyses: CreditAnalysis[];
+interface CreditAnalysisResponse {
+  data: CreditAnalysis[];
   total: number;
   page: number;
   totalPages: number;
 }
 
+interface StartAnalysisParams {
+  clientId: string;
+  startDate: string;
+  endDate: string;
+}
+
 export const creditAnalysisService = {
-  async getAnalyses(params?: GetAnalysesParams): Promise<AnalysesResponse> {
+  async getCreditAnalyses(params?: GetCreditAnalysisParams): Promise<CreditAnalysisResponse> {
     try {
-      const { data } = await api.get<AnalysesResponse>('/credit-analyses', { params });
+      const { data } = await api.get<CreditAnalysisResponse>('/credit-analyses', { params });
       return data;
     } catch (error) {
-      console.error('Erro ao buscar análises:', error);
+      console.error('Erro ao buscar análises de crédito:', error);
       throw error;
     }
   },
 
-  async getAnalysisById(id: string): Promise<CreditAnalysis> {
+  async getCreditAnalysisById(id: string): Promise<CreditAnalysis> {
     try {
       const { data } = await api.get<CreditAnalysis>(`/credit-analyses/${id}`);
       return data;
     } catch (error) {
-      console.error('Erro ao buscar análise:', error);
+      console.error('Erro ao buscar análise de crédito:', error);
       throw error;
     }
   },
 
-  async createAnalysis(data: CreateAnalysisData): Promise<CreditAnalysis> {
+  async startAnalysis(params: StartAnalysisParams): Promise<CreditAnalysis> {
     try {
-      const { data: response } = await api.post<CreditAnalysis>('/credit-analyses', data);
-      return response;
+      const { data } = await api.post<CreditAnalysis>('/credit-analyses', params);
+      return data;
     } catch (error) {
-      console.error('Erro ao criar análise:', error);
-      throw error;
-    }
-  },
-
-  async updateTransactionStatus(analysisId: string, data: UpdateTransactionData): Promise<CreditAnalysis> {
-    try {
-      const { data: response } = await api.patch<CreditAnalysis>(
-        `/credit-analyses/${analysisId}/transactions/${data.id}`,
-        {
-          status: data.status,
-          observations: data.observations,
-        }
-      );
-      return response;
-    } catch (error) {
-      console.error('Erro ao atualizar status da transação:', error);
+      console.error('Erro ao iniciar análise de crédito:', error);
       throw error;
     }
   },
@@ -82,34 +59,18 @@ export const creditAnalysisService = {
     try {
       await api.delete(`/credit-analyses/${id}`);
     } catch (error) {
-      console.error('Erro ao cancelar análise:', error);
+      console.error('Erro ao cancelar análise de crédito:', error);
       throw error;
     }
   },
 
-  async downloadReport(id: string, format: 'pdf' | 'xlsx' = 'pdf'): Promise<Blob> {
-    try {
-      const { data } = await api.get<Blob>(
-        `/credit-analyses/${id}/report`,
-        {
-          params: { format },
-          responseType: 'blob',
-        }
-      );
-      return data;
-    } catch (error) {
-      console.error('Erro ao baixar relatório:', error);
-      throw error;
-    }
-  },
-
-  async uploadTransactions(analysisId: string, file: File): Promise<CreditAnalysis> {
+  async uploadTransactionFile(analysisId: string, file: File): Promise<CreditAnalysis> {
     try {
       const formData = new FormData();
       formData.append('file', file);
 
       const { data } = await api.post<CreditAnalysis>(
-        `/credit-analyses/${analysisId}/transactions/upload`,
+        `/credit-analyses/${analysisId}/upload`,
         formData,
         {
           headers: {
@@ -117,39 +78,69 @@ export const creditAnalysisService = {
           },
         }
       );
+
       return data;
     } catch (error) {
-      console.error('Erro ao fazer upload de transações:', error);
+      console.error('Erro ao fazer upload de arquivo de transações:', error);
       throw error;
     }
   },
 
-  async applyRetentionRules(analysisId: string): Promise<CreditAnalysis> {
+  async approveTransaction(analysisId: string, transactionId: string): Promise<CreditAnalysis> {
     try {
       const { data } = await api.post<CreditAnalysis>(
-        `/credit-analyses/${analysisId}/apply-rules`
+        `/credit-analyses/${analysisId}/transactions/${transactionId}/approve`
       );
       return data;
     } catch (error) {
-      console.error('Erro ao aplicar regras de retenção:', error);
+      console.error('Erro ao aprovar transação:', error);
       throw error;
     }
   },
 
-  async getRetentionRules(): Promise<{
-    id: string;
-    code: string;
-    description: string;
-    conditions: string[];
-    retentionPercentage: number;
-    active: boolean;
-  }[]> {
+  async rejectTransaction(
+    analysisId: string,
+    transactionId: string,
+    reason: string
+  ): Promise<CreditAnalysis> {
     try {
-      const { data } = await api.get('/retention-rules');
+      const { data } = await api.post<CreditAnalysis>(
+        `/credit-analyses/${analysisId}/transactions/${transactionId}/reject`,
+        { reason }
+      );
       return data;
     } catch (error) {
-      console.error('Erro ao buscar regras de retenção:', error);
+      console.error('Erro ao rejeitar transação:', error);
       throw error;
     }
   },
-}; 
+
+  async downloadReport(analysisId: string): Promise<Blob> {
+    try {
+      const { data } = await api.get<Blob>(`/credit-analyses/${analysisId}/report`, {
+        responseType: 'blob',
+      });
+      return data;
+    } catch (error) {
+      console.error('Erro ao baixar relatório:', error);
+      throw error;
+    }
+  },
+
+  async downloadTransactionAttachment(
+    analysisId: string,
+    transactionId: string,
+    attachmentId: string
+  ): Promise<Blob> {
+    try {
+      const { data } = await api.get<Blob>(
+        `/credit-analyses/${analysisId}/transactions/${transactionId}/attachments/${attachmentId}`,
+        { responseType: 'blob' }
+      );
+      return data;
+    } catch (error) {
+      console.error('Erro ao baixar anexo de transação:', error);
+      throw error;
+    }
+  },
+};

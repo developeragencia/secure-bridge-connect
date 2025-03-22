@@ -41,7 +41,17 @@ const StatusCard: React.FC<StatusCardProps> = ({ title, count, icon, color, onCl
 };
 
 interface ProposalStatusPanelProps {
-  proposalCounts: Record<ProposalStatus, number>;
+  proposalCounts: {
+    REQUEST?: number;
+    ANALYSIS?: number;
+    PENDING?: number;
+    IN_ANALYSIS?: number;
+    DRAFT?: number;
+    APPROVED?: number;
+    REJECTED?: number;
+    CONVERTED?: number;
+    CANCELLED?: number;
+  };
   onFilterByStatus: (status: ProposalStatus | null) => void;
 }
 
@@ -53,23 +63,23 @@ const ProposalStatusPanel: React.FC<ProposalStatusPanelProps> = ({
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
       <StatusCard
         title="Solicitadas"
-        count={proposalCounts.REQUEST}
+        count={proposalCounts.REQUEST || proposalCounts.DRAFT || proposalCounts.PENDING || 0}
         icon={<UserCheck className="h-5 w-5 text-blue-600" />}
         color="border-l-4 border-l-blue-500"
-        onClick={() => onFilterByStatus('REQUEST')}
+        onClick={() => onFilterByStatus(proposalCounts.REQUEST ? 'REQUEST' : 'PENDING')}
       />
       
       <StatusCard
         title="Em Análise"
-        count={proposalCounts.ANALYSIS}
+        count={proposalCounts.ANALYSIS || proposalCounts.IN_ANALYSIS || 0}
         icon={<Clock className="h-5 w-5 text-amber-600" />}
         color="border-l-4 border-l-amber-500"
-        onClick={() => onFilterByStatus('ANALYSIS')}
+        onClick={() => onFilterByStatus(proposalCounts.ANALYSIS ? 'ANALYSIS' : 'IN_ANALYSIS')}
       />
       
       <StatusCard
         title="Aprovadas"
-        count={proposalCounts.APPROVED}
+        count={proposalCounts.APPROVED || 0}
         icon={<CheckCircle2 className="h-5 w-5 text-green-600" />}
         color="border-l-4 border-l-green-500"
         onClick={() => onFilterByStatus('APPROVED')}
@@ -77,7 +87,7 @@ const ProposalStatusPanel: React.FC<ProposalStatusPanelProps> = ({
       
       <StatusCard
         title="Rejeitadas"
-        count={proposalCounts.REJECTED}
+        count={proposalCounts.REJECTED || 0}
         icon={<XCircle className="h-5 w-5 text-red-600" />}
         color="border-l-4 border-l-red-500"
         onClick={() => onFilterByStatus('REJECTED')}
@@ -85,7 +95,7 @@ const ProposalStatusPanel: React.FC<ProposalStatusPanelProps> = ({
       
       <StatusCard
         title="Convertidas"
-        count={proposalCounts.CONVERTED}
+        count={proposalCounts.CONVERTED || 0}
         icon={<FileCheck className="h-5 w-5 text-violet-600" />}
         color="border-l-4 border-l-violet-500"
         onClick={() => onFilterByStatus('CONVERTED')}
@@ -93,7 +103,7 @@ const ProposalStatusPanel: React.FC<ProposalStatusPanelProps> = ({
       
       <StatusCard
         title="Todas"
-        count={Object.values(proposalCounts).reduce((acc, curr) => acc + curr, 0)}
+        count={Object.values(proposalCounts).reduce((acc, curr) => acc + (curr || 0), 0)}
         icon={<AlertTriangle className="h-5 w-5 text-indigo-600" />}
         color="border-l-4 border-l-indigo-500"
         onClick={() => onFilterByStatus(null)}

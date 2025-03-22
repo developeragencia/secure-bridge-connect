@@ -1,4 +1,5 @@
-import { api } from '@/lib/api';
+
+import api from '@/lib/api';
 import { Proposal, ProposalFilters, ProposalStatus } from '@/types/proposal';
 
 interface CreateProposalData {
@@ -168,4 +169,4 @@ export const proposalService = {
       throw error;
     }
   },
-}; 
+};

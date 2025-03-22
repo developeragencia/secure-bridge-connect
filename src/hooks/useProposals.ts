@@ -1,12 +1,19 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { proposalService } from '@/services/proposalService';
-import { Proposal, ProposalFilters } from '@/types/proposal';
-import { useToast } from '@/components/ui/use-toast';
+import { Proposal, ProposalFilters, ProposalStatus } from '@/types/proposal';
+import { toast } from 'sonner';
 
 interface UseProposalsParams extends ProposalFilters {
   page?: number;
   limit?: number;
   enabled?: boolean;
+}
+
+// Define the correct type for attachment params
+interface DownloadAttachmentParams {
+  proposalId: string;
+  attachmentId: string;
 }
 
 export function useProposals(params?: UseProposalsParams) {
@@ -27,22 +34,18 @@ export function useProposal(id: string) {
 
 export function useCreateProposal() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
+  
   return useMutation({
     mutationFn: proposalService.createProposal,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['proposals'] });
-      toast({
-        title: 'Proposta criada com sucesso',
+      toast.success('Proposta criada com sucesso', {
         description: `A proposta "${data.title}" foi criada com sucesso.`,
       });
     },
     onError: (error) => {
-      toast({
-        title: 'Erro ao criar proposta',
+      toast.error('Erro ao criar proposta', {
         description: 'Ocorreu um erro ao criar a proposta. Tente novamente.',
-        variant: 'destructive',
       });
     },
   });
@@ -50,23 +53,19 @@ export function useCreateProposal() {
 
 export function useUpdateProposal() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
+  
   return useMutation({
     mutationFn: proposalService.updateProposal,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['proposals'] });
       queryClient.invalidateQueries({ queryKey: ['proposal', data.id] });
-      toast({
-        title: 'Proposta atualizada com sucesso',
+      toast.success('Proposta atualizada com sucesso', {
         description: `A proposta "${data.title}" foi atualizada com sucesso.`,
       });
     },
     onError: (error) => {
-      toast({
-        title: 'Erro ao atualizar proposta',
+      toast.error('Erro ao atualizar proposta', {
         description: 'Ocorreu um erro ao atualizar a proposta. Tente novamente.',
-        variant: 'destructive',
       });
     },
   });
@@ -74,23 +73,19 @@ export function useUpdateProposal() {
 
 export function useUpdateProposalStatus() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
+  
   return useMutation({
     mutationFn: proposalService.updateProposalStatus,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['proposals'] });
       queryClient.invalidateQueries({ queryKey: ['proposal', data.id] });
-      toast({
-        title: 'Status atualizado com sucesso',
+      toast.success('Status atualizado com sucesso', {
         description: `O status da proposta "${data.title}" foi atualizado com sucesso.`,
       });
     },
     onError: (error) => {
-      toast({
-        title: 'Erro ao atualizar status',
+      toast.error('Erro ao atualizar status', {
         description: 'Ocorreu um erro ao atualizar o status da proposta. Tente novamente.',
-        variant: 'destructive',
       });
     },
   });
@@ -98,23 +93,19 @@ export function useUpdateProposalStatus() {
 
 export function useDeleteProposal() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
+  
   return useMutation({
     mutationFn: proposalService.deleteProposal,
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ['proposals'] });
       queryClient.removeQueries({ queryKey: ['proposal', id] });
-      toast({
-        title: 'Proposta excluída com sucesso',
+      toast.success('Proposta excluída com sucesso', {
         description: 'A proposta foi excluída com sucesso.',
       });
     },
     onError: (error) => {
-      toast({
-        title: 'Erro ao excluir proposta',
+      toast.error('Erro ao excluir proposta', {
         description: 'Ocorreu um erro ao excluir a proposta. Tente novamente.',
-        variant: 'destructive',
       });
     },
   });
@@ -122,51 +113,47 @@ export function useDeleteProposal() {
 
 export function useConvertToContract() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
+  
   return useMutation({
     mutationFn: proposalService.convertToContract,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['proposals'] });
       queryClient.invalidateQueries({ queryKey: ['proposal', data.id] });
       queryClient.invalidateQueries({ queryKey: ['contracts'] });
-      toast({
-        title: 'Proposta convertida em contrato',
+      toast.success('Proposta convertida em contrato', {
         description: `A proposta "${data.title}" foi convertida em contrato com sucesso.`,
       });
     },
     onError: (error) => {
-      toast({
-        title: 'Erro ao converter proposta',
+      toast.error('Erro ao converter proposta', {
         description: 'Ocorreu um erro ao converter a proposta em contrato. Tente novamente.',
-        variant: 'destructive',
       });
     },
   });
 }
 
 export function useDownloadAttachment() {
-  const { toast } = useToast();
-
+  const downloadAttachment = async (params: DownloadAttachmentParams) => {
+    return proposalService.downloadAttachment(params.proposalId, params.attachmentId);
+  };
+  
   return useMutation({
-    mutationFn: proposalService.downloadAttachment,
-    onSuccess: (data, variables) => {
+    mutationFn: downloadAttachment,
+    onSuccess: (data) => {
       // Cria um URL para o blob e força o download
       const url = window.URL.createObjectURL(data);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `attachment-${variables.attachmentId}`);
+      link.setAttribute('download', `attachment`);
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
     },
-    onError: (error) => {
-      toast({
-        title: 'Erro ao baixar anexo',
+    onError: () => {
+      toast.error('Erro ao baixar anexo', {
         description: 'Ocorreu um erro ao baixar o anexo. Tente novamente.',
-        variant: 'destructive',
       });
     },
   });
-} 
+}

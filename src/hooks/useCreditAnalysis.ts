@@ -1,188 +1,218 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { creditAnalysisService } from '@/services/creditAnalysisService';
+import { toast } from 'sonner';
 import { CreditAnalysis } from '@/types/proposal';
-import { useToast } from '@/components/ui/use-toast';
 
-interface UseAnalysesParams {
+interface UseCreditAnalysisFilters {
   clientId?: string;
-  status?: CreditAnalysis['status'];
   startDate?: string;
   endDate?: string;
+  status?: string;
   page?: number;
   limit?: number;
   enabled?: boolean;
 }
 
-export function useCreditAnalyses(params?: UseAnalysesParams) {
+interface UploadTransactionFileParams {
+  analysisId: string;
+  file: File;
+}
+
+interface ApproveRejectTransactionParams {
+  analysisId: string;
+  transactionId: string;
+  reason?: string;
+}
+
+interface DownloadAttachmentParams {
+  analysisId: string;
+  transactionId: string;
+  attachmentId: string;
+}
+
+export function useCreditAnalyses(filters?: UseCreditAnalysisFilters) {
   return useQuery({
-    queryKey: ['credit-analyses', params],
-    queryFn: () => creditAnalysisService.getAnalyses(params),
-    enabled: params?.enabled !== false,
+    queryKey: ['credit-analyses', filters],
+    queryFn: () => creditAnalysisService.getCreditAnalyses(filters),
+    enabled: filters?.enabled !== false,
   });
 }
 
 export function useCreditAnalysis(id: string) {
   return useQuery({
     queryKey: ['credit-analysis', id],
-    queryFn: () => creditAnalysisService.getAnalysisById(id),
+    queryFn: () => creditAnalysisService.getCreditAnalysisById(id),
     enabled: !!id,
   });
 }
 
-export function useCreateAnalysis() {
+export function useStartCreditAnalysis() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
+  
   return useMutation({
-    mutationFn: creditAnalysisService.createAnalysis,
-    onSuccess: (data) => {
+    mutationFn: creditAnalysisService.startAnalysis,
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['credit-analyses'] });
-      toast({
-        title: 'Análise criada com sucesso',
-        description: 'A análise de créditos foi iniciada com sucesso.',
+      toast.success('Análise de crédito iniciada', {
+        description: 'A análise de crédito foi iniciada com sucesso.',
       });
     },
-    onError: (error) => {
-      toast({
-        title: 'Erro ao criar análise',
-        description: 'Ocorreu um erro ao criar a análise. Tente novamente.',
-        variant: 'destructive',
+    onError: () => {
+      toast.error('Erro ao iniciar análise', {
+        description: 'Ocorreu um erro ao iniciar a análise de crédito. Tente novamente.',
       });
     },
   });
 }
 
-export function useUpdateTransactionStatus() {
+export function useCancelCreditAnalysis() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  return useMutation({
-    mutationFn: ({ analysisId, ...data }: { analysisId: string } & Parameters<typeof creditAnalysisService.updateTransactionStatus>[1]) =>
-      creditAnalysisService.updateTransactionStatus(analysisId, data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['credit-analysis', data.id] });
-      toast({
-        title: 'Status atualizado',
-        description: 'O status da transação foi atualizado com sucesso.',
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: 'Erro ao atualizar status',
-        description: 'Ocorreu um erro ao atualizar o status da transação. Tente novamente.',
-        variant: 'destructive',
-      });
-    },
-  });
-}
-
-export function useCancelAnalysis() {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
+  
   return useMutation({
     mutationFn: creditAnalysisService.cancelAnalysis,
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ['credit-analyses'] });
       queryClient.removeQueries({ queryKey: ['credit-analysis', id] });
-      toast({
-        title: 'Análise cancelada',
-        description: 'A análise de créditos foi cancelada com sucesso.',
+      toast.success('Análise de crédito cancelada', {
+        description: 'A análise de crédito foi cancelada com sucesso.',
+      });
+    },
+    onError: () => {
+      toast.error('Erro ao cancelar análise', {
+        description: 'Ocorreu um erro ao cancelar a análise de crédito. Tente novamente.',
+      });
+    },
+  });
+}
+
+export function useUploadTransactionFile() {
+  const queryClient = useQueryClient();
+  
+  const uploadFile = async (params: UploadTransactionFileParams) => {
+    return creditAnalysisService.uploadTransactionFile(params.analysisId, params.file);
+  };
+  
+  return useMutation({
+    mutationFn: uploadFile,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['credit-analyses'] });
+      queryClient.invalidateQueries({ queryKey: ['credit-analysis', data.id] });
+      toast.success('Arquivo enviado', {
+        description: 'O arquivo de transações foi enviado com sucesso.',
+      });
+    },
+    onError: () => {
+      toast.error('Erro ao enviar arquivo', {
+        description: 'Ocorreu um erro ao enviar o arquivo de transações. Tente novamente.',
+      });
+    },
+  });
+}
+
+export function useApproveTransaction() {
+  const queryClient = useQueryClient();
+  
+  const approveTransaction = async (params: ApproveRejectTransactionParams) => {
+    return creditAnalysisService.approveTransaction(params.analysisId, params.transactionId);
+  };
+  
+  return useMutation({
+    mutationFn: approveTransaction,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['credit-analysis', data.id] });
+      toast.success('Transação aprovada', {
+        description: 'A transação foi aprovada com sucesso.',
+      });
+    },
+    onError: () => {
+      toast.error('Erro ao aprovar transação', {
+        description: 'Ocorreu um erro ao aprovar a transação. Tente novamente.',
+      });
+    },
+  });
+}
+
+export function useRejectTransaction() {
+  const queryClient = useQueryClient();
+  
+  const rejectTransaction = async (params: ApproveRejectTransactionParams) => {
+    if (!params.reason) {
+      throw new Error('É necessário informar um motivo para rejeitar a transação.');
+    }
+    return creditAnalysisService.rejectTransaction(
+      params.analysisId,
+      params.transactionId,
+      params.reason
+    );
+  };
+  
+  return useMutation({
+    mutationFn: rejectTransaction,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['credit-analysis', data.id] });
+      toast.success('Transação rejeitada', {
+        description: 'A transação foi rejeitada com sucesso.',
       });
     },
     onError: (error) => {
-      toast({
-        title: 'Erro ao cancelar análise',
-        description: 'Ocorreu um erro ao cancelar a análise. Tente novamente.',
-        variant: 'destructive',
+      toast.error('Erro ao rejeitar transação', {
+        description: error instanceof Error 
+          ? error.message 
+          : 'Ocorreu um erro ao rejeitar a transação. Tente novamente.',
       });
     },
   });
 }
 
 export function useDownloadReport() {
-  const { toast } = useToast();
-
   return useMutation({
     mutationFn: creditAnalysisService.downloadReport,
-    onSuccess: (data, variables) => {
-      // Cria um URL para o blob e força o download
+    onSuccess: (data) => {
+      // Create a URL for the blob and force download
       const url = window.URL.createObjectURL(data);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute(
-        'download',
-        `analise-creditos-${variables[0]}.${variables[1] || 'pdf'}`
-      );
+      link.setAttribute('download', 'credit-analysis-report.pdf');
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-
-      toast({
-        title: 'Download iniciado',
-        description: 'O relatório está sendo baixado.',
-      });
     },
-    onError: (error) => {
-      toast({
-        title: 'Erro ao baixar relatório',
+    onError: () => {
+      toast.error('Erro ao baixar relatório', {
         description: 'Ocorreu um erro ao baixar o relatório. Tente novamente.',
-        variant: 'destructive',
       });
     },
   });
 }
 
-export function useUploadTransactions() {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
+export function useDownloadTransactionAttachment() {
+  const downloadAttachment = async (params: DownloadAttachmentParams) => {
+    return creditAnalysisService.downloadTransactionAttachment(
+      params.analysisId,
+      params.transactionId,
+      params.attachmentId
+    );
+  };
+  
   return useMutation({
-    mutationFn: creditAnalysisService.uploadTransactions,
+    mutationFn: downloadAttachment,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['credit-analysis', data.id] });
-      toast({
-        title: 'Upload concluído',
-        description: 'As transações foram importadas com sucesso.',
-      });
+      // Create a URL for the blob and force download
+      const url = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'transaction-attachment');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
     },
-    onError: (error) => {
-      toast({
-        title: 'Erro no upload',
-        description: 'Ocorreu um erro ao importar as transações. Tente novamente.',
-        variant: 'destructive',
+    onError: () => {
+      toast.error('Erro ao baixar anexo', {
+        description: 'Ocorreu um erro ao baixar o anexo da transação. Tente novamente.',
       });
     },
   });
 }
-
-export function useApplyRetentionRules() {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  return useMutation({
-    mutationFn: creditAnalysisService.applyRetentionRules,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['credit-analysis', data.id] });
-      toast({
-        title: 'Regras aplicadas',
-        description: 'As regras de retenção foram aplicadas com sucesso.',
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: 'Erro ao aplicar regras',
-        description: 'Ocorreu um erro ao aplicar as regras de retenção. Tente novamente.',
-        variant: 'destructive',
-      });
-    },
-  });
-}
-
-export function useRetentionRules() {
-  return useQuery({
-    queryKey: ['retention-rules'],
-    queryFn: creditAnalysisService.getRetentionRules,
-  });
-} 

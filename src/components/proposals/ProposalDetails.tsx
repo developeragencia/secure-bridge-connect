@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useProposal, useUpdateProposalStatus, useConvertToContract } from '@/hooks/useProposals';
 import { Button } from '@/components/ui/button';
@@ -28,7 +29,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposalId, className
     if (!proposal) return;
 
     updateStatus(
-      { proposalId: proposal.id, status: newStatus },
+      { id: proposal.id, status: newStatus },
       {
         onSuccess: () => {
           toast.success('Status da proposta atualizado com sucesso');
@@ -44,7 +45,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposalId, className
     if (!proposal) return;
 
     convertToContract(
-      { proposalId: proposal.id },
+      proposal.id,
       {
         onSuccess: () => {
           toast.success('Proposta convertida em contrato com sucesso');
@@ -91,7 +92,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposalId, className
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-sm font-medium text-muted-foreground">Cliente</p>
-            <p className="text-lg">{proposal.client.razaoSocial}</p>
+            <p className="text-lg">{proposal.client?.razaoSocial || proposal.clientName}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
@@ -99,7 +100,7 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposalId, className
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
-              }).format(proposal.totalValue)}
+              }).format(proposal.totalValue || proposal.value || 0)}
             </p>
           </div>
           <div>
@@ -186,4 +187,4 @@ const ProposalDetails: React.FC<ProposalDetailsProps> = ({ proposalId, className
   );
 };
 
-export default ProposalDetails; 
+export default ProposalDetails;
