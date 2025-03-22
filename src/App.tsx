@@ -14,6 +14,7 @@ import Clients from '@/pages/Clients';
 import ClientDetails from '@/pages/ClientDetails';
 import Profile from '@/pages/Profile';
 import NotFound from '@/pages/NotFound';
+import Unauthorized from '@/pages/Unauthorized';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,7 +41,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// This component wraps AuthProvider with navigation capabilities
+// Este componente envolve o AuthProvider com capacidades de navegação
 const AuthProviderWithNavigation = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   
@@ -73,6 +74,7 @@ const App = () => {
                 <Route path="clients" element={<Clients />} />
                 <Route path="clients/:id" element={<ClientDetails />} />
                 <Route path="profile" element={<Profile />} />
+                <Route path="unauthorized" element={<Unauthorized />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>

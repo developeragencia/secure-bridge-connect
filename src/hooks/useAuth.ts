@@ -9,7 +9,7 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
 
-  // Add a helper method for checking permissions (used in ProtectedRoute)
+  // Adiciona um método auxiliar para verificar permissões (usado no ProtectedRoute)
   const checkPermission = (permission: string) => {
     return context.user?.permissions?.includes(permission) || false;
   };

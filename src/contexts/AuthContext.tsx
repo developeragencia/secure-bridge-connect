@@ -10,14 +10,14 @@ interface AuthContextData {
   signIn: (credentials: { email: string; password: string }) => Promise<void>;
   signOut: () => void;
   updateUser: (user: User) => void;
-  navigate?: (path: string) => void; // Optional navigate function that will be set by the wrapper
+  navigate?: (path: string) => void; // Adicionado para receber a função navigate como prop
 }
 
 export const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 interface AuthProviderProps {
   children: React.ReactNode;
-  navigate?: (path: string) => void;
+  navigate?: (path: string) => void; // Recebe o navigate como prop em vez de usar o hook
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children, navigate }) => {
