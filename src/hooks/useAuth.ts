@@ -6,7 +6,7 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
   }
 
   // Adiciona um método auxiliar para verificar permissões (usado no ProtectedRoute)

@@ -15,6 +15,8 @@ import ClientDetails from '@/pages/ClientDetails';
 import Profile from '@/pages/Profile';
 import NotFound from '@/pages/NotFound';
 import Unauthorized from '@/pages/Unauthorized';
+import Index from '@/pages/Index';
+import Admin from '@/pages/Admin';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -59,16 +61,17 @@ const App = () => {
         <Router>
           <AuthProviderWithNavigation>
             <Routes>
+              <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={<Admin />} />
               <Route
-                path="/"
+                path="/secure"
                 element={
                   <PrivateRoute>
                     <Layout />
                   </PrivateRoute>
                 }
               >
-                <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="transactions" element={<Transactions />} />
                 <Route path="clients" element={<Clients />} />
